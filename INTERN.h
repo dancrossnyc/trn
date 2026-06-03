@@ -7,10 +7,5 @@
 #define EXT
 
 #undef INIT
-#ifdef xenix
-#define INIT(x) =x
-#else
 #define INIT(x) = x
-#endif
-
 #define DOINIT

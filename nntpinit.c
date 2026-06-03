@@ -126,10 +126,6 @@ get_tcp_socket (char *machine, int port, char *service)
     freeaddrinfo(res0);
 #else	/* !INET6 */
     struct sockaddr_in sin;
-#ifdef __hpux
-    int socksize = 0;
-    int socksizelen = sizeof socksize;
-#endif
     struct hostent* hp;
 #ifdef h_addr
     int x = 0;
@@ -227,21 +223,6 @@ get_tcp_socket (char *machine, int port, char *service)
 
 #endif /* !h_addr */
 #endif /* !INET6 */
-#ifdef __hpux	/* recommended by raj@cup.hp.com */
-#define	HPSOCKSIZE 0x8000
-    getsockopt(s, SOL_SOCKET, SO_SNDBUF, (caddr_t)&socksize, (caddr_t)&socksizelen);
-    if (socksize < HPSOCKSIZE) {
-	socksize = HPSOCKSIZE;
-	setsockopt(s, SOL_SOCKET, SO_SNDBUF, (caddr_t)&socksize, sizeof (socksize));
-    }
-    socksize = 0;
-    socksizelen = sizeof (socksize);
-    getsockopt(s, SOL_SOCKET, SO_RCVBUF, (caddr_t)&socksize, (caddr_t)&socksizelen);
-    if (socksize < HPSOCKSIZE) {
-	socksize = HPSOCKSIZE;
-	setsockopt(s, SOL_SOCKET, SO_RCVBUF, (caddr_t)&socksize, sizeof (socksize));
-    }
-#endif
     return s;
 }
 
