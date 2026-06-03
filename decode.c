@@ -33,9 +33,6 @@ char *
 decode_fix_fname (char *s)
 {
     char* t;
-#ifdef MSDOS
-    int dotcount = 0;
-#endif
 
     if (!s)
 	s = "unknown";
@@ -46,11 +43,6 @@ decode_fix_fname (char *s)
 /*$$ we need to eliminate any "../"s from the string */
     while (*s == '/' || *s == '~') s++;
     for (t = decode_filename; *s; s++) {
-#ifdef MSDOS
-/*$$ we should also handle backslashes here */
-	if (*s == '.' && (t == decode_filename || dotcount++))
-	    continue;
-#endif
 	if (isprint(*s)
 #ifdef GOODCHARS
 	 && index(GOODCHARS, *s)
@@ -73,25 +65,10 @@ static bool
 bad_filename (char *filename)
 {
     int len = strlen(filename);
-#ifdef MSDOS
-    if (len == 3) {
-	if (strcaseEQ(filename, "aux") || strcaseEQ(filename, "con")
-	 || strcaseEQ(filename, "nul") || strcaseEQ(filename, "prn"))
-	    return TRUE;
-    }
-    else if (len == 4) {
-	if (strcaseEQ(filename, "com1") || strcaseEQ(filename, "com2")
-	 || strcaseEQ(filename, "com3") || strcaseEQ(filename, "com4")
-	 || strcaseEQ(filename, "lpt1") || strcaseEQ(filename, "lpt2")
-	 || strcaseEQ(filename, "lpt3"))
-	    return TRUE;
-    }
-#else
     if (len <= 2) {
 	if (*filename == '.' && (*filename == '\0' || *filename == '.'))
 	    return TRUE;
     }
-#endif
     return 0;
 }
 
@@ -419,11 +396,7 @@ decode_mkdir (char *filename)
     static char dir[LBUFLEN];
     char* s;
 
-#ifdef MSDOS
-    interp(dir, sizeof dir, "%Y/parts/");
-#else
     interp(dir, sizeof dir, "%Y/m-prts-%L/");
-#endif
     strcat(dir, filename);
     s = dir + strlen(dir);
     if (s[-1] == '/')

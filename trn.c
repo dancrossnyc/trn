@@ -100,11 +100,6 @@ main (int argc, char *argv[])
     char* s;
 
     /* Figure out our executable's name. */
-#ifdef MSDOS
-    strlwr(argv[0]);
-    if ((s = rindex(argv[0],'\\')) != NULL)
-	*s = '/';
-#endif
     if ((s = rindex(argv[0],'/')) == NULL)
 	s = argv[0];
     else

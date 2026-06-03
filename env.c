@@ -36,13 +36,11 @@ env_init (char *tcbuf, bool_int lax)
 	if (!loginName)
 	    loginName = getenv("LOGNAME");
     }
-#ifndef MSDOS
     if (!lax || !loginName) {
 	loginName = getlogin();
 	if (loginName)
 	    loginName = savestr(loginName);
     }
-#endif
 
     /* Set realName, and maybe set loginName and homedir (if NULL). */
     if (!setusername(tcbuf)) {
@@ -98,7 +96,6 @@ setusername (char *tmpbuf)
     char* s;
     char* c;
 
-#ifdef HAS_GETPWENT
     struct passwd* pwd;
 
     if (loginName == NULL)
@@ -112,28 +109,6 @@ setusername (char *tmpbuf)
     if (!homedir)
 	homedir = savestr(pwd->pw_dir);
     s = pwd->pw_gecos;
-#else /* !HAS_GETPWENT */
-    int i;
-
-    if (getpw(getuid(), tmpbuf+1) != 0)
-	return 0;
-    if (!loginName) {
-	cpytill(buf,tmpbuf+1,':');
-	loginName = savestr(buf);
-    }
-    for (s = tmpbuf, i = GCOSFIELD-1; i; i--) {
-	if (s)
-	    s = index(s+1,':');
-    }
-    if (!s)
-	return 0;
-    s = cpytill(tmpbuf,s+1,':');
-    if (!homedir) {
-	cpytill(buf,s+1,':');
-	homedir = savestr(buf);
-    }
-    s = tmpbuf;
-#endif /* !HAS_GETPWENT */
 #ifdef PASSNAMES
 #ifdef BERKNAMES
 #ifdef BERKJUNK
@@ -173,9 +148,7 @@ setusername (char *tmpbuf)
 	    s = "PUT_YOUR_NAME_HERE";
     }
 #endif /* !PASSNAMES */
-#ifdef HAS_GETPWENT
     endpwent();
-#endif
     return 1;
 }
 
@@ -345,25 +318,3 @@ envix (char *nam, int len)
     return i;
 }
 
-#ifdef MSDOS
-
-char *
-GetEnv (char *var)
-{
-#undef getenv
-    char* s = getenv(var);
-    if (s && isalpha(*s) && s[1] == ':') {
-	char* t = index(s,'\\');
-	if (t) {
-	    char ebuf[MAXDIR+32];
-	    strcpy(ebuf,s);
-	    t = ebuf + (t-s);
-	    do {
-		*t = '/';
-	    } while ((t = index(t,'\\')) != NULL);
-	    s = export(var,ebuf);
-	}
-    }
-    return s;
-}
-#endif

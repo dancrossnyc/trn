@@ -15,12 +15,7 @@ EXT char* decode_filename INIT(NULL);
 #define DECODE_MAYBEDONE 7
 #define DECODE_ERROR	 8
 
-#ifdef MSDOS
-#define GOODCHARS "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" \
-                  "0123456789-_^#%"
-#else
 #define BADCHARS "!$&*()|\'\";<>[]{}?/`\\ \t"
-#endif
 
 typedef int (*DECODE_FUNC) (FILE*,int);
 

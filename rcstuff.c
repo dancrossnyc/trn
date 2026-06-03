@@ -316,7 +316,6 @@ lock_newsrc (NEWSRC *rp)
 	fclose(tmpfp);
     }
     if (processnum) {
-#ifndef MSDOS
 #ifdef VERBOSE
 	IF(verbose)
 	    printf("\nThe requested newsrc is locked by process %ld on host %s.\n",
@@ -404,7 +403,6 @@ the lock file: %s\n", rp->lockname) FLUSH;
 		resetty();
 	    finalize(0);
 	}
-#endif
     }
     tmpfp = fopen(rp->lockname,"w");
     if (tmpfp == NULL) {
@@ -1426,12 +1424,10 @@ write_newsrcs (MULTIRC *mptr)
 	    total_success = FALSE;
 	    continue;
 	}
-#ifndef MSDOS
 	if (stat(rp->name,&filestat)>=0) { /* preserve permissions */
 	    chmod(rp->newname,filestat.st_mode&0666);
 	    chown(rp->newname,filestat.st_uid,filestat.st_gid);
 	}
-#endif
 	/* write out each line*/
 
 	for (np = first_ng; np; np = np->next) {

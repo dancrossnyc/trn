@@ -531,9 +531,6 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
 /* SELECT_INIT:
  *	This symbol indicates we default to the selector for group entry.
  */
-/* MSDOS:
- *	This is defined if this is an MSDOS system.
- */
 #define THREAD_INIT	$trn_init
 #define SELECT_INIT	$trn_select
 
@@ -541,8 +538,6 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
 #define NEWSPOSTER "$bin/Pnews -h %h"
 #define MAILPOSTER "$bin/Rnmail -h %h"
 /*#define ANCIENT_NEWS	*//* if your B news system is <= 2.10.1 */
-
-#$d_msdos MSDOS	/**/
 
 #endif
 !GROK!THIS!

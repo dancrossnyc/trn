@@ -22,9 +22,6 @@
 #ifdef I_SYS_WAIT
 #include <sys/wait.h>
 #endif
-#ifdef MSDOS
-#include <process.h>
-#endif
 #ifdef SCAN
 #include "scan.h"
 #include "smisc.h"	/* s_default_cmd */
@@ -92,10 +89,8 @@ util_init (void)
 int
 doshell (char *shell, char *s)
 {
-#ifndef MSDOS
     WAIT_STATUS status;
     pid_t pid, w;
-#endif
     int ret;
 
     xmouse_off();
@@ -184,9 +179,6 @@ doshell (char *shell, char *s)
     if (shell == NULL && (shell = getval("SHELL",NULL)) == NULL)
 	shell = PREFSHELL;
     termlib_reset();
-#ifdef MSDOS
-    status = spawnl(P_WAIT, shell, shell, "/c", s, (char*)NULL);
-#else
     if ((pid = vfork()) == 0) {
 #ifdef SUPPORT_NNTP
 	if (datasrc && (datasrc->flags & DF_REMOTE)) {
@@ -237,7 +229,6 @@ doshell (char *shell, char *s)
 	ret = status;
 #endif /* UNION_WAIT */
 #endif /* USE_WIFSTAT */
-#endif /* !MSDOS */
     termlib_init();
     xmouse_check();
     waiting = FALSE;

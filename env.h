@@ -28,6 +28,3 @@ char* getval (char*,char*);
 char* export (char*,char*);
 void un_export (char*);
 void re_export (char*,char*,int);
-#ifdef MSDOS
-char* GetEnv (char*);
-#endif

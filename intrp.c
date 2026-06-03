@@ -59,21 +59,10 @@ intrp_init (char *tcbuf, int tcbuf_len)
 
 #ifdef NEWS_ADMIN
     {
-#ifdef HAS_GETPWENT
 	struct passwd* pwd = getpwnam(NEWS_ADMIN);
 
 	if (pwd != NULL)
 	    newsuid = pwd->pw_uid;
-#else
-#ifdef TILDENAME
-	char tildenews[2+sizeof NEWS_ADMIN];
-	strcpy(tildenews, "~");
-	strcat(tildenews, NEWS_ADMIN);
-	(void) filexp(tildenews);
-#else
-	... "Define either HAS_GETPWENT or TILDENAME to get NEWS_ADMIN"
-#endif  /* TILDENAME */
-#endif	/* HAS_GETPWENT */
     }
 
     /* if this is the news admin then load his UID into newsuid */

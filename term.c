@@ -98,14 +98,7 @@ term_init (void)
     else
 	_tty.sg_flags &= ~XTABS;
 #  else /* !I_SGTTY */
-#   ifdef MSDOS
-    outspeed = B19200;
-    ERASECH = '\b';
-    KILLCH = Ctl('u');
-    tc_GT = 1;
-#   else
     ..."Don't know how to initialize the terminal!"
-#   endif /* !MSDOS */
 #  endif /* !I_SGTTY */
 # endif /* !I_TERMIOS */
 #endif /* !I_TERMIO */
@@ -180,29 +173,6 @@ term_set (
     /* get all that good termcap stuff */
 
 #ifdef HAS_TERMLIB
-#ifdef MSDOS
-    tc_BC = "\b";
-    tc_UP = "\033[A";
-    tc_CR = "\r";
-    tc_VB = nullstr;
-    tc_CL = "\033[H\033[2J";
-    tc_CE = "\033[K";
-    tc_TI = nullstr;
-    tc_TE = nullstr;
-    tc_KS = nullstr;
-    tc_KE = nullstr;
-    tc_CM = "\033[%d;%dH";
-    tc_HO = "\033[H";
-    tc_IL = nullstr; /*$$*/
-    tc_CD = nullstr; /*$$*/
-    tc_SO = "\033[7m";
-    tc_SE = "\033[m";
-    tc_US = "\033[7m";
-    tc_UE = "\033[m";
-    tc_UC = nullstr;
-    set_lines_and_cols();
-    tc_AM = TRUE;
-#else
     s = getenv("TERM");
     status = tgetent(tcbuf,s? s : "dumb");	/* get termcap entry */
     if (status < 1) {
@@ -285,7 +255,6 @@ term_set (
 		    tc_COLS = winsize.ws_col;
 	}
 # endif
-#endif
     if (!*tc_UP)			/* no UP string? */
 	marking = 0;			/* disable any marking */
     if (*tc_CM || *tc_HO)
@@ -311,27 +280,6 @@ term_set (
     mac_init(tcbuf);
 }
 
-#ifdef MSDOS
-static void
-set_lines_and_cols (void)
-{
-    gotoxy(132,1);
-    if (wherex() == 132)
-	tc_COLS = 132;
-    else
-	tc_COLS = 80;
-    gotoxy(1,50);
-    if (wherey() == 50)
-	tc_LINES = 50;
-    else {
-	gotoxy(1,43);
-	if (wherey() == 50)
-	    tc_LINES = 50;
-	else
-	    tc_LINES = 25;
-    }
-}
-#endif
 
 void
 set_macro (
@@ -396,43 +344,25 @@ arrow_macros (char *tmpbuf)
 {
 #ifdef HAS_TERMLIB
     char lbuf[256];			/* should be long enough */
-#ifndef MSDOS
     char* tmpaddr = tmpbuf;
-#endif
     register char* tmpstr;
 
     /* If arrows are defined as single keys, we probably don't
      * want to redefine them.  (The tvi912c defines kl as ^H)
      */
-#ifdef MSDOS
-    strcpy(lbuf,"\035\110");
-#else
     strcpy(lbuf,Tgetstr("ku"));		/* up */
-#endif
     if ((int)strlen(lbuf) > 1)
 	set_macro(lbuf,up[auto_arrow_macros]);
 
-#ifdef MSDOS
-    strcpy(lbuf,"\035\120");
-#else
     strcpy(lbuf,Tgetstr("kd"));		/* down */
-#endif
     if ((int)strlen(lbuf) > 1)
 	set_macro(lbuf,down[auto_arrow_macros]);
 
-#ifdef MSDOS
-    strcpy(lbuf,"\035\113");
-#else
     strcpy(lbuf,Tgetstr("kl"));		/* left */
-#endif
     if ((int)strlen(lbuf) > 1)
 	set_macro(lbuf,left[auto_arrow_macros]);
 
-#ifdef MSDOS
-    strcpy(lbuf,"\035\115");
-#else
     strcpy(lbuf,Tgetstr("kr"));		/* right */
-#endif
     if ((int)strlen(lbuf) > 1)
 	set_macro(lbuf,right[auto_arrow_macros]);
 
@@ -662,11 +592,7 @@ finput_pending (bool_int check_term)
 #  ifdef HAS_RDCHK
 	return rdchk(0);
 #  else /* !HAS_RDCHK */
-#   ifdef MSDOS
-	return kbhit();
-#   else /* !MSDOS */
 	return circfill();
-#   endif /* !MSDOS */
 #  endif /* !HAS_RDCHK */
 #  endif /* !FIONREAD */
     }
@@ -996,14 +922,7 @@ read_tty (char *addr, int size)
 	}
     }
 #endif
-#ifdef MSDOS
-    *addr = getch();
-    if (*addr == '\0')
-	*addr = Ctl('\035');
-    size = 1;
-#else
     size = read(0,addr,size);
-#endif
 #ifdef RAWONLY
     *addr &= 0177;
 #endif
@@ -2450,24 +2369,4 @@ tc_color_capability (char *capability)
     return NULL;
 }
 
-#ifdef MSDOS
-int
-tputs(str,num,func)
-char* str;
-int num;
-int (*func) _((char_int));
-{
-    printf(str,num);
-    return 0;
-}
-#endif
 
-#ifdef MSDOS
-char *
-tgoto (char *str, int x, int y)
-{
-    static char gbuf[32];
-    sprintf(gbuf,str,y+1,x+1);
-    return gbuf;
-}
-#endif

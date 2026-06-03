@@ -191,9 +191,7 @@ nntp_body (ART_NUM artnum)
 		artname);
 	finalize(1); /*$$*/
     }
-#ifndef MSDOS
     chmod(artname, 0600);
-#endif
     /*artio_setbuf(artfp);$$*/
     if (parsed_art == artnum)
 	sprintf(ser_line, "BODY %ld", (long)artnum);
