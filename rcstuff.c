@@ -218,7 +218,7 @@ unuse_multirc (MULTIRC *mptr)
 bool
 use_next_multirc (MULTIRC *mptr)
 {
-    register MULTIRC* mp = multirc_ptr(mptr->num);
+    MULTIRC* mp = multirc_ptr(mptr->num);
 
     unuse_multirc(mptr);
 
@@ -239,7 +239,7 @@ use_next_multirc (MULTIRC *mptr)
 bool
 use_prev_multirc (MULTIRC *mptr)
 {
-    register MULTIRC* mp = multirc_ptr(mptr->num);
+    MULTIRC* mp = multirc_ptr(mptr->num);
 
     unuse_multirc(mptr);
 
@@ -258,7 +258,7 @@ use_prev_multirc (MULTIRC *mptr)
 }
 
 char *
-multirc_name (register MULTIRC *mp)
+multirc_name (MULTIRC *mp)
 {
     char* cp;
     if (mp->first->next)
@@ -428,7 +428,7 @@ unlock_newsrc (NEWSRC *rp)
 static bool
 open_newsrc (NEWSRC *rp)
 {
-    register NGDATA* np;
+    NGDATA* np;
     NGDATA* prev_np;
     char* some_buf;
     long length;
@@ -445,7 +445,6 @@ open_newsrc (NEWSRC *rp)
 	    return FALSE;
 	}
 	some_buf = SUBSCRIPTIONS;
-#ifdef SUPPORT_NNTP
 	if ((rp->datasrc->flags & DF_REMOTE)
 	 && nntp_list("SUBSCRIPTIONS",nullstr,0) == 1) {
 	    do {
@@ -455,7 +454,6 @@ open_newsrc (NEWSRC *rp)
 		    break;
 	    } while (!nntp_at_list_end(ser_line));
 	}
-#endif
 	ElseIf (*some_buf && (tmpfp = fopen(filexp(some_buf),"r")) != NULL) {
 	    while (fgets(buf,sizeof buf,tmpfp))
 		fputs(buf,rcfp);
@@ -614,13 +612,11 @@ open_newsrc (NEWSRC *rp)
     }
     else {
 	readlast();
-#ifdef SUPPORT_NNTP
 	if (rp->datasrc->flags & DF_REMOTE) {
 	    rp->datasrc->act_sf.recent_cnt = lastactsiz;
 	    rp->datasrc->desc_sf.recent_cnt = lastextranum;
 	}
 	else
-#endif
 	{
 	    rp->datasrc->act_sf.recent_cnt = lastextranum;
 	    rp->datasrc->desc_sf.recent_cnt = 0;
@@ -637,15 +633,15 @@ open_newsrc (NEWSRC *rp)
 static void
 init_ngnode (LIST *list, LISTNODE *node)
 {
-    register ART_NUM i;
-    register NGDATA* np;
+    ART_NUM i;
+    NGDATA* np;
     bzero(node->data, list->items_per_node * list->item_size);
     for (i = node->low, np = (NGDATA*)node->data; i <= node->high; i++, np++)
 	np->num = i;
 }
 
 static void
-parse_rcline (register NGDATA *np)
+parse_rcline (NGDATA *np)
 {
     char* s;
     int len;
@@ -918,7 +914,7 @@ reask_unsub:
 	    return FALSE;
 	}
 	else if (*buf == 'y') {
-	    register char* cp;
+	    char* cp;
 	    cp = ngptr->rcline + ngptr->numoffset;
 	    ngptr->flags = (*cp && cp[1] == '0' ? NF_UNTHREADED : 0);
 	    ngptr->subscribechar = ':';
@@ -950,7 +946,7 @@ reask_unsub:
 static NGDATA *
 add_newsgroup (NEWSRC *rp, char *ngn, char_int c)
 {
-    register NGDATA* np;
+    NGDATA* np;
 
     np = ngdata_ptr(ngdata_cnt++);
     np->prev = last_ng;
@@ -1169,8 +1165,8 @@ q to abort\n") FLUSH;
 void
 list_newsgroups (void)
 {
-    register NGDATA* np;
-    register NG_NUM i;
+    NGDATA* np;
+    NG_NUM i;
     char tmpbuf[2048];
     static char* status[] = {"(READ)","(UNSUB)","(DUP)","(BOGUS)","(JUNK)"};
 
@@ -1206,8 +1202,8 @@ find_ng (char *ngnam)
 void
 cleanup_newsrc (NEWSRC *rp)
 {
-    register NGDATA* np;
-    register NG_NUM bogosity = 0;
+    NGDATA* np;
+    NG_NUM bogosity = 0;
 
 #ifdef VERBOSE
     IF(verbose)
@@ -1374,7 +1370,7 @@ bool
 write_newsrcs (MULTIRC *mptr)
 {
     NEWSRC* rp;
-    register NGDATA* np;
+    NGDATA* np;
     int save_sort = sel_sort;
     FILE* rcfp;
     bool total_success = TRUE;
@@ -1403,13 +1399,11 @@ write_newsrcs (MULTIRC *mptr)
 	}
 	else {
 	    readlast();
-#ifdef SUPPORT_NNTP
 	    if (rp->datasrc->flags & DF_REMOTE) {
 		lastactsiz = rp->datasrc->act_sf.recent_cnt;
 		lastextranum = rp->datasrc->desc_sf.recent_cnt;
 	    }
 	    else
-#endif
 		lastextranum = rp->datasrc->act_sf.recent_cnt;
 	    lastnewtime = rp->datasrc->lastnewgrp;
 	    writelast();
@@ -1431,7 +1425,7 @@ write_newsrcs (MULTIRC *mptr)
 	/* write out each line*/
 
 	for (np = first_ng; np; np = np->next) {
-	    register char* delim;
+	    char* delim;
 	    if (np->rc != rp)
 		continue;
 	    if (np->numoffset) {

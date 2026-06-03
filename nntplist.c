@@ -12,7 +12,7 @@
 #include "nntpclient.h"
 #include "nntpinit.h"
 
-void Usage _((void));
+void Usage (void);
 
 char* server_name;
 char* nntp_auth_file;
@@ -33,7 +33,7 @@ main (int argc, char *argv[])
     char* wildarg = NULL;
     char* cp;
     FILE* in_fp;
-    register FILE* out_fp = NULL;
+    FILE* out_fp = NULL;
 
     while (--argc) {
 	if (**++argv == '-') {
@@ -95,10 +95,8 @@ main (int argc, char *argv[])
     if (strNE(cp,"local")) {
 	server_name = savestr(cp);
 	cp = index(server_name, ';');
-#ifndef DECNET
 	if (!cp)
 	    cp = index(server_name, ':');
-#endif
 	if (cp) {
 	    *cp = '\0';
 	    nntplink.port_number = atoi(cp+1);
@@ -187,11 +185,9 @@ Usage (void)
     exit(1);
 }
 
-#ifdef SUPPORT_NNTP
 int
 nntp_handle_timeout (void)
 {
     fputs("\n503 Server timed out.\n",stderr);
     return -2;
 }
-#endif

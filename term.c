@@ -62,7 +62,6 @@ static bool got_a_char = FALSE;	/* TRUE if we got a char since eating */
 /* guarantee capability pointer != NULL */
 /* (I believe terminfo will ignore the &tmpaddr argument.) */
 
-char* tgetstr();
 #define Tgetstr(key) ((tmpstr = tgetstr(key,&tmpaddr)) ? tmpstr : nullstr)
 
 /* terminal initialization */
@@ -72,36 +71,12 @@ term_init (void)
 {
     savetty();				/* remember current tty state */
 
-#ifdef I_TERMIO
-    outspeed = _tty.c_cflag & CBAUD;	/* for tputs() */
-    ERASECH = _tty.c_cc[VERASE];	/* for finish_command() */
-    KILLCH = _tty.c_cc[VKILL];		/* for finish_command() */
-    if (tc_GT = ((_tty.c_oflag & TABDLY) != TAB3))
-	/* we have tabs, so that's OK */;
-    else
-	_tty.c_oflag &= ~TAB3;	/* turn off kernel tabbing -- done in rn */
-#else /* !I_TERMIO */
-# ifdef I_TERMIOS
     outspeed = cfgetospeed(&_tty);	/* for tputs() (output) */
     ERASECH = _tty.c_cc[VERASE];	/* for finish_command() */
     KILLCH = _tty.c_cc[VKILL];		/* for finish_command() */
 #if 0
     _tty.c_oflag &= ~OXTABS;	/* turn off kernel tabbing-done in rn */
 #endif
-# else /* !I_TERMIOS */
-#  ifdef I_SGTTY
-    outspeed = _tty.sg_ospeed;		/* for tputs() */
-    ERASECH = _tty.sg_erase;		/* for finish_command() */
-    KILLCH = _tty.sg_kill;		/* for finish_command() */
-    if (tc_GT = ((_tty.sg_flags & XTABS) != XTABS))
-	/* we have tabs, so that's OK */;
-    else
-	_tty.sg_flags &= ~XTABS;
-#  else /* !I_SGTTY */
-    ..."Don't know how to initialize the terminal!"
-#  endif /* !I_SGTTY */
-# endif /* !I_TERMIOS */
-#endif /* !I_TERMIO */
 
     /* The following could be a table but I can't be sure that there isn't */
     /* some degree of sparsity out there in the world. */
@@ -146,8 +121,8 @@ term_set (
     char *tcbuf		/* temp area for "uncompiled" termcap entry */
 )
 {
-    char* tmpaddr;			/* must not be register */
-    register char* tmpstr;
+    char* tmpaddr;			/* must not be */
+    char* tmpstr;
     char* s;
     int status;
 #ifdef TIOCGWINSZ
@@ -224,14 +199,12 @@ term_set (
     tc_LINES = tgetnum("li");		/* lines per page */
     tc_COLS = tgetnum("co");		/* columns on page */
 
-#ifdef TIOCGWINSZ
     { struct winsize ws;
 	if (ioctl(0, TIOCGWINSZ, &ws) >= 0 && ws.ws_row > 0 && ws.ws_col > 0) {
 	    tc_LINES = ws.ws_row;
 	    tc_COLS = ws.ws_col;
 	}
     }
-#endif
 
     tc_AM = tgetflag("am");		/* terminal wraps automatically? */
     tc_XN = tgetflag("xn");		/* then eats next newline? */
@@ -247,14 +220,12 @@ term_set (
 	else
 	    tc_CR = "\r";
     }
-#ifdef TIOCGWINSZ
 	if (ioctl(1, TIOCGWINSZ, &winsize) >= 0) {
 		if (winsize.ws_row > 0)
 		    tc_LINES = winsize.ws_row;
 		if (winsize.ws_col > 0)
 		    tc_COLS = winsize.ws_col;
 	}
-# endif
     if (!*tc_UP)			/* no UP string? */
 	marking = 0;			/* disable any marking */
     if (*tc_CM || *tc_HO)
@@ -345,7 +316,7 @@ arrow_macros (char *tmpbuf)
 #ifdef HAS_TERMLIB
     char lbuf[256];			/* should be long enough */
     char* tmpaddr = tmpbuf;
-    register char* tmpstr;
+    char* tmpstr;
 
     /* If arrows are defined as single keys, we probably don't
      * want to redefine them.  (The tvi912c defines kl as ^H)
@@ -391,11 +362,11 @@ mac_init (char *tcbuf)
 void
 mac_line (char *line, char *tmpbuf, int tbsize)
 {
-    register char* s;
-    register char* m;
-    register KEYMAP* curmap;
-    register int ch;
-    register int garbage = 0;
+    char* s;
+    char* m;
+    KEYMAP* curmap;
+    int ch;
+    int garbage = 0;
     static char override[] = "\nkeymap overrides string\n";
 
     if (topmap == NULL)
@@ -451,8 +422,8 @@ mac_line (char *line, char *tmpbuf, int tbsize)
 static KEYMAP *
 newkeymap (void)
 {
-    register int i;
-    register KEYMAP* map;
+    int i;
+    KEYMAP* map;
 
 #ifndef lint
     map = (KEYMAP*)safemalloc(sizeof(KEYMAP));
@@ -482,11 +453,11 @@ show_macros (void)
 }
 
 static void
-show_keymap (register KEYMAP *curmap, char *prefix)
+show_keymap (KEYMAP *curmap, char *prefix)
 {
-    register int i;
-    register char* next = prefix + strlen(prefix);
-    register int kt;
+    int i;
+    char* next = prefix + strlen(prefix);
+    int kt;
 
     for (i = 0; i < 128; i++) {
 	if ((kt = curmap->km_type[i]) != 0) {
@@ -536,7 +507,7 @@ set_mode (char_int new_gmode, char_int new_mode)
 /* routine to pass to tputs */
 
 int
-putchr (register char_int ch)
+putchr (char_int ch)
 {
     putchar(ch);
 #ifdef lint
@@ -584,17 +555,9 @@ finput_pending (bool_int check_term)
     }
 #endif
     if (check_term) {
-# ifdef FIONREAD
-	long iocount;
+	int iocount;
 	ioctl(0, FIONREAD, &iocount);
-	return (int)iocount;
-# else /* !FIONREAD */
-#  ifdef HAS_RDCHK
-	return rdchk(0);
-#  else /* !HAS_RDCHK */
-	return circfill();
-#  endif /* !HAS_RDCHK */
-#  endif /* !FIONREAD */
+	return iocount;
     }
 # endif /* !PENDING */
     return 0;
@@ -608,7 +571,7 @@ int buflimit = LBUFLEN;
 bool
 finish_command (int donewline)
 {
-    register char* s;
+    char* s;
     char gmode_save = gmode;
 
     s = buf;
@@ -666,7 +629,7 @@ static bool screen_is_dirty; /*$$ remove this? */
 /* Process the character *s in the buffer buf returning the new 's' */
 
 char *
-edit_buf (register char *s, char *cmd)
+edit_buf (char *s, char *cmd)
 {
     static bool quoteone = FALSE;
     if (quoteone) {
@@ -796,7 +759,7 @@ eat_typeahead (void)
     if (!allow_typeahead && !mouse_is_down && !macro_pending()
      && this_time - last_time > 0.3) {
 #ifdef PENDING
-	register KEYMAP* curmap = topmap;
+	KEYMAP* curmap = topmap;
 	Uchar lc;
 	int i, j;
 	for (j = 0; input_pending(); ) {
@@ -839,19 +802,7 @@ eat_typeahead (void)
 	    pushstring(buf,0);
 	}
 #else /* this is probably v7 */
-# ifdef I_SGTTY
-	ioctl(_tty_ch,TIOCSETP,&_tty);
-# else
-#  ifdef I_TERMIO
-	ioctl(_tty_ch,TCSETAW,&_tty);
-#  else
-#   ifdef I_TERMIOS
 	tcsetattr(_tty_ch,TCSAFLUSH,&_tty);
-#   else
-	..."Don't know how to eat typeahead!"
-#   endif
-#  endif
-# endif
 #endif
     }
     last_time = this_time;
@@ -881,7 +832,6 @@ settle_down (void)
     eat_typeahead();
 }
 
-#ifdef SUPPORT_NNTP
 bool ignore_EINTR = FALSE;
 
 Signal_t
@@ -893,7 +843,6 @@ alarm_catcher (int signo)
     sigset(SIGALRM,alarm_catcher);
     (void) alarm(DATASRC_ALARM_SECS);
 }
-#endif
 
 /* read a character from the terminal, with multi-character pushback */
 
@@ -935,7 +884,7 @@ read_tty (char *addr, int size)
 int
 circfill (void)
 {
-    register int Howmany;
+    int Howmany;
 
     errno = 0;
     Howmany = read(devtty,circlebuf+nextin,1);
@@ -967,7 +916,7 @@ pushchar (char_int c)
 /* print an underlined string, one way or another */
 
 void
-underprint (register char *s)
+underprint (char *s)
 {
     assert(tc_UC);
     if (*tc_UC) {	/* char by char underline? */
@@ -1029,19 +978,17 @@ no_ulfire (void)
 /* get a character into a buffer */
 
 void
-getcmd (register char *whatbuf)
+getcmd (char *whatbuf)
 {
-    register KEYMAP* curmap;
-    register int i;
+    KEYMAP* curmap;
+    int i;
     bool no_macros;
     int times = 0;			/* loop detector */
 
-#ifdef SUPPORT_NNTP
     if (!input_pending()) {
 	sigset(SIGALRM,alarm_catcher);
 	(void) alarm(DATASRC_ALARM_SECS);
     }
-#endif
 
 tryagain:
     curmap = topmap;
@@ -1053,18 +1000,14 @@ tryagain:
     for (;;) {
 	int_count = 0;
 	errno = 0;
-#ifdef SUPPORT_NNTP
 	ignore_EINTR = FALSE;
-#endif
 	if (read_tty(whatbuf,1) < 0) {
 	    if (!errno)
 	        errno = EINTR;
 	    if (errno == EINTR) {
-#ifdef SUPPORT_NNTP
 		if (ignore_EINTR)
 		    continue;
 		(void) alarm(0);
-#endif
 		return;
 	    }
 	    perror(readerr);
@@ -1109,23 +1052,17 @@ got_canonical:
 	times = 0;
 	goto tryagain;
     }
-#ifdef I_SGTTY
-    if (*whatbuf == '\r')
-	*whatbuf = '\n';
-#endif
     if (whatbuf == buf)
 	whatbuf[1] = FINISHCMD;		/* tell finish_command to work */
-#ifdef SUPPORT_NNTP
     (void) alarm(0);
-#endif
 }
 
 void
 pushstring (char *str, char_int bits)
 {
-    register int i;
+    int i;
     char tmpbuf[PUSHSIZE];
-    register char* s = tmpbuf;
+    char* s = tmpbuf;
 
     assert(str != NULL);
     interp(tmpbuf,PUSHSIZE,str);
@@ -1470,7 +1407,7 @@ print_lines (char *what_to_print, int hilite)
     register
 #endif
     char* s;
-    register int i;
+    int i;
 
     for (s=what_to_print; *s; ) {
 	i = check_page_line();
@@ -1530,7 +1467,7 @@ check_page_line (void)
     if (page_line < 0)
 	return -1;
     if (page_line >= tc_LINES || int_count) {
-	register int cmd = -1;
+	int cmd = -1;
 	if (int_count || (cmd = get_anything())) {
 	    page_line = -1;		/* disable further printing */
 	    if (cmd > 0)
@@ -1579,7 +1516,7 @@ warnmsg (char *str)
 void
 pad (int num)
 {
-    register int i;
+    int i;
 
     for (i = num; i; i--)
 	putchar(tc_PC);
@@ -1619,7 +1556,7 @@ rubout (void)
 void
 reprint (void)
 {
-    register char* s;
+    char* s;
 
     fputs("^R\n",stdout) FLUSH;
     termdown(1);
@@ -1662,8 +1599,6 @@ clear (void)
 void
 home_cursor (void)
 {
-    char* tgoto();
-
     if (!*tc_HO) {		/* no home sequence? */
 	if (!*tc_CM) {		/* no cursor motion either? */
 	    fputs("\n\n\n", stdout);
@@ -1682,7 +1617,6 @@ home_cursor (void)
 void
 goto_xy (int to_col, int to_line)
 {
-    char* tgoto();
     char* str;
     int cmcost, xcost, ycost;
 
@@ -1763,7 +1697,6 @@ line_col_calcs (void)
 #endif
 }
 
-#ifdef SIGWINCH
 Signal_t
 winch_catcher (int dummy)
 {
@@ -1771,7 +1704,6 @@ winch_catcher (int dummy)
     sigset(SIGWINCH, winch_catcher);
 
     /* Come here if window size change signal received */
-#ifdef TIOCGWINSZ
     {	struct winsize ws;
 	if (ioctl(0, TIOCGWINSZ, &ws) >= 0 && ws.ws_row > 0 && ws.ws_col > 0) {
 	    if (tc_LINES != ws.ws_row || tc_COLS != ws.ws_col) {
@@ -1787,14 +1719,7 @@ winch_catcher (int dummy)
 	    }
 	}
     }
-#else
-    /* Well, if SIGWINCH is defined, but TIOCGWINSZ isn't, there's    */
-    /* almost certainly something wrong.  Figure it out for yourself, */
-    /* because I don't know how to deal with it :-)                   */
-    ERROR!
-#endif
 }
-#endif
 
 void
 termlib_init (void)
@@ -1920,11 +1845,7 @@ wait_key_pause (
 #ifdef NBG_TERMIO
     /* First try a nice standard way */
     {
-#ifdef I_TERMIO
-	struct termio save_tty, wait_tty;
-#else	/* must be TERMIOS then */
 	struct termios save_tty, wait_tty;
-#endif
 	char lbuf[1];		/* for the read command */
 	int nrd;		/* number read */
 

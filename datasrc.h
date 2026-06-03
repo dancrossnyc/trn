@@ -8,10 +8,8 @@ struct srcfile {
     HASHTABLE*	hp;		/* the hash table for the data */
     LIST*	lp;		/* the list used to store the data */
     long	recent_cnt;	/* # lines/bytes this file might be */
-#ifdef SUPPORT_NNTP
     time_t	lastfetch;	/* when the data was last fetched */
     time_t	refetch_secs;	/* how long before we refetch this file */
-#endif
 };
 
 struct datasrc {
@@ -21,9 +19,7 @@ struct datasrc {
     char*	grpdesc;	/* the newsgroup description file or tmp */
     SRCFILE	desc_sf;	/* the group description's hashed contents */
     char*	extra_name;	/* local active.times or server's actfile */
-#ifdef SUPPORT_NNTP
     NNTPLINK	nntplink;
-#endif
     char*	spool_dir;
     char*	over_dir;
     char*	over_fmt;
@@ -49,7 +45,6 @@ struct datasrc {
 #define DF_OPEN 	0x0010
 #define DF_ACTIVE 	0x0020
 #define DF_UNAVAILABLE 	0x0040
-#ifdef SUPPORT_NNTP
 #define DF_REMOTE	0x0080
 #define DF_TMPACTFILE	0x0100
 #define DF_TMPGRPDESC	0x0200
@@ -58,7 +53,6 @@ struct datasrc {
 #define DF_NOXGTITLE	0x1000
 #define DF_NOLISTGROUP	0x2000
 #define DF_NOXREFS	0x4000
-#endif
 
 #define FF_HAS_FIELD	0x01
 #define FF_CHECK4FIELD	0x02
@@ -84,9 +78,7 @@ EXT int datasrc_cnt INIT(0);
 
 EXT char* trnaccess_mem INIT(NULL);
 
-#ifdef SUPPORT_NNTP
 EXT char* nntp_auth_file;
-#endif
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
@@ -102,9 +94,7 @@ bool actfile_hash (DATASRC*);
 bool find_actgrp (DATASRC*,char*,char*,int,ART_NUM);
 char* find_grpdesc (DATASRC*,char*);
 int srcfile_open (SRCFILE*,char*,char*,char*);
-#ifdef SUPPORT_NNTP
 char* srcfile_append (SRCFILE*,char*,int);
 void srcfile_end_append (SRCFILE*,char*);
-#endif
 void srcfile_close (SRCFILE*);
 int find_close_match (void);

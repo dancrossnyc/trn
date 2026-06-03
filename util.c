@@ -46,14 +46,12 @@ static char null_export[] = "_=X";/* Just in case doshell precedes util_init */
 static char* newsactive_export = null_export + 2;
 static char* grpdesc_export = null_export + 2;
 static char* quotechars_export = null_export + 2;
-#ifdef SUPPORT_NNTP
 static char* nntpserver_export = null_export + 2;
 static char* nntpfds_export = null_export + 2;
 #ifdef USE_GENAUTH
 static char* nntpauth_export = null_export + 2;
 #endif
 static char* nntpforce_export = null_export + 2;
-#endif
 
 void
 util_init (void)
@@ -66,19 +64,15 @@ util_init (void)
     *cp = '\0';
     newsactive_export = export("NEWSACTIVE", buf);
     grpdesc_export = export("NEWSDESCRIPTIONS", buf);
-#ifdef SUPPORT_NNTP
     nntpserver_export = export("NNTPSERVER", buf);
-#endif
     buf[64] = '\0';
     quotechars_export = export("QUOTECHARS",buf);
-#ifdef SUPPORT_NNTP
     nntpfds_export = export("NNTPFDS", buf);
 #ifdef USE_GENAUTH
     nntpauth_export = export("NNTP_AUTH_FDS", buf);
 #endif
     buf[3] = '\0';
     nntpforce_export = export("NNTP_FORCE_AUTH", buf);
-#endif
 
     for (cp = patchlevel; isspace(*cp); cp++) ;
     export("TRN_VERSION", cp);
@@ -100,7 +94,6 @@ doshell (char *shell, char *s)
     sigset(SIGTTOU,SIG_DFL);
     sigset(SIGTTIN,SIG_DFL);
 #endif
-#ifdef SUPPORT_NNTP
     if (datasrc && (datasrc->flags & DF_REMOTE)) {
 #ifdef USE_GENAUTH
 	if (export_nntp_fds) {
@@ -150,25 +143,17 @@ doshell (char *shell, char *s)
 	else
 	    re_export(newsactive_export, "none", 512);
     } else {
-#ifdef SUPPORT_NNTP
 	un_export(nntpfds_export);
 #ifdef USE_GENAUTH
 	un_export(nntpauth_export);
 #endif
 	un_export(nntpserver_export);
 	un_export(nntpforce_export);
-#endif
 	if (datasrc)
 	    re_export(newsactive_export, datasrc->newsid, 512);
 	else
 	    un_export(newsactive_export);
     }
-#else
-    if (datasrc)
-	re_export(newsactive_export, datasrc->newsid, 512);
-    else
-	un_export(newsactive_export);
-#endif
     if (datasrc)
 	re_export(grpdesc_export, datasrc->grpdesc, 512);
     else
@@ -180,7 +165,6 @@ doshell (char *shell, char *s)
 	shell = PREFSHELL;
     termlib_reset();
     if ((pid = vfork()) == 0) {
-#ifdef SUPPORT_NNTP
 	if (datasrc && (datasrc->flags & DF_REMOTE)) {
 	    int i;
 	    /* This is necessary to keep the bourne shell from puking */
@@ -196,7 +180,6 @@ doshell (char *shell, char *s)
 		close(i);
 	    }
 	}
-#endif /* SUPPORT_NNTP */
 	if (nowait_fork) {
 	    close(1);
 	    close(2);
@@ -241,10 +224,8 @@ doshell (char *shell, char *s)
     sigset(SIGTTOU,stop_catcher);
     sigset(SIGTTIN,stop_catcher);
 #endif
-#ifdef SUPPORT_NNTP
     if (datasrc && datasrc->auth_user)
 	UNLINK(nntp_auth_file);
-#endif
     return ret;
 }
 
@@ -252,8 +233,7 @@ doshell (char *shell, char *s)
 
 #ifndef USE_DEBUGGING_MALLOC
 char*
-safemalloc(size)
-MEM_SIZE size;
+safemalloc(MEM_SIZE size)
 {
     char* ptr;
 
@@ -270,9 +250,7 @@ MEM_SIZE size;
 
 #ifndef USE_DEBUGGING_MALLOC
 char*
-saferealloc(where,size)
-char* where;
-MEM_SIZE size;
+saferealloc(char* where, MEM_SIZE size)
 {
     char* ptr;
 
@@ -291,9 +269,9 @@ MEM_SIZE size;
 /* safe version of string concatenate, with \n deletion and space padding */
 
 char *
-safecat (char *to, register char *from, register int len)
+safecat (char *to, char *from, int len)
 {
-    register char* dest = to;
+    char* dest = to;
 
     len--;				/* leave room for null */
     if (*dest) {
@@ -317,9 +295,7 @@ safecat (char *to, register char *from, register int len)
 
 #ifdef SETUIDGID
 int
-eaccess(filename, mod)
-char* filename;
-int mod;
+eaccess(char* filename, int mod)
 {
     int protection, euid;
 
@@ -357,10 +333,10 @@ trn_getwd (char *buf, int buflen)
 /* just like fgets but will make bigger buffer as necessary */
 
 char *
-get_a_line (char *buffer, register int buffer_length, bool_int realloc_ok, FILE *fp)
+get_a_line (char *buffer, int buffer_length, bool_int realloc_ok, FILE *fp)
 {
-    register int bufix = 0;
-    register int nextch;
+    int bufix = 0;
+    int nextch;
 
     do {
 	if (bufix >= buffer_length) {
@@ -389,17 +365,11 @@ get_a_line (char *buffer, register int buffer_length, bool_int realloc_ok, FILE 
 }
 
 int
-makedir (register char *dirname, int nametype)
+makedir (char *dirname, int nametype)
 {
-#ifdef MAKEDIR
-    register char* end;
-    register char* s;
-# ifdef HAS_MKDIR
+    char* end;
+    char* s;
     int status = 0;
-# else
-    char tmpbuf[1024];
-    register char* tbptr = tmpbuf+5;
-# endif
 
     for (end = dirname; *end; end++) ;	/* find the end */
     if (nametype == MD_FILE) {		/* not to create last component? */
@@ -408,9 +378,6 @@ makedir (register char *dirname, int nametype)
 	    return 0;			/* nothing to make */
 	*end = '\0';			/* isolate file name */
     }
-# ifndef HAS_MKDIR
-    strcpy(tmpbuf,"mkdir");
-# endif
 
     s = end;
     for (;;) {
@@ -427,27 +394,14 @@ makedir (register char *dirname, int nametype)
 
     for (s=dirname; s <= end; s++) {	/* this is grody but efficient */
 	if (!*s) {			/* something to make? */
-# ifdef HAS_MKDIR
 	    status = status || mkdir(dirname,0777);
-# else
-	    sprintf(tbptr," %s",dirname);
-	    tbptr += strlen(tbptr);	/* make it, sort of */
-# endif
 	    *s = '/';			/* mark it made */
 	}
     }
     if (nametype == MD_DIR)		/* don't need final slash unless */
 	*end = '\0';			/*  a filename follows the dir name */
 
-# ifdef HAS_MKDIR
     return status;
-# else
-    return (tbptr==tmpbuf+5 ? 0 : doshell(sh,tmpbuf));/* exercise our faith */
-# endif
-#else
-    sprintf(cmd_buf,"%s %s %d", filexp(DIRMAKER), dirname, nametype);
-    return doshell(sh,cmd_buf);
-#endif
 }
 
 void
@@ -518,8 +472,8 @@ safelink (char *old, char *new)
 char *
 trn_strstr (char *s1, char *s2)
 {
-    register char* p = s1;
-    register int len = strlen(s2);
+    char* p = s1;
+    int len = strlen(s2);
 
     for ( ; (p = index(p, *s2)) != NULL; p++)
 	if (strnEQ(p, s2, len))
@@ -654,21 +608,17 @@ temp_filename (void)
     return savestr(tmpbuf);
 }
 
-#ifdef SUPPORT_NNTP
 char *
 get_auth_user (void)
 {
     return datasrc->auth_user;
 }
-#endif
 
-#ifdef SUPPORT_NNTP
 char *
 get_auth_pass (void)
 {
     return datasrc->auth_pass;
 }
-#endif
 
 #if defined(USE_GENAUTH) && defined(SUPPORT_NNTP)
 char *
@@ -681,7 +631,7 @@ get_auth_command (void)
 char **
 prep_ini_words (INI_WORDS words[])
 {
-    register int checksum;
+    int checksum;
     char* cp = (char*)INI_VALUES(words);
     if (!cp) {
 	int i;
@@ -859,8 +809,8 @@ next_ini_section (char *cp, char **section, char **cond)
 char *
 parse_ini_section (char *cp, INI_WORDS words[])
 {
-    register int checksum;
-    register char* s;
+    int checksum;
+    char* s;
     char** values = prep_ini_words(words);
     int i;
 

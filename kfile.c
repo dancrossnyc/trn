@@ -230,7 +230,7 @@ do_kfile (FILE *kfp, int entering)
 	    }
 	}
 	else if (first_time && *bp == '<') {
-	    register ARTICLE* ap;
+	    ARTICLE* ap;
 	    if (last_kill_type != '<') {
 		if (last_kill_type) {
 		    if (perform_status_end(ngptr->toread,"article")) {
@@ -314,7 +314,7 @@ do_kfile (FILE *kfp, int entering)
 static bool
 kfile_junk (char *ptr, int killmask)
 {
-    register ARTICLE* ap = (ARTICLE*)ptr;
+    ARTICLE* ap = (ARTICLE*)ptr;
     if ((ap->flags & killmask) == AF_UNREAD)
 	set_read(ap);
     else if (ap->flags & sel_mask) {
@@ -490,7 +490,7 @@ write_global_thread_commands (int keylen, HASHDATUM *data, int appending)
 	msgid = data->dat_ptr;
     }
     else {
-	register ARTICLE* ap = (ARTICLE*)data->dat_ptr;
+	ARTICLE* ap = (ARTICLE*)data->dat_ptr;
 	autofl = ap->autofl;
 	if (!autofl || (appending && (autofl & AUTO_OLD)))
 	    return 0;
@@ -525,7 +525,7 @@ age_thread_commands (int keylen, HASHDATUM *data, int elapsed_days)
 	data->dat_len += elapsed_days;
     }
     else {
-	register ARTICLE* ap = (ARTICLE*)data->dat_ptr;
+	ARTICLE* ap = (ARTICLE*)data->dat_ptr;
 	if (ap->autofl & AUTO_OLD) {
 	    ap->autofl &= ~AUTO_OLD;
 	    kf_changethd_cnt++;
@@ -647,7 +647,7 @@ edit_kfile (void)
 	if (kf_state & KFS_LOCAL_CHANGES)
 	    rewrite_kfile(lastart);
 	if (!(kf_state & KFS_GLOBAL_THREADFILE)) {
-	    register SUBJECT* sp;
+	    SUBJECT* sp;
 	    for (sp = first_subject; sp; sp = sp->next)
 		clear_subject(sp);
 	}
@@ -673,7 +673,7 @@ edit_kfile (void)
 		if (*bp == '/' || *bp == '*')
 		    kf_state |= KFS_NORMAL_LINES;
 		else if (*bp == '<') {
-		    register ARTICLE* ap;
+		    ARTICLE* ap;
 		    char* cp = index(bp,' ');
 		    if (!cp)
 			cp = ",";

@@ -410,9 +410,9 @@ static char* univ_begin_label INIT(NULL);
 **  Match text and p, return TRUE, FALSE, or ABORT.
 */
 static int
-univ_DoMatch (register char *text, register char *p)
+univ_DoMatch (char *text, char *p)
 {
-    register int	matched;
+    int	matched;
 
     for ( ; *p; text++, p++) {
 	if (*p == '*') {
@@ -1116,14 +1116,14 @@ univ_virt_pass (void)
 }
 
 static int
-univ_order_number (register UNIV_ITEM **ui1, register UNIV_ITEM **ui2)
+univ_order_number (UNIV_ITEM **ui1, UNIV_ITEM **ui2)
 {
     return (int)((*ui1)->num - (*ui2)->num) * sel_direction;
 }
 
 #ifdef SCORE
 static int
-univ_order_score (register UNIV_ITEM **ui1, register UNIV_ITEM **ui2)
+univ_order_score (UNIV_ITEM **ui1, UNIV_ITEM **ui2)
 {
     if ((*ui1)->score != (*ui2)->score)
 	return (int)((*ui2)->score - (*ui1)->score) * sel_direction;

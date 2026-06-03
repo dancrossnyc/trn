@@ -4,30 +4,30 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static int cleanup_msgid_hash _((int,HASHDATUM*,int));
-static ARTICLE* first_sib _((ARTICLE*,int));
-static ARTICLE* last_sib _((ARTICLE*,int,ARTICLE*));
-static int subjorder_subject _((SUBJECT**,SUBJECT**));
-static int subjorder_date _((SUBJECT**,SUBJECT**));
-static int subjorder_count _((SUBJECT**,SUBJECT**));
-static int subjorder_lines _((SUBJECT**,SUBJECT**));
-static int subject_score_high _((SUBJECT*));
-static int subjorder_score _((SUBJECT**,SUBJECT**));
-static int threadorder_subject _((SUBJECT**,SUBJECT**));
-static int threadorder_date _((SUBJECT**,SUBJECT**));
-static int threadorder_count _((SUBJECT**,SUBJECT**));
-static int threadorder_lines _((SUBJECT**,SUBJECT**));
+static int cleanup_msgid_hash (int,HASHDATUM*,int);
+static ARTICLE* first_sib (ARTICLE*,int);
+static ARTICLE* last_sib (ARTICLE*,int,ARTICLE*);
+static int subjorder_subject (SUBJECT**,SUBJECT**);
+static int subjorder_date (SUBJECT**,SUBJECT**);
+static int subjorder_count (SUBJECT**,SUBJECT**);
+static int subjorder_lines (SUBJECT**,SUBJECT**);
+static int subject_score_high (SUBJECT*);
+static int subjorder_score (SUBJECT**,SUBJECT**);
+static int threadorder_subject (SUBJECT**,SUBJECT**);
+static int threadorder_date (SUBJECT**,SUBJECT**);
+static int threadorder_count (SUBJECT**,SUBJECT**);
+static int threadorder_lines (SUBJECT**,SUBJECT**);
 #ifdef SCORE
-static int thread_score_high _((SUBJECT*));
+static int thread_score_high (SUBJECT*);
 #endif
-static int threadorder_score _((SUBJECT**,SUBJECT**));
-static int artorder_date _((ARTICLE**,ARTICLE**));
-static int artorder_subject _((ARTICLE**,ARTICLE**));
-static int artorder_author _((ARTICLE**,ARTICLE**));
-static int artorder_number _((ARTICLE**,ARTICLE**));
-static int artorder_groups _((ARTICLE**,ARTICLE**));
-static int artorder_lines _((ARTICLE**,ARTICLE**));
+static int threadorder_score (SUBJECT**,SUBJECT**);
+static int artorder_date (ARTICLE**,ARTICLE**);
+static int artorder_subject (ARTICLE**,ARTICLE**);
+static int artorder_author (ARTICLE**,ARTICLE**);
+static int artorder_number (ARTICLE**,ARTICLE**);
+static int artorder_groups (ARTICLE**,ARTICLE**);
+static int artorder_lines (ARTICLE**,ARTICLE**);
 #ifdef SCORE
-static int artorder_score _((ARTICLE**,ARTICLE**));
+static int artorder_score (ARTICLE**,ARTICLE**);
 #endif
-static void build_artptrs _((void));
+static void build_artptrs (void);

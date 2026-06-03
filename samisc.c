@@ -109,8 +109,8 @@ sa_artnum_to_ent (ART_NUM artnum)
 void
 sa_selthreads (void)
 {
-    register SUBJECT *sp;
-    register ARTICLE *ap;
+    SUBJECT *sp;
+    ARTICLE *ap;
     bool want_unread;
 #if 0
     /* this does not work now, but maybe it will help debugging? */

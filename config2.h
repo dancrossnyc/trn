@@ -3,11 +3,12 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#   include <pwd.h>
-
-#   include <unistd.h>
-
-#   include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <pwd.h>
 
 #ifdef USE_DEBUGGING_MALLOC
 #   include "malloc.h"
@@ -15,31 +16,6 @@
 #   define saferealloc realloc
 #endif
 
-#   include <string.h>
-
-#ifndef S_ISDIR
-#   define S_ISDIR(m)  ( ((m) & S_IFMT) == S_IFDIR )
-#endif
-#ifndef S_ISCHR
-#   define S_ISCHR(m)  ( ((m) & S_IFMT) == S_IFCHR )
-#endif
-#ifndef S_ISREG
-#   define S_ISREG(m)  ( ((m) & S_IFMT) == S_IFREG )
-#endif
-#ifndef isalnum
-#   define isalnum(c) (isalpha(c) || isdigit(c))
-#endif
-
-
-/* what to do with ansi prototypes -- '()' == ignore, 'x' == use */
-#	define _(x) x
-#	ifndef CONST
-#	    define CONST const
-#	endif
-
-/* some handy defs */
-
-#define bool char
 #define bool_int int
 #define char_int int
 #ifndef TRUE

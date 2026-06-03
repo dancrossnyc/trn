@@ -20,8 +20,8 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <ctype.h>
+
 #include "config.h"
-/*#include "config2.h"*/
 #include <time.h>
 
 #define yyparse		date_parse
@@ -40,10 +40,9 @@
 
 #define LPAREN		'('
 #define RPAREN		')'
-#define IS7BIT(x)	((unsigned int)(x) < 0200)
+#define IS7BIT(x)	((unsigned int)(x) < 0x80)
 
-#define SIZEOF(array)	((int)(sizeof array / sizeof array[0]))
-#define ENDOF(array)	(&array[SIZEOF(array)])
+#define ENDOF(array)	(&array[sizeof(array)/sizeof((array)[0])])
 
 
 /*
@@ -91,10 +90,7 @@ static MERIDIAN	yyMeridian;
 static time_t	yyRelMonth;
 static time_t	yyRelSeconds;
 
-
-extern struct tm	*localtime();
-
-static void		date_error();
+static void		date_error(char*);
 %}
 
 %union {
@@ -438,22 +434,17 @@ static TABLE	TimezoneTable[] = {
 
 /* ARGSUSED */
 static void
-date_error(s)
-    char	*s;
+date_error(char *s)
 {
     /* NOTREACHED */
 }
 
 
 static time_t
-ToSeconds(Hours, Minutes, Seconds, Meridian)
-    time_t	Hours;
-    time_t	Minutes;
-    time_t	Seconds;
-    MERIDIAN	Meridian;
+ToSeconds(time_t Hours, time_t Minutes, time_t Seconds, MERIDIAN Meridian)
 {
     if (Minutes < 0 || Minutes > 59 || Seconds < 0 || Seconds > 61)
-	return -1;
+		return -1;
     if (Meridian == MER24) {
 	if (Hours < 0 || Hours > 23)
 	    return -1;
@@ -471,38 +462,30 @@ ToSeconds(Hours, Minutes, Seconds, Meridian)
 
 
 static time_t
-Convert(Month, Day, Year, Hours, Minutes, Seconds, Meridian, dst)
-    time_t	Month;
-    time_t	Day;
-    time_t	Year;
-    time_t	Hours;
-    time_t	Minutes;
-    time_t	Seconds;
-    MERIDIAN	Meridian;
-    DSTMODE	dst;
+Convert(time_t Month, time_t Day, time_t Year, time_t Hours, time_t Minutes, time_t Seconds, MERIDIAN Meridian, DSTMODE dst)
 {
     static int	DaysNormal[13] = {
-	0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+	    0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
     };
     static int	DaysLeap[13] = {
-	0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+	    0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
     };
     static int	LeapYears[] = {
-	1972, 1976, 1980, 1984, 1988, 1992, 1996,
-	2000, 2004, 2008, 2012, 2016, 2020, 2024, 2028, 2032, 2036
+	    1972, 1976, 1980, 1984, 1988, 1992, 1996,
+	    2000, 2004, 2008, 2012, 2016, 2020, 2024, 2028, 2032, 2036
     };
-    register int	*yp;
-    register int	*mp;
-    register time_t	Julian;
-    register int	i;
-    time_t		tod;
+    int	*yp;
+    int	*mp;
+    time_t	Julian;
+    int	i;
+    time_t	 tod;
 
     if (Year < 0)
-	Year = -Year;
+	    Year = -Year;
     if (Year < 100)
-	Year += 1900;
+	    Year += 1900;
     if (Year < EPOCH)
-	Year += 100;
+	    Year += 100;
     for (mp = DaysNormal, yp = LeapYears; yp < ENDOF(LeapYears); yp++)
 	if (Year == *yp) {
 	    mp = DaysLeap;
@@ -533,9 +516,7 @@ Convert(Month, Day, Year, Hours, Minutes, Seconds, Meridian, dst)
 
 
 static time_t
-DSTcorrect(Start, Future)
-    time_t	Start;
-    time_t	Future;
+DSTcorrect(time_t Start, time_t Future)
 {
     time_t	StartDay;
     time_t	FutureDay;
@@ -547,9 +528,7 @@ DSTcorrect(Start, Future)
 
 
 static time_t
-RelativeMonth(Start, RelMonth)
-    time_t	Start;
-    time_t	RelMonth;
+RelativeMonth(time_t Start, time_t RelMonth)
 {
     struct tm	*tm;
     time_t	Month;
@@ -567,14 +546,12 @@ RelativeMonth(Start, RelMonth)
 
 
 static int
-LookupWord(buff, length)
-    char		*buff;
-    register int	length;
+LookupWord(char* buff, int length)
 {
-    register char	*p;
-    register char	*q;
-    register TABLE	*tp;
-    register int	c;
+    char	*p;
+    char	*q;
+    TABLE	*tp;
+    int	c;
 
     p = buff;
     c = p[0];
@@ -659,14 +636,14 @@ LookupWord(buff, length)
 
 
 int
-date_lex()
+date_lex(void)
 {
-    register char	c;
-    register char	*p;
-    char		buff[20];
-    register int	sign;
-    register int	i;
-    register int	nesting;
+    char c;
+    char *p;
+    char buff[20];
+    int	sign;
+    int	i;
+    int	nesting;
 
     for ( ; ; ) {
 	/* Get first character after the whitespace. */
@@ -722,10 +699,9 @@ date_lex()
 
 
 time_t
-parsedate(p)
-    char		*p;
+parsedate(char *p)
 {
-    extern int		date_parse();
+	extern int		date_parse(void);
     time_t		Start;
 
     yyInput = p;
@@ -746,7 +722,7 @@ parsedate(p)
     yyHaveTime = 0;
 
     if (date_parse() || yyHaveTime > 1 || yyHaveDate > 1)
-	return -1;
+		return -1;
 
     if (yyHaveDate || yyHaveTime) {
 	Start = Convert(yyMonth, yyDay, yyYear, yyHour, yyMinutes, yySeconds,

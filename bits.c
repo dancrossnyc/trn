@@ -53,11 +53,11 @@ void
 rc_to_bits (void)
 {
     char* mybuf = buf;			/* place to decode rc line */
-    register char* s;
-    register char* c;
-    register char* h;
-    register long i;
-    register ART_NUM unread;
+    char* s;
+    char* c;
+    char* h;
+    long i;
+    ART_NUM unread;
     ARTICLE* ap;
 
     /* modify the article flags to reflect what has already been read */
@@ -183,9 +183,9 @@ set_firstart (char *s)
 void
 bits_to_rc (void)
 {
-    register char* s;
-    register char* mybuf = buf;
-    register ART_NUM i;
+    char* s;
+    char* mybuf = buf;
+    ART_NUM i;
     ART_NUM count=0;
     int safelen = LBUFLEN - 32;
 
@@ -269,7 +269,6 @@ find_existing_articles (void)
     ART_NUM an;
     ARTICLE* ap;
 
-#ifdef SUPPORT_NNTP
     if (datasrc->flags & DF_REMOTE) {
 	/* Parse the LISTGROUP output and remember everything we find */
 	if (/*nntp_rover() ||*/ nntp_artnums()) {
@@ -327,7 +326,6 @@ find_existing_articles (void)
 	}
     }
     else
-#endif
     {
 	ART_NUM first = lastart+1;
 	ART_NUM last = 0;
@@ -394,7 +392,7 @@ void
 onemore (ARTICLE *ap)
 {
     if (!(ap->flags & AF_UNREAD)) {
-	register ART_NUM artnum = article_num(ap);
+	ART_NUM artnum = article_num(ap);
 	check_first(artnum);
 	ap->flags |= AF_UNREAD;
 	ap->flags &= ~AF_DEL;
@@ -448,7 +446,7 @@ onemissing (ARTICLE *ap)
 /* mark an article as unread, with possible xref chasing */
 
 void
-unmark_as_read (register ARTICLE *ap)
+unmark_as_read (ARTICLE *ap)
 {
     onemore(ap);
 #ifdef MCHASE
@@ -463,7 +461,7 @@ unmark_as_read (register ARTICLE *ap)
 ** Don't call this on missing articles.
 */
 void
-set_read (register ARTICLE *ap)
+set_read (ARTICLE *ap)
 {
     oneless(ap);
     if (!olden_days && ap->xrefs != nullstr && !(ap->flags & AF_KCHASE)) {
@@ -488,7 +486,7 @@ delay_unmark (ARTICLE *ap)
 /* newsgroups, mark them read there also. */
 
 void
-mark_as_read (register ARTICLE *ap)
+mark_as_read (ARTICLE *ap)
 {
     oneless(ap);
     if (ap->xrefs != nullstr && !(ap->flags & AF_KCHASE)) {
@@ -501,7 +499,7 @@ mark_as_read (register ARTICLE *ap)
 void
 mark_missing_articles (void)
 {
-    register ARTICLE* ap;
+    ARTICLE* ap;
     for (ap = article_ptr(article_first(absfirst));
 	 ap && article_num(ap) <= lastart;
 	 ap = article_nextp(ap))
@@ -548,7 +546,7 @@ yankback (void)
 static bool
 yank_article (char *ptr, int arg)
 {
-    register ARTICLE* ap = (ARTICLE*)ptr;
+    ARTICLE* ap = (ARTICLE*)ptr;
     if (ap->flags & AF_YANKBACK) {
 	unmark_as_read(ap);
 	if (selected_only)
@@ -574,7 +572,7 @@ chase_xrefs (bool_int until_key)
 static bool
 check_chase (char *ptr, int until_key)
 {
-    register ARTICLE* ap = (ARTICLE*)ptr;
+    ARTICLE* ap = (ARTICLE*)ptr;
 
     if (ap->flags & AF_KCHASE) {
 	chase_xref(article_num(ap),TRUE);
@@ -605,8 +603,8 @@ chase_xref (	/* The Xref-line-using version */
     int markread
 )
 {
-    register char* xartnum;
-    register ART_NUM x;
+    char* xartnum;
+    ART_NUM x;
     char* xref_buf, *curxref;
     char tmpbuf[128];
 
@@ -747,12 +745,12 @@ chase_xref (		/* The DBM version */
 {
     datum lhs, rhs;
     datum fetch();
-    register char* idp;
+    char* idp;
     char* ident_buf;
     static FILE* hist_file = NULL;
     long pos;
-    register char* xartnum;
-    register ART_NUM x;
+    char* xartnum;
+    ART_NUM x;
     char* xref_buf;
     char* curxref;
     char tmpbuf[128];

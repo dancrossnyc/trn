@@ -248,7 +248,6 @@ do_newsgroup (
 
 	if ((art > lastart || forcegrow) && !keep_the_group_static) {
 	    ART_NUM oldlast = lastart;
-#ifdef SUPPORT_NNTP
 	    if (artsize < 0)
 		nntp_finishbody(FB_SILENT);
 	    if (datasrc->flags & DF_REMOTE) {
@@ -261,7 +260,6 @@ do_newsgroup (
 		}
 	    }
 	    else
-#endif
 		grow_ng(getngsize(ngptr));
 	    if (forcelast && art > oldlast)
 		art = lastart+1;
@@ -385,7 +383,6 @@ do_newsgroup (
 					/*  (line # within article file) */
 	    }
 	    clear();			/* clear screen */
-#ifdef SUPPORT_NNTP
 	    if (art == 0 && artp && artp->msgid && (datasrc->flags&DF_REMOTE)
 	     && !(artp->flags & AF_CACHED)) {
 		art = nntp_stat_id(artp->msgid);
@@ -396,7 +393,6 @@ do_newsgroup (
 		if (art)
 		    artp = article_find(art);
 	    }
-#endif
 	    /* make sure article is found & open */
 	    if (!artopen(art,(ART_POS)0)) {
 		char tmpbuf[256];
@@ -741,7 +737,7 @@ n or q to change nothing.\n\
       case '{':			/* goto thread's root article */
 	if (artp && ThreadedGroup) {
 	    if (!find_parent(*buf == '{')) {
-		register char* cp = (*buf=='['?"parent":"root");
+		char* cp = (*buf=='['?"parent":"root");
 #ifdef VERBOSE
 		IF(verbose)
 		    printf("\nThere is no %s article prior to this one.\n",
@@ -812,7 +808,7 @@ This is the last leaf in this tree.\n",stdout) FLUSH;
       case ')':			/* goto next sibling */
 	if (artp && ThreadedGroup) {
 	    if (!(*buf == '(' ? find_prev_sib() : find_next_sib())) {
-		register char* cp = (*buf == '(' ? "previous" : "next");
+		char* cp = (*buf == '(' ? "previous" : "next");
 #ifdef VERBOSE
 		IF(verbose)
 		    printf("\nThis article has no %s sibling.\n",cp) FLUSH;
@@ -1411,13 +1407,11 @@ run_the_selector:
 #ifdef INNERSEARCH
       case Ctl('e'):
 	if (art <= lastart) {
-#ifdef SUPPORT_NNTP
 	    if (artsize < 0) {
 		nntp_finishbody(FB_OUTPUT);
 		raw_artsize = nntp_artsize();
 		artsize = raw_artsize-artbuf_seek+artbuf_len+htype[PAST_HEADER].minpos;
 	    }
-#endif
 	    if (do_hiding) {
 		seekartbuf(artsize);
 		seekartbuf(artpos);
@@ -1747,7 +1741,7 @@ u to mark all and unsubscribe.\n\n\
 static bool
 count_unCACHED_article (char *ptr, int arg)
 {
-    register ARTICLE* ap = (ARTICLE*)ptr;
+    ARTICLE* ap = (ARTICLE*)ptr;
     if ((ap->flags & (AF_UNREAD|AF_CACHED)) == AF_UNREAD)
 	obj_count++;
     return 0;
@@ -1756,7 +1750,7 @@ count_unCACHED_article (char *ptr, int arg)
 static bool
 mark_all_READ (char *ptr, int leave_unread)
 {
-    register ARTICLE* ap = (ARTICLE*)ptr;
+    ARTICLE* ap = (ARTICLE*)ptr;
     if (article_num(ap) > lastart - leave_unread)
 	return 1;
     ap->flags &= ~(sel_mask|AF_UNREAD);
@@ -1766,7 +1760,7 @@ mark_all_READ (char *ptr, int leave_unread)
 static bool
 mark_all_unREAD (char *ptr, int arg)
 {
-    register ARTICLE* ap = (ARTICLE*)ptr;
+    ARTICLE* ap = (ARTICLE*)ptr;
     if ((ap->flags & (AF_UNREAD|AF_EXISTS)) == AF_EXISTS) {
 	ap->flags |= AF_UNREAD;		/* mark as unread */
 	obj_count++;
@@ -1777,8 +1771,8 @@ mark_all_unREAD (char *ptr, int arg)
 bool
 output_subject (char *ptr, int flag)
 {
-    register ARTICLE* ap;
-    register ART_NUM i;
+    ARTICLE* ap;
+    ART_NUM i;
     char tmpbuf[256];
     int len;
     char* s;
@@ -1817,7 +1811,7 @@ output_subject (char *ptr, int flag)
 static bool
 debug_article_output (char *ptr, int arg)
 {
-    register ARTICLE* ap = (ARTICLE*)ptr;
+    ARTICLE* ap = (ARTICLE*)ptr;
     if (int_count)
 	return 1;
     if (article_num(ap) >= firstart && ap->subj) {

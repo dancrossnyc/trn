@@ -148,10 +148,8 @@ mt_data (void)
 	tweak_data();
 	goto exit;
     }
-#ifdef SUPPORT_NNTP
     if (!datasrc->thread_dir && total.last > lastart)
 	total.last = lastart;
-#endif
 
     if (read_authors()
      && read_subjects()
@@ -204,7 +202,7 @@ mt_name (char *group)
 #ifdef LONG_THREAD_NAMES
     sprintf(buf, "%s/%s", datasrc->thread_dir, group);
 #else
-    register char* cp;
+    char* cp;
 
     cp = strcpy(buf, datasrc->thread_dir) + strlen(datasrc->thread_dir);
     *cp++ = '/';
@@ -229,9 +227,9 @@ static char* subject_strings, *string_end;
 static int
 read_authors (void)
 {
-    register int count;
-    register char* string_ptr;
-    register char** author_ptr;
+    int count;
+    char* string_ptr;
+    char** author_ptr;
 
     if (!read_item((char**)&author_cnts, (MEM_SIZE)total.author*sizeof (WORD)))
 	return 0;
@@ -275,9 +273,9 @@ read_authors (void)
 static int
 read_subjects (void)
 {
-    register int count;
-    register char* string_ptr;
-    register SUBJECT** subj_ptr;
+    int count;
+    char* string_ptr;
+    SUBJECT** subj_ptr;
     WORD* subject_cnts;
 
     if (!read_item((char**)&subject_cnts,
@@ -320,8 +318,8 @@ read_subjects (void)
 static int
 read_roots (void)
 {
-    register SUBJECT** subj_ptr;
-    register int i;
+    SUBJECT** subj_ptr;
+    int i;
     SUBJECT* sp;
     SUBJECT* prev_sp;
     int count;
@@ -429,9 +427,9 @@ the_article (int relative_offset, int num)
 static int
 read_articles (void)
 {
-    register int count;
-    register ARTICLE* article;
-    register ARTICLE** art_ptr;
+    int count;
+    ARTICLE* article;
+    ARTICLE** art_ptr;
     int ret;
 
     /* Build an array to interpret interlinkages of articles. */
@@ -455,12 +453,8 @@ read_articles (void)
 	lp_bmap(&p_article.num, 2);
 	wp_bmap(&p_article.subject, 8);
 
-#ifdef SUPPORT_NNTP
 	article = *art_ptr++ = allocate_article(p_article.num > lastart?
 						0 : p_article.num);
-#else
-	article = *art_ptr++ = allocate_article(p_article.num);
-#endif
 	article->date = p_article.date;
 #ifndef DBM_XREFS
 	if (olden_days < 2 && !(p_article.flags & HAS_XREFS))
@@ -512,9 +506,9 @@ read_articles (void)
 static int
 read_ids (void)
 {
-    register ARTICLE* article;
-    register char* string_ptr;
-    register int i, count, len, len2;
+    ARTICLE* article;
+    char* string_ptr;
+    int i, count, len, len2;
 
     if (!read_item(&strings, (MEM_SIZE)total.string2)
      || !read_item((char**)&ids,
@@ -599,9 +593,9 @@ read_ids (void)
 static void
 tweak_data (void)
 {
-    register int count;
-    register ARTICLE* ap;
-    register ARTICLE** art_ptr;
+    int count;
+    ARTICLE* ap;
+    ARTICLE** art_ptr;
     union { ARTICLE* ap; int num; } uni;
     int fl;
 
@@ -676,8 +670,8 @@ mybytemap (BMAP *map)
 	WORD w;
 	LONG l;
     } u;
-    register BYTE *mp;
-    register int i, j;
+    BYTE *mp;
+    int i, j;
 
     mp = &map->w[sizeof (WORD)];
     u.w = 1;
@@ -724,7 +718,7 @@ wp_bmap (WORD *buf, int len)
 	BYTE b[sizeof (WORD)];
 	WORD w;
     } in, out;
-    register int i;
+    int i;
 
     if (word_same)
 	return;
@@ -746,7 +740,7 @@ lp_bmap (LONG *buf, int len)
 	BYTE b[sizeof (LONG)];
 	LONG l;
     } in, out;
-    register int i;
+    int i;
 
     if (long_same)
 	return;

@@ -4,4 +4,4 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static void def_init_node _((LIST*,LISTNODE*));
+static void def_init_node (LIST*,LISTNODE*);

@@ -25,20 +25,10 @@
 #endif
 #include <fcntl.h>
 
-#ifdef I_TERMIO
-# include <termio.h>
-#else
-# ifdef I_TERMIOS
 #   include <termios.h>
 #   if !defined (O_NDELAY)
 #     define O_NDELAY O_NONBLOCK	/* Posix-style non-blocking i/o */
 #   endif
-# else
-#   ifdef I_SGTTY
-#     include <sgtty.h>
-#   endif
-# endif
-#endif
 
 #ifdef I_PTEM
 #include <sys/stream.h>
@@ -337,11 +327,7 @@
 #   define ELSE ..."ELSE" outside of VERBOSE
 #endif
 
-#ifdef SUPPORT_NNTP
 #define ElseIf else if
-#else
-#define ElseIf if
-#endif
 
 #ifdef DEBUG
 #   define assert(ex) {if (!(ex)){fprintf(stderr,"Assertion failed: file %s, line %d\n", __FILE__, __LINE__);sig_catcher(0);}}
@@ -516,12 +502,6 @@
 #   endif
 #endif
 
-#ifndef MAKEDIR
-/* shell script to make n-deep subdirectories */
-#   ifndef DIRMAKER		/* % and ~ */
-#	define DIRMAKER "%X/makedir"
-#   endif
-#endif
 
 /* trn's default access list */
 #ifndef DEFACCESS
@@ -739,11 +719,6 @@
 /* dependencies of nice background scoring */
 #ifdef PENDING
 # ifdef NICEBG
-#  ifndef I_TERMIO
-#   ifndef I_TERMIOS
-#    undef NBG_TERMIO
-#   endif
-#  endif
 /* later insert defines to turn off NBG_SIGIO when needed */
 # endif
 #else /* !PENDING */
@@ -755,13 +730,6 @@
 #endif
 
 /* Winsock is only initialized if NNTP_SUPPORT is defined */
-#ifdef WINSOCK
-# ifndef NNTP_SUPPORT
-#  ifdef USEURL
-#   undef USEURL
-#  endif
-# endif
-#endif
 
 /* TK requires TCL */
 #ifdef USE_TK

@@ -193,7 +193,7 @@ sc_cleanup (void)
 void
 sc_set_score (ART_NUM a, int score)
 {
-    register ARTICLE* ap;
+    ARTICLE* ap;
 
     if (is_unavailable(a))	/* newly unavailable */
 	return;

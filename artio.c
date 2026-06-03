@@ -55,11 +55,9 @@ artopen (ART_NUM artnum, ART_POS pos)
     }
     artclose();
 retry_open:
-#ifdef SUPPORT_NNTP
     if (datasrc->flags & DF_REMOTE)
 	nntp_body(artnum);
     else
-#endif
     {
 	sprintf(artname,"%ld",(long)artnum);
 	artfp = fopen(artname,"r");
@@ -75,9 +73,7 @@ retry_open:
 	uncache_article(ap,FALSE);
     } else {
 #ifdef LINKART
-#ifdef SUPPORT_NNTP
 	if (!(datasrc->flags & DF_REMOTE))
-#endif
 	{
 	    char tmpbuf[256];
 	    char* s;
@@ -110,10 +106,8 @@ void
 artclose (void)
 {
     if (artfp != NULL) {		/* article still open? */
-#ifdef SUPPORT_NNTP
 	if (datasrc->flags & DF_REMOTE)
 	    nntp_finishbody(FB_DISCARD);
-#endif
 	fclose(artfp);			/* close it */
 	artfp = NULL;			/* and tell the world */
 	openart = 0;
@@ -124,30 +118,24 @@ artclose (void)
 int
 seekart (ART_POS pos)
 {
-#ifdef SUPPORT_NNTP
     if (datasrc->flags & DF_REMOTE)
 	return nntp_seekart(pos);
-#endif
     return fseek(artfp,(long)pos,0);
 }
 
 ART_POS
 tellart (void)
 {
-#ifdef SUPPORT_NNTP
     if (datasrc->flags & DF_REMOTE)
 	return nntp_tellart();
-#endif
     return (ART_POS)ftell(artfp);
 }
 
 char *
 readart (char *s, int limit)
 {
-#ifdef SUPPORT_NNTP
     if (datasrc->flags & DF_REMOTE)
 	return nntp_readart(s,limit);
-#endif
     return fgets(s,limit,artfp);
 }
 
@@ -357,12 +345,10 @@ readartbuf (bool_int view_inline)
 	if (mime_section->prev)
 	    mime_state = SKIP_MIME;
 	else {
-#ifdef SUPPORT_NNTP
 	    if (datasrc->flags & DF_REMOTE) {
 		nntp_finishbody(FB_SILENT);
 		raw_artsize = nntp_artsize();
 	    }
-#endif
 	    seekart(raw_artsize);
 	}
 	/* FALL THROUGH */

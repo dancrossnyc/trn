@@ -28,10 +28,10 @@ struct list {
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
 void list_init (void);
-LIST* new_list _((long,long,int,int,int,void(*) _((LIST*,LISTNODE*))));
+LIST* new_list (long,long,int,int,int,void(*) (LIST*,LISTNODE*));
 char* listnum2listitem (LIST*,long);
 long listitem2listnum (LIST*,char*);
-bool walk_list _((LIST*,bool(*) _((char*,int)),int));
+bool walk_list (LIST*,bool(*)(char*,int),int);
 long existing_listnum (LIST*,long,int);
 char* next_listitem (LIST*,char*);
 char* prev_listitem (LIST*,char*);

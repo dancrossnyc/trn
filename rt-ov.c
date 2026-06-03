@@ -37,7 +37,6 @@ ov_init (void)
     Uchar* fieldnum = datasrc->fieldnum;
     Uchar* fieldflags = datasrc->fieldflags;
     datasrc->flags &= ~DF_TRY_OVERVIEW;
-#ifdef SUPPORT_NNTP
     if (!datasrc->over_dir) {
 	int ret;
 	/* Check if the server is XOVER compliant */
@@ -55,7 +54,6 @@ ov_init (void)
 	has_overview_fmt = ret > 0;
     }
     else
-#endif
     {
 	has_overview_fmt = datasrc->over_fmt != NULL
 			&& (tmpfp = fopen(datasrc->over_fmt, "r")) != NULL;
@@ -66,14 +64,12 @@ ov_init (void)
 	fieldnum[0] = OV_NUM;
 	fieldflags[OV_NUM] = FF_HAS_FIELD;
 	for (i = 1;;) {
-#ifdef SUPPORT_NNTP
 	    if (!datasrc->over_dir) {
 		if (nntp_gets(buf, sizeof buf) < 0)
 		    break;/*$$*/
 		if (nntp_at_list_end(buf))
 		    break;
 	    }
-#endif
 	    ElseIf (!fgets(buf, sizeof buf, tmpfp)) {
 		fclose(tmpfp);
 		break;
@@ -152,17 +148,13 @@ ov_data (ART_NUM first, ART_NUM last, bool_int cheating)
     MEM_SIZE last_buflen = LBUFLEN;
     bool success = TRUE;
     ART_NUM real_first = first;
-#ifdef SUPPORT_NNTP
     ART_NUM real_last = last;
     int line_cnt;
     int ov_chunk_size = cheating? OV_CHUNK_SIZE : OV_CHUNK_SIZE * 8;
-#endif
     time_t started_request;
     bool remote = !datasrc->over_dir;
 
-#ifdef SUPPORT_NNTP
 beginning:
-#endif
     for (;;) {
 	artnum = article_first(first);
 	if (artnum > first || !(article_ptr(artnum)->flags & AF_CACHED))
@@ -172,14 +164,12 @@ beginning:
     }
     if (first > last)
 	goto exit;
-#ifdef SUPPORT_NNTP
     if (remote) {
 	if (last - first > ov_chunk_size + ov_chunk_size/2 - 1) {
 	    last = first + ov_chunk_size - 1;
 	    line_cnt = 0;
 	}
     }
-#endif
     started_request = time((time_t*)NULL);
     for (;;) {
 	artnum = article_last(last);
@@ -189,7 +179,6 @@ beginning:
 	last--;
     }
 
-#ifdef SUPPORT_NNTP
     if (remote) {
 	sprintf(ser_line, "XOVER %ld-%ld", (long)first, (long)last);
 	if (nntp_command(ser_line) <= 0 || nntp_check() <= 0) {
@@ -201,7 +190,6 @@ beginning:
 	    printf("\nGetting overview file."), fflush(stdout);
 # endif
     }
-#endif
     ElseIf (datasrc->ov_opened < started_request - 60*60) {
 	ov_close();
 	if ((datasrc->ov_in = fopen(ov_name(ngname), "r")) == NULL)
@@ -215,11 +203,7 @@ beginning:
 	if (cheating)
 	    setspin(SPIN_BACKGROUND);
 	else {
-#ifdef SUPPORT_NNTP
 	    int lots2do = ((datasrc->flags & DF_REMOTE)? netspeed : 20) * 100;
-#else
-	    int lots2do = 20 * 100;
-#endif
 	    if (spin_estimate > spin_todo)
 		spin_estimate = spin_todo;
 	    setspin(spin_estimate > lots2do? SPIN_BARGRAPH : SPIN_FOREGROUND);
@@ -229,14 +213,12 @@ beginning:
 
     artnum = first-1;
     for (;;) {
-#ifdef SUPPORT_NNTP
 	if (remote) {
 	    line = nntp_get_a_line(last_buf,last_buflen,last_buf!=buf);
 	    if (nntp_at_list_end(line))
 		break;
 	    line_cnt++;
 	}
-#endif
 	ElseIf (!(line = get_a_line(last_buf,last_buflen,last_buf!=buf,datasrc->ov_in)))
 	    break;
 
@@ -247,10 +229,8 @@ beginning:
 	    continue;
 	if (an > last) {
 	    artnum = last;
-#ifdef SUPPORT_NNTP
 	    if (remote)
 		continue;
-#endif
 	    break;
 	}
 	spin_todo -= an - artnum - 1;
@@ -258,9 +238,7 @@ beginning:
 	if (int_count) {
 	    int_count = 0;
 	    success = FALSE;
-#ifdef SUPPORT_NNTP
 	    if (!remote)
-#endif
 		break;
 	}
 	if (!remote && cheating) {
@@ -275,7 +253,6 @@ beginning:
 	    }
 	}
     }
-#ifdef SUPPORT_NNTP
     if (remote && line_cnt == 0 && last < real_last) {
 	an = nntp_find_real_art(last);
 	if (an > 0) {
@@ -296,7 +273,6 @@ beginning:
 	}
 	spin_todo -= last - artnum;
     }
-#endif
     if (artnum > last_cached && artnum >= first)
 	last_cached = artnum;
   exit:
@@ -304,7 +280,6 @@ beginning:
 	int_count = 0;
 	success = FALSE;
     }
-#ifdef SUPPORT_NNTP
     else if (remote) {
 	if (cheating && curr_artp != sentinel_artp) {
 	    pushchar('\f' | 0200);
@@ -326,7 +301,6 @@ beginning:
 	    success = FALSE;
 	}
     }
-#endif
     if (!cheating && datasrc->ov_in)
 	fseek(datasrc->ov_in, 0L, 0);	/* rewind it for the cheating phase */
     if (success && real_first <= first_cached) {
@@ -340,10 +314,10 @@ beginning:
 }
 
 static void
-ov_parse (register char *line, ART_NUM artnum, bool_int remote)
+ov_parse (char *line, ART_NUM artnum, bool_int remote)
 {
-    register ARTICLE* article;
-    register int i;
+    ARTICLE* article;
+    int i;
     int fn;
     Uchar* fieldnum = datasrc->fieldnum;
     Uchar* fieldflags = datasrc->fieldflags;
@@ -358,11 +332,9 @@ ov_parse (register char *line, ART_NUM artnum, bool_int remote)
     }
 
     if (len_last_line_got > 0 && line[len_last_line_got-1] == '\n') {
-#ifdef SUPPORT_NNTP
 	if (len_last_line_got > 1 && line[len_last_line_got-2] == '\r')
 	    line[len_last_line_got-2] = '\0';
 	else
-#endif
 	    line[len_last_line_got-1] = '\0';
     }
     cp = line;
@@ -460,7 +432,7 @@ ov_parse (register char *line, ART_NUM artnum, bool_int remote)
 static char *
 ov_name (char *group)
 {
-    register char* cp;
+    char* cp;
 
     strcpy(buf, datasrc->over_dir);
     cp = buf + strlen(buf);

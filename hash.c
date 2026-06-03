@@ -61,13 +61,13 @@ hashcreate(unsigned size, int (*cmpfunc)(char*,int,HASHDATUM))
 ** invalidate tbl to prevent further use via other pointers to it.
 */
 void
-hashdestroy (register HASHTABLE *tbl)
+hashdestroy (HASHTABLE *tbl)
 {
-    register unsigned idx;
-    register HASHENT* hp;
-    register HASHENT* next;
-    register HASHENT** hepp;
-    register int tblsize;
+    unsigned idx;
+    HASHENT* hp;
+    HASHENT* next;
+    HASHENT** hepp;
+    int tblsize;
 
     if (BADTBL(tbl))
 	return;
@@ -87,10 +87,10 @@ hashdestroy (register HASHTABLE *tbl)
 }
 
 void
-hashstore (register HASHTABLE *tbl, char *key, int keylen, HASHDATUM data)
+hashstore (HASHTABLE *tbl, char *key, int keylen, HASHDATUM data)
 {
-    register HASHENT* hp;
-    register HASHENT** nextp;
+    HASHENT* hp;
+    HASHENT** nextp;
 
     nextp = hashfind(tbl, key, keylen);
     hp = *nextp;
@@ -104,10 +104,10 @@ hashstore (register HASHTABLE *tbl, char *key, int keylen, HASHDATUM data)
 }
 
 void
-hashdelete (register HASHTABLE *tbl, char *key, int keylen)
+hashdelete (HASHTABLE *tbl, char *key, int keylen)
 {
-    register HASHENT* hp;
-    register HASHENT** nextp;
+    HASHENT* hp;
+    HASHENT** nextp;
 
     nextp = hashfind(tbl, key, keylen);
     hp = *nextp;
@@ -123,10 +123,10 @@ HASHENT** slast_nextp;
 int slast_keylen;
 
 HASHDATUM
-hashfetch (register HASHTABLE *tbl, char *key, int keylen)
+hashfetch (HASHTABLE *tbl, char *key, int keylen)
 {
-    register HASHENT* hp;
-    register HASHENT** nextp;
+    HASHENT* hp;
+    HASHENT** nextp;
     static HASHDATUM errdatum = { NULL, 0 };
 
     nextp = hashfind(tbl, key, keylen);
@@ -141,7 +141,7 @@ hashfetch (register HASHTABLE *tbl, char *key, int keylen)
 void
 hashstorelast (HASHDATUM data)
 {
-    register HASHENT* hp;
+    HASHENT* hp;
 
     hp = *slast_nextp;
     if (hp == NULL) {			/* absent; allocate an entry */
@@ -157,16 +157,13 @@ hashstorelast (HASHDATUM data)
 ** and extra as arguments.
 */
 void
-hashwalk(tbl, nodefunc, extra)
-HASHTABLE* tbl;
-register int (*nodefunc) _((int,HASHDATUM*,int));
-register int extra;
+hashwalk(HASHTABLE* tbl, int (*nodefunc)(int,HASHDATUM*,int), int extra)
 {
-    register unsigned idx;
-    register HASHENT* hp;
-    register HASHENT* next;
-    register HASHENT** hepp;
-    register int tblsize;
+    unsigned idx;
+    HASHENT* hp;
+    HASHENT* next;
+    HASHENT** hepp;
+    int tblsize;
 
     if (BADTBL(tbl))
 	return;
@@ -193,12 +190,12 @@ register int extra;
 ** to be inserted, if insertion is desired.
 */
 static HASHENT **
-hashfind (register HASHTABLE *tbl, char *key, register int keylen)
+hashfind (HASHTABLE *tbl, char *key, int keylen)
 {
-    register HASHENT* hp;
-    register HASHENT* prevhp = NULL;
-    register HASHENT** hepp;
-    register unsigned size;
+    HASHENT* hp;
+    HASHENT* prevhp = NULL;
+    HASHENT** hepp;
+    unsigned size;
 
     if (BADTBL(tbl)) {
 	fputs("Hash table is invalid.",stderr);
@@ -215,9 +212,9 @@ hashfind (register HASHTABLE *tbl, char *key, register int keylen)
 }
 
 static unsigned
-hash (register char *key, register int keylen)
+hash (char *key, int keylen)
 {
-    register unsigned hash = 0;
+    unsigned hash = 0;
 
     while (keylen--)
 	hash += *key++;
@@ -234,7 +231,7 @@ default_cmp (char *key, int keylen, HASHDATUM data)
 static HASHENT *
 healloc (void)				/* allocate a hash entry */
 {
-    register HASHENT* hp;
+    HASHENT* hp;
 
     if (hereuse == NULL) {
 	int i;
@@ -260,7 +257,7 @@ healloc (void)				/* allocate a hash entry */
 
 static void
 hefree (				/* free a hash entry */
-    register HASHENT *hp
+    HASHENT *hp
 )
 {
 #ifdef HASH_FREE_ENTRIES

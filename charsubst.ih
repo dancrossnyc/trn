@@ -4,4 +4,4 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static int Latin1toASCII _((Uchar*,Uchar*,int,int));
+static int Latin1toASCII (Uchar*,Uchar*,int,int);

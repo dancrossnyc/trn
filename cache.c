@@ -108,9 +108,7 @@ close_cache (void)
     SUBJECT* sp;
     SUBJECT* next;
 
-#ifdef SUPPORT_NNTP
     nntp_artname(0, FALSE);		/* clear the tmpfile cache */
-#endif
 
     if (subj_hash) {
 	hashdestroy(subj_hash);
@@ -149,8 +147,8 @@ close_cache (void)
 static void
 init_artnode (LIST *list, LISTNODE *node)
 {
-    register ART_NUM i;
-    register ARTICLE* ap;
+    ART_NUM i;
+    ARTICLE* ap;
     bzero(node->data, list->items_per_node * list->item_size);
     for (i = node->low, ap = (ARTICLE*)node->data; i <= node->high; i++, ap++)
 	ap->num = i;
@@ -167,10 +165,10 @@ clear_artitem (char *cp, int arg)
 ** with the same subject.
 */
 void
-cache_article (register ARTICLE *ap)
+cache_article (ARTICLE *ap)
 {
-    register ARTICLE* next;
-    register ARTICLE* ap2;
+    ARTICLE* next;
+    ARTICLE* ap2;
 
     if (!(next = ap->subj->articles) || ap->date < next->date)
 	ap->subj->articles = ap;
@@ -205,7 +203,7 @@ cache_article (register ARTICLE *ap)
 void
 check_for_near_subj (ARTICLE *ap)
 {
-    register SUBJECT* sp;
+    SUBJECT* sp;
     if (!shortsubj_hash) {
 	shortsubj_hash = hashcreate(401, subject_cmp);	/*TODO: pick a better size */
 	sp = first_subject;
@@ -247,7 +245,7 @@ change_join_subject_len (int len)
 }
 
 void
-check_poster (register ARTICLE *ap)
+check_poster (ARTICLE *ap)
 {
     if (auto_select_postings && (ap->flags & AF_EXISTS) && ap->from) {
 	if (ap->flags & AF_FROMTRUNCED) {
@@ -314,16 +312,16 @@ check_poster (register ARTICLE *ap)
 ** was corrupt and the duplicate id got a different subject).
 */
 void
-uncache_article (register ARTICLE *ap, bool_int remove_empties)
+uncache_article (ARTICLE *ap, bool_int remove_empties)
 {
-    register ARTICLE* next;
+    ARTICLE* next;
 
     if (ap->subj) {
 	if (ALLBITS(ap->flags, AF_CACHED | AF_EXISTS)) {
 	    if ((next = ap->subj->articles) == ap)
 		ap->subj->articles = ap->subj_next;
 	    else {
-		register ARTICLE* ap2;
+		ARTICLE* ap2;
 		while (next) {
 		    if ((ap2 = next->subj_next) == ap) {
 			next->subj_next = ap->subj_next;
@@ -334,7 +332,7 @@ uncache_article (register ARTICLE *ap, bool_int remove_empties)
 	    }
 	}
 	if (remove_empties && !ap->subj->articles) {
-	    register SUBJECT* sp = ap->subj;
+	    SUBJECT* sp = ap->subj;
 	    if (sp == first_subject)
 		first_subject = sp->next;
 	    else
@@ -358,9 +356,9 @@ uncache_article (register ARTICLE *ap, bool_int remove_empties)
 char *
 fetchcache (ART_NUM artnum, int which_line, bool_int fill_cache)
 {
-    register char* s;
-    register ARTICLE* ap;
-    register bool cached = (htype[which_line].flags & HT_CACHED);
+    char* s;
+    ARTICLE* ap;
+    bool cached = (htype[which_line].flags & HT_CACHED);
 
     /* article_find() returns a NULL if the artnum value is invalid */
     if (!(ap = article_find(artnum)) || !(ap->flags & AF_EXISTS))
@@ -380,9 +378,9 @@ fetchcache (ART_NUM artnum, int which_line, bool_int fill_cache)
 ** Truncated headers (e.g. from a .thread file) are optionally ignored.
 */
 char *
-get_cached_line (register ARTICLE *ap, int which_line, bool_int no_truncs)
+get_cached_line (ARTICLE *ap, int which_line, bool_int no_truncs)
 {
-    register char* s;
+    char* s;
 
     switch (which_line) {
       case SUBJ_LINE:
@@ -587,7 +585,7 @@ dectrl (char *str)
     for ( ; *str;) {
 	int w = byte_length_at(str);
 	if (AT_GREY_SPACE(str)) {
-	    register int i;
+	    int i;
 	    for (i = 0; i < w; i += 1) {
 		str[i] = ' ';
 	    }
@@ -598,9 +596,9 @@ dectrl (char *str)
 
 void
 set_cached_line (
-    register ARTICLE *ap,
-    register int which_line,
-    register char *s		/* already allocated, ready to save */
+    ARTICLE *ap,
+    int which_line,
+    char *s		/* already allocated, ready to save */
 )
 {
     char* cp;
@@ -671,8 +669,8 @@ void
 look_ahead (void)
 {
 #ifdef ARTSEARCH
-    register char* h;
-    register char* s;
+    char* h;
+    char* s;
 
 #ifdef DEBUG
     if (debug && srchahead) {
@@ -698,7 +696,7 @@ look_ahead (void)
 	h = pattern + strlen(pattern);
 	interp(h,(sizeof buf) - (h-buf),"%\\s");
 	{			/* compensate for notesfiles */
-	    register int i;
+	    int i;
 	    for (i = 24; *h && i--; h++)
 		if (*h == '\\')
 		    h++;
@@ -766,10 +764,8 @@ cache_until_key (void)
     if (input_pending())
 	return;
 
-# ifdef SUPPORT_NNTP
     if ((datasrc->flags & DF_REMOTE) && nntp_finishbody(FB_BACKGROUND))
 	return;
-# endif
 
 # ifdef NICEBG
     if (wait_key_pause(10))
@@ -810,16 +806,14 @@ cache_until_key (void)
     setspin(SPIN_OFF);
     untrim_cache = FALSE;
 #endif
-#ifdef SUPPORT_NNTP
     check_datasrcs();
-#endif
 }
 
 #ifdef PENDING
 bool
 cache_subjects (void)
 {
-    register ART_NUM an;
+    ART_NUM an;
 
     if (subj_to_get > lastart)
 	return TRUE;
@@ -838,7 +832,7 @@ cache_subjects (void)
 bool
 cache_xrefs (void)
 {
-    register ART_NUM an;
+    ART_NUM an;
 
     if (olden_days || (datasrc->flags & DF_NOXREFS) || xref_to_get > lastart)
 	return TRUE;
@@ -907,7 +901,7 @@ cache_unread_arts (void)
 bool
 art_data (ART_NUM first, ART_NUM last, bool_int cheating, bool_int all_articles)
 {
-    register ART_NUM i;
+    ART_NUM i;
     ART_NUM expected_i = first;
 
     int cachemask = (ThreadedGroup ? AF_THREADED : AF_CACHED)
@@ -917,11 +911,7 @@ art_data (ART_NUM first, ART_NUM last, bool_int cheating, bool_int all_articles)
     if (cheating)
 	setspin(SPIN_BACKGROUND);
     else {
-#ifdef SUPPORT_NNTP
 	int lots2do = ((datasrc->flags & DF_REMOTE)? netspeed : 20) * 25;
-#else
-	int lots2do = 20 * 25;
-#endif
 	setspin(spin_estimate > lots2do? SPIN_BARGRAPH : SPIN_FOREGROUND);
     }
     /*assert(first >= absfirst && last <= lastart);*/
@@ -1016,7 +1006,7 @@ cache_range (ART_NUM first, ART_NUM last)
 }
 
 void
-clear_article (register ARTICLE *ap)
+clear_article (ARTICLE *ap)
 {
     if (ap->from)
 	free(ap->from);

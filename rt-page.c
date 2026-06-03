@@ -1706,8 +1706,8 @@ output_sel (int ix, int sel, bool_int update)
 static int
 count_subject_lines (SUBJECT *subj, int *selptr)
 {
-    register ARTICLE* ap;
-    register int sel;
+    ARTICLE* ap;
+    int sel;
 
     if (subj->flags & SF_DEL)
 	sel = 2;
@@ -1737,8 +1737,8 @@ count_subject_lines (SUBJECT *subj, int *selptr)
 static int
 count_thread_lines (SUBJECT *subj, int *selptr)
 {
-    register int total = 0;
-    register ARTICLE* thread = subj->thread;
+    int total = 0;
+    ARTICLE* thread = subj->thread;
     int sel = -1, subj_sel;
 
     do {
@@ -1758,7 +1758,7 @@ count_thread_lines (SUBJECT *subj, int *selptr)
 /* Display an article, perhaps with its author.
 */
 static void
-display_article (register ARTICLE *ap, int ix, int sel)
+display_article (ARTICLE *ap, int ix, int sel)
 {
     int subj_width = tc_COLS - 5 - UseSelNum;
     int from_width = tc_COLS / 5;
@@ -1788,8 +1788,8 @@ display_article (register ARTICLE *ap, int ix, int sel)
 static void
 display_subject (SUBJECT *subj, int ix, int sel)
 {
-    register ARTICLE* ap;
-    register int j, i;
+    ARTICLE* ap;
+    int j, i;
     int subj_width = tc_COLS - 8 - UseSelNum;
     int from_width = tc_COLS / 5;
     int date_width = tc_COLS / 5;

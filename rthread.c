@@ -170,7 +170,7 @@ thread_close (void)
 static int
 cleanup_msgid_hash (int keylen, HASHDATUM *data, int extra)
 {
-    register ARTICLE* ap = (ARTICLE*)data->dat_ptr;
+    ARTICLE* ap = (ARTICLE*)data->dat_ptr;
     int ret = -1;
 
     if (ap) {
@@ -201,9 +201,9 @@ top_article (void)
 }
 
 ARTICLE *
-first_art (register SUBJECT *sp)
+first_art (SUBJECT *sp)
 {
-    register ARTICLE* ap = (ThreadedGroup? sp->thread : sp->articles);
+    ARTICLE* ap = (ThreadedGroup? sp->thread : sp->articles);
     if (ap && !(ap->flags & AF_EXISTS)) {
 	oneless(ap);
 	ap = next_art(ap);
@@ -212,9 +212,9 @@ first_art (register SUBJECT *sp)
 }
 
 ARTICLE *
-last_art (register SUBJECT *sp)
+last_art (SUBJECT *sp)
 {
-    register ARTICLE* ap;
+    ARTICLE* ap;
 
     if (!ThreadedGroup) {
 	ap = sp->articles;
@@ -248,7 +248,7 @@ last_art (register SUBJECT *sp)
 void
 inc_art (bool_int sel_flag, bool_int rereading)
 {
-    register ARTICLE* ap = artp;
+    ARTICLE* ap = artp;
     int subj_mask = (rereading? 0 : SF_VISIT);
 
     /* Use the explicit article-order if it exists */
@@ -281,7 +281,7 @@ inc_art (bool_int sel_flag, bool_int rereading)
 
     /* Use subject- or thread-order when possible */
     if (ThreadedGroup || srchahead) {
-	register SUBJECT* sp;
+	SUBJECT* sp;
 	if (ap)
 	    sp = ap->subj;
 	else
@@ -344,7 +344,7 @@ inc_art (bool_int sel_flag, bool_int rereading)
 void
 dec_art (bool_int sel_flag, bool_int rereading)
 {
-    register ARTICLE* ap = artp;
+    ARTICLE* ap = artp;
     int subj_mask = (rereading? 0 : SF_VISIT);
 
     /* Use the explicit article-order if it exists */
@@ -371,7 +371,7 @@ dec_art (bool_int sel_flag, bool_int rereading)
 
     /* Use subject- or thread-order when possible */
     if (ThreadedGroup || srchahead) {
-	register SUBJECT* sp;
+	SUBJECT* sp;
 	if (ap)
 	    sp = ap->subj;
 	else
@@ -420,7 +420,7 @@ dec_art (bool_int sel_flag, bool_int rereading)
 /* Bump the param to the next article in depth-first order.
 */
 ARTICLE *
-bump_art (register ARTICLE *ap)
+bump_art (ARTICLE *ap)
 {
     if (ap->child1)
 	return ap->child1;
@@ -435,7 +435,7 @@ bump_art (register ARTICLE *ap)
 ** non-threaded group; honors the breadth_first flag in a threaded one.
 */
 ARTICLE *
-next_art (register ARTICLE *ap)
+next_art (ARTICLE *ap)
 {
 try_again:
     if (!ThreadedGroup) {
@@ -475,9 +475,9 @@ done:
 ** non-threaded group.
 */
 ARTICLE *
-prev_art (register ARTICLE *ap)
+prev_art (ARTICLE *ap)
 {
-    register ARTICLE* initial_ap;
+    ARTICLE* initial_ap;
 
 try_again:
     initial_ap = ap;
@@ -515,7 +515,7 @@ done:
 bool
 next_art_with_subj (void)
 {
-    register ARTICLE* ap = artp;
+    ARTICLE* ap = artp;
 
     if (!ap)
 	return FALSE;
@@ -543,8 +543,8 @@ next_art_with_subj (void)
 bool
 prev_art_with_subj (void)
 {
-    register ARTICLE* ap = artp;
-    register ARTICLE* ap2;
+    ARTICLE* ap = artp;
+    ARTICLE* ap2;
 
     if (!ap)
 	return FALSE;
@@ -571,7 +571,7 @@ prev_art_with_subj (void)
 }
 
 SUBJECT *
-next_subj (register SUBJECT *sp, int subj_mask)
+next_subj (SUBJECT *sp, int subj_mask)
 {
     if (!sp)
 	sp = first_subject;
@@ -591,7 +591,7 @@ next_subj (register SUBJECT *sp, int subj_mask)
 }
 
 SUBJECT *
-prev_subj (register SUBJECT *sp, int subj_mask)
+prev_subj (SUBJECT *sp, int subj_mask)
 {
     if (!sp)
 	sp = last_subject;
@@ -613,7 +613,7 @@ prev_subj (register SUBJECT *sp, int subj_mask)
 /* Select a single article.
 */
 void
-select_article (register ARTICLE *ap, int auto_flags)
+select_article (ARTICLE *ap, int auto_flags)
 {
     int desired_flags = (sel_rereading? AF_EXISTS : (AF_EXISTS|AF_UNREAD));
 #ifdef VERBOSE
@@ -643,7 +643,7 @@ select_article (register ARTICLE *ap, int auto_flags)
 /* Select this article's subject.
 */
 void
-select_arts_subject (register ARTICLE *ap, int auto_flags)
+select_arts_subject (ARTICLE *ap, int auto_flags)
 {
     if (ap->subj && ap->subj->articles)
 	select_subject(ap->subj, auto_flags);
@@ -656,7 +656,7 @@ select_arts_subject (register ARTICLE *ap, int auto_flags)
 void
 select_subject (SUBJECT *subj, int auto_flags)
 {
-    register ARTICLE* ap;
+    ARTICLE* ap;
     int desired_flags = (sel_rereading? AF_EXISTS : (AF_EXISTS|AF_UNREAD));
     int old_count = selected_count;
 
@@ -682,7 +682,7 @@ select_subject (SUBJECT *subj, int auto_flags)
 /* Select this article's thread.
 */
 void
-select_arts_thread (register ARTICLE *ap, int auto_flags)
+select_arts_thread (ARTICLE *ap, int auto_flags)
 {
     if (ap->subj && ap->subj->thread)
 	select_thread(ap->subj->thread, auto_flags);
@@ -693,9 +693,9 @@ select_arts_thread (register ARTICLE *ap, int auto_flags)
 /* Select all the articles in a thread.
 */
 void
-select_thread (register ARTICLE *thread, int auto_flags)
+select_thread (ARTICLE *thread, int auto_flags)
 {
-    register SUBJECT* sp;
+    SUBJECT* sp;
 
     sp = thread->subj;
     do {
@@ -707,9 +707,9 @@ select_thread (register ARTICLE *thread, int auto_flags)
 /* Select the subthread attached to this article.
 */
 void
-select_subthread (register ARTICLE *ap, int auto_flags)
+select_subthread (ARTICLE *ap, int auto_flags)
 {
-    register ARTICLE* limit;
+    ARTICLE* limit;
     SUBJECT* subj;
     int desired_flags = (sel_rereading? AF_EXISTS : (AF_EXISTS|AF_UNREAD));
     int old_count = selected_count;
@@ -744,7 +744,7 @@ select_subthread (register ARTICLE *ap, int auto_flags)
 /* Deselect a single article.
 */
 void
-deselect_article (register ARTICLE *ap, int auto_flags)
+deselect_article (ARTICLE *ap, int auto_flags)
 {
 #ifdef VERBOSE
     bool echo = (auto_flags & ALSO_ECHO) != 0;
@@ -766,7 +766,7 @@ deselect_article (register ARTICLE *ap, int auto_flags)
 /* Deselect this article's subject.
 */
 void
-deselect_arts_subject (register ARTICLE *ap)
+deselect_arts_subject (ARTICLE *ap)
 {
     if (ap->subj && ap->subj->articles)
 	deselect_subject(ap->subj);
@@ -779,7 +779,7 @@ deselect_arts_subject (register ARTICLE *ap)
 void
 deselect_subject (SUBJECT *subj)
 {
-    register ARTICLE* ap;
+    ARTICLE* ap;
 
     for (ap = subj->articles; ap; ap = ap->subj_next) {
 	if (ap->flags & sel_mask) {
@@ -802,7 +802,7 @@ deselect_subject (SUBJECT *subj)
 /* Deselect this article's thread.
 */
 void
-deselect_arts_thread (register ARTICLE *ap)
+deselect_arts_thread (ARTICLE *ap)
 {
     if (ap->subj && ap->subj->thread)
 	deselect_thread(ap->subj->thread);
@@ -813,9 +813,9 @@ deselect_arts_thread (register ARTICLE *ap)
 /* Deselect all the articles in a thread.
 */
 void
-deselect_thread (register ARTICLE *thread)
+deselect_thread (ARTICLE *thread)
 {
-    register SUBJECT* sp;
+    SUBJECT* sp;
 
     sp = thread->subj;
     do {
@@ -829,7 +829,7 @@ deselect_thread (register ARTICLE *thread)
 void
 deselect_all (void)
 {
-    register SUBJECT* sp;
+    SUBJECT* sp;
 
     for (sp = first_subject; sp; sp = sp->next)
 	deselect_subject(sp);
@@ -844,7 +844,7 @@ deselect_all (void)
 /* Kill all unread articles attached to this article's subject.
 */
 void
-kill_arts_subject (register ARTICLE *ap, int auto_flags)
+kill_arts_subject (ARTICLE *ap, int auto_flags)
 {
     if (ap->subj && ap->subj->articles)
 	kill_subject(ap->subj, auto_flags);
@@ -863,8 +863,8 @@ kill_arts_subject (register ARTICLE *ap, int auto_flags)
 void
 kill_subject (SUBJECT *subj, int auto_flags)
 {
-    register ARTICLE* ap;
-    register int killmask = (auto_flags & AFFECT_ALL)? 0 : sel_mask;
+    ARTICLE* ap;
+    int killmask = (auto_flags & AFFECT_ALL)? 0 : sel_mask;
     char toreturn = (auto_flags & SET_TORETURN) != 0;
 
     auto_flags &= AUTO_KILLS;
@@ -882,7 +882,7 @@ kill_subject (SUBJECT *subj, int auto_flags)
 /* Kill all unread articles attached to this article's thread.
 */
 void
-kill_arts_thread (register ARTICLE *ap, int auto_flags)
+kill_arts_thread (ARTICLE *ap, int auto_flags)
 {
     if (ap->subj && ap->subj->thread)
 	kill_thread(ap->subj->thread, auto_flags);
@@ -893,9 +893,9 @@ kill_arts_thread (register ARTICLE *ap, int auto_flags)
 /* Kill all unread articles attached to the given thread.
 */
 void
-kill_thread (register ARTICLE *thread, int auto_flags)
+kill_thread (ARTICLE *thread, int auto_flags)
 {
-    register SUBJECT* sp;
+    SUBJECT* sp;
 
     sp = thread->subj;
     do {
@@ -907,9 +907,9 @@ kill_thread (register ARTICLE *thread, int auto_flags)
 /* Kill the subthread attached to this article.
 */
 void
-kill_subthread (register ARTICLE *ap, int auto_flags)
+kill_subthread (ARTICLE *ap, int auto_flags)
 {
-    register ARTICLE* limit;
+    ARTICLE* limit;
     char toreturn = (auto_flags & SET_TORETURN) != 0;
 
     if (!ap)
@@ -937,7 +937,7 @@ kill_subthread (register ARTICLE *ap, int auto_flags)
 void
 unkill_subject (SUBJECT *subj)
 {
-    register ARTICLE* ap;
+    ARTICLE* ap;
     int save_sel_count = selected_count;
 
     for (ap = subj->articles; ap; ap = ap->subj_next) {
@@ -970,9 +970,9 @@ unkill_subject (SUBJECT *subj)
 /* Unkill all the articles attached to the given thread.
 */
 void
-unkill_thread (register ARTICLE *thread)
+unkill_thread (ARTICLE *thread)
 {
-    register SUBJECT* sp;
+    SUBJECT* sp;
 
     sp = thread->subj;
     do {
@@ -984,10 +984,10 @@ unkill_thread (register ARTICLE *thread)
 /* Unkill the subthread attached to this article.
 */
 void
-unkill_subthread (register ARTICLE *ap)
+unkill_subthread (ARTICLE *ap)
 {
-    register ARTICLE* limit;
-    register SUBJECT* sp;
+    ARTICLE* limit;
+    SUBJECT* sp;
 
     if (!ap)
 	return;
@@ -1018,7 +1018,7 @@ unkill_subthread (register ARTICLE *ap)
 void
 clear_subject (SUBJECT *subj)
 {
-    register ARTICLE* ap;
+    ARTICLE* ap;
 
     for (ap = subj->articles; ap; ap = ap->subj_next)
 	clear_auto_flags(ap);
@@ -1027,9 +1027,9 @@ clear_subject (SUBJECT *subj)
 /* Clear the auto flags in all unread articles attached to the given thread.
 */
 void
-clear_thread (register ARTICLE *thread)
+clear_thread (ARTICLE *thread)
 {
-    register SUBJECT* sp;
+    SUBJECT* sp;
 
     sp = thread->subj;
     do {
@@ -1041,9 +1041,9 @@ clear_thread (register ARTICLE *thread)
 /* Clear the auto flags in the subthread attached to this article.
 */
 void
-clear_subthread (register ARTICLE *ap)
+clear_subthread (ARTICLE *ap)
 {
-    register ARTICLE* limit;
+    ARTICLE* limit;
 
     if (!ap)
 	return;
@@ -1061,7 +1061,7 @@ clear_subthread (register ARTICLE *ap)
 ARTICLE *
 subj_art (SUBJECT *sp)
 {
-    register ARTICLE* ap = NULL;
+    ARTICLE* ap = NULL;
     int art_mask = (selected_only? (AF_SEL|AF_UNREAD) : AF_UNREAD);
     bool TG_save = ThreadedGroup;
 
@@ -1089,8 +1089,8 @@ subj_art (SUBJECT *sp)
 void
 visit_next_thread (void)
 {
-    register SUBJECT* sp;
-    register ARTICLE* ap = artp;
+    SUBJECT* sp;
+    ARTICLE* ap = artp;
 
     sp = (ap? ap->subj : NULL);
     while ((sp = next_subj(sp, SF_VISIT)) != NULL) {
@@ -1112,8 +1112,8 @@ visit_next_thread (void)
 void
 visit_prev_thread (void)
 {
-    register SUBJECT* sp;
-    register ARTICLE* ap = artp;
+    SUBJECT* sp;
+    ARTICLE* ap = artp;
 
     sp = (ap? ap->subj : NULL);
     while ((sp = prev_subj(sp, SF_VISIT)) != NULL) {
@@ -1135,7 +1135,7 @@ visit_prev_thread (void)
 bool
 find_parent (bool_int keep_going)
 {
-    register ARTICLE* ap = artp;
+    ARTICLE* ap = artp;
 
     if (!ap->parent)
 	return FALSE;
@@ -1155,7 +1155,7 @@ find_parent (bool_int keep_going)
 bool
 find_leaf (bool_int keep_going)
 {
-    register ARTICLE* ap = artp;
+    ARTICLE* ap = artp;
 
     if (!ap->child1)
 	return FALSE;
@@ -1285,9 +1285,9 @@ last_sib (ARTICLE *ta, int depth, ARTICLE *limit)
 void
 count_subjects (int cmode)
 {
-    register int count, sel_count;
-    register ARTICLE* ap;
-    register SUBJECT* sp;
+    int count, sel_count;
+    ARTICLE* ap;
+    SUBJECT* sp;
     int desired_flags = (sel_rereading? AF_EXISTS : (AF_EXISTS|AF_UNREAD));
     time_t subjdate;
 
@@ -1371,27 +1371,27 @@ count_subjects (int cmode)
 }
 
 static int
-subjorder_subject (register SUBJECT **spp1, register SUBJECT **spp2)
+subjorder_subject (SUBJECT **spp1, SUBJECT **spp2)
 {
     return strcaseCMP((*spp1)->str+4, (*spp2)->str+4) * sel_direction;
 }
 
 static int
-subjorder_date (register SUBJECT **spp1, register SUBJECT **spp2)
+subjorder_date (SUBJECT **spp1, SUBJECT **spp2)
 {
     time_t eq = (*spp1)->date - (*spp2)->date;
     return eq? eq > 0? sel_direction : -sel_direction : 0;
 }
 
 static int
-subjorder_count (register SUBJECT **spp1, register SUBJECT **spp2)
+subjorder_count (SUBJECT **spp1, SUBJECT **spp2)
 {
     short eq = (*spp1)->misc - (*spp2)->misc;
     return eq? eq > 0? sel_direction : -sel_direction : subjorder_date(spp1,spp2);
 }
 
 static int
-subjorder_lines (register SUBJECT **spp1, register SUBJECT **spp2)
+subjorder_lines (SUBJECT **spp1, SUBJECT **spp2)
 {
     long eq, l1, l2;
     l1 = (*spp1)->articles? (*spp1)->articles->lines : 0;
@@ -1427,7 +1427,7 @@ subject_score_high (SUBJECT *sp)
 
 /* later make a subject-thread score routine */
 static int
-subjorder_score (register SUBJECT **spp1, register SUBJECT **spp2)
+subjorder_score (SUBJECT **spp1, SUBJECT **spp2)
 {
     int sc1, sc2;
     sc1 = subject_score_high(*spp1);
@@ -1442,8 +1442,8 @@ subjorder_score (register SUBJECT **spp1, register SUBJECT **spp2)
 static int
 threadorder_subject (SUBJECT **spp1, SUBJECT **spp2)
 {
-    register ARTICLE* t1 = (*spp1)->thread;
-    register ARTICLE* t2 = (*spp2)->thread;
+    ARTICLE* t1 = (*spp1)->thread;
+    ARTICLE* t2 = (*spp2)->thread;
     if (t1 != t2 && t1 && t2)
 	return strcaseCMP(t1->subj->str+4, t2->subj->str+4) * sel_direction;
     return subjorder_date(spp1, spp2);
@@ -1452,11 +1452,11 @@ threadorder_subject (SUBJECT **spp1, SUBJECT **spp2)
 static int
 threadorder_date (SUBJECT **spp1, SUBJECT **spp2)
 {
-    register ARTICLE* t1 = (*spp1)->thread;
-    register ARTICLE* t2 = (*spp2)->thread;
+    ARTICLE* t1 = (*spp1)->thread;
+    ARTICLE* t2 = (*spp2)->thread;
     if (t1 != t2 && t1 && t2) {
-	register SUBJECT* sp1;
-	register SUBJECT* sp2;
+	SUBJECT* sp1;
+	SUBJECT* sp2;
 	long eq;
 	if (!(sp1 = t1->subj)->misc)
 	    for (sp1=sp1->thread_link; sp1 != t1->subj; sp1=sp1->thread_link)
@@ -1476,10 +1476,10 @@ threadorder_date (SUBJECT **spp1, SUBJECT **spp2)
 static int
 threadorder_count (SUBJECT **spp1, SUBJECT **spp2)
 {
-    register int size1 = (*spp1)->misc;
-    register int size2 = (*spp2)->misc;
+    int size1 = (*spp1)->misc;
+    int size2 = (*spp2)->misc;
     if ((*spp1)->thread != (*spp2)->thread) {
-	register SUBJECT* sp;
+	SUBJECT* sp;
 	for (sp = (*spp1)->thread_link; sp != *spp1; sp = sp->thread_link)
 	    size1 += sp->misc;
 	for (sp = (*spp2)->thread_link; sp != *spp2; sp = sp->thread_link)
@@ -1493,11 +1493,11 @@ threadorder_count (SUBJECT **spp1, SUBJECT **spp2)
 static int
 threadorder_lines (SUBJECT **spp1, SUBJECT **spp2)
 {
-    register ARTICLE* t1 = (*spp1)->thread;
-    register ARTICLE* t2 = (*spp2)->thread;
+    ARTICLE* t1 = (*spp1)->thread;
+    ARTICLE* t2 = (*spp2)->thread;
     if (t1 != t2 && t1 && t2) {
-	register SUBJECT* sp1;
-	register SUBJECT* sp2;
+	SUBJECT* sp1;
+	SUBJECT* sp2;
 	long eq, l1, l2;
 	if (!(sp1 = t1->subj)->misc) {
 	    for (sp1=sp1->thread_link; sp1 != t1->subj; sp1=sp1->thread_link) {
@@ -1566,8 +1566,8 @@ threadorder_score (SUBJECT **spp1, SUBJECT **spp2)
 void
 sort_subjects (void)
 {
-    register SUBJECT* sp;
-    register int i;
+    SUBJECT* sp;
+    int i;
     SUBJECT** lp;
     SUBJECT** subj_list;
     int (*sort_procedure)();
@@ -1632,14 +1632,14 @@ sort_subjects (void)
 }
 
 static int
-artorder_date (register ARTICLE **art1, register ARTICLE **art2)
+artorder_date (ARTICLE **art1, ARTICLE **art2)
 {
     long eq = (*art1)->date - (*art2)->date;
     return eq? eq > 0? sel_direction : -sel_direction : 0;
 }
 
 static int
-artorder_subject (register ARTICLE **art1, register ARTICLE **art2)
+artorder_subject (ARTICLE **art1, ARTICLE **art2)
 {
     if ((*art1)->subj == (*art2)->subj)
 	return artorder_date(art1, art2);
@@ -1648,21 +1648,21 @@ artorder_subject (register ARTICLE **art1, register ARTICLE **art2)
 }
 
 static int
-artorder_author (register ARTICLE **art1, register ARTICLE **art2)
+artorder_author (ARTICLE **art1, ARTICLE **art2)
 {
     int eq = strcaseCMP((*art1)->from, (*art2)->from);
     return eq? eq * sel_direction : artorder_date(art1, art2);
 }
 
 static int
-artorder_number (register ARTICLE **art1, register ARTICLE **art2)
+artorder_number (ARTICLE **art1, ARTICLE **art2)
 {
     ART_NUM eq = article_num(*art1) - article_num(*art2);
     return eq > 0? sel_direction : -sel_direction;
 }
 
 static int
-artorder_groups (register ARTICLE **art1, register ARTICLE **art2)
+artorder_groups (ARTICLE **art1, ARTICLE **art2)
 {
     long eq;
 #ifdef DEBUG
@@ -1676,7 +1676,7 @@ artorder_groups (register ARTICLE **art1, register ARTICLE **art2)
 }
 
 static int
-artorder_lines (register ARTICLE **art1, register ARTICLE **art2)
+artorder_lines (ARTICLE **art1, ARTICLE **art2)
 {
     long eq = (*art1)->lines - (*art2)->lines;
     return eq? eq > 0? sel_direction : -sel_direction : artorder_date(art1,art2);
@@ -1684,7 +1684,7 @@ artorder_lines (register ARTICLE **art1, register ARTICLE **art2)
 
 #ifdef SCORE
 static int
-artorder_score (register ARTICLE **art1, register ARTICLE **art2)
+artorder_score (ARTICLE **art1, ARTICLE **art2)
 {
     int eq = sc_score_art(article_num(*art2),FALSE)
 	   - sc_score_art(article_num(*art1),FALSE);

@@ -22,8 +22,8 @@ char	nullstr[1];
 
 char	buf[LBUFLEN+1];
 
-int valid_header _((char*));
-void append_signature _((void));
+int valid_header (char*);
+void append_signature (void);
 
 int
 main (int argc, char *argv[])
@@ -33,7 +33,7 @@ main (int argc, char *argv[])
     int artpos, headbuf_size, len;
     char* headbuf;
     char* line_end;
-    register char* cp;
+    char* cp;
     int i;
 
     headbuf_size = LBUFLEN * 8;
@@ -249,7 +249,7 @@ main (int argc, char *argv[])
 
 /* valid_header -- determine if a line is a valid header line */
 int
-valid_header (register char *h)
+valid_header (char *h)
 {
     char* colon;
     char* space;
@@ -311,7 +311,6 @@ append_signature (void)
     (void) fclose(fp);
 }
 
-#ifdef SUPPORT_NNTP
 int
 nntp_handle_timeout (void)
 {
@@ -337,4 +336,3 @@ nntp_handle_timeout (void)
     fputs("\n503 Server timed out.\n",stderr);
     return -2;
 }
-#endif

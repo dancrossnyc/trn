@@ -27,7 +27,6 @@
 #include "artio.h"
 #include "rcstuff.h"
 
-#ifdef SUPPORT_NNTP
 
 int
 nntp_list (char *type, char *arg, int len)
@@ -612,4 +611,3 @@ nntp_read (char *buf, long n)
 }
 #endif /* SUPPORT_XTHREAD */
 
-#endif /* SUPPORT_NNTP */

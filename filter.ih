@@ -4,6 +4,6 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static void filter_restart _((void));
-static int filter_send _((char*));
-static char* filter_recv _((char*));
+static void filter_restart (void);
+static int filter_send (char*);
+static char* filter_recv (char*);

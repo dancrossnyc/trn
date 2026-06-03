@@ -4,9 +4,9 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static bool count_unCACHED_article _((char*,int));
-static bool mark_all_READ _((char*,int));
-static bool mark_all_unREAD _((char*,int));
+static bool count_unCACHED_article (char*,int);
+static bool mark_all_READ (char*,int);
+static bool mark_all_unREAD (char*,int);
 #ifdef DEBUG
-static bool debug_article_output _((char*,int));
+static bool debug_article_output (char*,int);
 #endif

@@ -66,11 +66,9 @@ find_new_groups (void)
 
     for (rp = multirc->first; rp; rp = rp->next) {
 	if (ALLBITS(rp->flags, RF_ADD_NEWGROUPS | RF_ACTIVE)) {
-#ifdef SUPPORT_NNTP
 	    if (rp->datasrc->flags & DF_REMOTE)
 		new_nntp_groups(rp->datasrc);
 	    else
-#endif
 		new_local_groups(rp->datasrc);
 	}
     }
@@ -110,12 +108,11 @@ process_list (int flag)
     addgroup_cnt = 0;
 }
 
-#ifdef SUPPORT_NNTP
 
 static void
 new_nntp_groups (DATASRC *dp)
 {
-    register char* s;
+    char* s;
     int len;
     time_t server_time;
     NGDATA* np;
@@ -181,12 +178,11 @@ new_nntp_groups (DATASRC *dp)
     }
     hashdestroy(newngs);
 }
-#endif
 
 static void
 new_local_groups (DATASRC *dp)
 {
-    register char* s;
+    char* s;
     time_t lastone;
     NGDATA* np;
     char tmpbuf[LBUFLEN];
@@ -314,7 +310,6 @@ scanactive (bool_int add_matching)
 	set_datasrc(dp);
 	if (dp->act_sf.fp)
 	    hashwalk(dp->act_sf.hp, list_groups, add_matching);
-#ifdef SUPPORT_NNTP
 	else {
 	    if (maxngtodo != 1)
 		strcpy(buf, "*");
@@ -334,7 +329,6 @@ scanactive (bool_int add_matching)
 		}
 	    }
 	}
-#endif
     }
 
     process_list(add_matching);
@@ -359,7 +353,7 @@ list_groups (int keylen, HASHDATUM *data, int add_matching)
 static void
 scanline (char *actline, bool_int add_matching)
 {
-    register char* s;
+    char* s;
     NGDATA* np;
     long high, low;
     char ch;
@@ -386,20 +380,20 @@ scanline (char *actline, bool_int add_matching)
 }
 
 static int
-agorder_number (register ADDGROUP **app1, register ADDGROUP **app2)
+agorder_number (ADDGROUP **app1, ADDGROUP **app2)
 {
     ART_NUM eq = (*app1)->num - (*app2)->num;
     return eq > 0? sel_direction : -sel_direction;
 }
 
 static int
-agorder_groupname (register ADDGROUP **app1, register ADDGROUP **app2)
+agorder_groupname (ADDGROUP **app1, ADDGROUP **app2)
 {
     return strcaseCMP((*app1)->name, (*app2)->name) * sel_direction;
 }
 
 static int
-agorder_count (register ADDGROUP **app1, register ADDGROUP **app2)
+agorder_count (ADDGROUP **app1, ADDGROUP **app2)
 {
     long eq = (*app1)->toread - (*app2)->toread;
     if (eq)
@@ -412,8 +406,8 @@ agorder_count (register ADDGROUP **app1, register ADDGROUP **app2)
 void
 sort_addgroups (void)
 {
-    register ADDGROUP* ap;
-    register int i;
+    ADDGROUP* ap;
+    int i;
     ADDGROUP** lp;
     ADDGROUP** ag_list;
     int (*sort_procedure)();

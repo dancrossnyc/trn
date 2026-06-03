@@ -4,7 +4,7 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static void follow_it_up _((void));
+static void follow_it_up (void);
 #if 0
-static bool cut_line _((char*));
+static bool cut_line (char*);
 #endif

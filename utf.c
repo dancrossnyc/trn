@@ -128,18 +128,16 @@ find_charset (const char *s)
 }
 
 charset_desc_t *
-find_charset_desc (int id)
+find_charset_desc(int id)
 {
-    const char *it = NULL;
-    int i;
-    for (i = 0; ; i += 1) {
+    for (int i = 0; ; i++) {
 	charset_desc_t *node = &charset_descs[i];
-    if (node->name == NULL) break;
-	if (id == node->id)
-	    it = node;
-    if (it != NULL) break;
+	if (node == NULL || node->name == NULL)
+	    return NULL;
+	if (node->id == id)
+	    return node;
     }
-    return it;
+    return NULL;
 }
 
 int

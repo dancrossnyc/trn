@@ -118,7 +118,7 @@ current_charsubst (void)
     const char* ocs = output_charset_name();
     int maxlen = (sizeof show - 5)/2;
     if (strcmp(ics, ocs) == 0)
-	sprintf(show, "[%.*s]", maxlen, ics, maxlen, ocs);
+	sprintf(show, "[%.*s]", maxlen, ics);
     else
 	sprintf(show, "[%.*s->%.*s]", maxlen, ics, maxlen, ocs);
 #else /*!USE_UTF_HACK */

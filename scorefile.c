@@ -770,9 +770,10 @@ sf_do_file (char *fname)
 }
 
 int
-score_match(str,ind)
-char* str;		/* string to match on */
-int ind;		/* index into sf_entries */
+score_match(
+    char *str,		/* string to match on */
+    int ind		/* index into sf_entries */
+)
 {
     char* s1;
     char* s2;
@@ -797,8 +798,7 @@ int ind;		/* index into sf_entries */
 }
 
 int
-sf_score(a)
-ART_NUM a;
+sf_score(ART_NUM a)
 {
     int sum,i,j;
     int h;		/* header type */
@@ -880,8 +880,7 @@ ART_NUM a;
 
 /* returns changed score line or NULL if no changes */
 char*
-sf_missing_score(line)
-char* line;
+sf_missing_score(char *line)
 {
     static char lbuf[LBUFLEN];
     int i;
@@ -910,8 +909,7 @@ Type a score now or delete the colon to abort this entry:\n") FLUSH;
 /* Interprets the '\"' command for creating new score entries online */
 /* consider using some external buffer rather than the 2 internal ones */
 void
-sf_append(line)
-char* line;
+sf_append(char* line)
 {
     char* scoreline;	/* full line to add to scorefile */
     char* scoretext;	/* text after the score# */
@@ -1038,9 +1036,7 @@ char* line;
 
 /* returns a lowercased copy of the header line type h in private buffer */
 char*
-sf_get_line(a,h)
-ART_NUM a;
-int h;
+sf_get_line(ART_NUM a,int h)
 {
     static char sf_getline[LBUFLEN];
     char* s;
@@ -1078,8 +1074,7 @@ int h;
 
 /* given an index into sf_entries, print information about that index */
 void
-sf_print_match(indx)
-int indx;
+sf_print_match(int indx)
 {
     int i,j,k;
     int level,tmplevel;		/* level is initialized iff used */
@@ -1131,8 +1126,7 @@ int indx;
 }
 
 void
-sf_exclude_file(fname)
-char* fname;
+sf_exclude_file(char* fname)
 {
     int start,end;
     int newnum;
@@ -1185,8 +1179,9 @@ char* fname;
 }
 
 void
-sf_edit_file(filespec)
-char* filespec;		/* file abbrev. or name */
+sf_edit_file(
+    char* filespec /* file abbrev. or name */
+)
 {
     char filebuf[LBUFLEN];	/* clean up buffers */
     char filechar;		/* which file to do? */
@@ -1236,8 +1231,7 @@ char* filespec;		/* file abbrev. or name */
 /* if file number is negative, the file does not exist or cannot be opened */
 #ifdef SCOREFILE_CACHE
 static int
-sf_open_file(name)
-char* name;
+sf_open_file(char* name)
 {
     FILE* fp;
     char* temp_name;
@@ -1305,7 +1299,7 @@ char* name;
 
 #ifdef SCOREFILE_CACHE
 static void
-sf_file_clear()
+sf_file_clear(void)
 {
     int i;
 
@@ -1327,8 +1321,7 @@ sf_file_clear()
 
 #ifdef SCOREFILE_CACHE
 static char*
-sf_file_getline(fnum)
-int fnum;
+sf_file_getline(int fnum)
 {
     if (fnum < 0 || fnum >= sf_num_files)
 	return NULL;

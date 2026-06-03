@@ -28,7 +28,7 @@ void
 setngtodo (char *pat)
 {
     char* s;
-    register int i = maxngtodo + save_maxngtodo;
+    int i = maxngtodo + save_maxngtodo;
 
     if (!*pat)
 	return;
@@ -52,7 +52,7 @@ setngtodo (char *pat)
 bool
 inlist (char *ngnam)
 {
-    register int i;
+    int i;
 
     if (maxngtodo == 0)
 	return TRUE;

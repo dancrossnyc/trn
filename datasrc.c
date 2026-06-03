@@ -41,7 +41,6 @@ datasrc_init (void)
 
     datasrc_list = new_list(0,0,sizeof(DATASRC),20,LF_ZERO_MEM,NULL);
 
-#ifdef SUPPORT_NNTP
     nntp_auth_file = savestr(filexp(NNTP_AUTH_FILE));
 
     machine = getenv("NNTPSERVER");
@@ -55,7 +54,6 @@ datasrc_init (void)
 	vals[DI_FORCE_AUTH] = getenv("NNTP_FORCE_AUTH");
 	new_datasrc("default",vals);
     }
-#endif
 
     trnaccess_mem = read_datasrcs(TRNACCESS);
     s = read_datasrcs(DEFACCESS);
@@ -64,7 +62,6 @@ datasrc_init (void)
     else if (s)
 	free(s);
 
-#ifdef SUPPORT_NNTP
     if (!machine) {
 	machine = filexp(SERVER_NAME);
 	if (FILE_REF(machine))
@@ -73,9 +70,6 @@ datasrc_init (void)
 	    machine = NULL;
 	    actname = ACTIVE;
 	}
-#else
-	actname = ACTIVE;
-#endif
 	prep_ini_words(datasrc_ini);	/* re-zero the values */
 
 	vals[DI_NNTP_SERVER] = machine;
@@ -86,7 +80,6 @@ datasrc_init (void)
 	vals[DI_OVERVIEW_FMT] = OVERVIEW_FMT;
 	vals[DI_ACTIVE_TIMES] = ACTIVE_TIMES;
 	vals[DI_GROUP_DESC] = GROUPDESC;
-#ifdef SUPPORT_NNTP
 	if (machine) {
 	    vals[DI_AUTH_USER] = read_auth_file(nntp_auth_file,
 						&vals[DI_AUTH_PASS]);
@@ -95,11 +88,8 @@ datasrc_init (void)
 #endif
 	    vals[DI_FORCE_AUTH] = getenv("NNTP_FORCE_AUTH");
 	}
-#endif
 	new_datasrc("default",vals);
-#ifdef SUPPORT_NNTP
     }
-#endif
     unprep_ini_words(datasrc_ini);
 }
 
@@ -155,12 +145,7 @@ new_datasrc (char *name, char **vals)
     char* v;
 
     if (vals[DI_NNTP_SERVER]) {
-#ifdef SUPPORT_NNTP
 	dp->flags |= DF_REMOTE;
-#else
-	datasrc_cnt--;
-	return NULL;
-#endif
     }
     else if (!vals[DI_ACTIVE_FILE])
 	return NULL; /*$$*/
@@ -169,7 +154,6 @@ new_datasrc (char *name, char **vals)
     if (strEQ(name,"default"))
 	dp->flags |= DF_DEFAULT;
 
-#ifdef SUPPORT_NNTP
     if ((v = vals[DI_NNTP_SERVER]) != NULL) {
 	char* cp;
 	dp->newsid = savestr(v);
@@ -184,7 +168,6 @@ new_datasrc (char *name, char **vals)
 	    dp->act_sf.refetch_secs = defRefetchSecs;
     }
     else
-#endif /* SUPPORT_NNTP */
 	dp->newsid = savestr(filexp(vals[DI_ACTIVE_FILE]));
 
     if (!(dp->spool_dir = file_or_none(vals[DI_SPOOL_DIR])))
@@ -195,7 +178,6 @@ new_datasrc (char *name, char **vals)
     dp->thread_dir = dir_or_none(dp,vals[DI_THREAD_DIR],DF_TRY_THREAD);
     dp->grpdesc = dir_or_none(dp,vals[DI_GROUP_DESC],0);
     dp->extra_name = dir_or_none(dp,vals[DI_ACTIVE_TIMES],DF_ADD_OK);
-#ifdef SUPPORT_NNTP
     if (dp->flags & DF_REMOTE) {
 	/* FYI, we know extra_name to be NULL in this case. */
 	if (vals[DI_ACTIVE_FILE]) {
@@ -240,7 +222,6 @@ new_datasrc (char *name, char **vals)
     if ((v = vals[DI_XREFS]) != NULL && (*v == 'n' || *v == 'N'))
 	dp->flags |= DF_NOXREFS;
 
-#endif /* SUPPORT_NNTP */
 
     return dp;
 }
@@ -250,10 +231,8 @@ dir_or_none (DATASRC *dp, char *dir, int flag)
 {
     if (!dir || !*dir || strEQ(dir, "remote")) {
 	dp->flags |= flag;
-#ifdef SUPPORT_NNTP
 	if (dp->flags & DF_REMOTE)
 	    return NULL;
-#endif
 	if (flag == DF_ADD_OK) {
 	    char* cp = safemalloc(strlen(dp->newsid)+6+1);
 	    sprintf(cp,"%s.times",dp->newsid);
@@ -301,7 +280,6 @@ open_datasrc (DATASRC *dp)
     set_datasrc(dp);
     if (dp->flags & DF_OPEN)
 	return TRUE;
-#ifdef SUPPORT_NNTP
     if (dp->flags & DF_REMOTE) {
 	if (nntp_connect(dp->newsid,1) <= 0) {
 	    dp->flags |= DF_UNAVAILABLE;
@@ -351,7 +329,6 @@ open_datasrc (DATASRC *dp)
 	    success = actfile_hash(dp);
     }
     else
-#endif
 	success = actfile_hash(dp);
     if (success) {
 	dp->flags |= DF_OPEN;
@@ -362,29 +339,24 @@ open_datasrc (DATASRC *dp)
     }
     else
 	dp->flags |= DF_UNAVAILABLE;
-#ifdef SUPPORT_NNTP
     if (dp->flags & DF_REMOTE)
 	nntp_allow_timeout = TRUE;
-#endif
     return success;
 }
 
 void
 set_datasrc (DATASRC *dp)
 {
-#ifdef SUPPORT_NNTP
     if (datasrc)
 	datasrc->nntplink = nntplink;
     if (dp)
 	nntplink = dp->nntplink;
-#endif
     datasrc = dp;
 }
 
 void
 check_datasrcs (void)
 {
-#ifdef SUPPORT_NNTP
     DATASRC* dp;
     time_t now = time((time_t*)NULL);
     time_t limit;
@@ -404,13 +376,11 @@ check_datasrcs (void)
 	    }
 	}
     }
-#endif
 }
 
 void
 close_datasrc (DATASRC *dp)
 {
-#ifdef SUPPORT_NNTP
     if (dp->flags & DF_REMOTE) {
 	if (dp->flags & DF_TMPACTFILE)
 	    UNLINK(dp->extra_name);
@@ -423,12 +393,10 @@ close_datasrc (DATASRC *dp)
 		srcfile_end_append(&dp->desc_sf, dp->grpdesc);
 	}
     }
-#endif
 
     if (!(dp->flags & DF_OPEN))
 	return;
 
-#ifdef SUPPORT_NNTP
     if (dp->flags & DF_REMOTE) {
 	DATASRC* save_datasrc = datasrc;
 	set_datasrc(dp);
@@ -436,7 +404,6 @@ close_datasrc (DATASRC *dp)
 	dp->nntplink = nntplink;
 	set_datasrc(save_datasrc);
     }
-#endif
     srcfile_close(&dp->act_sf);
     srcfile_close(&dp->desc_sf);
     dp->flags &= ~DF_OPEN;
@@ -448,7 +415,6 @@ bool
 actfile_hash (DATASRC *dp)
 {
     int ret;
-#ifdef SUPPORT_NNTP
     if (dp->flags & DF_REMOTE) {
 	DATASRC* save_datasrc = datasrc;
 	set_datasrc(dp);
@@ -459,13 +425,12 @@ actfile_hash (DATASRC *dp)
 	set_datasrc(save_datasrc);
     }
     else
-#endif
 	ret = srcfile_open(&dp->act_sf, dp->newsid, (char*)NULL, (char*)NULL);
     return ret;
 }
 
 bool
-find_actgrp (DATASRC *dp, register char *outbuf, register char *nam, register int len, ART_NUM high)
+find_actgrp (DATASRC *dp, char *outbuf, char *nam, int len, ART_NUM high)
 {
     HASHDATUM data;
     ACT_POS act_pos;
@@ -488,7 +453,6 @@ find_actgrp (DATASRC *dp, register char *outbuf, register char *nam, register in
 	lbp = NULL;
 	lbp_len = 0;
     }
-#ifdef SUPPORT_NNTP
     if ((dp->flags & DF_USELISTACT)
      && (DATASRC_NNTP_FLAGS(dp) & NNTP_NEW_CMD_OK)) {
 	DATASRC* save_datasrc = datasrc;
@@ -529,10 +493,8 @@ find_actgrp (DATASRC *dp, register char *outbuf, register char *nam, register in
 # endif
 	high = (ART_NUM)atol(outbuf+len+1);
     }
-#endif
 
     if (lbp_len) {
-#ifdef SUPPORT_NNTP
 	if ((dp->flags & DF_REMOTE) && dp->act_sf.refetch_secs) {
 	    int num;
 	    char* cp;
@@ -548,7 +510,6 @@ find_actgrp (DATASRC *dp, register char *outbuf, register char *nam, register in
 	    }
 	    goto use_cache;
 	}
-#endif
 
 	/* hopefully this forces a reread */
 	fseek(fp,2000000000L,1);
@@ -582,7 +543,6 @@ find_grpdesc (DATASRC *dp, char *groupname)
 	return nullstr;
 
     if (!dp->desc_sf.hp) {
-#ifdef SUPPORT_NNTP
 	if ((dp->flags & DF_REMOTE) && dp->desc_sf.refetch_secs) {
 	    /*DATASRC* save_datasrc = datasrc;*/
 	    set_datasrc(dp);
@@ -601,24 +561,19 @@ find_grpdesc (DATASRC *dp, char *groupname)
 	    /*set_datasrc(save_datasrc);*/
 	}
 	else
-#endif
 	    ret = srcfile_open(&dp->desc_sf, dp->grpdesc,
 			       (char*)NULL, (char*)NULL);
 	if (!ret) {
-#ifdef SUPPORT_NNTP
 	    if (dp->flags & DF_TMPGRPDESC) {
 		dp->flags &= ~DF_TMPGRPDESC;
 		UNLINK(dp->grpdesc);
 	    }
-#endif
 	    free(dp->grpdesc);
 	    dp->grpdesc = NULL;
 	    return nullstr;
 	}
-#ifdef SUPPORT_NNTP
 	if (ret == 2 || !dp->desc_sf.refetch_secs)
 	    dp->flags |= DF_NOXGTITLE;
-#endif
     }
 
     grouplen = strlen(groupname);
@@ -629,7 +584,6 @@ find_grpdesc (DATASRC *dp, char *groupname)
 	return node->data + data.dat_len + grouplen + 1;
     }
 
-#ifdef SUPPORT_NNTP
   try_xgtitle:
 
     if ((dp->flags & (DF_REMOTE|DF_NOXGTITLE)) == DF_REMOTE) {
@@ -655,7 +609,6 @@ find_grpdesc (DATASRC *dp, char *groupname)
 	    dp->grpdesc = NULL;
 	}
     }
-#endif
     return nullstr;
 }
 
@@ -673,7 +626,7 @@ adv_then_find_next_nl_and_dectrl (char *s)
     for (s++; *s && *s != '\n';) {
 	int w = byte_length_at(s);
 	if (AT_GREY_SPACE(s)) {
-	    register int i;
+	    int i;
 	    for (i = 0; i < w; i += 1) {
 		s[i] = ' ';
 	    }
@@ -686,14 +639,13 @@ adv_then_find_next_nl_and_dectrl (char *s)
 int
 srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
 {
-    register unsigned offset;
-    register char* s;
+    unsigned offset;
+    char* s;
     HASHDATUM data;
     long node_low;
     int keylen, linelen;
     FILE* fp;
     char* lbp;
-#ifdef SUPPORT_NNTP
     time_t now = time((time_t*)NULL);
     bool use_buffered_nntp_gets = 0;
 
@@ -739,7 +691,6 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
 	    sfp->refetch_secs += 365L*24*60*60;
     }
     else
-#endif
     {
 	fp = fopen(filename, "r");
 	spin_todo = 0;
@@ -759,20 +710,17 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
     sfp->hp = hashcreate(3001, srcfile_cmp);
     sfp->fp = fp;
 
-#ifdef SUPPORT_NNTP
     if (!filename) {
 	(void) listnum2listitem(sfp->lp, 0);
 	sfp->lp->high = -1;
 	setspin(SPIN_OFF);
 	return 1;
     }
-#endif
 
     lbp = listnum2listitem(sfp->lp, 0);
     data.dat_ptr = (char*)sfp->lp->first;
 
     for (offset = 0, node_low = 0; ; offset += linelen, lbp += linelen) {
-#ifdef SUPPORT_NNTP
 	if (server) {
 	    if (use_buffered_nntp_gets)
 		use_buffered_nntp_gets = 0;
@@ -789,7 +737,6 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
 	    fputs(buf, fp);
 	    spin(200 * netspeed);
 	}
-#endif
 	ElseIf (!fgets(buf, sizeof buf, fp))
 	    break;
 
@@ -830,7 +777,6 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
     sfp->lp->high = node_low + offset - 1;
     setspin(SPIN_OFF);
 
-#ifdef SUPPORT_NNTP
     if (server) {
 	fflush(fp);
 	if (ferror(fp)) {
@@ -841,13 +787,11 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
 	}
 	newline();
     }
-#endif
     fseek(fp,0L,0);
 
     return server? 2 : 1;
 }
 
-#ifdef SUPPORT_NNTP
 char *
 srcfile_append (SRCFILE *sfp, char *bp, int keylen)
 {
@@ -894,9 +838,7 @@ srcfile_append (SRCFILE *sfp, char *bp, int keylen)
 
     return lbp;
 }
-#endif /* SUPPORT_NNTP */
 
-#ifdef SUPPORT_NNTP
 void
 srcfile_end_append (SRCFILE *sfp, char *filename)
 {
@@ -911,7 +853,6 @@ srcfile_end_append (SRCFILE *sfp, char *filename)
 	}
     }
 }
-#endif /* SUPPORT_NNTP */
 
 void
 srcfile_close (SRCFILE *sfp)

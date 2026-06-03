@@ -85,11 +85,11 @@ extract_name (char *name)
 char *
 compress_name (char *name, int max)
 {
-    register char* s;
-    register char* last;
-    register char* mid;
-    register char* d;
-    register int len, namelen, midlen;
+    char* s;
+    char* last;
+    char* mid;
+    char* d;
+    int len, namelen, midlen;
 #ifdef USE_UTF_HACK
     int vis_len, vis_namelen, vis_midlen;
 #else
@@ -373,7 +373,7 @@ try_again:
 #endif
     return name;
 }
-#undef vis_len;
+#undef vis_len
 #undef vis_namelen
 #undef vis_midlen
 
@@ -516,13 +516,13 @@ compress_date (ARTICLE *ap, int size)
 ** will be set to the start of the interesting characters.
 */
 bool
-subject_has_Re (register char *str, char **strp)
+subject_has_Re (char *str, char **strp)
 {
     bool has_Re = 0;
 
     while (*str && AT_GREY_SPACE(str)) str++;
     while (EQ(str[0], 'r') && EQ(str[1], 'e')) {	/* check for Re: */
-      register char* cp = str + 2;
+      char* cp = str + 2;
 	if (*cp == '^') {				/* allow Re^2: */
 	    while (*++cp <= '9' && *cp >= '0')
 		;
@@ -544,8 +544,8 @@ subject_has_Re (register char *str, char **strp)
 char *
 compress_subj (ARTICLE *ap, int max)
 {
-    register char* cp;
-    register int len;
+    char* cp;
+    int len;
     ARTICLE* first;
 
     if (!ap)

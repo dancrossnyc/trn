@@ -4,5 +4,5 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static char* skipinterp _((char*,char*));
-static void abort_interp _((void));
+static char* skipinterp (char*,char*);
+static void abort_interp (void);

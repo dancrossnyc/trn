@@ -4,9 +4,9 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static void ttk_article_delete _((ClientData));
-static void ttk_treeprep_helper _((ARTICLE*));
-static void ttk_treechange_helper _((ARTICLE*));
-static int ttk_article_objectcmd _((ClientData,Tcl_Interp*,int,char**));
-static int ttk_article _((ClientData,Tcl_Interp*,int,char**));
-static int ttk_trn _((ClientData,Tcl_Interp*,int,char**));
+static void ttk_article_delete (ClientData);
+static void ttk_treeprep_helper (ARTICLE*);
+static void ttk_treechange_helper (ARTICLE*);
+static int ttk_article_objectcmd (ClientData,Tcl_Interp*,int,char**);
+static int ttk_article (ClientData,Tcl_Interp*,int,char**);
+static int ttk_trn (ClientData,Tcl_Interp*,int,char**);

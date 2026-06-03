@@ -19,9 +19,7 @@ $changes = 0;
 # We're looking for the following limited format:
 #
 # void
-# function(arg1, arg2)
-# char* arg1;
-# int (*arg2) _((void));
+# function(char* arg1, int (*arg2a)(void))
 # {
 #
 # Once we find the '{' on a line by itself, we scan backward, parsing
@@ -147,8 +145,12 @@ foreach $file (<*.c>) {
 			print $out "#if$newcond\n";
 		    }
 		}
+		# Some special processing for non-returning "finalize"
+		if ($func eq "finalize") {
+			print $out "[[noreturn]] ";
+		}
 		# At last, output the actual prototype.
-		print $out "$ret $func _((";
+		print $out "$ret $func (";
 		if ($_ = pop @args) {
 		    print $out $_;
 		    while ($_ = pop @args) {
@@ -157,16 +159,7 @@ foreach $file (<*.c>) {
 		} else {
 		    print $out "void";
 		}
-		# Some special processing for non-returning "finalize"
-		if ($func eq "finalize") {
-		    print $out "))
-#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR >= 5)
-  __attribute__((noreturn))
-#endif
-  ;\n";
-		} else {
-		    print $out "));\n";
-		}
+		print $out ");\n";
 		# Remember the conditional state of the current .h|.ih file.
 		if ($ret =~ /^static\s/) {
 		    $cond_I = $newcond;

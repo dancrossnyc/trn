@@ -51,8 +51,8 @@ art_search (
 )
 {
     char* pattern;			/* unparsed pattern */
-    register char cmdchr = *patbuf;	/* what kind of search? */
-    register char* s;
+    char cmdchr = *patbuf;	/* what kind of search? */
+    char* s;
     bool backward = cmdchr == '?' || cmdchr == Ctl('p');
 					/* direction of search */
     COMPEX* compex;			/* which compiled expression */
@@ -158,7 +158,7 @@ art_search (
 	    srchahead = -1;
     }
     else {
-	register char* h;
+	char* h;
 	int saltmode = patbuf[2] == 'g'? 2 : 1;
 	char *finding_str = patbuf[1] == 'f'? "author" : "subject";
 
@@ -232,7 +232,7 @@ art_search (
 	    srchahead = -1;
 
 	{			/* compensate for notesfiles */
-	    register int i;
+	    int i;
 	    for (i = 24; *h && i--; h++)
 		if (*h == '\\')
 		    h++;

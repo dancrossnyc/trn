@@ -4,4 +4,4 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static char* output_change _((char*,long,char*,char*,char*));
+static char* output_change (char*,long,char*,char*,char*);

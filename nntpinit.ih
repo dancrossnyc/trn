@@ -5,5 +5,5 @@
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
 #ifdef DECNET
-static int get_dnet_socket _((char*));
+static int get_dnet_socket (char*);
 #endif

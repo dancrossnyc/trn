@@ -274,9 +274,9 @@ int
 tree_puts (char *orig_line, ART_LINE header_line, int is_subject)
 {
     char* tmpbuf;
-    register char* line;
-    register char* cp;
-    register char* end;
+    char* line;
+    char* cp;
+    char* end;
     int pad_cnt, wrap_at;
     ART_LINE start_line = header_line;
     int i, len;
@@ -607,7 +607,7 @@ display_tree (ARTICLE *article, char *cp)
 **	' ', '1'-'9', 'A'-'Z', 'a'-'z', '+'
 */
 char
-thread_letter (register ARTICLE *ap)
+thread_letter (ARTICLE *ap)
 {
     int subj = ap->subj->misc;
 

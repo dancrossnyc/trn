@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#ifdef SUPPORT_NNTP
 
 struct nntplink {
     FILE*	rd_fp;
@@ -59,7 +58,6 @@ EXT char ser_line[NNTP_STRLEN];
 
 EXT char last_command[NNTP_STRLEN];
 
-#endif /* SUPPORT_NNTP */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

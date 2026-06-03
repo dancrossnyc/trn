@@ -14,77 +14,26 @@
 #include "nntpinit.h"
 #include "nntpinit.ih"
 
-#ifdef SUPPORT_NNTP
 
-#ifdef WINSOCK
-#include <winsock.h>
-WSADATA wsaData;
-#else
 #include <sys/socket.h>
 #include <netinet/in.h>
-#ifdef NONETDB
-# define IPPORT_NNTP	((unsigned short) 119)
-#else
-# include <netdb.h>
-#endif
-#endif
+#include <arpa/inet.h>
+#include <netdb.h>
 
-#ifdef EXCELAN
-int connect _((int, struct sockaddr*));
-unsigned short htons _((unsigned short));
-unsigned long rhost _((char**));
-int rresvport p((int));
-int socket _((int, struct sockproto *, struct sockaddr_in *, int));
-#endif /* EXCELAN */
 
-#ifdef DECNET
-#include <netdnet/dn.h>
-#include <netdnet/dnetdb.h>
-#endif /* DECNET */
-
-#ifndef WINSOCK
-unsigned long inet_addr _((char*));
-#ifndef NONETDB
-struct servent* getservbyname();
-struct hostent* gethostbyname();
-#endif
-#endif
 
 int
 init_nntp (void)
 {
-#ifdef WINSOCK
-    if (WSAStartup(0x0101,&wsaData) == 0) {
-	if (wsaData.wVersion == 0x0101)
-	    return 1;
-	WSACleanup();
-    }
-    fprintf(stderr,"Unable to initialize WinSock DLL.\n");
-    return -1;
-#else
     return 1;
-#endif
 }
 
 int
 server_init (char *machine)
 {
     int sockt_rd, sockt_wr;
-#ifdef DECNET
-    char* cp;
-#endif
 
-#ifdef DECNET
-    cp = index(machine, ':');
-
-    if (cp && cp[1] == ':') {
-	*cp = '\0';
-	sockt_rd = get_dnet_socket(machine);
-    } else
-	sockt_rd = get_tcp_socket(machine, nntplink.port_number, "nntp");
-#else /* !DECNET */
     sockt_rd = get_tcp_socket(machine, nntplink.port_number, "nntp");
-#endif
 
     if (sockt_rd < 0)
 	return -1;
@@ -124,9 +73,6 @@ server_init (char *machine)
 void
 cleanup_nntp (void)
 {
-#ifdef WINSOCK
-    WSACleanup();
-#endif
 }
 
 int
@@ -184,14 +130,10 @@ get_tcp_socket (char *machine, int port, char *service)
     int socksize = 0;
     int socksizelen = sizeof socksize;
 #endif
-#ifdef NONETDB
-    bzero((char*)&sin, sizeof sin);
-    sin.sin_family = AF_INET;
-#else
     struct hostent* hp;
 #ifdef h_addr
     int x = 0;
-    register char** cp;
+    char** cp;
     static char* alist[1];
 #endif /* h_addr */
     static struct hostent def;
@@ -237,7 +179,6 @@ get_tcp_socket (char *machine, int port, char *service)
     }
 
     sin.sin_family = hp->h_addrtype;
-#endif /* !NONETDB */
 
     /* The following is kinda gross.  The name server under 4.3
     ** returns a list of addresses, each of which should be tried
@@ -249,7 +190,6 @@ get_tcp_socket (char *machine, int port, char *service)
 #ifdef h_addr
     /* get a socket and initiate connection -- use multiple addresses */
     for (cp = hp->h_addr_list; cp && *cp; cp++) {
-	extern char* inet_ntoa _((const struct in_addr));
 	s = socket(hp->h_addrtype, SOCK_STREAM, 0);
 	if (s < 0) {
 	    perror("socket");
@@ -271,30 +211,6 @@ get_tcp_socket (char *machine, int port, char *service)
 	return -1;
     }
 #else /* no name server */
-#ifdef EXCELAN
-    s = socket(SOCK_STREAM, (struct sockproto*)NULL, &sin, SO_KEEPALIVE);
-    if (s < 0) {
-	/* Get the socket */
-	perror("socket");
-	return -1;
-    }
-    bzero((char*)&sin, sizeof sin);
-    sin.sin_family = AF_INET;
-    sin.sin_port = htons(port? port : *service == 'n'? IPPORT_NNTP : 80);
-
-    /* set up addr for the connect */
-    if ((sin.sin_addr.s_addr = rhost(&machine)) == -1) {
-	fprintf(stderr, "%s: Unknown host.\n", machine);
-	return -1;
-    }
-
-    /* And then connect */
-    if (connect(s, (struct sockaddr*)&sin) < 0) {
-	perror("connect");
-	(void) close(s);
-	return -1;
-    }
-#else /* !EXCELAN */
     if ((s = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
 	perror("socket");
 	return -1;
@@ -309,7 +225,6 @@ get_tcp_socket (char *machine, int port, char *service)
 	return -1;
     }
 
-#endif /* !EXCELAN */
 #endif /* !h_addr */
 #endif /* !INET6 */
 #ifdef __hpux	/* recommended by raj@cup.hp.com */
@@ -330,129 +245,8 @@ get_tcp_socket (char *machine, int port, char *service)
     return s;
 }
 
-#ifdef DECNET
-static int
-get_dnet_socket (char *machine)
-{
-    int s, area, node;
-    struct sockaddr_dn sdn;
-    struct nodeent *getnodebyname(), *np;
-
-    bzero((char*)&sdn, sizeof sdn);
-
-    switch (s = sscanf(machine, "%d%*[.]%d", &area, &node)) {
-    case 1:
-	node = area;
-	area = 0;
-    case 2:
-	node += area*1024;
-	sdn.sdn_add.a_len = 2;
-	sdn.sdn_family = AF_DECnet;
-	sdn.sdn_add.a_addr[0] = node % 256;
-	sdn.sdn_add.a_addr[1] = node / 256;
-	break;
-    default:
-	if ((np = getnodebyname(machine)) == NULL) {
-	    fprintf(stderr, "%s: Unknown host.\n", machine);
-	    return -1;
-	}
-	bcopy(np->n_addr, (char*)sdn.sdn_add.a_addr, np->n_length);
-	sdn.sdn_add.a_len = np->n_length;
-	sdn.sdn_family = np->n_addrtype;
-	break;
-    }
-    sdn.sdn_objnum = 0;
-    sdn.sdn_flags = 0;
-    sdn.sdn_objnamel = strlen("NNTP");
-    bcopy("NNTP", &sdn.sdn_objname[0], sdn.sdn_objnamel);
-
-    if ((s = socket(AF_DECnet, SOCK_STREAM, 0)) < 0) {
-	nerror("socket");
-	return -1;
-    }
-
-    /* And then connect */
-    if (connect(s, (struct sockaddr*)&sdn, sizeof sdn) < 0) {
-	nerror("connect");
-	close(s);
-	return -1;
-    }
-    return s;
-}
-#endif /* DECNET */
 
 /*
  * inet_addr for EXCELAN (which does not have it!)
  */
-#ifdef NONETDB
-unsigned long
-inet_addr (register char *cp)
-{
-    unsigned long val, base, n;
-    register char c;
-    unsigned long octet[4], *octetptr = octet;
-#ifndef htonl
-    extern  unsigned long   htonl();
-#endif  /* htonl */
-again:
-    /* Collect number up to ``.''.
-     * Values are specified as for C:
-     * 0x=hex, 0=octal, other=decimal. */
-    val = 0; base = 10;
-    if (*cp == '0')
-	base = 8, cp++;
-    if (*cp == 'x' || *cp == 'X')
-	base = 16, cp++;
-    while (c = *cp) {
-	if (isdigit(c)) {
-	    val = (val * base) + (c - '0');
-	    cp++;
-	    continue;
-	}
-	if (base == 16 && isxdigit(c)) {
-	    val = (val << 4) + (c + 10 - (islower(c) ? 'a' : 'A'));
-	    cp++;
-	    continue;
-	}
-	break;
-    }
-    if (*cp == '.') {
-	/* Internet format:
-	 *      a.b.c.d
-	 *      a.b.c   (with c treated as 16-bits)
-	 *      a.b     (with b treated as 24 bits) */
-	if (octetptr >= octet + 4)
-	    return -1;
-	*octetptr++ = val, cp++;
-	goto again;
-    }
-    /* Check for trailing characters. */
-    if (*cp && !isspace(*cp))
-	return -1;
-    *octetptr++ = val;
-    /* Concoct the address according to the number of octet specified. */
-    n = octetptr - octet;
-    switch (n) {
-    case 1:    			/* a -- 32 bits */
-	val = octet[0];
-	break;
-    case 2:			/* a.b -- 8.24 bits */
-	val = (octet[0] << 24) | (octet[1] & 0xffffff);
-	break;
-    case 3:			/* a.b.c -- 8.8.16 bits */
-	val = (octet[0] << 24) | ((octet[1] & 0xff) << 16) |
-	    (octet[2] & 0xffff);
-	break;
-    case 4:			/* a.b.c.d -- 8.8.8.8 bits */
-	val = (octet[0] << 24) | ((octet[1] & 0xff) << 16) |
-	    ((octet[2] & 0xff) << 8) | (octet[3] & 0xff);
-	break;
-    default:
-	return -1;
-    }
-    val = htonl(val);
-    return val;
-}
-#endif /* NONETDB */
 
-#endif /* SUPPORT_NNTP */

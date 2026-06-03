@@ -19,13 +19,7 @@ list_init (void)
 /* Create the header for a dynamic list of items.
 */
 LIST*
-new_list(low, high, item_size, items_per_node, flags, init_node)
-long low;
-long high;
-int item_size;
-int items_per_node;
-int flags;
-void (*init_node) _((LIST*,LISTNODE*));
+new_list(long low, long high, int item_size, int items_per_node, int flags, void (*init_node)(LIST*,LISTNODE*))
 {
     LIST* list = (LIST*)safemalloc(sizeof (LIST));
     list->first = list->recent = NULL;
@@ -122,10 +116,7 @@ listitem2listnum (LIST *list, char *ptr)
 /* Execute the indicated callback function on every item in the list.
 */
 bool
-walk_list(list, callback, arg)
-LIST* list;
-bool (*callback) _((char*,int));
-int arg;
+walk_list(LIST* list, bool (*callback)(char*,int), int arg)
 {
     LISTNODE* node;
     char* cp;
@@ -148,7 +139,7 @@ int arg;
 long
 existing_listnum (LIST *list, long num, int direction)
 {
-    register LISTNODE* node = list->recent;
+    LISTNODE* node = list->recent;
     LISTNODE* prevnode = NULL;
 
     if (node && num < node->low)
@@ -188,7 +179,7 @@ existing_listnum (LIST *list, long num, int direction)
 char *
 next_listitem (LIST *list, char *ptr)
 {
-    register LISTNODE* node = list->recent;
+    LISTNODE* node = list->recent;
 
     if (ptr == node->data_high) {
 	node = node->next;
@@ -212,7 +203,7 @@ next_listitem (LIST *list, char *ptr)
 char *
 prev_listitem (LIST *list, char *ptr)
 {
-    register LISTNODE* node = list->recent;
+    LISTNODE* node = list->recent;
 
     if (ptr == node->data) {
 	LISTNODE* prev = list->first;

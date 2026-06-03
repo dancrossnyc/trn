@@ -21,20 +21,9 @@
 /* NOTE: If running Winsock, NNTP must be enabled so that the Winsock
  *       initialization will be done.  (common.h will check for this)
  */
-#ifdef WINSOCK
-#include <winsock.h>
-WSADATA wsaData;
-#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#endif
-
-#ifndef WINSOCK
-unsigned long inet_addr _((char*));
-struct servent* getservbyname();
-struct hostent* gethostbyname();
-#endif
 
 static char url_buf[1030];
 /* XXX just a little bit larger than necessary... */

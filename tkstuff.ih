@@ -5,5 +5,5 @@
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
 #ifdef USE_TK
-static void ttk_waitidle_pending _((void));
+static void ttk_waitidle_pending (void);
 #endif

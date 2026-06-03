@@ -67,10 +67,8 @@ double current_time (void);
 time_t text2secs (char*,time_t);
 char* secs2text (time_t);
 char* temp_filename (void);
-#ifdef SUPPORT_NNTP
 char* get_auth_user (void);
 char* get_auth_pass (void);
-#endif
 #if defined(USE_GENAUTH) && defined(SUPPORT_NNTP)
 char* get_auth_command (void);
 #endif

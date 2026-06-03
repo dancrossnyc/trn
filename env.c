@@ -56,7 +56,6 @@ env_init (char *tcbuf, bool_int lax)
     if (!setphostname(tcbuf))
 	fully_successful = FALSE;
 
-#ifdef SUPPORT_NNTP
     {
 	char* cp = getval("NETSPEED","5");
 	if (*cp == 'f')
@@ -69,7 +68,6 @@ env_init (char *tcbuf, bool_int lax)
 		netspeed = 1;
 	}
     }
-#endif
 
     return fully_successful;
 }
@@ -256,7 +254,7 @@ char *
 export (char *nam, char *val)
 {
     int namlen = strlen(nam);
-    register int i=envix(nam,namlen);	/* where does it go? */
+    int i=envix(nam,namlen);	/* where does it go? */
 
     if (!environ[i]) {			/* does not exist yet */
 	if (firstexport) {		/* need we copy environment? */
@@ -309,7 +307,7 @@ re_export (char *export_val, char *new_val, int limit)
 static int
 envix (char *nam, int len)
 {
-    register int i;
+    int i;
 
     for (i = 0; environ[i]; i++) {
 	if (strnEQ(environ[i],nam,len) && environ[i][len] == '=')

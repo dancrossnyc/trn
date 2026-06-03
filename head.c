@@ -29,9 +29,7 @@
 #include "head.h"
 
 bool first_one;		/* is this the 1st occurance of this header line? */
-#ifdef SUPPORT_NNTP
 bool reading_nntp_header;
-#endif
 
 static short htypeix[26] =
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
@@ -39,7 +37,7 @@ static short htypeix[26] =
 void
 head_init (void)
 {
-    register int i;
+    int i;
 
     for (i = HEAD_FIRST+1; i < HEAD_LAST; i++)
 	htypeix[*htype[i].name - 'a'] = i;
@@ -57,7 +55,7 @@ head_init (void)
 void
 dumpheader (char *where)
 {
-    register int i;
+    int i;
 
     printf("header: %ld %s", (long)parsed_art, where);
 
@@ -70,11 +68,11 @@ dumpheader (char *where)
 #endif
 
 int
-set_line_type (char *bufptr, register char *colon)
+set_line_type (char *bufptr, char *colon)
 {
-    register char* t;
-    register char* f;
-    register int i, len;
+    char* t;
+    char* f;
+    int i, len;
 
     if (colon-bufptr > sizeof msg)
 	return SOME_LINE;
@@ -86,7 +84,7 @@ set_line_type (char *bufptr, register char *colon)
 	*t = isupper(*f) ? tolower(*f) : *f;
     }
     *t = '\0';
-    f = msg;				/* get msg into a register */
+    f = msg;				/* get msg into a */
     len = t - f;
 
     /* now scan the HEADTYPE table, backwards so we don't have to supply an
@@ -159,7 +157,7 @@ get_header_num (char *s)
 void
 start_header (ART_NUM artnum)
 {
-    register int i;
+    int i;
 
 #ifdef DEBUG
     if (debug & DEB_HEADER)
@@ -213,13 +211,11 @@ parseline (char *art_buf, int newhide, int oldhide)
     end_header_line();
     s = index(art_buf,':');
     if (s == NULL) {	/* is it the end of the header? */
-#ifdef SUPPORT_NNTP
 	    /* Did NNTP ship us a mal-formed header line? */
 	    if (reading_nntp_header && *art_buf && *art_buf != '\n') {
 		in_header = SOME_LINE;
 		return newhide;
 	    }
-#endif
 	    in_header = PAST_HEADER;
     }
     else {		/* it is a new header line */
@@ -245,7 +241,7 @@ parseline (char *art_buf, int newhide, int oldhide)
 void
 end_header (void)
 {
-    register ARTICLE* ap = parsed_artp;
+    ARTICLE* ap = parsed_artp;
 
     end_header_line();
     in_header = PAST_HEADER;	/* just to be sure */
@@ -253,13 +249,11 @@ end_header (void)
     if (!ap->subj)
 	set_subj_line(ap,"<NONE>",6);
 
-#ifdef SUPPORT_NNTP
     if (reading_nntp_header) {
 	reading_nntp_header = FALSE;
 	htype[PAST_HEADER].minpos = artpos + 1;	/* nntp_body will fix this */
     }
     else
-#endif
 	htype[PAST_HEADER].minpos = tellart();
 
     /* If there's no References: line, then the In-Reply-To: line may give us
@@ -291,8 +285,8 @@ end_header (void)
 bool
 parseheader (ART_NUM artnum)
 {
-    register char* bp;
-    register int len;
+    char* bp;
+    int len;
     bool had_nl = TRUE;
     int found_nl;
 
@@ -301,7 +295,6 @@ parseheader (ART_NUM artnum)
     if (artnum > lastart)
 	return FALSE;
     spin(20);
-#ifdef SUPPORT_NNTP
     if (datasrc->flags & DF_REMOTE) {
 	char *s = nntp_artname(artnum, FALSE);
 	if (s) {
@@ -315,7 +308,6 @@ parseheader (ART_NUM artnum)
 	else
 	    reading_nntp_header = TRUE;
     }
-#endif
     ElseIf (!artopen(artnum,(ART_POS)0))
 	return FALSE;
 
@@ -329,7 +321,6 @@ parseheader (ART_NUM artnum)
 	    headbuf = saferealloc(headbuf,headbuf_size);
 	    bp = headbuf + len;
 	}
-#ifdef SUPPORT_NNTP
 	if (reading_nntp_header) {
 	    found_nl = nntp_gets(bp,LBUFLEN);
 	    if (found_nl < 0)
@@ -347,7 +338,6 @@ parseheader (ART_NUM artnum)
 	    bp[len] = '\0';
 	}
 	else
-#endif
 	{
 	    if (readart(bp,LBUFLEN) == NULL)
 		break;
@@ -375,8 +365,8 @@ fetchlines (
 {
     char* s;
     char* t;
-    register ART_POS firstpos;
-    register ART_POS lastpos;
+    ART_POS firstpos;
+    ART_POS lastpos;
     int size;
 
     /* Only return a cached line if it isn't the current article */
@@ -416,8 +406,8 @@ mp_fetchlines (
 {
     char* s;
     char* t;
-    register ART_POS firstpos;
-    register ART_POS lastpos;
+    ART_POS firstpos;
+    ART_POS lastpos;
     int size;
 
     /* Only return a cached line if it isn't the current article */
@@ -458,15 +448,14 @@ prefetchlines (
 {
     char* s;
     char* t;
-    register ART_POS firstpos;
-    register ART_POS lastpos;
+    ART_POS firstpos;
+    ART_POS lastpos;
     int size;
 
-#ifdef SUPPORT_NNTP
     if ((datasrc->flags & DF_REMOTE) && parsed_art != artnum) {
 	ARTICLE* ap;
 	int size;
-	register ART_NUM num, priornum, lastnum;
+	ART_NUM num, priornum, lastnum;
 	bool cached;
  	bool hasxhdr = TRUE;
 
@@ -551,7 +540,6 @@ prefetchlines (
 	    s = saferealloc(s, (MEM_SIZE)strlen(s)+1);
 	return s;
     }
-#endif /* SUPPORT_NNTP */
 
     /* Only return a cached line if it isn't the current article */
     s = NULL;

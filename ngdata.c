@@ -59,7 +59,6 @@ set_ng (NGDATA *np)
 int
 access_ng (void)
 {
-#ifdef SUPPORT_NNTP
     ART_NUM old_first = ngptr->abs1st;
 
     if (datasrc->flags & DF_REMOTE) {
@@ -77,7 +76,6 @@ access_ng (void)
 	    checkexpired(ngptr,absfirst);
     }
     else
-#endif
     {
 	if (eaccess(ngdir,5)) {		/* directory read protected? */
 	    if (eaccess(ngdir,0)) {
@@ -131,9 +129,7 @@ void
 chdir_newsdir (void)
 {
     if (chdir(datasrc->spool_dir) || (
-#ifdef SUPPORT_NNTP
 			 !(datasrc->flags & DF_REMOTE) &&
-#endif
 					    chdir(ngdir))) {
 	printf(nocd,ngdir) FLUSH;
 	sig_catcher(0);
@@ -190,19 +186,19 @@ grow_ng (ART_NUM newlast)
 }
 
 static int
-ngorder_number (register NGDATA **npp1, register NGDATA **npp2)
+ngorder_number (NGDATA **npp1, NGDATA **npp2)
 {
     return (int)((*npp1)->num - (*npp2)->num) * sel_direction;
 }
 
 static int
-ngorder_groupname (register NGDATA **npp1, register NGDATA **npp2)
+ngorder_groupname (NGDATA **npp1, NGDATA **npp2)
 {
     return strcaseCMP((*npp1)->rcline, (*npp2)->rcline) * sel_direction;
 }
 
 static int
-ngorder_count (register NGDATA **npp1, register NGDATA **npp2)
+ngorder_count (NGDATA **npp1, NGDATA **npp2)
 {
     int eq;
     if ((eq = (int)((*npp1)->toread - (*npp2)->toread)) != 0)
@@ -215,8 +211,8 @@ ngorder_count (register NGDATA **npp1, register NGDATA **npp2)
 void
 sort_newsgroups (void)
 {
-    register NGDATA* np;
-    register int i;
+    NGDATA* np;
+    int i;
     NGDATA** lp;
     NGDATA** ng_list;
     int (*sort_procedure)();
@@ -259,7 +255,6 @@ sort_newsgroups (void)
 void
 ng_skip (void)
 {
-#ifdef SUPPORT_NNTP
     if (datasrc->flags & DF_REMOTE) {
 	ART_NUM artnum;
 
@@ -294,7 +289,6 @@ ng_skip (void)
 	} while (art <= lastart);
     }
     else
-#endif
     {
 	if (errno != ENOENT) {	/* has it not been deleted? */
 	    clear();
@@ -320,10 +314,10 @@ ng_skip (void)
 /* find the maximum article number of a newsgroup */
 
 ART_NUM
-getngsize (register NGDATA *gp)
+getngsize (NGDATA *gp)
 {
-    register int len;
-    register char* nam;
+    int len;
+    char* nam;
     char tmpbuf[LBUFLEN];
     long last, first;
     char ch;

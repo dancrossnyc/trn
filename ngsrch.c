@@ -46,8 +46,8 @@ ng_search (
     int get_cmd				/*   be set to FALSE!!! */
 )
 {
-    register char cmdchr = *patbuf;	/* what kind of search? */
-    register char* s;
+    char cmdchr = *patbuf;	/* what kind of search? */
+    char* s;
     char* pattern;			/* unparsed pattern */
     char* cmdlst = NULL;		/* list of commands to do */
     int ret = NGS_NOTFOUND;		/* assume no commands */
@@ -186,8 +186,8 @@ char *
 ng_comp (COMPEX *compex, char *pattern, bool_int RE, bool_int fold)
 {
     char ng_pattern[128];
-    register char* s = pattern;
-    register char* d = ng_pattern;
+    char* s = pattern;
+    char* d = ng_pattern;
 
     if (!*s) {
 	if (compile(compex, "", RE, fold))

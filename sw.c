@@ -49,9 +49,9 @@ sw_file (char **tcbufptr)
 void
 sw_list (char *swlist)
 {
-    register char* s;
-    register char* p;
-    register char inquote = 0;
+    char* s;
+    char* p;
+    char inquote = 0;
 
     s = p = swlist;
     while (*s) {			/* "String, or nothing" */
@@ -98,7 +98,7 @@ sw_list (char *swlist)
 /* decode a single switch */
 
 void
-decode_switch (register char *s)
+decode_switch (char *s)
 {
     while (isspace(*s)) s++;		/* ignore leading spaces */
 #ifdef DEBUG

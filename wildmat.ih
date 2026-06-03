@@ -4,4 +4,4 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static int DoMatch _((char*,char*));
+static int DoMatch (char*,char*);

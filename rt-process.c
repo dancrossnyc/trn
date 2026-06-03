@@ -32,7 +32,7 @@
 ARTICLE *
 allocate_article (ART_NUM artnum)
 {
-    register ARTICLE* article;
+    ARTICLE* article;
 
     /* create an new article */
     if (artnum >= absfirst)
@@ -48,7 +48,7 @@ allocate_article (ART_NUM artnum)
 static void
 fix_msgid (char *msgid)
 {
-    register char* cp;
+    char* cp;
 
     if ((cp = index(msgid, '@')) != NULL) {
 	while (*++cp) {
@@ -136,7 +136,7 @@ valid_article (ARTICLE *article)
 		    /* End of slibling-search code */
 		}
 	    } else if (fake_had_subj) {
-		register SUBJECT* sp = fake_had_subj;
+		SUBJECT* sp = fake_had_subj;
 		if ((ap = sp->thread) == fake_ap) {
 		    do {
 			sp->thread = article;
@@ -174,7 +174,7 @@ valid_article (ARTICLE *article)
 ARTICLE *
 get_article (char *msgid)
 {
-    register ARTICLE* article;
+    ARTICLE* article;
     HASHDATUM data;
 
     fix_msgid(msgid);
@@ -207,10 +207,10 @@ get_article (char *msgid)
 void
 thread_article (ARTICLE *article, char *references)
 {
-    register ARTICLE* ap;
-    register ARTICLE* prev;
-    register char* cp;
-    register char* end;
+    ARTICLE* ap;
+    ARTICLE* prev;
+    char* cp;
+    char* end;
     int chain_autofl = (article->autofl
 	| (article->subj->articles? article->subj->articles->autofl : 0));
     int thread_autofl, subj_autofl = 0;
@@ -405,7 +405,7 @@ rover_thread (ARTICLE *article, char *s)
 /* Check if the string we've found looks like a valid message-id reference.
 */
 static char *
-valid_message_id (register char *start, register char *end)
+valid_message_id (char *start, char *end)
 {
     char* mid;
 
@@ -436,12 +436,12 @@ valid_message_id (register char *start, register char *end)
 /* Remove an article from its parent/siblings.  Leave parent pointer intact.
 */
 static void
-unlink_child (register ARTICLE *child)
+unlink_child (ARTICLE *child)
 {
-    register ARTICLE* last;
+    ARTICLE* last;
 
     if (!(last = child->parent)) {
-	register SUBJECT* sp = child->subj;
+	SUBJECT* sp = child->subj;
 	if ((last = sp->thread) == child) {
 	    do {
 		sp->thread = child->sibling;
@@ -467,12 +467,12 @@ unlink_child (register ARTICLE *child)
 ** link it to its thread.  Sorts siblings by date.
 */
 void
-link_child (register ARTICLE *child)
+link_child (ARTICLE *child)
 {
-    register ARTICLE* ap;
+    ARTICLE* ap;
 
     if (!(ap = child->parent)) {
-	register SUBJECT* sp = child->subj;
+	SUBJECT* sp = child->subj;
 	ap = sp->thread;
 	if (!ap || child->date < ap->date) {
 	    do {
@@ -502,9 +502,9 @@ link_child (register ARTICLE *child)
 void
 merge_threads (SUBJECT *s1, SUBJECT *s2)
 {
-    register SUBJECT* sp;
-    register ARTICLE* t1;
-    register ARTICLE* t2;
+    SUBJECT* sp;
+    ARTICLE* t1;
+    ARTICLE* t2;
 
     t1 = s1->thread;
     t2 = s2->thread;

@@ -98,7 +98,7 @@ intrp_init (char *tcbuf, int tcbuf_len)
 /* skip interpolations */
 
 static char *
-skipinterp (register char *pattern, char *stoppers)
+skipinterp (char *pattern, char *stoppers)
 {
 #ifdef DEBUG
     if (debug & DEB_INTRP)
@@ -181,7 +181,7 @@ getout:
 /* interpret interpolations */
 
 char *
-dointerp (register char *dest, register int destsize, register char *pattern, char *stoppers, char *cmd)
+dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
 {
     char* subj_buf = NULL;
     char* ngs_buf = NULL;
@@ -195,9 +195,9 @@ dointerp (register char *dest, register int destsize, register char *pattern, ch
     char* line_buf = NULL;
     char* line_split = NULL;
     char* orig_dest = dest;
-    register char* s;
-    register char* h;
-    register int i;
+    char* s;
+    char* h;
+    int i;
     char scrbuf[8192];
     char spfbuf[512];
     static char* input_str = NULL;
@@ -384,7 +384,6 @@ dointerp (register char *dest, register int destsize, register char *pattern, ch
 		}
 #ifdef BACKTICK
 		case '`': {
-		    FILE* popen();
 		    FILE* pipefp;
 
 		    pattern = dointerp(scrbuf,(sizeof scrbuf),pattern+1,"`",cmd);
@@ -470,7 +469,6 @@ dointerp (register char *dest, register int destsize, register char *pattern, ch
 		    break;
 		case 'A':
 		    if (in_ng) {
-#ifdef SUPPORT_NNTP
 			if (datasrc->flags & DF_REMOTE) {
 			    if (artopen(art,(ART_POS)0)) {
 				nntp_finishbody(FB_SILENT);
@@ -481,7 +479,6 @@ dointerp (register char *dest, register int destsize, register char *pattern, ch
 				s = nullstr;
 			}
 			else
-#endif
 #ifdef LINKART
 			    s = linkartname;  /* for Eunice */
 #else
@@ -944,7 +941,7 @@ dointerp (register char *dest, register int destsize, register char *pattern, ch
 	    }
 	    if (metabit) {
 		/* set meta bit while copying. */
-		i = metabit;		/* maybe get into register */
+		i = metabit;		/* maybe get into */
 		if (s == dest) {
 		    while (*dest)
 			*dest++ |= i;
@@ -998,7 +995,7 @@ dointerp (register char *dest, register int destsize, register char *pattern, ch
 		abort_interp();
 	    if (*pattern == '^' && pattern[1]) {
 		pattern++;
-		i = *(Uchar*)pattern;	/* get char after arrow into a register */
+		i = *(Uchar*)pattern;	/* get char after arrow into a */
 		if (i == '?')
 		    *dest++ = '\177' | metabit;
 		else if (i == '(') {
@@ -1047,9 +1044,9 @@ getout:
 }
 
 char *
-interp_backslash (char *dest, register char *pattern)
+interp_backslash (char *dest, char *pattern)
 {
-    register int i = *pattern;
+    int i = *pattern;
 
     if (i >= '0' && i <= '7') {
 	i = 0;
@@ -1089,13 +1086,13 @@ interp_backslash (char *dest, register char *pattern)
 /* helper functions */
 
 char *
-interp (register char *dest, register int destsize, register char *pattern)
+interp (char *dest, int destsize, char *pattern)
 {
     return dointerp(dest,destsize,pattern,(char*)NULL,(char*)NULL);
 }
 
 char *
-interpsearch (register char *dest, register int destsize, register char *pattern, char *cmd)
+interpsearch (char *dest, int destsize, char *pattern, char *cmd)
 {
     return dointerp(dest,destsize,pattern,(char*)NULL,cmd);
 }
@@ -1105,8 +1102,8 @@ interpsearch (register char *dest, register int destsize, register char *pattern
 void
 normalize_refs (char *refs)
 {
-    register char* f;
-    register char* t;
+    char* f;
+    char* t;
 
     for (f = t = refs; *f; ) {
 	if (*f == '<') {

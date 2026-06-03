@@ -24,9 +24,8 @@
 #include "sdisp.h"
 
 void
-s_goxy (int x, int y)
+s_goxy(int x, int y)
 {
-    char* tgoto();
     tputs(tgoto(tc_CM, x, y), 1, putchr);
 }
 

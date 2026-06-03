@@ -15,9 +15,7 @@ EXT char* realName INIT(NULL);		/* real name of user */
 EXT char* phostname INIT(NULL);		/* host name in a posting */
 EXT char* localhost INIT(NULL);		/* local host name */
 
-#ifdef SUPPORT_NNTP
 EXT int netspeed INIT(20);		/* how fast our net-connection is */
-#endif
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

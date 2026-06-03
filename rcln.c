@@ -77,10 +77,10 @@ catch_up (NGDATA *np, int leave_count, int output_level)
 int
 addartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 {
-    register NGDATA* np;
-    register char* s;
-    register char* t;
-    register char* maxt = NULL;
+    NGDATA* np;
+    char* s;
+    char* t;
+    char* maxt = NULL;
     ART_NUM min = 0, max = -1, lastnum = 0;
     char* mbuf;
     bool_int morenum;
@@ -214,12 +214,12 @@ addartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 
 #ifdef MCHASE
 void
-subartnum (DATASRC *dp, register ART_NUM artnum, char *ngnam)
+subartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 {
-    register NGDATA* np;
-    register char* s;
-    register char* t;
-    register ART_NUM min, max;
+    NGDATA* np;
+    char* s;
+    char* t;
+    ART_NUM min, max;
     char* mbuf;
     int curlen;
 
@@ -343,11 +343,11 @@ prange (char *where, ART_NUM min, ART_NUM max)
 /* calculate the number of unread articles for a newsgroup */
 
 void
-set_toread (register NGDATA *np, bool_int lax_high_check)
+set_toread (NGDATA *np, bool_int lax_high_check)
 {
-    register char* s;
-    register char* c;
-    register char* h;
+    char* s;
+    char* c;
+    char* h;
     char tmpbuf[64];
     char* mybuf = tmpbuf;
     char* nums;
@@ -433,10 +433,10 @@ set_toread (register NGDATA *np, bool_int lax_high_check)
 /* make sure expired articles are marked as read */
 
 void
-checkexpired (register NGDATA *np, register ART_NUM a1st)
+checkexpired (NGDATA *np, ART_NUM a1st)
 {
-    register char* s;
-    register ART_NUM num, lastnum = 0;
+    char* s;
+    ART_NUM num, lastnum = 0;
     char* mbuf;
     char* cp;
     int len;
@@ -522,10 +522,10 @@ checkexpired (register NGDATA *np, register ART_NUM a1st)
 bool
 was_read_group (DATASRC *dp, ART_NUM artnum, char *ngnam)
 {
-    register NGDATA* np;
-    register char* s;
-    register char* t;
-    register char* maxt = NULL;
+    NGDATA* np;
+    char* s;
+    char* t;
+    char* maxt = NULL;
     ART_NUM min = 0, max = -1, lastnum = 0;
 
     if (!artnum)

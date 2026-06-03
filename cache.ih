@@ -4,5 +4,5 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static void init_artnode _((LIST*,LISTNODE*));
-static bool clear_artitem _((char*,int));
+static void init_artnode (LIST*,LISTNODE*);
+static bool clear_artitem (char*,int);

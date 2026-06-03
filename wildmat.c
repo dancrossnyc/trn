@@ -55,11 +55,11 @@
 **  Match text and p, return TRUE, FALSE, or ABORT.
 */
 static int
-DoMatch (register char *text, register char *p)
+DoMatch (char *text, char *p)
 {
-    register int	last;
-    register int	matched;
-    register int	reverse;
+    int	last;
+    int	matched;
+    int	reverse;
 
     for ( ; *p; text++, p++) {
 	if (*text == '\0' && *p != '*')

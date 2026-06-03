@@ -73,14 +73,14 @@ static char* FirstCharacter;
 void
 search_init (void)
 {
-    register int    i;
+    int    i;
 
     for (i = 0; i < ASCSIZ; i++)
 	trans[i] = i;
 }
 
 void
-init_compex (register COMPEX *compex)
+init_compex (COMPEX *compex)
 {
     /* the following must start off zeroed */
 
@@ -89,7 +89,7 @@ init_compex (register COMPEX *compex)
 }
 
 void
-free_compex (register COMPEX *compex)
+free_compex (COMPEX *compex)
 {
     if (compex->eblen) {
 	free(compex->expbuf);
@@ -105,7 +105,7 @@ static char* gbr_str = NULL;
 static int gbr_siz = 0;
 
 char *
-getbracket (register COMPEX *compex, int n)
+getbracket (COMPEX *compex, int n)
 {
     int length = compex->braelist[n] - compex->braslist[n];
 
@@ -121,7 +121,7 @@ getbracket (register COMPEX *compex, int n)
 void
 case_fold (int which)
 {
-    register int i;
+    int i;
 
     if (which != folding) {
 	if (which) {
@@ -139,10 +139,10 @@ case_fold (int which)
 /* Compile the given regular expression into a [secret] internal format */
 
 char *
-compile (register COMPEX *compex, register char *strp, int RE, int fold)
+compile (COMPEX *compex, char *strp, int RE, int fold)
 {
-    register int c;
-    register char* ep;
+    int c;
+    char* ep;
     char* lastep;
     char  bracket[NBRA];
     char* bracketp;
@@ -277,7 +277,7 @@ compile (register COMPEX *compex, register char *strp, int RE, int fold)
 		    continue;
 
 		case '[': {		/* character class */
-		    register int i;
+		    int i;
 
 		    if (ep - compex->expbuf >= compex->eblen - BMAPSIZ)
 			ep = grow_eb(compex, ep, alt); /* reserve bitmap */
@@ -330,10 +330,10 @@ cerror:
 }
 
 char *
-grow_eb (register COMPEX *compex, char *epp, char **alt)
+grow_eb (COMPEX *compex, char *epp, char **alt)
 {
-    register char* oldbuf = compex->expbuf;
-    register char** altlist = compex->alternatives;
+    char* oldbuf = compex->expbuf;
+    char** altlist = compex->alternatives;
 
     compex->eblen += 80;
     compex->expbuf = saferealloc(compex->expbuf, (MEM_SIZE)compex->eblen + 4);
@@ -346,11 +346,11 @@ grow_eb (register COMPEX *compex, char *epp, char **alt)
 }
 
 char *
-execute (register COMPEX *compex, char *addr)
+execute (COMPEX *compex, char *addr)
 {
-    register char* p1 = addr;
-    register Uchar* trt = trans;
-    register int c;
+    char* p1 = addr;
+    Uchar* trt = trans;
+    int c;
 
     if (addr == NULL || compex->expbuf == NULL)
 	return NULL;
@@ -376,7 +376,7 @@ execute (register COMPEX *compex, char *addr)
     }
     else {			/* regular algorithm */
 	do {
-	    register char** alt = compex->alternatives;
+	    char** alt = compex->alternatives;
 	    while (*alt) {
 		if (advance(compex, p1, *alt++))
 		    return p1;
@@ -392,11 +392,11 @@ execute (register COMPEX *compex, char *addr)
 /* advance the match of the regular expression starting at ep along the
    string lp, simulates an NDFSA */
 bool
-advance (register COMPEX *compex, register char *lp, register char *ep)
+advance (COMPEX *compex, char *lp, char *ep)
 {
-    register char* curlp;
-    register Uchar* trt = trans;
-    register int i;
+    char* curlp;
+    Uchar* trt = trans;
+    int i;
 
     while (*lp || (*ep & (STAR|MNULL))) {
 	switch (*ep++) {
@@ -553,9 +553,9 @@ advance (register COMPEX *compex, register char *lp, register char *ep)
 }
 
 bool
-backref (register COMPEX *compex, register int i, register char *lp)
+backref (COMPEX *compex, int i, char *lp)
 {
-    register char* bp;
+    char* bp;
 
     bp = compex->braslist[i];
     while (*lp && *bp == *lp) {
@@ -568,7 +568,7 @@ backref (register COMPEX *compex, register int i, register char *lp)
 }
 
 bool
-cclass (register char *set, register int c, int af)
+cclass (char *set, int c, int af)
 {
     c &= 0177;
 #if BITSPERBYTE == 8
