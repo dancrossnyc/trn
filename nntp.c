@@ -30,10 +30,7 @@
 #ifdef SUPPORT_NNTP
 
 int
-nntp_list(type, arg, len)
-char* type;
-char* arg;
-int len;
+nntp_list (char *type, char *arg, int len)
 {
     int ret;
 #ifdef DEBUG /*$$*/
@@ -64,7 +61,7 @@ int len;
 }
 
 void
-nntp_finish_list()
+nntp_finish_list (void)
 {
     int ret;
     do {
@@ -82,9 +79,7 @@ nntp_finish_list()
 /* try to access the specified group */
 
 int
-nntp_group(group, gp)
-char* group;
-NGDATA* gp;
+nntp_group (char *group, NGDATA *gp)
 {
     sprintf(ser_line, "GROUP %s", group);
     if (nntp_command(ser_line) <= 0)
@@ -125,8 +120,7 @@ NGDATA* gp;
 /* check on an article's existence */
 
 int
-nntp_stat(artnum)
-ART_NUM artnum;
+nntp_stat (ART_NUM artnum)
 {
     sprintf(ser_line, "STAT %ld", (long)artnum);
     if (nntp_command(ser_line) <= 0)
@@ -137,8 +131,7 @@ ART_NUM artnum;
 /* check on an article's existence by its message id */
 
 ART_NUM
-nntp_stat_id(msgid)
-char* msgid;
+nntp_stat_id (char *msgid)
 {
     long artnum;
 
@@ -152,7 +145,7 @@ char* msgid;
 }
 
 ART_NUM
-nntp_next_art()
+nntp_next_art (void)
 {
     long artnum;
 
@@ -167,8 +160,7 @@ nntp_next_art()
 /* prepare to get the header */
 
 int
-nntp_header(artnum)
-ART_NUM artnum;
+nntp_header (ART_NUM artnum)
 {
     sprintf(ser_line, "HEAD %ld", (long)artnum);
     if (nntp_command(ser_line) <= 0)
@@ -179,8 +171,7 @@ ART_NUM artnum;
 /* copy the body of an article to a temporary file */
 
 void
-nntp_body(artnum)
-ART_NUM artnum;
+nntp_body (ART_NUM artnum)
 {
     char* artname;
 
@@ -239,16 +230,13 @@ ART_NUM artnum;
 }
 
 long
-nntp_artsize()
+nntp_artsize (void)
 {
     return body_pos < 0 ? body_end : -1;
 }
 
 static int
-nntp_copybody(s, limit, pos)
-char* s;
-int limit;
-ART_POS pos;
+nntp_copybody (char *s, int limit, ART_POS pos)
 {
     int len;
     bool had_nl = TRUE;
@@ -278,8 +266,7 @@ ART_POS pos;
 }
 
 int
-nntp_finishbody(bmode)
-int bmode;
+nntp_finishbody (int bmode)
 {
     char b[NNTP_STRLEN];
     if (body_pos < 0)
@@ -321,8 +308,7 @@ int bmode;
 }
 
 int
-nntp_seekart(pos)
-ART_POS pos;
+nntp_seekart (ART_POS pos)
 {
     if (body_pos >= 0) {
 	if (body_end < pos) {
@@ -339,15 +325,13 @@ ART_POS pos;
 }
 
 ART_POS
-nntp_tellart()
+nntp_tellart (void)
 {
     return body_pos < 0 ? (ART_POS)ftell(artfp) : body_pos;
 }
 
-char*
-nntp_readart(s, limit)
-char* s;
-int limit;
+char *
+nntp_readart (char *s, int limit)
 {
     if (body_pos >= 0) {
 	if (body_pos == body_end) {
@@ -372,7 +356,7 @@ int limit;
 static int maxdays[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 time_t
-nntp_time()
+nntp_time (void)
 {
     char* s;
     int year, month, day, hh, mm;
@@ -412,8 +396,7 @@ nntp_time()
 }
 
 int
-nntp_newgroups(t)
-time_t t;
+nntp_newgroups (time_t t)
 {
     struct tm *ts;
 
@@ -427,7 +410,7 @@ time_t t;
 }
 
 int
-nntp_artnums()
+nntp_artnums (void)
 {
     if (datasrc->flags & DF_NOLISTGROUP)
 	return 0;
@@ -442,7 +425,7 @@ nntp_artnums()
 
 #if 0
 int
-nntp_rover()
+nntp_rover (void)
 {
     if (datasrc->flags & DF_NOXROVER)
 	return 0;
@@ -457,8 +440,7 @@ nntp_rover()
 #endif
 
 ART_NUM
-nntp_find_real_art(after)
-ART_NUM after;
+nntp_find_real_art (ART_NUM after)
 {
     ART_NUM an;
 
@@ -478,10 +460,8 @@ ART_NUM after;
     return 0;
 }
 
-char*
-nntp_artname(artnum, allocate)
-ART_NUM artnum;
-bool_int allocate;
+char *
+nntp_artname (ART_NUM artnum, bool_int allocate)
 {
     static ART_NUM artnums[MAX_NNTP_ARTICLES];
     static time_t artages[MAX_NNTP_ARTICLES];
@@ -516,9 +496,8 @@ bool_int allocate;
     return NULL;
 }
 
-char*
-nntp_tmpname(ndx)
-int ndx;
+char *
+nntp_tmpname (int ndx)
 {
     static char artname[20];
     sprintf(artname,"rrn.%ld.%d",our_pid,ndx);
@@ -526,7 +505,7 @@ int ndx;
 }
 
 int
-nntp_handle_nested_lists()
+nntp_handle_nested_lists (void)
 {
     if (strcaseEQ(last_command,"quit"))
 	return 0; /*$$ flush data needed? */
@@ -537,7 +516,7 @@ nntp_handle_nested_lists()
 }
 
 int
-nntp_handle_timeout()
+nntp_handle_timeout (void)
 {
     static bool handling_timeout = FALSE;
     char last_command_save[NNTP_STRLEN];
@@ -563,8 +542,7 @@ nntp_handle_timeout()
 }
 
 void
-nntp_server_died(dp)
-DATASRC* dp;
+nntp_server_died (DATASRC *dp)
 {
     MULTIRC* mp = multirc;
     close_datasrc(dp);
@@ -582,7 +560,7 @@ DATASRC* dp;
 */
 #ifdef SUPPORT_XTHREAD
 long
-nntp_readcheck()
+nntp_readcheck (void)
 {
     /* try to get the status line and the status code */
     switch (nntp_check()) {
@@ -605,9 +583,7 @@ nntp_readcheck()
 */
 #ifdef SUPPORT_XTHREAD
 long
-nntp_read(buf, n)
-char* buf;
-long n;
+nntp_read (char *buf, long n)
 {
     /* if no bytes to read, then just return EOF */
     if (rawbytes < 0)

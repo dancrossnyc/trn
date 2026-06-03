@@ -15,9 +15,9 @@ EXT int perform_cnt;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-void intrp_init _((char*,int));
-char* dointerp _((char*,int,char*,char*,char*));
-char* interp_backslash _((char*,char*));
-char* interp _((char*,int,char*));
-char* interpsearch _((char*,int,char*,char*));
-void normalize_refs _((char*));
+void intrp_init (char*,int);
+char* dointerp (char*,int,char*,char*,char*);
+char* interp_backslash (char*,char*);
+char* interp (char*,int,char*);
+char* interpsearch (char*,int,char*,char*);
+void normalize_refs (char*);

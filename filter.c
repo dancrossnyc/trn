@@ -36,7 +36,7 @@ extern FILE* filter_error_file;
 #endif
 
 void
-filter_init()
+filter_init (void)
 {
     filt_wr = filt_rd = NULL;
     pipe_1[0] = pipe_1[1] = pipe_2[0] = pipe_2[1] = -1;
@@ -44,7 +44,7 @@ filter_init()
 }
 
 static void
-filter_restart()
+filter_restart (void)
 {
     char* filter;				/* external filter file */
     struct stat f_inode;			/* stat buf */
@@ -127,7 +127,7 @@ filter_restart()
 }
 
 void
-filter_nginit()
+filter_nginit (void)
 {
     static int recursing = 0;
     char buf[1024];
@@ -180,8 +180,7 @@ filter_nginit()
 }
 
 int
-filter(a)
-ART_NUM a;
+filter (ART_NUM a)
 {
     char buf[256];
     long score = 0, sc = 0;
@@ -232,8 +231,7 @@ ART_NUM a;
 }
 
 static int
-filter_send(cmd)
-char* cmd;
+filter_send (char *cmd)
 {
     if (filt_wr == NULL || fputs(cmd, filt_wr) == EOF) {
 	filter_restart();
@@ -252,9 +250,8 @@ char* cmd;
     return 0;
 }
 
-static char*
-filter_recv(buf)
-char* buf;
+static char *
+filter_recv (char *buf)
 {
     if (filt_rd == NULL)
 	return NULL;
@@ -263,7 +260,7 @@ char* buf;
 }
 
 void
-filter_cleanup()
+filter_cleanup (void)
 {
     if (filter_pid > 0) {
         kill(filter_pid, SIGTERM);

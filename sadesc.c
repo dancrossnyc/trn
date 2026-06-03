@@ -30,10 +30,11 @@
 
 
 /* returns statchars in temp space... */
-char*
-sa_get_statchars(a,line)
-long a;
-int line;		/* which status line (1 = first) */
+char *
+sa_get_statchars (
+    long a,
+    int line		/* which status line (1 = first) */
+)
 {
     static char char_buf[16];
 
@@ -81,9 +82,8 @@ int line;		/* which status line (1 = first) */
     return char_buf;
 }
 
-char*
-sa_desc_subject(e)
-long e;
+char *
+sa_desc_subject (long e)
 {
     char* s;
     char* s1;
@@ -113,11 +113,12 @@ long e;
 }
 
 /* NOTE: should redesign later for the "menu" style... */
-char*
-sa_get_desc(e,line,trunc)
-long e;		/* entry number */
-int line;
-bool_int trunc;		/* should it be truncated? */
+char *
+sa_get_desc (
+    long e,		/* entry number */
+    int line,
+    bool_int trunc		/* should it be truncated? */
+)
 {
     static char desc_buf[1024];
     char* s;
@@ -250,8 +251,9 @@ bool_int trunc;		/* should it be truncated? */
 
 /* returns # of lines the article occupies in total... */
 int
-sa_ent_lines(e)
-long e;			/* the entry number */
+sa_ent_lines (
+    long e			/* the entry number */
+)
 {
     char* s;
     ART_NUM artnum;

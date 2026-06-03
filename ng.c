@@ -76,7 +76,7 @@
 int exit_code = NG_NORM;
 
 void
-ng_init()
+ng_init (void)
 {
     setdfltcmd();
 
@@ -116,8 +116,9 @@ ng_init()
  */
 
 int
-do_newsgroup(start_command)
-char* start_command;			/* command to fake up first */
+do_newsgroup (
+    char *start_command			/* command to fake up first */
+)
 {
     char mode_save = mode;
     char gmode_save = gmode;
@@ -422,7 +423,7 @@ char* start_command;			/* command to fake up first */
 		case DA_CLEAN:		/* quit newsgroup */
 		    goto cleanup;
 		case DA_TOEND:		/* do not mark as read */
-		    goto reask_article; 
+		    goto reask_article;
 		case DA_RAISE:		/* reparse command at end of art */
 		    goto article_level;
 		case DA_NORM:		/* normal end of article */
@@ -529,7 +530,7 @@ article_level:
 #endif
 	}
     }					/* end of article selection loop */
-    
+
 /* shut down newsgroup */
 
 cleanup:
@@ -588,7 +589,7 @@ cleanup2:
 /* decide what to do at the end of an article */
 
 int
-art_switch()
+art_switch (void)
 {
     setdef(buf,dfltcmd);
 #ifdef VERIFY
@@ -922,7 +923,7 @@ This is the last leaf in this tree.\n",stdout) FLUSH;
 #endif
 	if (art >= firstart)
 	    return AS_NORM;
-	art = absfirst;	
+	art = absfirst;
 	/* FALL THROUGH */
       case 'P':		/* goto previous article */
 #ifdef SCAN
@@ -1147,7 +1148,7 @@ normal_search:
 #ifdef ARTSEARCH
       {		/* search for article by pattern */
 	char cmd = *buf;
-	
+
 	reread = TRUE;		/* assume this */
 	page_line = 1;
 	switch (art_search(buf, (sizeof buf), TRUE)) {
@@ -1594,14 +1595,13 @@ run_the_selector:
 
 #ifdef MAILCALL
 void
-setmail(force)
-bool_int force;
+setmail (bool_int force)
 {
     if (force)
 	mailcount = 0;
     if (!(mailcount++)) {
 	char* mailfile = filexp(getval("MAILFILE",MAILFILE));
-	
+
 	if (stat(mailfile,&filestat) < 0 || !filestat.st_size
 	    || filestat.st_atime > filestat.st_mtime)
 	    mailcall = nullstr;
@@ -1613,7 +1613,7 @@ bool_int force;
 #endif
 
 void
-setdfltcmd()
+setdfltcmd (void)
 {
     if (!ngptr || !ngptr->toread)
 	dfltcmd = "npq";
@@ -1639,7 +1639,7 @@ setdfltcmd()
 ** unsubscription as needed.
 */
 char
-ask_catchup()
+ask_catchup (void)
 {
     char ch;
     bool use_one_line = (gmode == 's');
@@ -1745,9 +1745,7 @@ u to mark all and unsubscribe.\n\n\
 }
 
 static bool
-count_unCACHED_article(ptr, arg)
-char* ptr;
-int arg;
+count_unCACHED_article (char *ptr, int arg)
 {
     register ARTICLE* ap = (ARTICLE*)ptr;
     if ((ap->flags & (AF_UNREAD|AF_CACHED)) == AF_UNREAD)
@@ -1756,9 +1754,7 @@ int arg;
 }
 
 static bool
-mark_all_READ(ptr, leave_unread)
-char* ptr;
-int leave_unread;
+mark_all_READ (char *ptr, int leave_unread)
 {
     register ARTICLE* ap = (ARTICLE*)ptr;
     if (article_num(ap) > lastart - leave_unread)
@@ -1768,9 +1764,7 @@ int leave_unread;
 }
 
 static bool
-mark_all_unREAD(ptr, arg)
-char* ptr;
-int arg;
+mark_all_unREAD (char *ptr, int arg)
 {
     register ARTICLE* ap = (ARTICLE*)ptr;
     if ((ap->flags & (AF_UNREAD|AF_EXISTS)) == AF_EXISTS) {
@@ -1781,9 +1775,7 @@ int arg;
 }
 
 bool
-output_subject(ptr, flag)
-char* ptr;
-int flag;
+output_subject (char *ptr, int flag)
 {
     register ARTICLE* ap;
     register ART_NUM i;
@@ -1823,9 +1815,7 @@ int flag;
 
 #ifdef DEBUG
 static bool
-debug_article_output(ptr, arg)
-char* ptr;
-int arg;
+debug_article_output (char *ptr, int arg)
 {
     register ARTICLE* ap = (ARTICLE*)ptr;
     if (int_count)
@@ -1840,8 +1830,7 @@ int arg;
 #endif
 
 char
-ask_memorize(ch)
-char_int ch;
+ask_memorize (char_int ch)
 {
     bool thread_cmd = (ch == 'T');
     bool use_one_line = (gmode == 's');

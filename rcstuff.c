@@ -34,7 +34,7 @@
 static bool foundany;
 
 bool
-rcstuff_init()
+rcstuff_init (void)
 {
     MULTIRC* mptr = NULL;
     int i;
@@ -104,11 +104,8 @@ rcstuff_init()
     return foundany;
 }
 
-NEWSRC*
-new_newsrc(name,newsrc,add_ok)
-char* name;
-char* newsrc;
-char* add_ok;
+NEWSRC *
+new_newsrc (char *name, char *newsrc, char *add_ok)
 {
     char tmpbuf[CBUFLEN];
     NEWSRC* rp;
@@ -153,8 +150,7 @@ char* add_ok;
 }
 
 bool
-use_multirc(mp)
-MULTIRC* mp;
+use_multirc (MULTIRC *mp)
 {
     NEWSRC* rp;
     bool had_trouble = FALSE;
@@ -185,8 +181,7 @@ MULTIRC* mp;
 }
 
 void
-unuse_multirc(mptr)
-MULTIRC* mptr;
+unuse_multirc (MULTIRC *mptr)
 {
     NEWSRC* rp;
 
@@ -221,8 +216,7 @@ MULTIRC* mptr;
 }
 
 bool
-use_next_multirc(mptr)
-MULTIRC* mptr;
+use_next_multirc (MULTIRC *mptr)
 {
     register MULTIRC* mp = multirc_ptr(mptr->num);
 
@@ -243,8 +237,7 @@ MULTIRC* mptr;
 }
 
 bool
-use_prev_multirc(mptr)
-MULTIRC* mptr;
+use_prev_multirc (MULTIRC *mptr)
 {
     register MULTIRC* mp = multirc_ptr(mptr->num);
 
@@ -264,9 +257,8 @@ MULTIRC* mptr;
     return TRUE;
 }
 
-char*
-multirc_name(mp)
-register MULTIRC* mp;
+char *
+multirc_name (register MULTIRC *mp)
 {
     char* cp;
     if (mp->first->next)
@@ -277,9 +269,7 @@ register MULTIRC* mp;
 }
 
 static bool
-clear_ngitem(cp, arg)
-char* cp;
-int arg;
+clear_ngitem (char *cp, int arg)
 {
     NGDATA* ncp = (NGDATA*)cp;
 
@@ -294,8 +284,7 @@ int arg;
 /* make sure there is no trn out there reading this newsrc */
 
 static bool
-lock_newsrc(rp)
-NEWSRC* rp;
+lock_newsrc (NEWSRC *rp)
 {
     long processnum = 0;
     char* runninghost = "(Unknown)";
@@ -428,8 +417,7 @@ the lock file: %s\n", rp->lockname) FLUSH;
 }
 
 static void
-unlock_newsrc(rp)
-NEWSRC* rp;
+unlock_newsrc (NEWSRC *rp)
 {
     safefree0(rp->infoname);
     if (rp->lockname) {
@@ -440,8 +428,7 @@ NEWSRC* rp;
 }
 
 static bool
-open_newsrc(rp)
-NEWSRC* rp;
+open_newsrc (NEWSRC *rp)
 {
     register NGDATA* np;
     NGDATA* prev_np;
@@ -650,9 +637,7 @@ NEWSRC* rp;
 
 /* Initialize the memory for an entire node's worth of article's */
 static void
-init_ngnode(list, node)
-LIST* list;
-LISTNODE* node;
+init_ngnode (LIST *list, LISTNODE *node)
 {
     register ART_NUM i;
     register NGDATA* np;
@@ -662,8 +647,7 @@ LISTNODE* node;
 }
 
 static void
-parse_rcline(np)
-register NGDATA* np;
+parse_rcline (register NGDATA *np)
 {
     char* s;
     int len;
@@ -687,8 +671,7 @@ register NGDATA* np;
 }
 
 void
-abandon_ng(np)
-NGDATA* np;
+abandon_ng (NGDATA *np)
 {
     char* some_buf = NULL;
     FILE* rcfp;
@@ -745,9 +728,7 @@ NGDATA* np;
 /* assumes that we are chdir'ed to NEWSSPOOL */
 
 bool
-get_ng(what, flags)
-char* what;
-int flags;
+get_ng (char *what, int flags)
 {
     char* ntoforget;
     char promptbuf[128];
@@ -968,11 +949,8 @@ reask_unsub:
 
 /* add a newsgroup to the newsrc file (eventually) */
 
-static NGDATA*
-add_newsgroup(rp, ngn, c)
-NEWSRC* rp;
-char* ngn;
-char_int c;
+static NGDATA *
+add_newsgroup (NEWSRC *rp, char *ngn, char_int c)
 {
     register NGDATA* np;
 
@@ -1002,9 +980,7 @@ char_int c;
 
 #ifdef RELOCATE
 bool
-relocate_newsgroup(move_np,newnum)
-NGDATA* move_np;
-NG_NUM newnum;
+relocate_newsgroup (NGDATA *move_np, NG_NUM newnum)
 {
     NGDATA* np;
     int i;
@@ -1193,7 +1169,7 @@ q to abort\n") FLUSH;
 /* List out the newsrc with annotations */
 
 void
-list_newsgroups()
+list_newsgroups (void)
 {
     register NGDATA* np;
     register NG_NUM i;
@@ -1220,9 +1196,8 @@ list_newsgroups()
 
 /* find a newsgroup in any newsrc */
 
-NGDATA*
-find_ng(ngnam)
-char* ngnam;
+NGDATA *
+find_ng (char *ngnam)
 {
     HASHDATUM data;
 
@@ -1231,8 +1206,7 @@ char* ngnam;
 }
 
 void
-cleanup_newsrc(rp)
-NEWSRC* rp;
+cleanup_newsrc (NEWSRC *rp)
 {
     register NGDATA* np;
     register NG_NUM bogosity = 0;
@@ -1358,8 +1332,7 @@ Type n or SP to leave them at the end in case they return.\n\
 /* make an entry in the hash table for the current newsgroup */
 
 void
-sethash(np)
-NGDATA* np;
+sethash (NGDATA *np)
 {
     HASHDATUM data;
     data.dat_ptr = (char*)np;
@@ -1368,10 +1341,7 @@ NGDATA* np;
 }
 
 static int
-rcline_cmp(key, keylen, data)
-char* key;
-int keylen;
-HASHDATUM data;
+rcline_cmp (char *key, int keylen, HASHDATUM data)
 {
     /* We already know that the lengths are equal, just compare the strings */
     return bcmp(key, ((NGDATA*)data.dat_ptr)->rcline, keylen);
@@ -1380,7 +1350,7 @@ HASHDATUM data;
 /* checkpoint the newsrc(s) */
 
 void
-checkpoint_newsrcs()
+checkpoint_newsrcs (void)
 {
 #ifdef DEBUG
     if (debug & DEB_CHECKPOINTING) {
@@ -1403,8 +1373,7 @@ checkpoint_newsrcs()
 /* write out the (presumably) revised newsrc(s) */
 
 bool
-write_newsrcs(mptr)
-MULTIRC* mptr;
+write_newsrcs (MULTIRC *mptr)
 {
     NEWSRC* rp;
     register NGDATA* np;
@@ -1521,8 +1490,7 @@ MULTIRC* mptr;
 }
 
 void
-get_old_newsrcs(mptr)
-MULTIRC* mptr;
+get_old_newsrcs (MULTIRC *mptr)
 {
     NEWSRC* rp;
 

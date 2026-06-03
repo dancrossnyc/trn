@@ -47,16 +47,14 @@ struct utsname utsn;
 COMPEX cond_compex;
 
 void
-intrp_init(tcbuf, tcbuf_len)
-char* tcbuf;
-int tcbuf_len;
+intrp_init (char *tcbuf, int tcbuf_len)
 {
 #if HOSTBITS != 0
     int i;
 #endif
 
     init_compex(&cond_compex);
-    
+
     /* get environmental stuff */
 
 #ifdef NEWS_ADMIN
@@ -110,10 +108,8 @@ int tcbuf_len;
 
 /* skip interpolations */
 
-static char*
-skipinterp(pattern,stoppers)
-register char* pattern;
-char* stoppers;
+static char *
+skipinterp (register char *pattern, char *stoppers)
 {
 #ifdef DEBUG
     if (debug & DEB_INTRP)
@@ -195,13 +191,8 @@ getout:
 
 /* interpret interpolations */
 
-char*
-dointerp(dest,destsize,pattern,stoppers,cmd)
-register char* dest;
-register int destsize;
-register char* pattern;
-char* stoppers;
-char* cmd;
+char *
+dointerp (register char *dest, register int destsize, register char *pattern, char *stoppers, char *cmd)
 {
     char* subj_buf = NULL;
     char* ngs_buf = NULL;
@@ -345,7 +336,7 @@ char* cmd;
 		    COMPEX *oldbra_compex = bra_compex;
 		    char rch;
 		    bool matched;
-		    
+
 		    pattern = dointerp(dest,destsize,pattern+1,"!=",cmd);
 		    rch = *pattern;
 		    if (rch == '!')
@@ -565,7 +556,7 @@ char* cmd;
 			if (htype[FOLLOW_LINE].minpos >= 0)
 					/* is there a Followup-To line? */
 			    s = follow_buf = fetchlines(art,FOLLOW_LINE);
-			else 
+			else
 			    s = ngs_buf = fetchlines(art,NGS_LINE);
 		    }
 		    else
@@ -632,11 +623,11 @@ char* cmd;
 		    break;
 		case 'o':			/* organization */
 #ifdef IGNOREORG
-		    s = getval("NEWSORG",orgname); 
+		    s = getval("NEWSORG",orgname);
 #else
 		    s = getval("NEWSORG",NULL);
-		    if (s == NULL) 
-			s = getval("ORGANIZATION",orgname); 
+		    if (s == NULL)
+			s = getval("ORGANIZATION",orgname);
 #endif
 		    s = filexp(s);
 #ifdef ORGFILE
@@ -740,7 +731,7 @@ char* cmd;
 			str = subj_buf = fetchsubj(art,TRUE);
 		    subject_has_Re(str,&str);
 		    if (*pattern == 's'
-		     && (h = instr(str,"- (nf", TRUE)) != NULL)
+		     && (h = in_str(str,"- (nf", TRUE)) != NULL)
 			*h = '\0';
 		    s = str;
 		    break;
@@ -1066,10 +1057,8 @@ getout:
     return pattern;			/* where we left off */
 }
 
-char*
-interp_backslash(dest,pattern)
-char* dest;
-register char* pattern;
+char *
+interp_backslash (char *dest, register char *pattern)
 {
     register int i = *pattern;
 
@@ -1110,21 +1099,14 @@ register char* pattern;
 
 /* helper functions */
 
-char*
-interp(dest,destsize,pattern)
-register char* dest;
-register int destsize;
-register char* pattern;
+char *
+interp (register char *dest, register int destsize, register char *pattern)
 {
     return dointerp(dest,destsize,pattern,(char*)NULL,(char*)NULL);
 }
 
-char*
-interpsearch(dest,destsize,pattern,cmd)
-register char* dest;
-register int destsize;
-register char* pattern;
-char* cmd;
+char *
+interpsearch (register char *dest, register int destsize, register char *pattern, char *cmd)
 {
     return dointerp(dest,destsize,pattern,(char*)NULL,cmd);
 }
@@ -1132,12 +1114,11 @@ char* cmd;
 /* normalize a references line in place */
 
 void
-normalize_refs(refs)
-char* refs;
+normalize_refs (char *refs)
 {
     register char* f;
     register char* t;
-    
+
     for (f = t = refs; *f; ) {
 	if (*f == '<') {
 	    while (*f && (*t++ = *f++) != '>') ;
@@ -1151,10 +1132,10 @@ char* refs;
     if (t != refs && t[-1] == ' ')
 	t--;
     *t = '\0';
-} 
+}
 
 static void
-abort_interp()
+abort_interp (void)
 {
     fputs("\n% interp buffer overflow!\n",stdout) FLUSH;
     sig_catcher(0);

@@ -27,19 +27,13 @@
 #include "addng.ih"
 
 static int
-addng_cmp(key, keylen, data)
-char* key;
-int keylen;
-HASHDATUM data;
+addng_cmp (char *key, int keylen, HASHDATUM data)
 {
 	return bcmp(key, ((ADDGROUP*)data.dat_ptr)->name, keylen);
 }
 
 static int
-build_addgroup_list(keylen, data, extra)
-int keylen;
-HASHDATUM* data;
-int extra;
+build_addgroup_list (int keylen, HASHDATUM *data, int extra)
 {
     ADDGROUP* node = (ADDGROUP*)data->dat_ptr;
 
@@ -55,13 +49,13 @@ int extra;
 }
 
 void
-addng_init()
+addng_init (void)
 {
     ;
 }
 
 bool
-find_new_groups()
+find_new_groups (void)
 {
     NEWSRC* rp;
     NG_NUM oldcnt = newsgroup_cnt;	/* remember # newsgroups */
@@ -88,8 +82,7 @@ find_new_groups()
 }
 
 static void
-process_list(flag)
-int flag;
+process_list (int flag)
 {
     ADDGROUP* node;
     ADDGROUP* prevnode;
@@ -120,8 +113,7 @@ int flag;
 #ifdef SUPPORT_NNTP
 
 static void
-new_nntp_groups(dp)
-DATASRC* dp;
+new_nntp_groups (DATASRC *dp)
 {
     register char* s;
     int len;
@@ -192,8 +184,7 @@ DATASRC* dp;
 #endif
 
 static void
-new_local_groups(dp)
-DATASRC* dp;
+new_local_groups (DATASRC *dp)
 {
     register char* s;
     time_t lastone;
@@ -243,16 +234,12 @@ DATASRC* dp;
 }
 
 static void
-add_to_hash(ng, name, toread, ch)
-HASHTABLE* ng;
-char* name;
-int toread;
-char_int ch;
+add_to_hash (HASHTABLE *ng, char *name, int toread, char_int ch)
 {
     HASHDATUM data;
     ADDGROUP* node;
-    unsigned namelen = strlen(name);
-    
+    unsigned namelen = strlen(name) + 1;
+
     data.dat_len = namelen + sizeof (ADDGROUP);
     node = (ADDGROUP*)safemalloc(data.dat_len);
     data.dat_ptr = (char *)node;
@@ -268,17 +255,14 @@ char_int ch;
 	break;
     }
     node->toread = (toread < 0)? 0 : toread;
-    strcpy(node->name, name);
+    strlcpy(node->name, name, namelen);
     node->datasrc = datasrc;
     node->next = node->prev = NULL;
     hashstore(ng, name, namelen, data);
 }
 
 static void
-add_to_list(name, toread, ch)
-char* name;
-int toread;
-char_int ch;
+add_to_list (char *name, int toread, char_int ch)
 {
     ADDGROUP* node = first_addgroup;
 
@@ -288,7 +272,9 @@ char_int ch;
 	node = node->next;
     }
 
-    node = (ADDGROUP*)safemalloc(strlen(name) + sizeof (ADDGROUP));
+    size_t namelen = strlen(name) + 1;
+
+    node = (ADDGROUP*)safemalloc(namelen + sizeof (ADDGROUP));
     switch (ch) {
       case ':':
 	node->flags = AGF_SEL;
@@ -302,7 +288,7 @@ char_int ch;
     }
     node->toread = (toread < 0)? 0 : toread;
     node->num = addgroup_cnt++;
-    strcpy(node->name, name);
+    strlcpy(node->name, name, namelen);
     node->datasrc = datasrc;
     node->next = NULL;
     node->prev = last_addgroup;
@@ -314,8 +300,7 @@ char_int ch;
 }
 
 bool
-scanactive(add_matching)
-bool_int add_matching;
+scanactive (bool_int add_matching)
 {
     DATASRC* dp;
     NG_NUM oldcnt = newsgroup_cnt;	/* remember # of newsgroups */
@@ -361,10 +346,7 @@ bool_int add_matching;
 }
 
 static int
-list_groups(keylen, data, add_matching)
-int keylen;
-HASHDATUM* data;
-int add_matching;
+list_groups (int keylen, HASHDATUM *data, int add_matching)
 {
     char* bp = ((LISTNODE*)data->dat_ptr)->data + data->dat_len;
     int linelen = index(bp, '\n') - bp + 1;
@@ -375,9 +357,7 @@ int add_matching;
 }
 
 static void
-scanline(actline, add_matching)
-char* actline;
-bool_int add_matching;
+scanline (char *actline, bool_int add_matching)
 {
     register char* s;
     NGDATA* np;
@@ -406,26 +386,20 @@ bool_int add_matching;
 }
 
 static int
-agorder_number(app1, app2)
-register ADDGROUP** app1;
-register ADDGROUP** app2;
+agorder_number (register ADDGROUP **app1, register ADDGROUP **app2)
 {
     ART_NUM eq = (*app1)->num - (*app2)->num;
     return eq > 0? sel_direction : -sel_direction;
 }
 
 static int
-agorder_groupname(app1, app2)
-register ADDGROUP** app1;
-register ADDGROUP** app2;
+agorder_groupname (register ADDGROUP **app1, register ADDGROUP **app2)
 {
     return strcaseCMP((*app1)->name, (*app2)->name) * sel_direction;
 }
 
 static int
-agorder_count(app1, app2)
-register ADDGROUP** app1;
-register ADDGROUP** app2;
+agorder_count (register ADDGROUP **app1, register ADDGROUP **app2)
 {
     long eq = (*app1)->toread - (*app2)->toread;
     if (eq)
@@ -436,7 +410,7 @@ register ADDGROUP** app2;
 /* Sort the newsgroups into the chosen order.
 */
 void
-sort_addgroups()
+sort_addgroups (void)
 {
     register ADDGROUP* ap;
     register int i;

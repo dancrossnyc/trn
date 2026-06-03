@@ -30,7 +30,7 @@
 #include "artio.h"
 
 void
-artio_init()
+artio_init (void)
 {
     artbuf_size = 8 * 1024;
     artbuf = safemalloc(artbuf_size);
@@ -39,10 +39,8 @@ artio_init()
 
 /* open an article, unless it's already open */
 
-FILE*
-artopen(artnum, pos)
-ART_NUM artnum;
-ART_POS pos;
+FILE *
+artopen (ART_NUM artnum, ART_POS pos)
 {
     char artname[MAXFILENAME];		/* filename of current article */
     ARTICLE* ap = article_find(artnum);
@@ -109,7 +107,7 @@ retry_open:
 }
 
 void
-artclose()
+artclose (void)
 {
     if (artfp != NULL) {		/* article still open? */
 #ifdef SUPPORT_NNTP
@@ -124,8 +122,7 @@ artclose()
 }
 
 int
-seekart(pos)
-ART_POS pos;
+seekart (ART_POS pos)
 {
 #ifdef SUPPORT_NNTP
     if (datasrc->flags & DF_REMOTE)
@@ -135,7 +132,7 @@ ART_POS pos;
 }
 
 ART_POS
-tellart()
+tellart (void)
 {
 #ifdef SUPPORT_NNTP
     if (datasrc->flags & DF_REMOTE)
@@ -144,10 +141,8 @@ tellart()
     return (ART_POS)ftell(artfp);
 }
 
-char*
-readart(s, limit)
-char* s;
-int limit;
+char *
+readart (char *s, int limit)
 {
 #ifdef SUPPORT_NNTP
     if (datasrc->flags & DF_REMOTE)
@@ -157,15 +152,14 @@ int limit;
 }
 
 void
-clear_artbuf()
+clear_artbuf (void)
 {
     *artbuf = '\0';
     artbuf_pos = artbuf_seek = artbuf_len = 0;
 }
 
 int
-seekartbuf(pos)
-ART_POS pos;
+seekartbuf (ART_POS pos)
 {
     if (!do_hiding)
 	return seekart(pos);
@@ -183,9 +177,8 @@ ART_POS pos;
     return 0;
 }
 
-char*
-readartbuf(view_inline)
-bool_int view_inline;
+char *
+readartbuf (bool_int view_inline)
 {
     char* bp;
     char* s;

@@ -21,8 +21,7 @@
 /* ! if we should autounsubscribe to it			*/
 /* \0 if we should ask the user.			*/
 int
-auto_subscribe(name)
-char* name;
+auto_subscribe (char *name)
 {
     char* s;
 
@@ -34,9 +33,7 @@ char* name;
 }
 
 bool
-matchlist(patlist, s)
-char* patlist;
-char* s;
+matchlist (char *patlist, char *s)
 {
     COMPEX ilcompex;
     char* p;
@@ -64,7 +61,7 @@ char* s;
 	    printf("\n%s\n", err) FLUSH;
 	    finalize(1);
 	}
-	
+
 	if (execute(&ilcompex,s) != NULL)
 	    result = tmpresult;
 	patlist = p;

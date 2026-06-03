@@ -5,19 +5,13 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-char* savestr _((char*));
-char* safecpy _((char*,char*,int));
-char* cpytill _((char*,char*,int));
-char* filexp _((char*));
-char* instr _((char*,char*,bool_int));
+char* savestr (char*);
+char* safecpy (char*,char*,int);
+char* cpytill (char*,char*,int);
+char* filexp (char*);
+char* in_str (char*,char*,bool_int);
 #ifndef HAS_STRCASECMP
-int trn_casecmp _((char*,char*));
-int trn_ncasecmp _((char*,char*,int));
+int trn_casecmp (char*,char*);
+int trn_ncasecmp (char*,char*,int);
 #endif
-#ifdef SUPPORT_NNTP
-char* read_auth_file _((char*,char**));
-#endif
-#ifdef MSDOS
-int ChDir _((char*));
-int getuid _((void));
-#endif
+char* read_auth_file (char*,char**);

@@ -145,12 +145,12 @@ EXT int sel_next_op;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-void opt_init _((int,char**,char**));
-void opt_file _((char*,char**,bool_int));
-void set_options _((char**));
-void set_option _((int,char*));
-void save_options _((char*));
-char* option_value _((int));
-void set_header _((char*,int,bool_int));
-char* quote_string _((char*));
-void cwd_check _((void));
+void opt_init (int,char**,char**);
+void opt_file (char*,char**,bool_int);
+void set_options (char**);
+void set_option (int,char*);
+void save_options (char*);
+char* option_value (int);
+void set_header (char*,int,bool_int);
+char* quote_string (char*);
+void cwd_check (void);

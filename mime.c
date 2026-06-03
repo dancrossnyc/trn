@@ -36,7 +36,7 @@ static char text_plain[] = "text/plain";
 #endif
 
 void
-mime_init()
+mime_init (void)
 {
     char* s;
     char* t;
@@ -58,8 +58,7 @@ mime_init()
 }
 
 void
-mime_ReadMimecap(mcname)
-char* mcname;
+mime_ReadMimecap (char *mcname)
 {
     FILE* fp;
     char* bp;
@@ -132,7 +131,7 @@ char* mcname;
 		    mcp->testcommand = savestr(arg);
 		else if (arg && strcaseEQ(t, "description"))
 		    mcp->label = savestr(arg);
-		else if (arg && strcaseEQ(t, "label")) 
+		else if (arg && strcaseEQ(t, "label"))
 		    mcp->label = savestr(arg); /* bogus old name for description */
 	    }
 	}
@@ -142,9 +141,8 @@ char* mcname;
     fclose(fp);
 }
 
-static char*
-mime_ParseEntryArg(cpp)
-char** cpp;
+static char *
+mime_ParseEntryArg (char **cpp)
 {
     char* s = *cpp;
     char* f;
@@ -170,10 +168,8 @@ char** cpp;
     return s;
 }
 
-MIMECAP_ENTRY*
-mime_FindMimecapEntry(contenttype, skip_flags)
-char* contenttype;
-int skip_flags;
+MIMECAP_ENTRY *
+mime_FindMimecapEntry (char *contenttype, int skip_flags)
 {
     MIMECAP_ENTRY* mcp;
     int i;
@@ -192,9 +188,7 @@ int skip_flags;
 }
 
 bool
-mime_TypesMatch(ct,pat)
-char* ct;
-char* pat;
+mime_TypesMatch (char *ct, char *pat)
 {
     char* s = index(pat,'/');
     int len = (s? s - pat : strlen(pat));
@@ -205,8 +199,7 @@ char* pat;
 }
 
 int
-mime_Exec(cmd)
-char* cmd;
+mime_Exec (char *cmd)
 {
     char* f;
     char* t;
@@ -257,7 +250,7 @@ char* cmd;
 }
 
 void
-mime_InitSections()
+mime_InitSections (void)
 {
     while (mime_PopSection()) ;
     mime_ClearStruct(mime_section);
@@ -265,7 +258,7 @@ mime_InitSections()
 }
 
 void
-mime_PushSection()
+mime_PushSection (void)
 {
     MIME_SECT* mp = (MIME_SECT*)safemalloc(sizeof (MIME_SECT));
     bzero((char*)mp, sizeof (MIME_SECT));
@@ -274,7 +267,7 @@ mime_PushSection()
 }
 
 bool
-mime_PopSection()
+mime_PopSection (void)
 {
     MIME_SECT* mp = mime_section->prev;
     if (mp) {
@@ -290,8 +283,7 @@ mime_PopSection()
 
 /* Free up this mime structure's resources */
 void
-mime_ClearStruct(mp)
-MIME_SECT* mp;
+mime_ClearStruct (MIME_SECT *mp)
 {
     safefree0(mp->filename);
     safefree0(mp->type_name);
@@ -307,7 +299,7 @@ MIME_SECT* mp;
 
 /* Setup mime_article structure based on article's headers */
 void
-mime_SetArticle()
+mime_SetArticle (void)
 {
     char* s;
 
@@ -341,9 +333,7 @@ mime_SetArticle()
 
 /* Use the Content-Type to set values in the mime structure */
 void
-mime_ParseType(mp, s)
-MIME_SECT* mp;
-char* s;
+mime_ParseType (MIME_SECT *mp, char *s)
 {
     char* t;
 
@@ -432,9 +422,7 @@ char* s;
 
 /* Use the Content-Disposition to set values in the mime structure */
 void
-mime_ParseDisposition(mp, s)
-MIME_SECT* mp;
-char* s;
+mime_ParseDisposition (MIME_SECT *mp, char *s)
 {
     char* params;
 
@@ -452,9 +440,7 @@ char* s;
 
 /* Use the Content-Transfer-Encoding to set values in the mime structure */
 void
-mime_ParseEncoding(mp, s)
-MIME_SECT* mp;
-char* s;
+mime_ParseEncoding (MIME_SECT *mp, char *s)
 {
     s = mime_SkipWhitespace(s);
     if (!*s) {
@@ -496,9 +482,7 @@ char* s;
 /* Parse a multipart mime header and affect the *mime_section structure */
 
 void
-mime_ParseSubheader(ifp, next_line)
-FILE* ifp;
-char* next_line;
+mime_ParseSubheader (FILE *ifp, char *next_line)
 {
     static char* line = NULL;
     static int line_size = 0;
@@ -564,8 +548,7 @@ char* next_line;
 }
 
 void
-mime_SetState(bp)
-char* bp;
+mime_SetState (char *bp)
 {
     int ret;
 
@@ -608,8 +591,7 @@ char* bp;
 }
 
 int
-mime_EndOfSection(bp)
-char* bp;
+mime_EndOfSection (char *bp)
 {
     MIME_SECT* mp = mime_section->prev;
     while (mp && !mp->boundary_len)
@@ -633,9 +615,8 @@ char* bp;
  * header line.  The passed-in string is transformed into just the
  * first word on the line.
  */
-char*
-mime_ParseParams(str)
-char* str;
+char *
+mime_ParseParams (char *str)
 {
     char* s;
     char* t;
@@ -671,10 +652,8 @@ char* str;
     return str;
 }
 
-char*
-mime_FindParam(s, param)
-char* s;
-char* param;
+char *
+mime_FindParam (char *s, char *param)
 {
     int param_len = strlen(param);
     while (s && *s) {
@@ -687,9 +666,8 @@ char* param;
 
 /* Skip whitespace and RFC-822 comments. */
 
-char*
-mime_SkipWhitespace(s)
-char* s;
+char *
+mime_SkipWhitespace (char *s)
 {
     int comment_level = 0;
 
@@ -722,8 +700,7 @@ char* s;
 }
 
 void
-mime_DecodeArticle(view)
-bool_int view;
+mime_DecodeArticle (bool_int view)
 {
     MIMECAP_ENTRY* mcp = NULL;
 
@@ -784,10 +761,7 @@ bool_int view;
 }
 
 void
-mime_Description(mp, s, limit)
-MIME_SECT* mp;
-char* s;
-int limit;
+mime_Description (MIME_SECT *mp, char *s, int limit)
 {
     char* fn = decode_fix_fname(mp->filename);
     int len, flen = strlen(fn);
@@ -830,10 +804,7 @@ static Uchar index_hex[256] = {
 };
 
 int
-qp_decodestring(t, f, in_header)
-char* t;
-char* f;
-bool_int in_header;
+qp_decodestring (char *t, char *f, bool_int in_header)
 {
     char* save_t = t;
     while (*f) {
@@ -846,7 +817,7 @@ bool_int in_header;
 	    else
 		*t++ = *f++;
 	    break;
-	  case '=':	/* decode a hex-value */ 
+	  case '=':	/* decode a hex-value */
 	    if (f[1] == '\n') {
 		f += 2;
 		break;
@@ -869,9 +840,7 @@ bool_int in_header;
 }
 
 int
-qp_decode(ifp,state)
-FILE* ifp;
-int state;
+qp_decode (FILE *ifp, int state)
 {
     static FILE* ofp = NULL;
     int c1, c2;
@@ -944,9 +913,7 @@ static Uchar index_b64[256] = {
 };
 
 int
-b64_decodestring(t, f)
-char* t;
-char* f;
+b64_decodestring (char *t, char *f)
 {
     char* save_t = t;
     Uchar ch1, ch2;
@@ -980,9 +947,7 @@ char* f;
 }
 
 int
-b64_decode(ifp, state)
-FILE* ifp;
-int state;
+b64_decode (FILE *ifp, int state)
 {
     static FILE* ofp = NULL;
     int c1, c2, c3, c4;
@@ -1057,8 +1022,7 @@ int state;
 }
 
 static int
-mime_getc(fp)
-FILE* fp;
+mime_getc (FILE *fp)
 {
     if (fp)
 	return fgetc(fp);
@@ -1074,9 +1038,7 @@ FILE* fp;
 }
 
 int
-cat_decode(ifp, state)
-FILE* ifp;
-int state;
+cat_decode (FILE *ifp, int state)
 {
     static FILE* ofp = NULL;
 
@@ -1157,9 +1119,7 @@ static const char* named_entities[] = {
 };
 
 int
-filter_html(t, f)
-char* t;
-char* f;
+filter_html (char *t, char *f)
 {
     static char tagword[32];
     static int tagword_len;
@@ -1361,11 +1321,8 @@ static char letters[2] = {'a', 'A'};
 static char roman_letters[] = { 'M', 'D', 'C', 'L', 'X', 'V', 'I'};
 static int  roman_values[]  = {1000, 500, 100,  50, 10,   5,   1 };
 
-static char*
-tag_action(t, word, opening_tag)
-char* t;
-char* word;
-bool_int opening_tag;
+static char *
+tag_action (char *t, char *word, bool_int opening_tag)
 {
     char* cp;
     int i, j, tnum, len, itype, ch, cnt, num;
@@ -1638,9 +1595,8 @@ bool_int opening_tag;
     return t;
 }
 
-static char*
-output_prep(t)
-char* t;
+static char *
+output_prep (char *t)
 {
     if (mime_section->html & HF_QUEUED_P) {
 	mime_section->html &= ~HF_QUEUED_P;
@@ -1653,10 +1609,8 @@ char* t;
     return t + do_indent(t);
 }
 
-static char*
-do_newline(t, flag)
-char* t;
-int flag;
+static char *
+do_newline (char *t, int flag)
 {
     if (mime_section->html & flag) {
 	mime_section->html &= ~(flag|HF_SPACE_OK);
@@ -1669,8 +1623,7 @@ int flag;
 }
 
 static int
-do_indent(t)
-char* t;
+do_indent (char *t)
 {
     HBLK* blks;
     int j, ch, spaces, len = 0;
@@ -1717,10 +1670,8 @@ char* t;
     return len;
 }
 
-static char*
-find_attr(str, attr)
-char* str;
-char* attr;
+static char *
+find_attr (char *str, char *attr)
 {
     int len = strlen(attr);
     char* cp = str;

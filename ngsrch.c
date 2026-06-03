@@ -32,7 +32,7 @@ COMPEX ngcompex;
 #endif
 
 void
-ngsrch_init()
+ngsrch_init (void)
 {
 #ifdef NGSEARCH
     init_compex(&ngcompex);
@@ -41,9 +41,10 @@ ngsrch_init()
 
 #ifdef NGSEARCH
 int
-ng_search(patbuf,get_cmd)
-char* patbuf;				/* if patbuf != buf, get_cmd must */
-int get_cmd;				/*   be set to FALSE!!! */
+ng_search (
+    char *patbuf,				/* if patbuf != buf, get_cmd must */
+    int get_cmd				/*   be set to FALSE!!! */
+)
 {
     register char cmdchr = *patbuf;	/* what kind of search? */
     register char* s;
@@ -175,19 +176,14 @@ exit:
 
 #ifdef NGSEARCH
 bool
-ng_wanted(np)
-NGDATA* np;
+ng_wanted (NGDATA *np)
 {
     return execute(&ngcompex,np->rcline) != NULL;
 }
 #endif /* NGSEARCH */
 
-char*
-ng_comp(compex,pattern,RE,fold)
-COMPEX* compex;
-char* pattern;
-bool_int RE;
-bool_int fold;
+char *
+ng_comp (COMPEX *compex, char *pattern, bool_int RE, bool_int fold)
 {
     char ng_pattern[128];
     register char* s = pattern;

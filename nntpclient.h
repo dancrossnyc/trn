@@ -1,5 +1,5 @@
 /* nntpclient.h
-*/ 
+*/
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
@@ -63,10 +63,10 @@ EXT char last_command[NNTP_STRLEN];
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-int nntp_connect _((char*,bool_int));
-char* nntp_servername _((char*));
-int nntp_command _((char*));
-int nntp_check _((void));
-bool nntp_at_list_end _((char*));
-int nntp_gets _((char*,int));
-void nntp_close _((bool_int));
+int nntp_connect (char*,bool_int);
+char* nntp_servername (char*);
+int nntp_command (char*);
+int nntp_check (void);
+bool nntp_at_list_end (char*);
+int nntp_gets (char*,int);
+void nntp_close (bool_int);

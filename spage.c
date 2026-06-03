@@ -27,8 +27,9 @@
 
 /* returns TRUE if sucessful */
 bool
-s_fillpage_backward(end)
-long end;		/* entry number to be last on page */
+s_fillpage_backward (
+    long end		/* entry number to be last on page */
+)
 {
     int min_page_ents;	/* current minimum */
     int i,j;
@@ -120,8 +121,9 @@ long end;		/* entry number to be last on page */
 /* fills the page array */
 /* returns TRUE on success */
 bool
-s_fillpage_forward(start)
-long start;			/* entry to start filling with */
+s_fillpage_forward (
+    long start			/* entry to start filling with */
+)
 {
     int i;
     long a;
@@ -202,7 +204,7 @@ long start;			/* entry to start filling with */
  */
 /* returns TRUE on success */
 bool
-s_refillpage()
+s_refillpage (void)
 {
     int i,j;
     long a;
@@ -298,7 +300,7 @@ s_refillpage()
  *         0 on failure
  */
 int
-s_fillpage()
+s_fillpage (void)
 {
     int i;
 
@@ -348,24 +350,24 @@ s_fillpage()
 }
 
 void
-s_cleanpage()
+s_cleanpage (void)
 {
 }
 
 void
-s_go_top_page()
+s_go_top_page (void)
 {
     s_ptr_page_line = 0;
 }
 
 void
-s_go_bot_page()
+s_go_bot_page (void)
 {
     s_ptr_page_line = s_bot_ent;
 }
 
 bool
-s_go_top_ents()
+s_go_top_ents (void)
 {
     s_top_ent = s_first();
     if (!s_top_ent)
@@ -386,7 +388,7 @@ s_go_top_ents()
 }
 
 bool
-s_go_bot_ents()
+s_go_bot_ents (void)
 {
     bool flag;
 
@@ -398,7 +400,7 @@ s_go_bot_ents()
 }
 
 void
-s_go_next_page()
+s_go_next_page (void)
 {
     long a;
     bool flag;
@@ -413,7 +415,7 @@ s_go_next_page()
 }
 
 void
-s_go_prev_page()
+s_go_prev_page (void)
 {
     long a;
     bool flag;

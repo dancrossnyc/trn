@@ -10,7 +10,7 @@
 #include "list.ih"
 
 void
-list_init()
+list_init (void)
 {
     ;
 }
@@ -41,9 +41,7 @@ void (*init_node) _((LIST*,LISTNODE*));
 
 /* The default way to initialize a node */
 static void
-def_init_node(list, node)
-LIST* list;
-LISTNODE* node;
+def_init_node (LIST *list, LISTNODE *node)
 {
     if (list->flags & LF_ZERO_MEM)
 	bzero(node->data, list->items_per_node * list->item_size);
@@ -53,10 +51,8 @@ LISTNODE* node;
 ** will allocate new list items as needed, keeping the list->high
 ** value up to date.
 */
-char*
-listnum2listitem(list, num)
-LIST* list;
-long num;
+char *
+listnum2listitem (LIST *list, long num)
 {
     LISTNODE* node = list->recent;
     LISTNODE* prevnode = NULL;
@@ -102,9 +98,7 @@ long num;
 ** must already exist or this will infinite loop.
 */
 long
-listitem2listnum(list, ptr)
-LIST* list;
-char* ptr;
+listitem2listnum (LIST *list, char *ptr)
 {
     LISTNODE* node;
     char* cp;
@@ -152,10 +146,7 @@ int arg;
 ** the initial list number.
 */
 long
-existing_listnum(list, num, direction)
-LIST* list;
-long num;
-int direction;
+existing_listnum (LIST *list, long num, int direction)
 {
     register LISTNODE* node = list->recent;
     LISTNODE* prevnode = NULL;
@@ -194,10 +185,8 @@ int direction;
 /* Increment the item pointer to the next allocated item.
 ** Returns NULL if ptr is the last one.
 */
-char*
-next_listitem(list, ptr)
-LIST* list;
-char* ptr;
+char *
+next_listitem (LIST *list, char *ptr)
 {
     register LISTNODE* node = list->recent;
 
@@ -220,10 +209,8 @@ char* ptr;
 /* Decrement the item pointer to the prev allocated item.
 ** Returns NULL if ptr is the first one.
 */
-char*
-prev_listitem(list, ptr)
-LIST* list;
-char* ptr;
+char *
+prev_listitem (LIST *list, char *ptr)
 {
     register LISTNODE* node = list->recent;
 
@@ -244,8 +231,7 @@ char* ptr;
 ** calling this.
 */
 void
-delete_list(list)
-LIST* list;
+delete_list (LIST *list)
 {
     LISTNODE* node = list->first;
     LISTNODE* prevnode = NULL;

@@ -59,7 +59,7 @@ static char* nntpforce_export = null_export + 2;
 #endif
 
 void
-util_init()
+util_init (void)
 {
     extern char patchlevel[];
     char* cp;
@@ -86,13 +86,11 @@ util_init()
     for (cp = patchlevel; isspace(*cp); cp++) ;
     export("TRN_VERSION", cp);
 }
-    
+
 /* fork and exec a shell command */
 
 int
-doshell(shell,s)
-char* shell;
-char* s;
+doshell (char *shell, char *s)
 {
 #ifndef MSDOS
     WAIT_STATUS status;
@@ -222,7 +220,7 @@ char* s;
     sigignore(SIGINT);
 #ifdef SIGQUIT
     sigignore(SIGQUIT);
-#endif 
+#endif
     waiting = TRUE;
     while ((w = wait(&status)) != pid)
 	if (w == -1 && errno != EINTR)
@@ -246,7 +244,7 @@ char* s;
     sigset(SIGINT,int_catcher);
 #ifdef SIGQUIT
     sigset(SIGQUIT,SIG_DFL);
-#endif 
+#endif
 #ifdef SIGTSTP
     sigset(SIGTSTP,stop_catcher);
     sigset(SIGTTOU,stop_catcher);
@@ -301,11 +299,8 @@ MEM_SIZE size;
 
 /* safe version of string concatenate, with \n deletion and space padding */
 
-char*
-safecat(to,from,len)
-char* to;
-register char* from;
-register int len;
+char *
+safecat (char *to, register char *from, register int len)
 {
     register char* dest = to;
 
@@ -336,7 +331,7 @@ char* filename;
 int mod;
 {
     int protection, euid;
-    
+
     mod &= 7;				/* remove extraneous garbage */
     if (stat(filename, &filestat) < 0)
 	return -1;
@@ -355,79 +350,23 @@ int mod;
 /*
  * Get working directory
  */
-char*
-trn_getwd(buf, buflen)
-char* buf;
-int buflen;
+char *
+trn_getwd (char *buf, int buflen)
 {
     char* ret;
 
-#ifdef HAS_GETCWD
     ret = getcwd(buf, buflen);
-#else
-    ret = trn_getcwd(buf, buflen);
-#endif
     if (!ret) {
 	printf("Cannot determine current working directory!\n") FLUSH;
 	finalize(1);
     }
-#ifdef MSDOS
-    strlwr(buf);
-    while ((buf = index(buf,'\\')) != NULL)
-	*buf++ = '/';
-#endif
     return ret;
 }
-
-#ifndef HAS_GETCWD
-static char*
-trn_getcwd(buf, len)
-char* buf;
-int len;
-{
-    char* ret;
-#ifdef HAS_GETWD
-    buf[len-1] = 0;
-    ret = getwd(buf);
-    if (buf[len-1]) {
-	/* getwd() overwrote the end of the buffer */
-	printf("getwd() buffer overrun!\n") FLUSH;
-	finalize(1);
-    }
-#else
-    FILE* popen();
-    FILE* pipefp;
-    char* nl;
-
-    if ((pipefp = popen("/bin/pwd","r")) == NULL) {
-	printf("Can't popen /bin/pwd\n") FLUSH;
-	return NULL;
-    }
-    buf[0] = 0;
-    fgets(ret = buf, len, pipefp);
-    if (pclose(pipefp) == EOF) {
-	printf("Failed to run /bin/pwd\n") FLUSH;
-	return NULL;
-    }
-    if (!buf[0]) {
-	printf("/bin/pwd didn't output anything\n") FLUSH;
-    	return NULL;
-    }
-    if ((nl = index(buf, '\n')) != NULL)
-	*nl = '\0';
-#endif
-    return ret;
-}
-#endif
 
 /* just like fgets but will make bigger buffer as necessary */
 
-char*
-get_a_line(buffer,buffer_length,realloc_ok,fp)
-char* buffer;
-register int buffer_length;
-bool_int realloc_ok;
-FILE* fp;
+char *
+get_a_line (char *buffer, register int buffer_length, bool_int realloc_ok, FILE *fp)
 {
     register int bufix = 0;
     register int nextch;
@@ -459,9 +398,7 @@ FILE* fp;
 }
 
 int
-makedir(dirname,nametype)
-register char* dirname;
-int nametype;
+makedir (register char *dirname, int nametype)
 {
 #ifdef MAKEDIR
     register char* end;
@@ -496,7 +433,7 @@ int nametype;
 	    break;			/* hope they know what they are doing */
 	*s = '\0';			/* mark as not existing */
     }
-    
+
     for (s=dirname; s <= end; s++) {	/* this is grody but efficient */
 	if (!*s) {			/* something to make? */
 # ifdef HAS_MKDIR
@@ -523,8 +460,7 @@ int nametype;
 }
 
 void
-notincl(feature)
-char* feature;
+notincl (char *feature)
 {
     printf("\nNo room for feature \"%s\" on this machine.\n",feature) FLUSH;
 }
@@ -532,10 +468,7 @@ char* feature;
 /* grow a static string to at least a certain length */
 
 void
-growstr(strptr,curlen,newlen)
-char** strptr;
-int* curlen;
-int newlen;
+growstr (char **strptr, int *curlen, int newlen)
 {
     if (newlen > *curlen) {		/* need more room? */
 	if (*curlen)
@@ -547,9 +480,7 @@ int newlen;
 }
 
 void
-setdef(buffer,dflt)
-char* buffer;
-char* dflt;
+setdef (char *buffer, char *dflt)
 {
 #ifdef SCAN
     s_default_cmd = FALSE;
@@ -574,9 +505,7 @@ char* dflt;
 
 #ifndef NO_FILELINKS
 void
-safelink(old, new)
-char* old;
-char* new;
+safelink (char *old, char *new)
 {
 #if 0
     extern int sys_nerr;
@@ -595,10 +524,8 @@ char* new;
 #endif
 
 #ifndef HAS_STRSTR
-char*
-trn_strstr(s1, s2)
-char* s1;
-char* s2;
+char *
+trn_strstr (char *s1, char *s2)
 {
     register char* p = s1;
     register int len = strlen(s2);
@@ -612,7 +539,7 @@ char* s2;
 
 /* attempts to verify a cryptographic signature. */
 void
-verify_sig()
+verify_sig (void)
 {
     int i;
 
@@ -635,7 +562,7 @@ verify_sig()
 }
 
 double
-current_time()
+current_time (void)
 {
 #ifdef HAS_GETTIMEOFDAY
     Timeval t;
@@ -653,9 +580,7 @@ current_time()
 }
 
 time_t
-text2secs(s, defSecs)
-char* s;
-time_t defSecs;
+text2secs (char *s, time_t defSecs)
 {
     time_t secs = 0;
     time_t item;
@@ -695,9 +620,8 @@ time_t defSecs;
     return secs * 60;
 }
 
-char*
-secs2text(secs)
-time_t secs;
+char *
+secs2text (time_t secs)
 {
     char* s = buf;
     int items;
@@ -729,8 +653,8 @@ time_t secs;
 }
 
 /* returns a saved string representing a unique temporary filename */
-char*
-temp_filename()
+char *
+temp_filename (void)
 {
     static int tmpfile_num = 0;
     char tmpbuf[CBUFLEN];
@@ -740,32 +664,31 @@ temp_filename()
 }
 
 #ifdef SUPPORT_NNTP
-char*
-get_auth_user()
+char *
+get_auth_user (void)
 {
     return datasrc->auth_user;
 }
 #endif
 
 #ifdef SUPPORT_NNTP
-char*
-get_auth_pass()
+char *
+get_auth_pass (void)
 {
     return datasrc->auth_pass;
 }
 #endif
 
 #if defined(USE_GENAUTH) && defined(SUPPORT_NNTP)
-char*
-get_auth_command()
+char *
+get_auth_command (void)
 {
     return datasrc->auth_command;
 }
 #endif
 
-char**
-prep_ini_words(words)
-INI_WORDS words[];
+char **
+prep_ini_words (INI_WORDS words[])
 {
     register int checksum;
     char* cp = (char*)INI_VALUES(words);
@@ -789,8 +712,7 @@ INI_WORDS words[];
 }
 
 void
-unprep_ini_words(words)
-INI_WORDS words[];
+unprep_ini_words (INI_WORDS words[])
 {
     free((char*)INI_VALUES(words));
     words[0].checksum = 0;
@@ -798,9 +720,7 @@ INI_WORDS words[];
 }
 
 void
-prep_ini_data(cp,filename)
-char* cp;
-char* filename;
+prep_ini_data (char *cp, char *filename)
 {
     char* t = cp;
 
@@ -873,9 +793,7 @@ char* filename;
 }
 
 bool
-parse_string(to, from)
-char** to;
-char** from;
+parse_string (char **to, char **from)
 {
     char inquote = 0;
     char* t = *to;
@@ -926,11 +844,8 @@ char** from;
     return inquote;	/* return TRUE if the string ended with a newline */
 }
 
-char*
-next_ini_section(cp,section,cond)
-char* cp;
-char** section;
-char** cond;
+char *
+next_ini_section (char *cp, char **section, char **cond)
 {
     while (*cp != '[') {
 	if (!*cp)
@@ -950,10 +865,8 @@ char** cond;
     return cp;
 }
 
-char*
-parse_ini_section(cp, words)
-char* cp;
-INI_WORDS words[];
+char *
+parse_ini_section (char *cp, INI_WORDS words[])
 {
     register int checksum;
     register char* s;
@@ -1000,8 +913,7 @@ INI_WORDS words[];
 }
 
 bool
-check_ini_cond(cond)
-char* cond;
+check_ini_cond (char *cond)
 {
     int not, equal, upordown, num;
     char* s;
@@ -1041,7 +953,7 @@ char* cond;
 /* $$ might get replaced soonish... */
 /* Ask for a single character (improve the prompt?) */
 char
-menu_get_char()
+menu_get_char (void)
 {
     printf("Enter your choice: ");
     fflush(stdout);
@@ -1054,8 +966,7 @@ menu_get_char()
 /* NOTE: kfile.c uses its own editor function */
 /* used in a few places, now centralized */
 int
-edit_file(fname)
-char* fname;
+edit_file (char *fname)
 {
     int r = -1;
 

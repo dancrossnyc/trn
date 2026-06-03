@@ -36,12 +36,12 @@
 static char nullart[] = "\nEmpty article.\n";
 
 void
-respond_init()
+respond_init (void)
 {
 }
 
 int
-save_article()
+save_article (void)
 {
     bool_int use_pref;
     register char* s;
@@ -50,7 +50,7 @@ save_article()
     int i;
     bool interactive = (buf[1] == FINISHCMD);
     char cmd = *buf;
-    
+
     if (!finish_command(interactive))	/* get rest of command */
 	return SAVE_ABORT;
     if ((use_pref = isupper(cmd)) != 0)
@@ -314,8 +314,8 @@ save_article()
 	    else if (norm_always)
 		mailbox = FALSE;
 	    else {
-		char* dflt = (instr(savename,"%a", TRUE) ? "nyq" : "ynq");
-		
+		char* dflt = (in_str(savename,"%a", TRUE) ? "nyq" : "ynq");
+
 		sprintf(cmd_buf,
 		"\nFile %s doesn't exist--\n	use mailbox format?",s);
 	      reask_save:
@@ -440,7 +440,7 @@ s_bomb:
 }
 
 int
-view_article()
+view_article (void)
 {
     parseheader(art);
     mime_SetArticle();
@@ -505,7 +505,7 @@ view_article()
 }
 
 int
-cancel_article()
+cancel_article (void)
 {
     char hbuf[5*LBUFLEN];
     char* ngs_buf;
@@ -530,9 +530,9 @@ cancel_article()
     from_buf = fetchlines(art,FROM_LINE);
     ngs_buf = fetchlines(art,NGS_LINE);
     if (strcaseNE(getval("FROM",""),from_buf)
-     && (!instr(from_buf,hostname,FALSE)
-      || (!instr(from_buf,loginName,TRUE)
-       && !instr(reply_buf,loginName,TRUE)
+     && (!in_str(from_buf,hostname,FALSE)
+      || (!in_str(from_buf,loginName,TRUE)
+       && !in_str(reply_buf,loginName,TRUE)
 #ifdef NEWS_ADMIN
        && myuid != newsuid
 #endif
@@ -578,7 +578,7 @@ done:
 }
 
 int
-supersede_article()		/* Supersedes: */
+supersede_article (void)		/* Supersedes: */
 {
     char hbuf[5*LBUFLEN];
     char* ngs_buf;
@@ -604,9 +604,9 @@ supersede_article()		/* Supersedes: */
     from_buf = fetchlines(art,FROM_LINE);
     ngs_buf = fetchlines(art,NGS_LINE);
     if (strcaseNE(getval("FROM",""),from_buf)
-     && (!instr(from_buf,hostname,FALSE)
-      || (!instr(from_buf,loginName,TRUE)
-       && !instr(reply_buf,loginName,TRUE)
+     && (!in_str(from_buf,hostname,FALSE)
+      || (!in_str(from_buf,loginName,TRUE)
+       && !in_str(reply_buf,loginName,TRUE)
 #ifdef NEWS_ADMIN
        && myuid != newsuid
 #endif
@@ -655,7 +655,7 @@ done:
 }
 
 static void
-follow_it_up()
+follow_it_up (void)
 {
     safecpy(cmd_buf,filexp(getval("NEWSPOSTER",NEWSPOSTER)), sizeof cmd_buf);
     if (invoke(cmd_buf,origdir) == 42) {
@@ -695,7 +695,7 @@ follow_it_up()
 }
 
 void
-reply()
+reply (void)
 {
     char hbuf[5*LBUFLEN];
     bool incl_body = (*buf == 'R' && art);
@@ -710,7 +710,7 @@ reply()
     }
     interp(hbuf, sizeof hbuf, getval("MAILHEADER",MAILHEADER));
     fputs(hbuf,tmpfp);
-    if (!instr(maildoer,"%h",TRUE)) {
+    if (!in_str(maildoer,"%h",TRUE)) {
 #ifdef VERBOSE
 	IF(verbose)
 	    printf("\n%s\n(Above lines saved in file %s)\n",buf,headname)
@@ -753,9 +753,9 @@ reply()
 done:
     free(maildoer);
 }
-  
+
 void
-forward()
+forward (void)
 {
     char hbuf[5*LBUFLEN];
     char* maildoer = savestr(getval("FORWARDPOSTER",FORWARDPOSTER));
@@ -814,7 +814,7 @@ forward()
 	}
     }
 #endif
-    if (!instr(maildoer,"%h",TRUE)) {
+    if (!in_str(maildoer,"%h",TRUE)) {
 #ifdef VERBOSE
 	IF(verbose)
 	    printf("\n%s\n(Above lines saved in file %s)\n",hbuf,headname)
@@ -866,7 +866,7 @@ forward()
 }
 
 void
-followup()
+followup (void)
 {
     char hbuf[5*LBUFLEN];
     bool incl_body = (*buf == 'F' && art);
@@ -929,9 +929,7 @@ trim the quoted article down as much as possible.)\n\
 }
 
 int
-invoke(cmd,dir)
-char* cmd;
-char* dir;
+invoke (char *cmd, char *dir)
 {
     char oldmode = mode;
     int ret = -1;
@@ -975,8 +973,7 @@ char* dir;
 */
 #if 0
 static bool
-cut_line(str)
-char* str;
+cut_line (char *str)
 {
     char* cp;
     char got_flag;

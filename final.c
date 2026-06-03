@@ -43,7 +43,7 @@
 #endif
 
 void
-final_init()
+final_init (void)
 {
 #ifdef SIGTSTP
     sigset(SIGTSTP, stop_catcher);	/* job control signals */
@@ -94,9 +94,8 @@ final_init()
 #endif
 }
 
-void					/* very much void */
-finalize(status)
-int status;
+void
+finalize (int status)
 {
 #ifdef SUPPORT_NNTP
     int i;
@@ -157,8 +156,7 @@ int status;
 /* come here on interrupt */
 
 Signal_t
-int_catcher(dummy)
-int dummy;
+int_catcher (int dummy)
 {
     sigset(SIGINT,int_catcher);
 #ifdef DEBUG
@@ -179,8 +177,7 @@ int dummy;
 /* come here on signal other than interrupt, stop, or cont */
 
 Signal_t
-sig_catcher(signo)
-int signo;
+sig_catcher (int signo)
 {
 #ifdef VERBOSE
     static char* signame[] = {
@@ -273,8 +270,7 @@ int signo;
 
 #ifdef SUPPORT_NNTP
 Signal_t
-pipe_catcher(signo)
-int signo;
+pipe_catcher (int signo)
 {
     ;/*$$ we lost the current nntp connection */
     sigset(SIGPIPE,pipe_catcher);
@@ -285,8 +281,7 @@ int signo;
 
 #ifdef SIGTSTP
 Signal_t
-stop_catcher(signo)
-int signo;
+stop_catcher (int signo)
 {
     if (!waiting) {
 	xmouse_off();

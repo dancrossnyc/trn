@@ -5,9 +5,9 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-bool ov_init _((void));
-int ov_num _((char*,char*));
-bool ov_data _((ART_NUM,ART_NUM,bool_int));
-void ov_close _((void));
-char* ov_fieldname _((int));
-char* ov_field _((ARTICLE*,int));
+bool ov_init (void);
+int ov_num (char*,char*);
+bool ov_data (ART_NUM,ART_NUM,bool_int);
+void ov_close (void);
+char* ov_fieldname (int);
+char* ov_field (ARTICLE*,int);

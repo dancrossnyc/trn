@@ -2,7 +2,7 @@
 */
 /* The authors make no claims as to the fitness or correctness of this software
  * for any use whatsoever, and it is provided as is. Any use of this software
- * is at the user's own risk. 
+ * is at the user's own risk.
  */
 
 #include "EXTERN.h"
@@ -60,11 +60,7 @@ static int _mx, _my, _mz;		/* min2, min3 temp variables */
    failure */
 
 int
-edit_distn(from, from_len, to, to_len)
-char* from;
-register int from_len;
-char* to;
-register int to_len;
+edit_distn (char *from, register int from_len, char *to, register int to_len)
 {
 #ifndef TRN_SPEEDUP
     register int ins, del, ch;	  	/* local copies of edit costs */
@@ -223,7 +219,7 @@ register int to_len;
 		    N(row, col + 1) + ins,
 		    W(row + 1, col) + del);
 	    if (from[col] == to[row - 1] && col > 0 &&
-		    from[col - 1] == to[row])		    
+		    from[col - 1] == to[row])
 		buffer[index] = min2(buffer[index],
 			NNWW(row - 1, col - 1) + swap_cost);
 

@@ -2,6 +2,8 @@
  */
 /* This software is copyrighted as detailed in the LICENSE file. */
 
+#include <sys/types.h>
+#include <dirent.h>
 
 #include "EXTERN.h"
 #include "common.h"
@@ -23,7 +25,6 @@
 #include "artio.h"
 #include "intrp.h"
 #include "rcln.h"
-#include "ndir.h"
 #include "kfile.h"
 #include "rthread.h"
 #include "rt-process.h"
@@ -43,13 +44,13 @@
 static long chase_count = 0;
 
 void
-bits_init()
+bits_init (void)
 {
     ;
 }
 
 void
-rc_to_bits()
+rc_to_bits (void)
 {
     char* mybuf = buf;			/* place to decode rc line */
     register char* s;
@@ -162,8 +163,7 @@ rc_to_bits()
 }
 
 bool
-set_firstart(s)
-char* s;
+set_firstart (char *s)
 {
     while (*s == ' ') s++;
 
@@ -181,7 +181,7 @@ char* s;
 /* reconstruct the .newsrc line in a human readable form */
 
 void
-bits_to_rc()
+bits_to_rc (void)
 {
     register char* s;
     register char* mybuf = buf;
@@ -264,7 +264,7 @@ bits_to_rc()
 }
 
 void
-find_existing_articles()
+find_existing_articles (void)
 {
     ART_NUM an;
     ARTICLE* ap;
@@ -332,7 +332,7 @@ find_existing_articles()
 	ART_NUM first = lastart+1;
 	ART_NUM last = 0;
 	DIR* dirp;
-	Direntry_t* dp;
+	struct dirent* dp;
 	char ch;
 	long lnum;
 
@@ -391,8 +391,7 @@ find_existing_articles()
 /* mark an article unread, keeping track of toread[] */
 
 void
-onemore(ap)
-ARTICLE* ap;
+onemore (ARTICLE *ap)
 {
     if (!(ap->flags & AF_UNREAD)) {
 	register ART_NUM artnum = article_num(ap);
@@ -415,8 +414,7 @@ ARTICLE* ap;
 /* mark an article read, keeping track of toread[] */
 
 void
-oneless(ap)
-ARTICLE* ap;
+oneless (ARTICLE *ap)
 {
     if (ap->flags & AF_UNREAD) {
 	ap->flags &= ~AF_UNREAD;
@@ -431,8 +429,7 @@ ARTICLE* ap;
 }
 
 void
-oneless_artnum(artnum)
-ART_NUM artnum;
+oneless_artnum (ART_NUM artnum)
 {
     ARTICLE* ap = article_find(artnum);
     if (ap)
@@ -440,8 +437,7 @@ ART_NUM artnum;
 }
 
 void
-onemissing(ap)
-ARTICLE* ap;
+onemissing (ARTICLE *ap)
 {
     missing_count += (ap->flags & AF_UNREAD) != 0;
     oneless(ap);
@@ -452,8 +448,7 @@ ARTICLE* ap;
 /* mark an article as unread, with possible xref chasing */
 
 void
-unmark_as_read(ap)
-register ARTICLE* ap;
+unmark_as_read (register ARTICLE *ap)
 {
     onemore(ap);
 #ifdef MCHASE
@@ -468,8 +463,7 @@ register ARTICLE* ap;
 ** Don't call this on missing articles.
 */
 void
-set_read(ap)
-register ARTICLE* ap;
+set_read (register ARTICLE *ap)
 {
     oneless(ap);
     if (!olden_days && ap->xrefs != nullstr && !(ap->flags & AF_KCHASE)) {
@@ -482,8 +476,7 @@ register ARTICLE* ap;
 /* will be marked as unread.  Called via M command */
 
 void
-delay_unmark(ap)
-ARTICLE* ap;
+delay_unmark (ARTICLE *ap)
 {
     if (!(ap->flags & AF_YANKBACK)) {
 	ap->flags |= AF_YANKBACK;
@@ -495,8 +488,7 @@ ARTICLE* ap;
 /* newsgroups, mark them read there also. */
 
 void
-mark_as_read(ap)
-register ARTICLE* ap;
+mark_as_read (register ARTICLE *ap)
 {
     oneless(ap);
     if (ap->xrefs != nullstr && !(ap->flags & AF_KCHASE)) {
@@ -507,7 +499,7 @@ register ARTICLE* ap;
 }
 
 void
-mark_missing_articles()
+mark_missing_articles (void)
 {
     register ARTICLE* ap;
     for (ap = article_ptr(article_first(absfirst));
@@ -522,8 +514,7 @@ mark_missing_articles()
 /* keep firstart pointing at the first unread article */
 
 void
-check_first(min)
-ART_NUM min;
+check_first (ART_NUM min)
 {
     if (min < absfirst)
 	min = absfirst;
@@ -534,7 +525,7 @@ ART_NUM min;
 /* bring back articles marked with M */
 
 void
-yankback()
+yankback (void)
 {
     if (dmcount) {			/* delayed unmarks pending? */
 	if (panic)
@@ -555,9 +546,7 @@ yankback()
 }
 
 static bool
-yank_article(ptr, arg)
-char* ptr;
-int arg;
+yank_article (char *ptr, int arg)
 {
     register ARTICLE* ap = (ARTICLE*)ptr;
     if (ap->flags & AF_YANKBACK) {
@@ -570,8 +559,7 @@ int arg;
 }
 
 int
-chase_xrefs(until_key)
-bool_int until_key;
+chase_xrefs (bool_int until_key)
 {
     if (!chase_count)
 	return 1;
@@ -584,9 +572,7 @@ bool_int until_key;
 }
 
 static bool
-check_chase(ptr, until_key)
-char* ptr;
-int until_key;
+check_chase (char *ptr, int until_key)
 {
     register ARTICLE* ap = (ARTICLE*)ptr;
 
@@ -614,9 +600,10 @@ int until_key;
 #ifndef DBM_XREFS
 /*=-=-=-=*/
 static int
-chase_xref(artnum,markread)	/* The Xref-line-using version */
-ART_NUM artnum;
-int markread;
+chase_xref (	/* The Xref-line-using version */
+    ART_NUM artnum,
+    int markread
+)
 {
     register char* xartnum;
     register ART_NUM x;
@@ -702,12 +689,10 @@ int markread;
  * check again.  This is so that if the new administrator decides
  * to change the system name as known to inews, rn will still do
  * Xrefs correctly--each article need only match itself to be valid.
- */ 
+ */
 # ifdef VALIDATE_XREF_SITE
 static bool
-valid_xref_site(artnum, site)
-ART_NUM artnum;
-char* site;
+valid_xref_site (ART_NUM artnum, char *site)
 {
     static char* inews_site = NULL;
     char* sitebuf;
@@ -728,7 +713,7 @@ char* site;
 #else /* ANCIENT_NEWS */
     /* Grab the site from the Posting-Version line */
     sitebuf = fetchlines(artnum,RVER_LINE);
-    if ((s = instr(sitebuf,"; site ",TRUE)) != NULL) {
+    if ((s = in_str(sitebuf,"; site ",TRUE)) != NULL) {
 	char* t = index(s+7, '.');
 	if (t)
 	    *t = '\0';
@@ -755,9 +740,10 @@ char* site;
 #else /* DBM_XREFS */
 
 static int
-chase_xref(artnum,markread)		/* The DBM version */
-ART_NUM artnum;
-int markread;
+chase_xref (		/* The DBM version */
+    ART_NUM artnum,
+    int markread
+)
 {
     datum lhs, rhs;
     datum fetch();
@@ -816,7 +802,7 @@ int markread;
 	termdown(1);
     }
 # endif
-    
+
     if ((idp = index(ident_buf, '@')) != NULL) {
 	while (*++idp)			/* make message-id case insensitive */
 	    if (isupper(*idp))

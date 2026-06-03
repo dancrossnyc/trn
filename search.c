@@ -2,9 +2,9 @@
  */
 
 /* string search routines */
- 
+
 /*		Copyright (c) 1981,1980 James Gosling		*/
- 
+
 /* Modified Aug. 12, 1981 by Tom London to include regular expressions
    as in ed.  RE stuff hacked over by jag to correct a few major problems,
    mainly dealing with searching within the buffer rather than copying
@@ -38,7 +38,7 @@
 #define MNULL	64		/* Bit is set in a meta-character defn to
 				   indicate that the metacharacter can match
 				   a null string.  advance() uses this. */
- 
+
 /* meta characters in the "compiled" form of a regular expression */
 #define CBRA	(2|MNULL)	/* \( -- begin bracket */
 #define	CCHR	4		/* a vanilla character */
@@ -56,11 +56,11 @@
 #define NWORD	34		/* matches non-word characer \W */
 #define WBOUND	(36|MNULL)	/* matches word boundary \b */
 #define NWBOUND	(38|MNULL)	/* matches non-(word boundary) \B */
- 
+
 #define	STAR	01		/* * -- Kleene star, repeats the previous
 				   REas many times as possible; the value
 				   ORs with the other operator types */
- 
+
 #define ASCSIZ 256
 typedef Uchar	TRANSTABLE[ASCSIZ];
 
@@ -71,17 +71,16 @@ static int err;
 static char* FirstCharacter;
 
 void
-search_init()
+search_init (void)
 {
     register int    i;
-    
+
     for (i = 0; i < ASCSIZ; i++)
 	trans[i] = i;
 }
 
 void
-init_compex(compex)
-register COMPEX* compex;
+init_compex (register COMPEX *compex)
 {
     /* the following must start off zeroed */
 
@@ -90,8 +89,7 @@ register COMPEX* compex;
 }
 
 void
-free_compex(compex)
-register COMPEX* compex;
+free_compex (register COMPEX *compex)
 {
     if (compex->eblen) {
 	free(compex->expbuf);
@@ -106,10 +104,8 @@ register COMPEX* compex;
 static char* gbr_str = NULL;
 static int gbr_siz = 0;
 
-char*
-getbracket(compex,n)
-register COMPEX* compex;
-int n;
+char *
+getbracket (register COMPEX *compex, int n)
 {
     int length = compex->braelist[n] - compex->braslist[n];
 
@@ -123,8 +119,7 @@ int n;
 }
 
 void
-case_fold(which)
-int which;
+case_fold (int which)
 {
     register int i;
 
@@ -143,12 +138,8 @@ int which;
 
 /* Compile the given regular expression into a [secret] internal format */
 
-char*
-compile(compex, strp, RE, fold)
-register COMPEX* compex;
-register char* strp;
-int RE;
-int fold;
+char *
+compile (register COMPEX *compex, register char *strp, int RE, int fold)
 {
     register int c;
     register char* ep;
@@ -157,7 +148,7 @@ int fold;
     char* bracketp;
     char** alt = compex->alternatives;
     char* retmes = "Badly formed search string";
- 
+
     case_fold(compex->do_folding = fold);
     if (!compex->eblen) {
 	compex->expbuf = safemalloc(84);
@@ -196,7 +187,7 @@ int fold;
 	}
 	else				/* it is a regular expression */
 	    switch (c) {
- 
+
 		case '\\':		/* meta something */
 		    switch (c = *strp++) {
 		    case '(':
@@ -264,7 +255,7 @@ int fold;
 		case '.':
 		    *ep++ = CDOT;
 		    continue;
- 
+
 		case '*':
 		    if (lastep == 0 || *lastep == CBRA || *lastep == CKET
 			|| *lastep == CIRC
@@ -272,35 +263,35 @@ int fold;
 			goto defchar;
 		    *lastep |= STAR;
 		    continue;
- 
+
 		case '^':
 		    if (ep != compex->expbuf && ep[-1] != CEND)
 			goto defchar;
 		    *ep++ = CIRC;
 		    continue;
- 
+
 		case '$':
 		    if (*strp != 0 && (*strp != '\\' || strp[1] != '|'))
 			goto defchar;
 		    *ep++ = CDOL;
 		    continue;
- 
+
 		case '[': {		/* character class */
 		    register int i;
-		    
+
 		    if (ep - compex->expbuf >= compex->eblen - BMAPSIZ)
 			ep = grow_eb(compex, ep, alt); /* reserve bitmap */
 
 		    for (i = BMAPSIZ; i; --i)
 			ep[i] = 0;
-		    
+
 		    if ((c = *strp++) == '^') {
 			c = *strp++;
 			*ep++ = NCCL;	/* negated */
 		    }
 		    else
 			*ep++ = CCL;	/* normal */
-		    
+
 		    i = 0;		/* remember oldchar */
 		    do {
 			if (c == '\0') {
@@ -325,7 +316,7 @@ int fold;
 		    ep += BMAPSIZ;
 		    continue;
 		}
- 
+
 	    defchar:
 		default:
 		    *ep++ = CCHR;
@@ -338,11 +329,8 @@ cerror:
     return retmes;
 }
 
-char*
-grow_eb(compex, epp, alt)
-register COMPEX* compex;
-char* epp;
-char** alt;
+char *
+grow_eb (register COMPEX *compex, char *epp, char **alt)
 {
     register char* oldbuf = compex->expbuf;
     register char** altlist = compex->alternatives;
@@ -352,20 +340,18 @@ char** alt;
     if (compex->expbuf != oldbuf) {	/* realloc can change expbuf! */
 	epp += compex->expbuf - oldbuf;
 	while (altlist != alt)
-	    *altlist++ += compex->expbuf - oldbuf; 
+	    *altlist++ += compex->expbuf - oldbuf;
     }
     return epp;
 }
 
-char*
-execute(compex, addr)
-register COMPEX* compex;
-char* addr;
+char *
+execute (register COMPEX *compex, char *addr)
 {
     register char* p1 = addr;
     register Uchar* trt = trans;
     register int c;
- 
+
     if (addr == NULL || compex->expbuf == NULL)
 	return NULL;
     if (compex->nbra) {			/* any brackets? */
@@ -402,72 +388,69 @@ char* addr;
     }
    /*NOTREACHED*/
 }
- 
+
 /* advance the match of the regular expression starting at ep along the
    string lp, simulates an NDFSA */
 bool
-advance(compex, lp, ep)
-register COMPEX* compex;
-register char* ep;
-register char* lp;
+advance (register COMPEX *compex, register char *lp, register char *ep)
 {
     register char* curlp;
     register Uchar* trt = trans;
     register int i;
- 
+
     while (*lp || (*ep & (STAR|MNULL))) {
 	switch (*ep++) {
- 
+
 	    case CCHR:
 		if (trt[*(Uchar*)ep++] != trt[*(Uchar*)lp])
 		    return FALSE;
 		lp++;
 		continue;
- 
+
 	    case CDOT:
 		if (*lp == '\n') return FALSE;
 		lp++;
 		continue;
- 
+
 	    case CDOL:
 		if (!*lp || *lp == '\n')
 		    continue;
 		return FALSE;
- 
+
 	    case CIRC:
 		if (lp == FirstCharacter || lp[-1]=='\n')
 		    continue;
 		return FALSE;
- 
+
 	    case WORD:
 		if (isalnum(*lp)) {
 		    lp++;
 		    continue;
 		}
 		return FALSE;
- 
+
 	    case NWORD:
 		if (!isalnum(*lp)) {
 		    lp++;
 		    continue;
 		}
 		return FALSE;
- 
+
 	    case WBOUND:
 		if ((lp == FirstCharacter || !isalnum(lp[-1])) !=
 			(!*lp || !isalnum(*lp)) )
 		    continue;
 		return FALSE;
- 
+
 	    case NWBOUND:
 		if ((lp == FirstCharacter || !isalnum(lp[-1])) ==
 			(!*lp || !isalnum(*lp)))
 		    continue;
 		return FALSE;
- 
+
 	    case CEND:
 		return TRUE;
- 
+
 	    case CCL:
 		if (cclass(ep, *lp, 1)) {
 		    ep += BMAPSIZ;
@@ -475,7 +458,7 @@ register char* lp;
 		    continue;
 		}
 		return FALSE;
- 
+
 	    case NCCL:
 		if (cclass(ep, *lp, 0)) {
 		    ep += BMAPSIZ;
@@ -483,18 +466,18 @@ register char* lp;
 		    continue;
 		}
 		return FALSE;
- 
+
 	    case CBRA:
 		compex->braslist[(unsigned char)*ep++] = lp;
 		continue;
- 
+
 	    case CKET:
 		i = *ep++;
 		compex->braelist[i] = lp;
 		compex->braelist[0] = lp;
 		compex->braslist[0] = compex->braslist[i];
 		continue;
- 
+
 	    case CBACK:
 		if (compex->braelist[i = *ep++] == 0) {
 		    fputs("bad braces\n",stdout) FLUSH;
@@ -506,7 +489,7 @@ register char* lp;
 		    continue;
 		}
 		return FALSE;
- 
+
 	    case CBACK | STAR:
 		if (compex->braelist[i = *ep++] == 0) {
 		    fputs("bad braces\n",stdout) FLUSH;
@@ -523,35 +506,35 @@ register char* lp;
 		    lp -= compex->braelist[i] - compex->braslist[i];
 		}
 		continue;
- 
+
 	    case CDOT | STAR:
 		curlp = lp;
 		while (*lp++ && lp[-1] != '\n') ;
 		goto star;
- 
+
 	    case WORD | STAR:
 		curlp = lp;
 		while (*lp++ && isalnum(lp[-1])) ;
 		goto star;
- 
+
 	    case NWORD | STAR:
 		curlp = lp;
 		while (*lp++ && !isalnum(lp[-1])) ;
 		goto star;
- 
+
 	    case CCHR | STAR:
 		curlp = lp;
 		while (*lp++ && trt[*(Uchar*)(lp-1)] == trt[*(Uchar*)ep]) ;
 		ep++;
 		goto star;
- 
+
 	    case CCL | STAR:
 	    case NCCL | STAR:
 		curlp = lp;
 		while (*lp++ && cclass(ep, lp[-1], ep[-1] == (CCL | STAR))) ;
 		ep += BMAPSIZ;
 		goto star;
- 
+
 	star:
 		do {
 		    lp--;
@@ -559,7 +542,7 @@ register char* lp;
 			return TRUE;
 		} while (lp > curlp);
 		return FALSE;
- 
+
 	    default:
 		fputs("Badly compiled pattern\n",stdout) FLUSH;
 		err = TRUE;
@@ -568,15 +551,12 @@ register char* lp;
     }
     return FALSE;
 }
- 
+
 bool
-backref(compex, i, lp)
-register COMPEX* compex;
-register int i;
-register char* lp;
+backref (register COMPEX *compex, register int i, register char *lp)
 {
     register char* bp;
- 
+
     bp = compex->braslist[i];
     while (*lp && *bp == *lp) {
 	bp++;
@@ -588,10 +568,7 @@ register char* lp;
 }
 
 bool
-cclass(set, c, af)
-register char* set;
-register int c;
-int af;
+cclass (register char *set, register int c, int af)
 {
     c &= 0177;
 #if BITSPERBYTE == 8

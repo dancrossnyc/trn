@@ -17,8 +17,7 @@
 #include "sorder.h"
 
 void
-s_init_context(cnum,type)
-int cnum,type;
+s_init_context (int cnum, int type)
 {
     SCONTEXT *p;
     int i;
@@ -63,9 +62,10 @@ int cnum,type;
 }
 
 /* allocate a new context number and initialize it */
-int	/* context number */
-s_new_context(type)
-int type;			/* context type */
+int
+s_new_context (
+    int type			/* context type */
+)
 {
     int i;
 
@@ -95,7 +95,7 @@ int type;			/* context type */
 
 /* saves the current context */
 void
-s_save_context()
+s_save_context (void)
 {
     SCONTEXT *p;
 
@@ -132,8 +132,9 @@ s_save_context()
 
 
 void
-s_change_context(newcontext)
-int newcontext;			/* context number to activate */
+s_change_context (
+    int newcontext			/* context number to activate */
+)
 {
     SCONTEXT *p;
 
@@ -174,13 +175,14 @@ int newcontext;			/* context number to activate */
 
 /* implement later? */
 void
-s_clean_contexts()
+s_clean_contexts (void)
 {
 }
 
 void
-s_delete_context(cnum)
-int cnum;		/* context number to delete */
+s_delete_context (
+    int cnum		/* context number to delete */
+)
 {
     if (cnum < 0 || cnum >= s_num_contexts) {
 	printf("s_delete_context: illegal context number %d!\n",cnum) FLUSH;

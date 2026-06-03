@@ -170,7 +170,6 @@ bits.$(o): INTERN.h
 bits.$(o): intrp.h
 bits.$(o): kfile.h
 bits.$(o): list.h
-bits.$(o): ndir.h
 bits.$(o): ngdata.h
 bits.$(o): ng.h
 bits.$(o): nntpclient.h
@@ -597,13 +596,6 @@ mime.$(o): search.h
 mime.$(o): term.h
 mime.$(o): util2.h
 mime.$(o): util.h
-ndir.$(o): common.h
-ndir.$(o): config2.h
-ndir.$(o): config.h
-ndir.$(o): EXTERN.h
-ndir.$(o): INTERN.h
-ndir.$(o): ndir.c
-ndir.$(o): ndir.h
 ng.$(o): addng.h
 ng.$(o): art.h
 ng.$(o): artio.h
@@ -673,7 +665,6 @@ ngdata.$(o): INTERN.h
 ngdata.$(o): intrp.h
 ngdata.$(o): kfile.h
 ngdata.$(o): list.h
-ngdata.$(o): ndir.h
 ngdata.$(o): ngdata.c
 ngdata.$(o): ngdata.h
 ngdata.$(o): ngdata.ih

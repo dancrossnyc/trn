@@ -161,20 +161,6 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  */
 #define DEFEDITOR "$defeditor"		/**/
 
-/* I_DIRENT:
- *	This symbol, if defined, indicates to the C program that it should
- *	include <dirent.h>. Using this symbol also triggers the definition
- *	of the Direntry_t define which ends up being 'struct dirent' or
- *	'struct direct' depending on the availability of <dirent.h>.
- */
-/* Direntry_t:
- *	This symbol is set to 'struct direct' or 'struct dirent' depending on
- *	whether dirent is available or not. You should use this pseudo type to
- *	portably declare your directory entries.
- */
-#$i_dirent I_DIRENT		/**/
-#define Direntry_t $direntrytype
-
 /* I_STDLIB:
  *	This symbol, if defined, indicates that <stdlib.h> exists and should
  *	be included.
@@ -203,12 +189,6 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  */
 #$i_sysioctl	I_SYS_IOCTL		/**/
 #$i_sysfilio	I_SYS_FILIO		/**/
-
-/* I_SYS_NDIR:
- *	This symbol, if defined, indicates to the C program that it should
- *	include <sys/ndir.h>.
- */
-#$i_sysndir I_SYS_NDIR	/**/
 
 /* I_SYS_WAIT:
  *	This symbol, if defined, indicates to the C program that it should
@@ -440,17 +420,6 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  *	available to find substrings.
  */
 #$d_strstr HAS_STRSTR	/**/
-
-/* EMULATE_NDIR:
- *	This symbol, if defined, indicates that the program should compile
- *	the ndir.c code provided with the package.
- */
-/* I_NDIR:
- *	This symbol, if defined, indicates that the program should include the
- *	system's version of ndir.h, rather than the one with this package.
- */
-#$d_usendir	EMULATE_NDIR		/**/
-#$d_libndir	I_NDIR		/**/
 
 /* I_PTEM:
  *	This symbol, if defined, indicates to the C program that it should

@@ -5,7 +5,7 @@
  */
 /* The authors make no claims as to the fitness or correctness of this software
  * for any use whatsoever, and it is provided as is. Any use of this software
- * is at the user's own risk. 
+ * is at the user's own risk.
  */
 
 /* Configuration choices for %x and %X */
@@ -35,11 +35,7 @@ extern char* tzname[];
 #endif
 
 size_t
-strftime(str, maxsize, fmt, ts)
-char* str;
-size_t maxsize;
-CONST char* fmt;
-CONST struct tm* ts;
+strftime (char *str, size_t maxsize, CONST char *fmt, CONST struct tm *ts)
 {
     size_t num = 0, len;
     char ch;

@@ -23,16 +23,13 @@ char* nntp_password;
 #endif
 
 int
-doshell(sh,cmd)
-char* sh;
-char* cmd;
+doshell (char *sh, char *cmd)
 {
     return system(cmd);
 }
 
 void
-finalize(num)
-int num;
+finalize (int num)
 {
 #ifdef SUPPORT_NNTP
     nntp_close(TRUE);
@@ -79,13 +76,8 @@ MEM_SIZE size;
 }
 #endif
 
-char*
-dointerp(dest, destsize, pattern, stoppers, cmd)
-char* dest;
-int destsize;
-char* pattern;
-char* stoppers;
-char* cmd;
+char *
+dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
 {
     extern char* dotdir;
     if (*pattern == '%' && pattern[1] == '.') {
@@ -101,7 +93,7 @@ char* cmd;
 
 #ifdef SUPPORT_NNTP
 int
-nntp_handle_nested_lists()
+nntp_handle_nested_lists (void)
 {
     fputs("Programming error! Nested NNTP calls detected.\n",stderr);
     return -1;
@@ -109,8 +101,8 @@ nntp_handle_nested_lists()
 #endif
 
 #ifdef SUPPORT_NNTP
-char*
-get_auth_user()
+char *
+get_auth_user (void)
 {
     extern char* nntp_auth_file;
     return read_auth_file(nntp_auth_file, &nntp_password);
@@ -118,16 +110,16 @@ get_auth_user()
 #endif
 
 #ifdef SUPPORT_NNTP
-char*
-get_auth_pass()
+char *
+get_auth_pass (void)
 {
     return nntp_password;
 }
 #endif
 
 #if defined(USE_GENAUTH) && defined(SUPPORT_NNTP)
-char*
-get_auth_command()
+char *
+get_auth_command (void)
 {
     return NULL;
 }

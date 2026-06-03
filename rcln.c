@@ -21,20 +21,17 @@
 #define MAX_DIGITS 7
 
 void
-rcln_init()
+rcln_init (void)
 {
     ;
 }
 
 #ifdef CATCHUP
 void
-catch_up(np, leave_count, output_level)
-NGDATA* np;
-int leave_count;
-int output_level;
+catch_up (NGDATA *np, int leave_count, int output_level)
 {
     char tmpbuf[128];
-    
+
     if (leave_count) {
 	if (output_level) {
 #ifdef VERBOSE
@@ -78,10 +75,7 @@ int output_level;
 /* add an article number to a newsgroup, if it isn't already read */
 
 int
-addartnum(dp,artnum,ngnam)
-DATASRC* dp;
-ART_NUM artnum;
-char* ngnam;
+addartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 {
     register NGDATA* np;
     register char* s;
@@ -186,12 +180,12 @@ char* ngnam;
 
 	    for (nextmax = s; isdigit(*nextmax); nextmax++) ;
 	    range_after = *nextmax++ == '-';
-	    
+
 	    if (range_before)
 		*t = '\0';		/* artnum is redundant */
 	    else
 		sprintf(t,"%ld-",(long)artnum);/* artnum will be new min */
-	    
+
 	    if (range_after)
 		s = nextmax;		/* *s is redundant */
 	/*  else
@@ -220,10 +214,7 @@ char* ngnam;
 
 #ifdef MCHASE
 void
-subartnum(dp,artnum,ngnam)
-DATASRC* dp;
-register ART_NUM artnum;
-char* ngnam;
+subartnum (DATASRC *dp, register ART_NUM artnum, char *ngnam)
 {
     register NGDATA* np;
     register char* s;
@@ -236,7 +227,7 @@ char* ngnam;
 	return;
     np = find_ng(ngnam);
     if (np == NULL)			/* not found in newsrc? */
-	return;	
+	return;
     if (dp != np->rc->datasrc)		/* punt on cross-host xrefs */
 	return;
     if (!np->numoffset)
@@ -249,9 +240,9 @@ char* ngnam;
 #endif
     s = np->rcline + np->numoffset;
     while (*s == ' ') s++;		/* skip spaces */
-    
+
     /* a little optimization, since it is almost always the last number */
-    
+
     for (t=s; *t; t++) ;		/* find end of string */
     curlen = t - np->rcline;
     for (t--; isdigit(*t); t--) ;	/* find previous delim */
@@ -340,9 +331,7 @@ char* ngnam;
 }
 
 void
-prange(where,min,max)
-char* where;
-ART_NUM min,max;
+prange (char *where, ART_NUM min, ART_NUM max)
 {
     if (min == max)
 	sprintf(where,"%ld",(long)min);
@@ -354,9 +343,7 @@ ART_NUM min,max;
 /* calculate the number of unread articles for a newsgroup */
 
 void
-set_toread(np, lax_high_check)
-register NGDATA* np;
-bool_int lax_high_check;
+set_toread (register NGDATA *np, bool_int lax_high_check)
 {
     register char* s;
     register char* c;
@@ -446,9 +433,7 @@ bool_int lax_high_check;
 /* make sure expired articles are marked as read */
 
 void
-checkexpired(np,a1st)
-register NGDATA* np;
-register ART_NUM a1st;
+checkexpired (register NGDATA *np, register ART_NUM a1st)
 {
     register char* s;
     register ART_NUM num, lastnum = 0;
@@ -535,10 +520,7 @@ register ART_NUM a1st;
 /* Returns TRUE if article is marked as read or does not exist */
 /* could use a better name */
 bool
-was_read_group(dp,artnum,ngnam)
-DATASRC* dp;
-ART_NUM artnum;
-char* ngnam;
+was_read_group (DATASRC *dp, ART_NUM artnum, char *ngnam)
 {
     register NGDATA* np;
     register char* s;

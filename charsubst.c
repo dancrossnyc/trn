@@ -6,11 +6,11 @@
  * use this software as long as: there is no monetary profit gained
  * specifically from the use or reproduction of this software, it is not
  * sold, rented, traded or otherwise marketed, and this copyright notice is
- * included prominently in any copy made. 
+ * included prominently in any copy made.
  *
  * The authors make no claims as to the fitness or correctness of this software
  * for any use whatsoever, and it is provided as is. Any use of this software
- * is at the user's own risk. 
+ * is at the user's own risk.
  */
 
 #include "EXTERN.h"
@@ -39,10 +39,7 @@ static Uchar textbl[96] = {
 static char texchar = '\0';
 
 int
-putsubstchar(c, limit, outputok)
-int c;
-int limit;
-bool_int outputok;
+putsubstchar (int c, int limit, bool_int outputok)
 {
     Uchar d, oc[2], nc[5];
     int t, i = 0;
@@ -50,7 +47,7 @@ bool_int outputok;
       case 'm':
 	t = 1;
 	goto doconvert;
-      case 'a': 
+      case 'a':
 	t = 2;
 	/* FALL THROUGH */
       doconvert:
@@ -89,7 +86,7 @@ bool_int outputok;
 		d = '\0';
 	    else
 		d = textbl[c-32];
-	    texchar = '\0'; 
+	    texchar = '\0';
 	    if (d)
 		c = d;
 	    else {
@@ -103,7 +100,7 @@ bool_int outputok;
 	    }
 	}
 	/* FALL THROUGH */
-      default: 
+      default:
 	if (outputok)
 	    putchar(c);
 	i++;
@@ -112,8 +109,8 @@ bool_int outputok;
     return i;
 }
 
-char*
-current_charsubst()
+char *
+current_charsubst (void)
 {
 #ifdef USE_UTF_HACK
     static char show[50];
@@ -167,11 +164,7 @@ current_charsubst()
 }
 
 int
-strcharsubst(outb, inb, limit, subst)
-char* outb;
-char* inb;
-int limit;
-char_int subst;
+strcharsubst (char *outb, char *inb, int limit, char_int subst)
 {
     char* s;
     int len;
@@ -192,7 +185,7 @@ char_int subst;
     }
 }
 
-/* The following is an adapted version of iso2asc by Markus Kuhn, 
+/* The following is an adapted version of iso2asc by Markus Kuhn,
    University of Erlangen, Germany <mskuhn@immd4.uni-erlangen.de>
 */
 
@@ -242,11 +235,7 @@ static char* iso2asc[ISO_TABLES][96] = {
  *  worst case: strlen(iso) == 4*strlen(asc)
  */
 static int
-Latin1toASCII(asc, iso, limit, t)
-Uchar* asc;
-Uchar* iso;
-int limit;
-int t;
+Latin1toASCII (Uchar *asc, Uchar *iso, int limit, int t)
 {
     Uchar* s = asc;
     char* p;

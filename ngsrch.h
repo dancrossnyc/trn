@@ -16,9 +16,9 @@ EXT bool ng_doempty INIT(FALSE);	/* search empty newsgroups? */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-void ngsrch_init _((void));
+void ngsrch_init (void);
 #ifdef NGSEARCH
-int ng_search _((char*,int));
-bool ng_wanted _((NGDATA*));
+int ng_search (char*,int);
+bool ng_wanted (NGDATA*);
 #endif
-char* ng_comp _((COMPEX*,char*,bool_int,bool_int));
+char* ng_comp (COMPEX*,char*,bool_int,bool_int);

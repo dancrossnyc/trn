@@ -14,7 +14,7 @@ struct listnode {
 struct list {
     LISTNODE* first;
     LISTNODE* recent;
-    void (*init_node) _((LIST*,LISTNODE*));
+    void (*init_node) (LIST*,LISTNODE*);
     long low;
     long high;
     int item_size;
@@ -27,12 +27,12 @@ struct list {
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-void list_init _((void));
+void list_init (void);
 LIST* new_list _((long,long,int,int,int,void(*) _((LIST*,LISTNODE*))));
-char* listnum2listitem _((LIST*,long));
-long listitem2listnum _((LIST*,char*));
+char* listnum2listitem (LIST*,long);
+long listitem2listnum (LIST*,char*);
 bool walk_list _((LIST*,bool(*) _((char*,int)),int));
-long existing_listnum _((LIST*,long,int));
-char* next_listitem _((LIST*,char*));
-char* prev_listitem _((LIST*,char*));
-void delete_list _((LIST*));
+long existing_listnum (LIST*,long,int);
+char* next_listitem (LIST*,char*);
+char* prev_listitem (LIST*,char*);
+void delete_list (LIST*);

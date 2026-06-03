@@ -96,6 +96,6 @@ EXT bool sa_mode_desc_keyw INIT(FALSE);
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-int sa_main _((void));
-void sa_grow _((ART_NUM,ART_NUM));
-void sa_cleanup _((void));
+int sa_main (void);
+void sa_grow (ART_NUM,ART_NUM);
+void sa_cleanup (void);

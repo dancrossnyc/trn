@@ -47,7 +47,7 @@ static PACKED_ARTICLE p_article;
 ** the read code know what we'll need to translate.
 */
 bool
-mt_init()
+mt_init (void)
 {
     int i;
     long size;
@@ -108,7 +108,7 @@ mt_init()
 ** we discovered a bogus thread file, destroyed the cache, and re-built it.
 */
 int
-mt_data()
+mt_data (void)
 {
     int ret = 1;
 #ifdef SUPPORT_XTHREAD		/* use remote thread file? */
@@ -198,9 +198,8 @@ exit:
 ** is defined), prepend the path, and append the '/.thread' or '.th' on to
 ** the end.
 */
-static char*
-mt_name(group)
-char* group;
+static char *
+mt_name (char *group)
 {
 #ifdef LONG_THREAD_NAMES
     sprintf(buf, "%s/%s", datasrc->thread_dir, group);
@@ -228,7 +227,7 @@ static char* subject_strings, *string_end;
 ** strings.
 */
 static int
-read_authors()
+read_authors (void)
 {
     register int count;
     register char* string_ptr;
@@ -274,7 +273,7 @@ read_authors()
 ** order that the roots require while being unpacked.
 */
 static int
-read_subjects()
+read_subjects (void)
 {
     register int count;
     register char* string_ptr;
@@ -319,7 +318,7 @@ read_subjects()
 ** offset.  This gets turned into a real pointer later.
 */
 static int
-read_roots()
+read_roots (void)
 {
     register SUBJECT** subj_ptr;
     register int i;
@@ -378,9 +377,8 @@ static bool invalid_data;
 ** A -1 means that it is NULL, otherwise it should be an offset into the
 ** subject array we just unpacked.
 */
-static SUBJECT*
-the_subject(num)
-int num;
+static SUBJECT *
+the_subject (int num)
 {
     if (num == -1)
 	return NULL;
@@ -393,9 +391,8 @@ int num;
 }
 
 /* Ditto for author checking. */
-static char*
-the_author(num)
-int num;
+static char *
+the_author (int num)
 {
     if (num == -1)
 	return NULL;
@@ -411,10 +408,8 @@ int num;
 ** zero for none.  Child values are always found in the very next array
 ** element if child_cnt is non-zero.
 */
-static ARTICLE*
-the_article(relative_offset, num)
-int relative_offset;
-int num;
+static ARTICLE *
+the_article (int relative_offset, int num)
 {
     union { ARTICLE* ap; int num; } uni;
 
@@ -432,7 +427,7 @@ int num;
 
 /* Read the articles into their trees.  Point everything everywhere. */
 static int
-read_articles()
+read_articles (void)
 {
     register int count;
     register ARTICLE* article;
@@ -515,7 +510,7 @@ read_articles()
 ** domain for those truly weird message-id's without '@'s.
 */
 static int
-read_ids()
+read_ids (void)
 {
     register ARTICLE* article;
     register char* string_ptr;
@@ -602,7 +597,7 @@ read_ids()
 ** articles as read.
 */
 static void
-tweak_data()
+tweak_data (void)
 {
     register int count;
     register ARTICLE* ap;
@@ -647,9 +642,7 @@ tweak_data()
 /* A shorthand for reading a chunk of the file into a malloc'ed array.
 */
 static int
-read_item(dest, len)
-char** dest;
-MEM_SIZE len;
+read_item (char **dest, MEM_SIZE len)
 {
     long ret;
 
@@ -676,8 +669,7 @@ MEM_SIZE len;
 ** being the byte number of the high-order byte in my <type>, and so forth.
 */
 static void
-mybytemap(map)
-BMAP* map;
+mybytemap (BMAP *map)
 {
     union {
 	BYTE b[sizeof (LONG)];
@@ -726,9 +718,7 @@ BMAP* map;
 /* Transform each WORD's byte-ordering in a buffer of the designated length.
 */
 static void
-wp_bmap(buf, len)
-WORD* buf;
-int len;
+wp_bmap (WORD *buf, int len)
 {
     union {
 	BYTE b[sizeof (WORD)];
@@ -750,9 +740,7 @@ int len;
 /* Transform each LONG's byte-ordering in a buffer of the designated length.
 */
 static void
-lp_bmap(buf, len)
-LONG* buf;
-int len;
+lp_bmap (LONG *buf, int len)
 {
     union {
 	BYTE b[sizeof (LONG)];

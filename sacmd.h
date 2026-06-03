@@ -13,8 +13,8 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-int sa_docmd _((void));
-bool sa_extract_start _((void));
-void sa_art_cmd_prim _((int,long));
-int sa_art_cmd _((int,int,long));
-long sa_wrap_next_author _((long));
+int sa_docmd (void);
+bool sa_extract_start (void);
+void sa_art_cmd_prim (int,long);
+int sa_art_cmd (int,int,long);
+long sa_wrap_next_author (long);

@@ -31,7 +31,7 @@
 #include "rt-ov.ih"
 
 bool
-ov_init()
+ov_init (void)
 {
     bool has_overview_fmt;
     Uchar* fieldnum = datasrc->fieldnum;
@@ -114,9 +114,7 @@ ov_init()
 }
 
 int
-ov_num(hdr,end)
-char* hdr;
-char* end;
+ov_num (char *hdr, char *end)
 {
     if (!end)
 	end = hdr + strlen(hdr);
@@ -146,9 +144,7 @@ char* end;
 /* Process the data in the group's news-overview file.
 */
 bool
-ov_data(first, last, cheating)
-ART_NUM first, last;
-bool_int cheating;
+ov_data (ART_NUM first, ART_NUM last, bool_int cheating)
 {
     ART_NUM artnum, an;
     char* line;
@@ -344,10 +340,7 @@ beginning:
 }
 
 static void
-ov_parse(line, artnum, remote)
-register char* line;
-ART_NUM artnum;
-bool_int remote;
+ov_parse (register char *line, ART_NUM artnum, bool_int remote)
 {
     register ARTICLE* article;
     register int i;
@@ -464,9 +457,8 @@ bool_int remote;
 ** subsitute any '.'s in the group name into '/'s, prepend the path, and
 ** append the '/.overview' or '.ov') on to the end.
 */
-static char*
-ov_name(group)
-char* group;
+static char *
+ov_name (char *group)
 {
     register char* cp;
 
@@ -481,7 +473,7 @@ char* group;
 }
 
 void
-ov_close()
+ov_close (void)
 {
     if (datasrc && datasrc->ov_opened) {
 	if (datasrc->ov_in) {
@@ -492,17 +484,14 @@ ov_close()
     }
 }
 
-char*
-ov_fieldname(num)
-int num;
+char *
+ov_fieldname (int num)
 {
     return htype[hdrnum[num]].name;
 }
 
-char*
-ov_field(ap, num)
-ARTICLE* ap;
-int num;
+char *
+ov_field (ARTICLE *ap, int num)
 {
     char* s;
     int fn;

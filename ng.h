@@ -37,13 +37,13 @@ EXT bool forcegrow INIT(FALSE);	/* do we want to recalculate size */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-void ng_init _((void));
-int do_newsgroup _((char*));
-int art_switch _((void));
+void ng_init (void);
+int do_newsgroup (char*);
+int art_switch (void);
 #ifdef MAILCALL
-void setmail _((bool_int));
+void setmail (bool_int);
 #endif
-void setdfltcmd _((void));
-char ask_catchup _((void));
-bool output_subject _((char*,int));
-char ask_memorize _((char_int));
+void setdfltcmd (void);
+char ask_catchup (void);
+bool output_subject (char*,int);
+char ask_memorize (char_int);

@@ -56,8 +56,7 @@ static TTK_ART* ttk_fastart;
 static char ttk_letters[] = "123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+";
 
 static void
-ttk_treeprep_helper(ap)
-ARTICLE* ap;
+ttk_treeprep_helper (ARTICLE *ap)
 {
     for (;;) {
 	ap->flags2 &= ~(AF2_WASUNREAD|AF2_CHANGED|AF2_NODEDRAWN);
@@ -71,8 +70,7 @@ ARTICLE* ap;
 }
 
 static void
-ttk_treechange_helper(ap)
-ARTICLE* ap;
+ttk_treechange_helper (ARTICLE *ap)
 {
     int changed;			/* later indicate num of changes? */
 
@@ -128,7 +126,7 @@ char* argv[];
 	if (argc != 3) {
 	    interp->result = "setid: needs id argument";
 	    return TCL_ERROR;
-	} 
+	}
 	data = hashfetch(msgid_hash, argv[2], strlen(argv[2]));
 	if (!(ap = (ARTICLE*)data.dat_ptr) || data.dat_len) {
 	    interp->result = "0";
@@ -143,7 +141,7 @@ char* argv[];
 	if (argc != 2) {
 	    interp->result = "setcurrent: too many arguments";
 	    return TCL_ERROR;
-	} 
+	}
 	ap = curr_artp;
 	if (!ap) {
 	    interp->result = "0";
@@ -433,9 +431,11 @@ char* argv[];
 /* XXX Cleanup the tree drawing, replace "wipetree" with special procedure */
 /* Called from trn to draw an article tree. */
 void
-ttk_draw_tree(ap,x,y)
-ARTICLE* ap;
-int x,y;				/* starting X and Y positions */
+ttk_draw_tree (
+    ARTICLE *ap,
+    int x,
+    int y				/* starting X and Y positions */
+)
 {
     static char lbuf[100];
 
@@ -509,7 +509,7 @@ char* argv[];
 }
 
 int
-ttk_tree_init()
+ttk_tree_init (void)
 {
     char lbuf[20];
 

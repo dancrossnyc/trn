@@ -41,15 +41,15 @@ EXT int sa_scan_context INIT(-1);
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-void sa_init _((void));
-void sa_init_ents _((void));
-void sa_clean_ents _((void));
-long sa_add_ent _((ART_NUM));
-void sa_cleanmain _((void));
-void sa_growarts _((long,long));
-void sa_init_context _((void));
-bool sa_initarts _((void));
-void sa_initmode _((void));
-int sa_mainloop _((void));
-void sa_lookahead _((void));
-long sa_readmarked_elig _((void));
+void sa_init (void);
+void sa_init_ents (void);
+void sa_clean_ents (void);
+long sa_add_ent (ART_NUM);
+void sa_cleanmain (void);
+void sa_growarts (long,long);
+void sa_init_context (void);
+bool sa_initarts (void);
+void sa_initmode (void);
+int sa_mainloop (void);
+void sa_lookahead (void);
+long sa_readmarked_elig (void);

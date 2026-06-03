@@ -27,7 +27,7 @@
 #include "scan.h"
 #include "scmd.h"
 #include "smisc.h"	/* needed? */
-#include "sorder.h" 
+#include "sorder.h"
 #include "spage.h"
 #include "sdisp.h"
 #include "scanart.h"
@@ -57,7 +57,7 @@ static bool sa_extract_junk = FALSE;
  * for setting refresh flags if necessary.
  */
 int
-sa_docmd()
+sa_docmd (void)
 {
     long a;		/* article pointed to */
     long b;		/* misc. artnum */
@@ -573,7 +573,7 @@ sa_docmd()
 }
 
 bool
-sa_extract_start()
+sa_extract_start (void)
 {
     if (sa_extract_dest == NULL) {
 	sa_extract_dest = (char*)safemalloc(LBUFLEN);
@@ -603,9 +603,7 @@ sa_extract_start()
 
 /* sa_art_cmd primitive: actually does work on an article */
 void
-sa_art_cmd_prim(cmd,a)
-int cmd;
-long a;
+sa_art_cmd_prim (int cmd, long a)
 {
     ART_NUM artnum;
 
@@ -658,10 +656,11 @@ long a;
 /* return value is unused for now, but may be later... */
 /* note: refilling after a kill is the caller's responsibility */
 int
-sa_art_cmd(multiple,cmd,a)
-int multiple;		/* follow the thread? */
-int cmd;		/* what to do */
-long a;		/* article # to affect or start with */
+sa_art_cmd (
+    int multiple,		/* follow the thread? */
+    int cmd,		/* what to do */
+    long a		/* article # to affect or start with */
+)
 {
     long b;
 
@@ -677,14 +676,13 @@ long a;		/* article # to affect or start with */
 
 /* XXX this needs a good long thinking session before re-activating */
 long
-sa_wrap_next_author(a)
-long a;
+sa_wrap_next_author (long a)
 {
 #ifdef UNDEF
     long b;
     char* s;
     char* s2;
-    
+
     s = (char*)sa_desc_author(a,20);	/* 20 characters should be enough */
     for (b = s_next_elig(a); b; b = s_next_elig(b))
 	if (STRSTR(get_from_line(b),s))

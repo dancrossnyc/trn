@@ -10,8 +10,8 @@ EXT bool s_follow_temp INIT(FALSE);
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-bool s_eligible _((long));
-void s_beep _((void));
-char* s_get_statchars _((long,int));
-char* s_get_desc _((long,int,bool_int));
-int s_ent_lines _((long));
+bool s_eligible (long);
+void s_beep (void);
+char* s_get_statchars (long,int);
+char* s_get_desc (long,int,bool_int);
+int s_ent_lines (long);

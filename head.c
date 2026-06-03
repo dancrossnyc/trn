@@ -37,7 +37,7 @@ static short htypeix[26] =
     {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 void
-head_init()
+head_init (void)
 {
     register int i;
 
@@ -55,8 +55,7 @@ head_init()
 
 #ifdef DEBUG
 void
-dumpheader(where)
-char* where;
+dumpheader (char *where)
 {
     register int i;
 
@@ -71,9 +70,7 @@ char* where;
 #endif
 
 int
-set_line_type(bufptr,colon)
-char* bufptr;
-register char* colon;
+set_line_type (char *bufptr, register char *colon)
 {
     register char* t;
     register char* f;
@@ -117,8 +114,7 @@ register char* colon;
 }
 
 int
-get_header_num(s)
-char* s;
+get_header_num (char *s)
 {
     char* end = s + strlen(s);
     int i;
@@ -161,8 +157,7 @@ char* s;
 }
 
 void
-start_header(artnum)
-ART_NUM artnum;
+start_header (ART_NUM artnum)
 {
     register int i;
 
@@ -181,7 +176,7 @@ ART_NUM artnum;
 }
 
 void
-end_header_line()
+end_header_line (void)
 {
     if (first_one) {		/* did we just pass 1st occurance? */
 	first_one = FALSE;
@@ -208,9 +203,7 @@ end_header_line()
 }
 
 bool
-parseline(art_buf,newhide,oldhide)
-char* art_buf;
-int newhide, oldhide;
+parseline (char *art_buf, int newhide, int oldhide)
 {
     char* s;
 
@@ -250,7 +243,7 @@ int newhide, oldhide;
 }
 
 void
-end_header()
+end_header (void)
 {
     register ARTICLE* ap = parsed_artp;
 
@@ -296,8 +289,7 @@ end_header()
 /* read the header into memory and parse it if we haven't already */
 
 bool
-parseheader(artnum)
-ART_NUM artnum;
+parseheader (ART_NUM artnum)
 {
     register char* bp;
     register int len;
@@ -375,10 +367,11 @@ ART_NUM artnum;
 
 /* get a header line from an article */
 
-char*
-fetchlines(artnum,which_line)
-ART_NUM artnum;				/* article to get line from */
-int which_line;				/* type of line desired */
+char *
+fetchlines (
+    ART_NUM artnum,				/* article to get line from */
+    int which_line				/* type of line desired */
+)
 {
     char* s;
     char* t;
@@ -414,11 +407,12 @@ int which_line;				/* type of line desired */
 
 /* (strn) like fetchlines, but for memory pools */
 #ifdef SCAN
-char*
-mp_fetchlines(artnum,which_line,pool)
-ART_NUM artnum;				/* article to get line from */
-int which_line;				/* type of line desired */
-int pool;				/* which memory pool to use */
+char *
+mp_fetchlines (
+    ART_NUM artnum,				/* article to get line from */
+    int which_line,				/* type of line desired */
+    int pool				/* which memory pool to use */
+)
 {
     char* s;
     char* t;
@@ -455,11 +449,12 @@ int pool;				/* which memory pool to use */
 
 /* prefetch a header line from one or more articles */
 
-char*
-prefetchlines(artnum,which_line,copy)
-ART_NUM artnum;				/* article to get line from */
-int which_line;				/* type of line desired */
-bool_int copy;				/* do you want it savestr()ed? */
+char *
+prefetchlines (
+    ART_NUM artnum,				/* article to get line from */
+    int which_line,				/* type of line desired */
+    bool_int copy				/* do you want it savestr()ed? */
+)
 {
     char* s;
     char* t;

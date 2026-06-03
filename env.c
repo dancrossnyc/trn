@@ -20,9 +20,7 @@
 #endif
 
 bool
-env_init(tcbuf, lax)
-char* tcbuf;
-bool_int lax;
+env_init (char *tcbuf, bool_int lax)
 {
     bool fully_successful = TRUE;
 
@@ -79,7 +77,7 @@ bool_int lax;
 }
 
 static void
-env_init2()
+env_init2 (void)
 {
     if (dotdir)		/* Avoid running multiple times. */
 	return;
@@ -95,8 +93,7 @@ env_init2()
 ** real name.
 */
 bool
-setusername(tmpbuf)
-char* tmpbuf;
+setusername (char *tmpbuf)
 {
     char* s;
     char* c;
@@ -183,8 +180,7 @@ char* tmpbuf;
 }
 
 bool
-setphostname(tmpbuf)
-char* tmpbuf;
+setphostname (char *tmpbuf)
 {
     FILE* fp;
     bool hostname_ok = TRUE;
@@ -203,7 +199,7 @@ char* tmpbuf;
     {
 	FILE* popen();
 	FILE* pipefp = popen(PHOSTCMD,"r");
-	
+
 	if (pipefp == NULL) {
 	    printf("Can't find hostname\n");
 	    finalize(1);
@@ -270,10 +266,8 @@ char* tmpbuf;
     return hostname_ok;
 }
 
-char*
-getval(nam,def)
-char* nam;
-char* def;
+char *
+getval (char *nam, char *def)
 {
     char* val;
 
@@ -285,10 +279,8 @@ char* def;
 static bool firstexport = TRUE;
 extern char** environ;
 
-char*
-export(nam,val)
-char* nam;
-char* val;
+char *
+export (char *nam, char *val)
 {
     int namlen = strlen(nam);
     register int i=envix(nam,namlen);	/* where does it go? */
@@ -302,7 +294,7 @@ char* val;
 #else
 	    char** tmpenv = NULL;
 #endif /* lint */
-    
+
 	    firstexport = FALSE;
 	    for (j = 0; j < i; j++)	/* copy environment */
 		tmpenv[j] = environ[j];
@@ -324,8 +316,7 @@ char* val;
 }
 
 void
-un_export(export_val)
-char* export_val;
+un_export (char *export_val)
 {
     if (export_val[-1] == '=' && export_val[-2] != '_') {
 	export_val[0] = export_val[-2];
@@ -335,10 +326,7 @@ char* export_val;
 }
 
 void
-re_export(export_val, new_val, limit)
-char* export_val;
-char* new_val;
-int limit;
+re_export (char *export_val, char *new_val, int limit)
 {
     if (export_val[-1] == '=' && export_val[-2] == '_' && !export_val[1])
 	export_val[-2] = export_val[0];
@@ -346,9 +334,7 @@ int limit;
 }
 
 static int
-envix(nam, len)
-char* nam;
-int len;
+envix (char *nam, int len)
 {
     register int i;
 
@@ -361,9 +347,8 @@ int len;
 
 #ifdef MSDOS
 
-char*
-GetEnv(var)
-char* var;
+char *
+GetEnv (char *var)
 {
 #undef getenv
     char* s = getenv(var);

@@ -28,7 +28,7 @@ EXT ADDGROUP* sel_next_gp;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-void addng_init _((void));
-bool find_new_groups _((void));
-bool scanactive _((bool_int));
-void sort_addgroups _((void));
+void addng_init (void);
+bool find_new_groups (void);
+bool scanactive (bool_int);
+void sort_addgroups (void);

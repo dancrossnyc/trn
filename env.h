@@ -1,3 +1,4 @@
+
 /* env.h
  */
 /* This software is copyrighted as detailed in the LICENSE file. */
@@ -20,13 +21,13 @@ EXT int netspeed INIT(20);		/* how fast our net-connection is */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-bool env_init _((char*,bool_int));
-bool setusername _((char*));
-bool setphostname _((char*));
-char* getval _((char*,char*));
-char* export _((char*,char*));
-void un_export _((char*));
-void re_export _((char*,char*,int));
+bool env_init (char*,bool_int);
+bool setusername (char*);
+bool setphostname (char*);
+char* getval (char*,char*);
+char* export (char*,char*);
+void un_export (char*);
+void re_export (char*,char*,int);
 #ifdef MSDOS
-char* GetEnv _((char*));
+char* GetEnv (char*);
 #endif

@@ -19,13 +19,13 @@ EXT int ttcl_running INIT(0);
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
 #ifdef USE_TK
-void ttk_do_waiting_events _((void));
-void ttk_wait_for_input _((void));
+void ttk_do_waiting_events (void);
+void ttk_wait_for_input (void);
 #endif
-void ttcl_init _((void));
-void ttcl_finalize _((int));
-void ttcl_set_int _((char*,int));
-void ttcl_set_str _((char*,char*));
-int ttcl_get_int _((char*));
-char* ttcl_get_str _((char*));
-void ttcl_eval _((char*));
+void ttcl_init (void);
+void ttcl_finalize (int);
+void ttcl_set_int (char*,int);
+void ttcl_set_str (char*,char*);
+int ttcl_get_int (char*);
+char* ttcl_get_str (char*);
+void ttcl_eval (char*);

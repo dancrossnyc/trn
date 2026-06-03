@@ -97,10 +97,7 @@ mime.h             Public info regarding mime.c.
 mime.ih            Private info regarding mime.c.
 mkpro.SH           Perl script to generate prototypes.
 mktd.SH            Perl script to re-generate typedef.h.
-msdos.h            Some configuration defines for msdos systems.
 myinstall.SH       A simple install script for our Makefile.
-ndir.c             BSD 4.2 directory routine emulation.
-ndir.h             Public directory info.
 newsnews.SH        A motd-like file that trn may print at startup.
 ng.c               Routines to display a newsgroup.
 ng.h               Public info regarding ng.c.
@@ -129,11 +126,9 @@ only.h             Public info regarding only.c.
 opt.c              Option parsing code for trnrc file.
 opt.h              Public info regarding opt.c.
 opt.ih             Private info regarding opt.c.
-os2.h              Some configuration defines for OS/2 systems.
 parsedate.y        A yacc script for date parsing.
 parsedate.h        Public info for parsedate.y.
 patchlevel.h       Indicates current patch level.
-popen.c            An implementation of unix pipes for msdos.
 rcln.c             Routines to mung a .newsrc line.
 rcln.h             Public info regarding rcln.c.
 rcstuff.c          Routines to mung the .newsrc file.
@@ -242,16 +237,6 @@ uudecode.ih        Private info regarding uudecode.c.
 wildmat.c          A wildcard match routine.
 wildmat.h          Public info regarding wildmat.c.
 wildmat.ih         Private info regarding wildmat.c.
-msdos/config.sh       A sample config.sh file for msdos systems.
-msdos/inews.def       The linker def file for inews.
-msdos/inews.lnk       The link file for inews.
-msdos/nntplist.def    The linker def file for nntplist.
-msdos/nntplist.lnk    The link file for nntplist.
-msdos/trn-artc.def    The linker def file for trn-artchk.
-msdos/trn-artc.lnk    The link file for trn-artchk.
-msdos/trn.def         The linker def file for trn.
-msdos/trn.lnk         The link file for trn.
-os2/config.sh         A sample config.sh file for os2 systems.
 samples/mimecap          A sample .mimecap file for trn's mime support.
 samples/overview.fmt     A sample overview.fmt file for your news lib dir.
 samples/subscriptions    A sample subscriptions file for the default .newsrc.

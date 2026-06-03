@@ -7,5 +7,5 @@
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-int uue_prescan _((char*,char**,int*,int*));
-int uudecode _((FILE*,int));
+int uue_prescan (char*,char**,int*,int*);
+int uudecode (FILE*,int);

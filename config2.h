@@ -135,8 +135,8 @@ char*	strcpy();
 
 #ifdef HAS_GETPWENT
 # ifndef __STDC__
-struct passwd* getpwuid _((uid_t));
-struct passwd* getpwnam _((char*));
+struct passwd* getpwuid (uid_t);
+struct passwd* getpwnam (char*);
 # endif
 #endif
 

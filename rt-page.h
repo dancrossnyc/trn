@@ -46,19 +46,19 @@ EXT SEL_ITEM sel_items[MAX_SEL];
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-bool set_sel_mode _((char_int));
-char* get_sel_order _((int));
-bool set_sel_order _((int,char*));
-bool set_sel_sort _((int,char_int));
-void set_selector _((int,int));
-void init_pages _((bool_int));
-bool first_page _((void));
-bool last_page _((void));
-bool next_page _((void));
-bool prev_page _((void));
-bool calc_page _((SEL_UNION));
-void display_page_title _((bool_int));
-void display_page _((void));
-void update_page _((void));
-void output_sel _((int,int,bool_int));
-void display_option _((int,int));
+bool set_sel_mode (char_int);
+char* get_sel_order (int);
+bool set_sel_order (int,char*);
+bool set_sel_sort (int,char_int);
+void set_selector (int,int);
+void init_pages (bool_int);
+bool first_page (void);
+bool last_page (void);
+bool next_page (void);
+bool prev_page (void);
+bool calc_page (SEL_UNION);
+void display_page_title (bool_int);
+void display_page (void);
+void update_page (void);
+void output_sel (int,int,bool_int);
+void display_option (int,int);

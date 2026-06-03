@@ -53,7 +53,7 @@ static bool sf_has_extra_headers;
 
 /* Must be called before any other sf_ routine (once for each group) */
 void
-sf_init()
+sf_init (void)
 {
     int i;
     char* s;
@@ -136,7 +136,7 @@ sf_init()
 }
 
 void
-sf_clean()
+sf_clean (void)
 {
     int i;
 
@@ -169,7 +169,7 @@ sf_clean()
  * call it "sf_recent_entry" or "sf_last_entry"?
  */
 void
-sf_grow()
+sf_grow (void)
 {
     int i;
 
@@ -191,8 +191,9 @@ sf_grow()
  * into the sf_extra_headers array.
  */
 int
-sf_check_extra_headers(head)
-char* head;		/* header name, (without ':' character) */
+sf_check_extra_headers (
+    char *head		/* header name, (without ':' character) */
+)
 {
     int i;
     char* s;
@@ -215,8 +216,9 @@ char* head;		/* header name, (without ':' character) */
  * known.
  */
 void
-sf_add_extra_header(head)
-char* head;		/* new header name, (without ':' character) */
+sf_add_extra_header (
+    char *head		/* new header name, (without ':' character) */
+)
 {
     static char lbuf[LBUFLEN];		/* ick. */
     int len;
@@ -248,10 +250,11 @@ char* head;		/* new header name, (without ':' character) */
     sf_extra_headers[sf_num_extra_headers-1] = s;
 }
 
-char*
-sf_get_extra_header(art,hnum)
-ART_NUM art;		/* article number to check */
-int hnum;		/* header number: offset into sf_extra_headers */
+char *
+sf_get_extra_header (
+    ART_NUM art,		/* article number to check */
+    int hnum		/* header number: offset into sf_extra_headers */
+)
 {
     char* s;
     char* head;		/* header text */
@@ -292,8 +295,7 @@ int hnum;		/* header number: offset into sf_extra_headers */
  * Note: does not check for trailing garbage ("+00kjsdfk" returns TRUE).
  */
 bool
-is_text_zero(s)
-char* s;
+is_text_zero (char *s)
 {
     return *s == '0' || ((*s == '+' || *s == '-') && s[1]=='0');
 }
@@ -302,9 +304,8 @@ char* s;
 static char sf_file[LBUFLEN];
 
 /* filenames of type a/b/c/foo.bar.misc for group foo.bar.misc */
-char*
-sf_get_filename(level)
-int level;
+char *
+sf_get_filename (int level)
 {
     char* s;
 
@@ -347,9 +348,8 @@ int level;
 }
 
 /* given a string, if no slashes prepends SCOREDIR env. variable */
-char*
-sf_cmd_fname(s)
-char* s;
+char *
+sf_cmd_fname (char *s)
 {
     static char lbuf[LBUFLEN];
     char* s1;
@@ -366,9 +366,10 @@ char* s;
 
 /* returns TRUE if good command, FALSE otherwise */
 bool
-sf_do_command(cmd,check)
-char* cmd;		/* text of command */
-bool_int check;		/* if TRUE, just check, don't execute */
+sf_do_command (
+    char *cmd,		/* text of command */
+    bool_int check		/* if TRUE, just check, don't execute */
+)
 {
     char* s;
     int i;
@@ -394,7 +395,7 @@ bool_int check;		/* if TRUE, just check, don't execute */
     }
     if (strnEQ(cmd,"savescores",10)) {
 	/* skip whitespace and = sign */
-	for (s = cmd+10; *s && (*s == ' ' || *s == '\t' || *s == '='); s++) ; 
+	for (s = cmd+10; *s && (*s == ' ' || *s == '\t' || *s == '='); s++) ;
 	if (strnEQ(s,"off",3)) {
 	    if (!check)
 		sc_savescores = FALSE;
@@ -536,10 +537,11 @@ bool_int check;		/* if TRUE, just check, don't execute */
 
 COMPEX* sf_compex INIT(NULL);
 
-char*
-sf_freeform(start1,end1)
-char* start1;		/* points to first character of keyword */
-char* end1;		/* points to last  character of keyword */
+char *
+sf_freeform (
+    char *start1,		/* points to first character of keyword */
+    char *end1		/* points to last  character of keyword */
+)
 {
     char* s;
     bool error;
@@ -594,9 +596,10 @@ char* end1;		/* points to last  character of keyword */
 }
 
 bool
-sf_do_line(line,check)
-char* line;
-bool_int check;		/* if TRUE, just check the line, don't act. */
+sf_do_line (
+    char *line,
+    bool_int check		/* if TRUE, just check the line, don't act. */
+)
 {
     char ch;
     char* s;
@@ -712,8 +715,7 @@ bool_int check;		/* if TRUE, just check the line, don't act. */
 }
 
 void
-sf_do_file(fname)
-char* fname;
+sf_do_file (char *fname)
 {
     char* s;
     int sf_fp;
@@ -996,7 +998,7 @@ char* line;
     if (!sf_do_line(scoreline,filechar!='!')) {
 	printf("Bad score line (ignored)\n") FLUSH;
 	return;
-    }	
+    }
     if (filechar == '!')
 	return;		/* don't actually append to file */
     if (filechar == '"') {	/* do local group */

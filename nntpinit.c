@@ -51,7 +51,7 @@ struct hostent* gethostbyname();
 #endif
 
 int
-init_nntp()
+init_nntp (void)
 {
 #ifdef WINSOCK
     if (WSAStartup(0x0101,&wsaData) == 0) {
@@ -67,8 +67,7 @@ init_nntp()
 }
 
 int
-server_init(machine)
-char* machine;
+server_init (char *machine)
 {
     int sockt_rd, sockt_wr;
 #ifdef DECNET
@@ -123,7 +122,7 @@ char* machine;
 }
 
 void
-cleanup_nntp()
+cleanup_nntp (void)
 {
 #ifdef WINSOCK
     WSACleanup();
@@ -131,10 +130,7 @@ cleanup_nntp()
 }
 
 int
-get_tcp_socket(machine, port, service)
-char* machine;
-int port;
-char* service;
+get_tcp_socket (char *machine, int port, char *service)
 {
     int s;
 #if INET6
@@ -260,7 +256,7 @@ char* service;
 	    return -1;
 	}
         bcopy(*cp, (char*)&sin.sin_addr, hp->h_length);
-		
+
 	if (x < 0)
 	    fprintf(stderr, "trying %s\n", inet_ntoa(sin.sin_addr));
 	x = connect(s, (struct sockaddr*)&sin, sizeof (sin));
@@ -336,8 +332,7 @@ char* service;
 
 #ifdef DECNET
 static int
-get_dnet_socket(machine)
-char* machine;
+get_dnet_socket (char *machine)
 {
     int s, area, node;
     struct sockaddr_dn sdn;
@@ -346,10 +341,10 @@ char* machine;
     bzero((char*)&sdn, sizeof sdn);
 
     switch (s = sscanf(machine, "%d%*[.]%d", &area, &node)) {
-    case 1: 
+    case 1:
 	node = area;
 	area = 0;
-    case 2: 
+    case 2:
 	node += area*1024;
 	sdn.sdn_add.a_len = 2;
 	sdn.sdn_family = AF_DECnet;
@@ -391,8 +386,7 @@ char* machine;
  */
 #ifdef NONETDB
 unsigned long
-inet_addr(cp)
-register char* cp;
+inet_addr (register char *cp)
 {
     unsigned long val, base, n;
     register char c;

@@ -75,20 +75,7 @@ EXT int lflusho INIT(LFLUSHO);
 #define unflush_output()
 #   endif
 #  else
-#   ifdef MSDOS
-
-#define crmode() (bizarre=1)
-#define nocrmode() (bizarre=1)
-#define echo()	 (bizarre=1)
-#define noecho() (bizarre=1)
-#define nl()	 (bizarre=1)
-#define nonl()	 (bizarre=1)
-#define	savetty()
-#define	resetty() (bizarre=0)
-#define unflush_output()
-#   else /* !MSDOS */
 ..."Don't know how to define the term macros!"
-#   endif /* !MSDOS */
 #  endif /* !I_SGTTY */
 # endif /* !I_TERMIOS */
 
@@ -253,7 +240,3 @@ void draw_mousebar _((int,bool_int));
 bool check_mousebar _((int,int,int,int,int,int));
 void add_tc_string _((char*,char*));
 char* tc_color_capability _((char*));
-#ifdef MSDOS
-int tputs _((char*,int,int(*) _((char_int))));
-char* tgoto _((char*,int,int));
-#endif

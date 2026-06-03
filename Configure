@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/ksh
 #
 # If these # comments don't work, trim them. Don't worry about any other
 # shell scripts, Configure will trim # comments from them for you.
@@ -23,31 +23,6 @@
 # Generated on Sun Aug 10 11:58:23 PDT 2003 [metaconfig 3.0 PL70]
 # (with additional metaconfig patches by trn-workers@lists.sourceforge.net)
 
-cat >/tmp/c1$$ <<EOF
-ARGGGHHHH!!!!!
-
-SCO csh still thinks true is false.  Write to SCO today and tell them that next
-year Configure ought to "rm /bin/csh" unless they fix their blasted shell. :-)
-
-(Actually, Configure ought to just patch csh in place.  Hmm.  Hmmmmm.  All
-we'd have to do is go in and swap the && and || tokens, wherever they are.)
-
-[End of diatribe. We now return you to your regularly scheduled programming...]
-EOF
-cat >/tmp/c2$$ <<EOF
-
-OOPS!  You naughty creature!  You didn't run Configure with sh!
-I will attempt to remedy the situation by running sh for you...
-EOF
-
-true || cat /tmp/c1$$ /tmp/c2$$
-true || exec sh $0 $argv:q
-
-(exit $?0) || cat /tmp/c2$$
-(exit $?0) || exec sh $0 $argv:q
-rm -f /tmp/c1$$ /tmp/c2$$
-
-: compute my invocation name
 me=$0
 case "$0" in
 */*)
@@ -55,19 +30,6 @@ case "$0" in
 	test "$me" || me=$0
 	;;
 esac
-
-: Proper separator for the PATH environment variable
-p_=:
-: On OS/2 this directory should exist if this is not floppy only system :-]
-if test -d c:/. ; then
-    if test -n "$OS2_SHELL"; then
-		p_=\;
-		PATH=`cmd /c "echo %PATH%" | tr '\\\\' / `
-		OS2_SHELL=`cmd /c "echo %OS2_SHELL%" | tr '\\\\' / | tr '[A-Z]' '[a-z]'`
-	elif test -n "$DJGPP"; then
-		p_=\;
-	fi
-fi
 
 : Proper PATH setting
 paths='/bin /usr/bin /usr/local/bin /usr/ucb /usr/local /usr/lbin'
@@ -79,79 +41,19 @@ paths="$paths /bsd4.3/usr/bin /usr/bsd /bsd43/bin /usr/ccs/bin"
 paths="$paths /etc /usr/lib /usr/ucblib /lib /usr/ccs/lib"
 paths="$paths /sbin /usr/sbin /usr/libexec"
 
+p_=':'
 for p in $paths
 do
 	case "$p_$PATH$p_" in
 	*$p_$p$p_*) ;;
-	*) test -d $p && PATH=$PATH$p_$p ;;
+	*) test -d $p && PATH=${PATH}:$p ;;
 	esac
 done
 
-PATH=.$p_$PATH
 export PATH
 
-: shall we be using ksh?
-inksh=''
-needksh=''
-avoidksh=''
-newsh=/bin/ksh
-changesh=''
-if (PATH=.; alias -x) >/dev/null 2>&1; then
-		inksh=true
-fi
-if test -f /hp-ux -a -f /bin/ksh; then
-	needksh='to avoid sh bug in "here document" expansion'
-fi
-if test -d /usr/lpp -a -f /usr/bin/bsh -a -f /usr/bin/uname; then
-	if test X`/usr/bin/uname -v` = X4; then
-		avoidksh="to avoid AIX 4's /bin/sh"
-		newsh=/usr/bin/bsh
-	fi
-fi
-case "$inksh/$needksh" in
-/[a-z]*)
-		ENV=''
-		changesh=true
-		reason="$needksh"
-	;;
-esac
-case "$inksh/$avoidksh" in
-true/[a-z]*)
-	changesh=true
-	reason="$avoidksh"
-	;;
-esac
-case "$inksh/$needksh-$avoidksh-" in
-true/--)
-		cat <<EOM
-(I see you are using the Korn shell.  Some ksh's blow up on $me,
-mainly on older exotic systems.  If yours does, try the Bourne shell instead.)
-EOM
-	;;
-esac
-case "$changesh" in
-true)
-	echo "(Feeding myself to $newsh $reason.)"
-	case "$0" in
-	Configure|*/Configure) exec $newsh $0 "$@";;
-	*) exec $newsh Configure "$@";;
-	esac
-	;;
-esac
-
-: if needed set CDPATH to a harmless value that is not chatty
-: avoid bash 2.02 problems with empty CDPATH.
-case "$CDPATH" in
-'')	;;
-*)	case "$SHELL" in
-	*bash*)	CDPATH='.' ;;
-	*)		CDPATH='' ;;
-	esac
-	;;
-esac
 : Configure runs within the UU subdirectory
-test -d UU || mkdir UU
-cd UU && rm -f ./*
+(test -d UU || mkdir UU) && cd UU && rm -f ./*
 
 d_bsd=''
 d_eunice=''
@@ -288,11 +190,6 @@ d_strftime=''
 strftimec=''
 strftimeo=''
 d_strstr=''
-d_libndir=''
-d_usendir=''
-libndir=''
-ndirc=''
-ndiro=''
 d_uwait3=''
 d_uwait=''
 d_vfork=''
@@ -303,8 +200,6 @@ d_wifstat=''
 defeditor=''
 filexp=''
 d_dirnamlen=''
-direntrytype=''
-i_dirent=''
 i_ptem=''
 i_stdlib=''
 i_string=''
@@ -315,7 +210,6 @@ i_bsdioctl=''
 i_sysfilio=''
 i_sysioctl=''
 i_syssockio=''
-i_sysndir=''
 i_syswait=''
 i_sgtty=''
 i_termio=''
@@ -5102,36 +4996,6 @@ esac
 EOF
 chmod +x findhdr
 
-: see if there are directory access routines out there
-echo " "
-if $test `./findhdr ndir.h` && \
-	  ( $test -r /usr/lib/libndir$_a || $test -r /usr/local/lib/libndir$_a ); then
-	echo "Ndir library found." >&4
-	if $test -r /usr/lib/libndir$_a; then
-		libndir='-lndir'
-	else
-		libndir="/usr/local/lib/libndir$_a"
-	fi
-	d_libndir="$define"
-	d_usendir="$undef"
-	ndirc=''
-	ndiro=''
-else
-	libndir=''
-	d_libndir="$undef"
-	if set readdir val -f; eval $csym; $val; then
-	echo "No ndir library found, but you have readdir() so we'll use that." >&4
-		d_usendir="$undef"
-		ndirc=''
-		ndiro=''
-	else
-		echo "No ndir library found--using ./ndir.c." >&4
-		d_usendir="$define"
-		ndirc='ndir.c'
-		ndiro="ndir$_o"
-	fi
-fi
-
 : see if memcmp exists
 set memcmp d_memcmp
 eval $inlibc
@@ -5538,59 +5402,9 @@ rp="What is the default editor on your system?"
 . ./getfile
 defeditor="$ans"
 
-: see if this is a dirent system
-echo " "
-if xinc=`./findhdr dirent.h`; $test "$xinc"; then
-	val="$define"
-	echo "<dirent.h> found." >&4
-else
-	val="$undef"
-	if xinc=`./findhdr sys/dir.h`; $test "$xinc"; then
-		echo "<sys/dir.h> found." >&4
-		echo " "
-	else
-		xinc=`./findhdr sys/ndir.h`
-	fi
-	echo "<dirent.h> NOT found." >&4
-fi
-set i_dirent
-eval $setvar
-
 : Look for type of directory structure.
 echo " "
 $cppstdin $cppflags $cppminus < "$xinc" > try.c
-
-case "$direntrytype" in
-''|' ')
-	case "$i_dirent" in
-	$define) guess1='struct dirent' ;;
-	*) guess1='struct direct'  ;;
-	esac
-	;;
-*)	guess1="$direntrytype"
-	;;
-esac
-
-case "$guess1" in
-'struct dirent') guess2='struct direct' ;;
-*) guess2='struct dirent' ;;
-esac
-		
-if $contains "$guess1" try.c >/dev/null 2>&1; then
-	direntrytype="$guess1"
-	echo "Your directory entries are $direntrytype." >&4
-elif $contains "$guess2" try.c >/dev/null 2>&1; then
-	direntrytype="$guess2"
-	echo "Your directory entries seem to be $direntrytype." >&4
-else
-	echo "I don't recognize your system's directory entries." >&4
-	rp="What type is used for directory entries on this system?"
-	dflt="$guess1"
-	. ./myread
-	direntrytype="$ans"
-fi
-$rm -f try.c
-
 
 : must not allow self reference
 case "$privlib" in
@@ -6061,10 +5875,6 @@ fi
 set i_sysioctl
 eval $setvar
 
-: see if this is an sysndir system
-set sys/ndir.h i_sysndir
-eval $inhdr
-
 : see if we should include time.h, sys/time.h, or both
 echo " "
 echo "Testing to see if we should include <time.h>, <sys/time.h> or both." >&4
@@ -6267,7 +6077,6 @@ d_havetlib='$d_havetlib'
 d_ignoreorg='$d_ignoreorg'
 d_inews='$d_inews'
 d_internet='$d_internet'
-d_libndir='$d_libndir'
 d_local='$d_local'
 d_memcmp='$d_memcmp'
 d_memcpy='$d_memcpy'
@@ -6293,7 +6102,6 @@ d_strchr='$d_strchr'
 d_strftime='$d_strftime'
 d_strstr='$d_strstr'
 d_uname='$d_uname'
-d_usendir='$d_usendir'
 d_usgnames='$d_usgnames'
 d_uwait3='$d_uwait3'
 d_uwait='$d_uwait'
@@ -6306,7 +6114,6 @@ d_xthread='$d_xthread'
 date='$date'
 defeditor='$defeditor'
 diff='$diff'
-direntrytype='$direntrytype'
 echo='$echo'
 ed='$ed'
 egrep='$egrep'
@@ -6324,7 +6131,6 @@ groupdesc='$groupdesc'
 hint='$hint'
 hostbits='$hostbits'
 i_bsdioctl='$i_bsdioctl'
-i_dirent='$i_dirent'
 i_ptem='$i_ptem'
 i_sgtty='$i_sgtty'
 i_stdlib='$i_stdlib'
@@ -6332,7 +6138,6 @@ i_string='$i_string'
 i_sysdir='$i_sysdir'
 i_sysfilio='$i_sysfilio'
 i_sysioctl='$i_sysioctl'
-i_sysndir='$i_sysndir'
 i_syssockio='$i_syssockio'
 i_systime='$i_systime'
 i_syswait='$i_syswait'
@@ -6357,7 +6162,6 @@ ldflags='$ldflags'
 less='$less'
 lib_ext='$lib_ext'
 libc='$libc'
-libndir='$libndir'
 libpth='$libpth'
 libs='$libs'
 libswanted='$libswanted'
@@ -6384,8 +6188,6 @@ myactive='$myactive'
 myuname='$myuname'
 n='$n'
 nametype='$nametype'
-ndirc='$ndirc'
-ndiro='$ndiro'
 newsadmin='$newsadmin'
 newslib='$newslib'
 newslibexp='$newslibexp'

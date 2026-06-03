@@ -5,11 +5,11 @@
  * use this software as long as: there is no monetary profit gained
  * specifically from the use or reproduction of this software, it is not
  * sold, rented, traded or otherwise marketed, and this copyright notice is
- * included prominently in any copy made. 
+ * included prominently in any copy made.
  *
  * The authors make no claims as to the fitness or correctness of this software
  * for any use whatsoever, and it is provided as is. Any use of this software
- * is at the user's own risk. 
+ * is at the user's own risk.
  */
 
 #ifdef CHARSUBST
@@ -24,6 +24,6 @@ EXT char* charsubst;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-int putsubstchar _((int,int,bool_int));
-char* current_charsubst _((void));
-int strcharsubst _((char*,char*,int,char_int));
+int putsubstchar (int,int,bool_int);
+char* current_charsubst (void);
+int strcharsubst (char*,char*,int,char_int);

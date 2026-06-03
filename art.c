@@ -82,7 +82,7 @@ bool firstpage;			/* is this the 1st page of article? */
 bool continuation;		/* this line/header is being continued */
 
 void
-art_init()
+art_init (void)
 {
 #ifdef INNERSEARCH
     init_compex(&gcompex);
@@ -90,7 +90,7 @@ art_init()
 }
 
 int
-do_article()
+do_article (void)
 {
     register char* s;
     bool hide_this_line = FALSE;	/* hidden header line? */
@@ -320,7 +320,7 @@ do_article()
 		}
 		else {
 		    int length = strlen(bufptr+1);
-		    notesfiles = instr(&bufptr[length-10]," - (nf", TRUE)!=NULL;
+		    notesfiles = in_str(&bufptr[length-10]," - (nf", TRUE)!=NULL;
 		    artline++;
 		    if (!s)
 			bufptr += (continuation? 0 : 9);
@@ -458,7 +458,7 @@ do_article()
 #ifdef DEBUG
 			if (debug & DEB_INNERSRCH && outpos < tc_COLS - 6) {
 			    standout();
-			    printf("%4d",artline); 
+			    printf("%4d",artline);
 			    un_standout();
 			}
 #endif
@@ -515,7 +515,7 @@ do_article()
 			}
 			bufptr++;
 		    }
-		    
+
 		} /* end of column loop */
 
 		if (outpos < 1000) {	/* did line overflow? */
@@ -601,7 +601,7 @@ recheck_pager:
 
 /* not done with this article, so pretend we are a pager */
 
-reask_pager:		    
+reask_pager:
 	if (term_line >= tc_LINES) {
 	    term_scrolled += term_line - tc_LINES + 1;
 	    term_line = tc_LINES-1;
@@ -687,9 +687,7 @@ reask_pager:
 }
 
 int
-maybe_set_color(cp, backsearch)
-char* cp;
-bool_int backsearch;
+maybe_set_color (char *cp, bool_int backsearch)
 {
     register char ch = (cp == artbuf || cp == art_line? 0 : cp[-1]);
     if (ch == '\001')
@@ -716,7 +714,7 @@ bool_int backsearch;
 /* process pager commands */
 
 int
-page_switch()
+page_switch (void)
 {
     register char* s;
 
@@ -1032,8 +1030,8 @@ page_switch()
       case 'h':
       case 'j':
 			  case Ctl('k'):
-      case 'm': case 'M':	
-      case 'p': case 'P': case Ctl('p'):	
+      case 'm': case 'M':
+      case 'p': case 'P': case Ctl('p'):
       case '`': case 'Q':
       case 'r':		  case Ctl('r'):
       case 'v':
@@ -1122,7 +1120,7 @@ leave_pager:
 }
 
 bool
-innermore()
+innermore (void)
 {
     if (artpos < innersearch) {		/* not even on page yet? */
 #ifdef DEBUG
@@ -1173,11 +1171,7 @@ innermore()
  *    btn_clk = click's 0, 1, or 2; x_clk = clicked x; y_clk = clicked y.
  */
 void
-pager_mouse(btn, x,y, btn_clk, x_clk,y_clk)
-int btn;
-int x, y;
-int btn_clk;
-int x_clk, y_clk;
+pager_mouse (int btn, int x, int y, int btn_clk, int x_clk, int y_clk)
 {
     ARTICLE* ap;
 

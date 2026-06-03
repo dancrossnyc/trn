@@ -34,8 +34,7 @@
 #include "rt-page.ih"
 
 bool
-set_sel_mode(ch)
-char_int ch;
+set_sel_mode (char_int ch)
 {
     switch (ch) {
       case 'a':
@@ -69,9 +68,8 @@ char_int ch;
     return TRUE;
 }
 
-char*
-get_sel_order(smode)
-int smode;
+char *
+get_sel_order (int smode)
 {
     int save_sel_mode = sel_mode;
     set_selector(smode, 0);
@@ -83,9 +81,7 @@ int smode;
 }
 
 bool
-set_sel_order(smode,str)
-int smode;
-char* str;
+set_sel_order (int smode, char *str)
 {
     bool reverse = 0;
     char ch;
@@ -106,9 +102,7 @@ char* str;
 }
 
 bool
-set_sel_sort(smode,ch)
-int smode;
-char_int ch;
+set_sel_sort (int smode, char_int ch)
 {
     int save_sel_mode = sel_mode;
     int ssort;
@@ -156,9 +150,7 @@ char_int ch;
 }
 
 void
-set_selector(smode, ssort)
-int smode;
-int ssort;
+set_selector (int smode, int ssort)
 {
     if (smode == 0) {
 	if (sel_mode == SM_SUBJECT)
@@ -278,7 +270,7 @@ int ssort;
 }
 
 static void
-sel_page_init()
+sel_page_init (void)
 {
     sel_max_line_cnt = tc_LINES - (tc_COLS - mousebar_width < 50? 6 : 5);
     sel_chars = getval("SELECTCHARS", SELECTCHARS);
@@ -299,8 +291,7 @@ sel_page_init()
 }
 
 void
-init_pages(fill_last_page)
-bool_int fill_last_page;
+init_pages (bool_int fill_last_page)
 {
     SEL_UNION no_search;
     no_search.op = -1;
@@ -675,7 +666,7 @@ try_again:
 }
 
 bool
-first_page()
+first_page (void)
 {
     sel_prior_obj_cnt = 0;
 
@@ -774,7 +765,7 @@ first_page()
 }
 
 bool
-last_page()
+last_page (void)
 {
     sel_prior_obj_cnt = sel_total_obj_cnt;
 
@@ -847,7 +838,7 @@ last_page()
 }
 
 bool
-next_page()
+next_page (void)
 {
     switch (sel_mode) {
       case SM_MULTIRC: {
@@ -911,7 +902,7 @@ next_page()
 }
 
 bool
-prev_page()
+prev_page (void)
 {
     int item_cnt = 0;
 
@@ -943,7 +934,7 @@ prev_page()
       case SM_NEWSGROUP: {
 	NGDATA* np = sel_page_np;
 	NGDATA* page_np = sel_page_np;
-	
+
 	if (!np)
 	    np = last_ng;
 	else
@@ -1086,8 +1077,7 @@ prev_page()
 
 /* Return TRUE if we had to change pages to find the object */
 bool
-calc_page(u)
-SEL_UNION u;
+calc_page (SEL_UNION u)
 {
     int ret = FALSE;
     if (u.op != -1)
@@ -1225,8 +1215,7 @@ try_again:
 }
 
 void
-display_page_title(home_only)
-bool_int home_only;
+display_page_title (bool_int home_only)
 {
     if (home_only || (erase_screen && erase_each_line))
 	home_cursor();
@@ -1296,7 +1285,7 @@ bool_int home_only;
 }
 
 void
-display_page()
+display_page (void)
 {
     int sel;
 
@@ -1625,7 +1614,7 @@ try_again:
 }
 
 void
-update_page()
+update_page (void)
 {
     SEL_UNION u;
     int sel;
@@ -1674,10 +1663,7 @@ update_page()
 }
 
 void
-output_sel(ix, sel, update)
-int ix;
-int sel;
-bool_int update;
+output_sel (int ix, int sel, bool_int update)
 {
     if (ix < 0) {
 	if (UseSelNum)
@@ -1718,9 +1704,7 @@ bool_int update;
 ** optional authors.
 */
 static int
-count_subject_lines(subj, selptr)
-SUBJECT* subj;
-int* selptr;
+count_subject_lines (SUBJECT *subj, int *selptr)
 {
     register ARTICLE* ap;
     register int sel;
@@ -1751,9 +1735,7 @@ int* selptr;
 ** optional authors.
 */
 static int
-count_thread_lines(subj, selptr)
-SUBJECT* subj;
-int* selptr;
+count_thread_lines (SUBJECT *subj, int *selptr)
 {
     register int total = 0;
     register ARTICLE* thread = subj->thread;
@@ -1776,10 +1758,7 @@ int* selptr;
 /* Display an article, perhaps with its author.
 */
 static void
-display_article(ap, ix, sel)
-register ARTICLE* ap;
-int ix;
-int sel;
+display_article (register ARTICLE *ap, int ix, int sel)
 {
     int subj_width = tc_COLS - 5 - UseSelNum;
     int from_width = tc_COLS / 5;
@@ -1788,7 +1767,7 @@ int sel;
     maybe_eol();
     if (subj_width < 32)
 	subj_width = 32;
-    
+
     output_sel(ix, sel, FALSE);
     if (*sel_art_dmode == 's' || from_width < 8)
 	printf("  %s\n",compress_subj(ap->subj->articles,subj_width)) FLUSH;
@@ -1807,10 +1786,7 @@ int sel;
 /* Display the given subject group, with optional authors.
 */
 static void
-display_subject(subj, ix, sel)
-SUBJECT* subj;
-int ix;
-int sel;
+display_subject (SUBJECT *subj, int ix, int sel)
 {
     register ARTICLE* ap;
     register int j, i;
@@ -1899,9 +1875,7 @@ int sel;
 }
 
 void
-display_option(op,item_index)
-int op;
-int item_index;
+display_option (int op, int item_index)
 {
     int len;
     char* pre;
@@ -1930,8 +1904,7 @@ int item_index;
 }
 
 static void
-display_univ(ui)
-UNIV_ITEM* ui;
+display_univ (UNIV_ITEM *ui)
 {
     if (!ui) {
 	fputs("****EMPTY****",stdout);
@@ -1978,11 +1951,7 @@ UNIV_ITEM* ui;
 }
 
 static void
-display_group(dp, group, len, max_len)
-DATASRC* dp;
-char* group;
-int len;
-int max_len;
+display_group (DATASRC *dp, char *group, int len, int max_len)
 {
     if (*sel_grp_dmode == 's')
 	fputs(group, stdout);

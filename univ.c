@@ -50,14 +50,14 @@ static int univ_min_score INIT(0);
 static bool univ_use_min_score INIT(FALSE);
 
 void
-univ_init()
+univ_init (void)
 {
     univ_level = 0;
     univ_ever_init = 1;
 }
 
 void
-univ_startup()
+univ_startup (void)
 {
     bool sys_top_load;
     bool user_top_load;
@@ -91,7 +91,7 @@ univ_startup()
 }
 
 void
-univ_open()
+univ_open (void)
 {
     first_univ = last_univ = 0;
     sel_page_univ = sel_next_univ = 0;
@@ -102,7 +102,7 @@ univ_open()
 }
 
 void
-univ_close()
+univ_close (void)
 {
     UNIV_ITEM* node;
     UNIV_ITEM* nextnode;
@@ -133,10 +133,8 @@ univ_close()
     univ_level--;
 }
 
-UNIV_ITEM*
-univ_add(type, desc)
-int type;
-char* desc;
+UNIV_ITEM *
+univ_add (int type, char *desc)
 {
     UNIV_ITEM* node = first_univ;
 
@@ -164,8 +162,7 @@ char* desc;
 }
 
 static void
-univ_free_data(ui)
-UNIV_ITEM* ui;
+univ_free_data (UNIV_ITEM *ui)
 {
     if (!ui)
 	return;
@@ -212,25 +209,24 @@ UNIV_ITEM* ui;
 
 /* not used now, but may be used later... */
 int
-univ_lines(ui)
-UNIV_ITEM* ui;
+univ_lines (UNIV_ITEM *ui)
 {
     /* later use the type and all that jazz... */
     return 1;
 }
 
 /* not used now, but may be used later... */
-char*
-univ_desc_line(ui,linenum)
-UNIV_ITEM* ui;				/* universal item */
-int linenum;				/* which line to describe (0 base) */
+char *
+univ_desc_line (
+    UNIV_ITEM *ui,				/* universal item */
+    int linenum				/* which line to describe (0 base) */
+)
 {
     return ui->desc;
 }
 
 void
-univ_add_text(txt)
-char* txt;
+univ_add_text (char *txt)
 {
     /* later check text for bad things */
     (void)univ_add(UN_TXT,txt);
@@ -238,9 +234,7 @@ char* txt;
 
 /* temp for testing */
 void
-univ_add_debug(desc,txt)
-char* desc;
-char* txt;
+univ_add_debug (char *desc, char *txt)
 {
     UNIV_ITEM* ui;
     /* later check text for bad things */
@@ -249,9 +243,7 @@ char* txt;
 }
 
 void
-univ_add_group(desc,grpname)
-char* desc;
-char* grpname;
+univ_add_group (char *desc, char *grpname)
 {
     UNIV_ITEM* ui;
     char* s;
@@ -286,9 +278,7 @@ char* grpname;
 }
 
 void
-univ_add_mask(desc,mask)
-char* desc;
-char* mask;
+univ_add_mask (char *desc, char *mask)
 {
     UNIV_ITEM* ui;
 
@@ -298,10 +288,11 @@ char* mask;
 }
 
 void
-univ_add_file(desc,fname,label)
-char* desc;
-char* fname;				/* May be URL */
-char* label;
+univ_add_file (
+    char *desc,
+    char *fname,				/* May be URL */
+    char *label
+)
 {
     UNIV_ITEM* ui;
 
@@ -314,11 +305,8 @@ char* label;
 	ui->data.cfile.label = NULL;
 }
 
-UNIV_ITEM*
-univ_add_virt_num(desc,grp,art)
-char* desc;
-char* grp;
-ART_NUM art;
+UNIV_ITEM *
+univ_add_virt_num (char *desc, char *grp, ART_NUM art)
 {
     UNIV_ITEM* ui;
 
@@ -331,9 +319,7 @@ ART_NUM art;
 }
 
 void
-univ_add_textfile(desc,name)
-char* desc;
-char* name;
+univ_add_textfile (char *desc, char *name)
 {
     UNIV_ITEM* ui;
     char* s;
@@ -367,8 +353,7 @@ char* name;
 
 /* mostly the same as the newsgroup stuff */
 void
-univ_add_virtgroup(grpname)
-char* grpname;
+univ_add_virtgroup (char *grpname)
 {
     UNIV_ITEM* ui;
     char* s;
@@ -425,9 +410,7 @@ static char* univ_begin_label INIT(NULL);
 **  Match text and p, return TRUE, FALSE, or ABORT.
 */
 static int
-univ_DoMatch(text, p)
-register char* text;
-register char* p;
+univ_DoMatch (register char *text, register char *p)
 {
     register int	matched;
 
@@ -455,9 +438,7 @@ register char* p;
 
 /* type: 0=newsgroup, 1=virtual (more in future?) */
 void
-univ_use_pattern(pattern,type)
-char* pattern;
-int type;
+univ_use_pattern (char *pattern, int type)
 {
     char* s = pattern;
     NGDATA* np;
@@ -514,9 +495,7 @@ int type;
 /* interprets a line of newsgroups, adding or subtracting each pattern */
 /* Newsgroup patterns are separated by spaces and/or commas */
 void
-univ_use_group_line(line,type)
-char* line;
-int type;
+univ_use_group_line (char *line, int type)
 {
     char* s;
     char* p;
@@ -540,10 +519,7 @@ int type;
 
 /* returns TRUE on success, FALSE otherwise */
 static bool
-univ_use_file(fname,title,label)
-char* fname;
-char* title;
-char* label;
+univ_use_file (char *fname, char *title, char *label)
 {
     static char lbuf[LBUFLEN];
     FILE* fp;
@@ -613,8 +589,7 @@ char* label;
 }
 
 static bool
-univ_include_file(fname)
-char* fname;
+univ_include_file (char *fname)
 {
     char* old_univ_fname;
     bool retval;
@@ -628,9 +603,10 @@ char* fname;
 
 /* do the '$' extensions of the line. */
 static void
-univ_do_line_ext1(desc,line)
-char* desc;
-char* line;			/* may be temporarily edited */
+univ_do_line_ext1 (
+    char *desc,
+    char *line			/* may be temporarily edited */
+)
 {
     char* s;
     char* p;
@@ -704,8 +680,7 @@ static char* univ_line_desc;
 
 /* returns FALSE when no more lines should be interpreted */
 static bool
-univ_do_line(line)
-char* line;
+univ_do_line (char *line)
 {
     char* s;
     char* p;
@@ -842,10 +817,7 @@ char* line;
 
 /* level generator */
 bool
-univ_file_load(fname,title,label)
-char* fname;
-char* title;
-char* label;
+univ_file_load (char *fname, char *title, char *label)
 {
     bool flag;
 
@@ -872,9 +844,7 @@ char* label;
 
 /* level generator */
 void
-univ_mask_load(mask,title)
-char* mask;
-char* title;
+univ_mask_load (char *mask, char *title)
 {
     univ_open();
 
@@ -887,7 +857,7 @@ char* title;
 }
 
 void
-univ_redofile()
+univ_redofile (void)
 {
     char* tmp_fname;
     char* tmp_title;
@@ -909,8 +879,8 @@ univ_redofile()
 }
 
 
-static char*
-univ_edit_new_userfile()
+static char *
+univ_edit_new_userfile (void)
 {
     char* s;
     FILE* fp;
@@ -951,7 +921,7 @@ univ_edit_new_userfile()
 /* code adapted from edit_kfile in kfile.c */
 /* XXX problem if elements expand to larger than cmd_buf */
 void
-univ_edit()
+univ_edit (void)
 {
     char* s;
 
@@ -971,8 +941,7 @@ univ_edit()
 
 /* later use some internal pager */
 void
-univ_page_file(fname)
-char* fname;
+univ_page_file (char *fname)
 {
     if (!fname || !*fname)
 	return;
@@ -997,7 +966,7 @@ static UNIV_ITEM* current_vg_ui;
 /* virtual newsgroup second pass function */
 /* called from within newsgroup */
 void
-univ_ng_virtual()
+univ_ng_virtual (void)
 {
     switch (current_vg_ui->type) {
       case UN_VGROUP:
@@ -1015,8 +984,7 @@ univ_ng_virtual()
 }
 
 static void
-univ_vg_addart(a)
-ART_NUM a;
+univ_vg_addart (ART_NUM a)
 {
     char* subj;
     char* from;
@@ -1050,7 +1018,7 @@ ART_NUM a;
 
 
 static void
-univ_vg_addgroup()
+univ_vg_addgroup (void)
 {
     ART_NUM a;
 
@@ -1065,8 +1033,7 @@ univ_vg_addgroup()
 
 /* returns do_newsgroup() value */
 int
-univ_visit_group_main(gname)
-char* gname;
+univ_visit_group_main (char *gname)
 {
     int ret;
     NGDATA* np;
@@ -1100,7 +1067,7 @@ char* gname;
 
 /* LATER: allow the loop to be interrupted */
 void
-univ_virt_pass()
+univ_virt_pass (void)
 {
     UNIV_ITEM* ui;
 
@@ -1149,18 +1116,14 @@ univ_virt_pass()
 }
 
 static int
-univ_order_number(ui1, ui2)
-register UNIV_ITEM** ui1;
-register UNIV_ITEM** ui2;
+univ_order_number (register UNIV_ITEM **ui1, register UNIV_ITEM **ui2)
 {
     return (int)((*ui1)->num - (*ui2)->num) * sel_direction;
 }
 
 #ifdef SCORE
 static int
-univ_order_score(ui1, ui2)
-register UNIV_ITEM** ui1;
-register UNIV_ITEM** ui2;
+univ_order_score (register UNIV_ITEM **ui1, register UNIV_ITEM **ui2)
 {
     if ((*ui1)->score != (*ui2)->score)
 	return (int)((*ui2)->score - (*ui1)->score) * sel_direction;
@@ -1170,7 +1133,7 @@ register UNIV_ITEM** ui2;
 #endif
 
 void
-sort_univ()
+sort_univ (void)
 {
     int cnt,i;
     UNIV_ITEM* ui;
@@ -1218,9 +1181,8 @@ sort_univ()
 
 /* return a description of the article */
 /* do this better later, like the code in sadesc.c */
-char*
-univ_article_desc(ui)
-UNIV_ITEM* ui;
+char *
+univ_article_desc (UNIV_ITEM *ui)
 {
     char* s;
     char* f;
@@ -1270,8 +1232,9 @@ UNIV_ITEM* ui;
  *        to the new level
  */
 void
-univ_help_main(where)
-int where;	/* what context were we in--use later for key help? */
+univ_help_main (
+    int where	/* what context were we in--use later for key help? */
+)
 {
     UNIV_ITEM *ui;
     bool flag;
@@ -1296,15 +1259,13 @@ int where;	/* what context were we in--use later for key help? */
 }
 
 void
-univ_help(where)
-int where;
+univ_help (int where)
 {
     univ_visit_help(where);	/* push old selector info to stack */
 }
 
-char*
-univ_keyhelp_modestr(ui)
-UNIV_ITEM* ui;
+char *
+univ_keyhelp_modestr (UNIV_ITEM *ui)
 {
     switch (ui->data.i) {
       case UHELP_PAGE:

@@ -26,12 +26,12 @@ EXT char* linkartname INIT(nullstr);/* real name of article for Eunice */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-void artio_init _((void));
-FILE* artopen _((ART_NUM,ART_POS));
-void artclose _((void));
-int seekart _((ART_POS));
-ART_POS tellart _((void));
-char* readart _((char*,int));
-void clear_artbuf _((void));
-int seekartbuf _((ART_POS));
-char* readartbuf _((bool_int));
+void artio_init (void);
+FILE* artopen (ART_NUM,ART_POS);
+void artclose (void);
+int seekart (ART_POS);
+ART_POS tellart (void);
+char* readart (char*,int);
+void clear_artbuf (void);
+int seekartbuf (ART_POS);
+char* readartbuf (bool_int);

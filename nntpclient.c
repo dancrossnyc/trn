@@ -29,9 +29,7 @@ int nntp_handle_auth_err _((void));
 #endif
 
 int
-nntp_connect(machine,verbose)
-char* machine;
-bool_int verbose;
+nntp_connect (char *machine, bool_int verbose)
 {
     int response;
 
@@ -112,9 +110,8 @@ bool_int verbose;
     return response;
 }
 
-char*
-nntp_servername(name)
-char* name;
+char *
+nntp_servername (char *name)
 {
     FILE* fp;
 
@@ -133,8 +130,7 @@ char* name;
 }
 
 int
-nntp_command(bp)
-char* bp;
+nntp_command (char *bp)
 {
     time_t now;
 #if defined(DEBUG) && defined(FLUSH)
@@ -173,7 +169,7 @@ char* bp;
 }
 
 int
-nntp_check()
+nntp_check (void)
 {
     int ret;
     int len = 0;
@@ -237,8 +233,7 @@ nntp_check()
 }
 
 bool
-nntp_at_list_end(s)
-char* s;
+nntp_at_list_end (char *s)
 {
     if (!s || (*s == '.' && (s[1] == '\0' || s[1] == '\r'))) {
 	nntplink.flags |= NNTP_NEW_CMD_OK;
@@ -254,9 +249,7 @@ char* s;
  * to work right, so "len" MUST be at least 3.
  */
 int
-nntp_gets(bp, len)
-char* bp;
-int  len;
+nntp_gets (char *bp, int len)
 {
     int ch, n = 0;
     char* cp = bp;
@@ -305,8 +298,7 @@ int  len;
 }
 
 void
-nntp_close(send_quit)
-bool_int send_quit;
+nntp_close (bool_int send_quit)
 {
     if (send_quit && nntplink.wr_fp != NULL && nntplink.rd_fp != NULL) {
 	if (nntp_command("QUIT") > 0)

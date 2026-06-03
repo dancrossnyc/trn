@@ -14,10 +14,10 @@
 ART_LINE maxindx = -1;
 
 void
-backpage_init()
+backpage_init (void)
 {
     char* varyname;
-    
+
     varyname = filexp(VARYNAME);
     close(creat(varyname,0600));
     varyfd = open(varyname,2);
@@ -26,14 +26,13 @@ backpage_init()
 	printf(cantopen,varyname) FLUSH;
 	sig_catcher(0);
     }
-    
+
 }
 
 /* virtual array read */
 
 ART_POS
-vrdary(indx)
-ART_LINE indx;
+vrdary (ART_LINE indx)
 {
     int subindx;
     long offset;
@@ -67,9 +66,7 @@ ART_LINE indx;
 /* write to virtual array */
 
 void
-vwtary(indx,newvalue)
-ART_LINE indx;
-ART_POS newvalue;
+vwtary (ART_LINE indx, ART_POS newvalue)
 {
     int subindx;
     long offset;
