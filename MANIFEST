@@ -198,7 +198,6 @@ sorder.c           Strn generic scan mode.
 sorder.h           Strn generic scan mode.
 spage.c            Strn generic scan mode.
 spage.h            Strn generic scan mode.
-strftime.c         Source for strftime.c, if needed.
 strn.1             Manual page for strn.
 sw.c               Switch processing routines.
 sw.h               Public info regarding switch.c.
