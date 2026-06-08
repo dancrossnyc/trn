@@ -92,11 +92,11 @@ void
 free_compex (COMPEX *compex)
 {
     if (compex->eblen) {
-	free(compex->expbuf);
+	safefree(compex->expbuf);
 	compex->eblen = 0;
     }
     if (compex->brastr) {
-	free(compex->brastr);
+	safefree(compex->brastr);
 	compex->brastr = NULL;
     }
 }
@@ -336,7 +336,7 @@ grow_eb (COMPEX *compex, char *epp, char **alt)
     char** altlist = compex->alternatives;
 
     compex->eblen += 80;
-    compex->expbuf = saferealloc(compex->expbuf, (MEM_SIZE)compex->eblen + 4);
+    compex->expbuf = saferealloc(compex->expbuf, (size_t)compex->eblen + 4);
     if (compex->expbuf != oldbuf) {	/* realloc can change expbuf! */
 	epp += compex->expbuf - oldbuf;
 	while (altlist != alt)
@@ -358,8 +358,8 @@ execute (COMPEX *compex, char *addr)
 	for (c = 0; c <= compex->nbra; c++)
 	    compex->braslist[c] = compex->braelist[c] = NULL;
 	if (compex->brastr)
-	    free(compex->brastr);
-	compex->brastr = savestr(p1);	/* in case p1 is not static */
+	    safefree(compex->brastr);
+	compex->brastr = estrdup(p1);	/* in case p1 is not static */
 	p1 = compex->brastr;		/* ! */
     }
     case_fold(compex->do_folding);	/* make sure table is correct */
@@ -480,7 +480,7 @@ advance (COMPEX *compex, char *lp, char *ep)
 
 	    case CBACK:
 		if (compex->braelist[i = *ep++] == 0) {
-		    fputs("bad braces\n",stdout) FLUSH;
+		    fputs("bad braces\n",stdout);
 		    err = TRUE;
 		    return FALSE;
 		}
@@ -492,7 +492,7 @@ advance (COMPEX *compex, char *lp, char *ep)
 
 	    case CBACK | STAR:
 		if (compex->braelist[i = *ep++] == 0) {
-		    fputs("bad braces\n",stdout) FLUSH;
+		    fputs("bad braces\n",stdout);
 		    err = TRUE;
 		    return FALSE;
 		}
@@ -544,7 +544,7 @@ advance (COMPEX *compex, char *lp, char *ep)
 		return FALSE;
 
 	    default:
-		fputs("Badly compiled pattern\n",stdout) FLUSH;
+		fputs("Badly compiled pattern\n",stdout);
 		err = TRUE;
 		return -1;
 	}

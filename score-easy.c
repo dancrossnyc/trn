@@ -30,10 +30,10 @@ sc_easy_append (void)
 
     filechar = '\0';	/* GCC warning avoidance */
     s = sc_e_newline;
-    printf("\nScorefile easy append mode.\n") FLUSH;
+    printf("\nScorefile easy append mode.\n");
     q_done = FALSE;
     while (!q_done) {
-	printf("0) Exit.\n") FLUSH;
+	printf("0) Exit.\n");
 	printf("1) List the current scorefile abbreviations.\n");
 	printf("2) Add an entry to the global scorefile.\n");
 	printf("3) Add an entry to this newsgroup's scorefile.\n");
@@ -60,7 +60,7 @@ sc_easy_append (void)
 	    filechar = '!';
 	    break;
 	  case 'h':
-	    printf("No help available (yet).\n") FLUSH;
+	    printf("No help available (yet).\n");
 	    q_done = FALSE;
 	    break;
 	  default:
@@ -73,7 +73,7 @@ sc_easy_append (void)
 	fflush(stdout);
 	eat_typeahead();
 	getcmd(buf);
-	printf("%c\n",*buf) FLUSH;
+	printf("%c\n",*buf);
 	filechar = *buf;
 	/* If error checking is done later, then an error should set
 	 * filechar to '\0' and continue the while loop.
@@ -110,7 +110,7 @@ sc_easy_append (void)
 	    q_done = FALSE;
 	    break;
 	  case 'h':
-	    printf("No help available (yet).\n") FLUSH;
+	    printf("No help available (yet).\n");
 	    q_done = FALSE;
 	    break;
 	  default:
@@ -134,7 +134,7 @@ sc_easy_append (void)
 	    *s++ = ' ';
 	    q_done = TRUE;
 	} else
-	    printf("\n") FLUSH;
+	    printf("\n");
     }
     q_done = FALSE;
     while (!q_done) {
@@ -158,7 +158,7 @@ sc_easy_append (void)
 	    *s++ = '\0';
 	    return sc_e_newline;
 	  case 'h':
-	    printf("No help available (yet).\n") FLUSH;
+	    printf("No help available (yet).\n");
 	    q_done = FALSE;
 	    break;
 	  default:
@@ -179,7 +179,7 @@ sc_easy_command (void)
     char ch;
 
     s = sc_e_newline;
-    printf("\nScoring easy command mode.\n") FLUSH;
+    printf("\nScoring easy command mode.\n");
     q_done = FALSE;
     while (!q_done) {
 	printf("0) Exit.\n");
@@ -207,7 +207,7 @@ sc_easy_command (void)
 	  case '5':
 	    return "f";
 	  case 'h':
-	    printf("No help available (yet).\n") FLUSH;
+	    printf("No help available (yet).\n");
 	    q_done = FALSE;
 	    break;
 	  default:

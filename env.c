@@ -39,7 +39,7 @@ env_init (char *tcbuf, bool_int lax)
     if (!lax || !loginName) {
 	loginName = getlogin();
 	if (loginName)
-	    loginName = savestr(loginName);
+	    loginName = estrdup(loginName);
     }
 
     /* Set realName, and maybe set loginName and homedir (if NULL). */
@@ -80,9 +80,9 @@ env_init2 (void)
     if (!homedir)
 	homedir = "/";
     dotdir = getval("DOTDIR",homedir);
-    trndir = savestr(filexp(getval("TRNDIR",TRNDIR)));
-    lib = savestr(filexp(NEWSLIB));
-    rnlib = savestr(filexp(PRIVLIB));
+    trndir = estrdup(filexp(getval("TRNDIR",TRNDIR)));
+    lib = estrdup(filexp(NEWSLIB));
+    rnlib = estrdup(filexp(PRIVLIB));
 }
 
 /* Set loginName to the user's login name and realName to the user's
@@ -103,9 +103,9 @@ setusername (char *tmpbuf)
     if (!pwd)
 	return 0;
     if (!loginName)
-	loginName = savestr(pwd->pw_name);
+	loginName = estrdup(pwd->pw_name);
     if (!homedir)
-	homedir = savestr(pwd->pw_dir);
+	homedir = estrdup(pwd->pw_dir);
     s = pwd->pw_gecos;
 #ifdef PASSNAMES
 #ifdef BERKNAMES
@@ -124,13 +124,13 @@ setusername (char *tmpbuf)
 	if (islower(*c))
 	    *c = toupper(*c);		/* gack and double gack */
     }
-    realName = savestr(buf);
+    realName = estrdup(buf);
 #else /* !BERKNAMES */
     if ((c = index(s, '(')) != NULL)
 	*c = '\0';
     if ((c = index(s, '-')) != NULL)
 	s = c;
-    realName = savestr(s);
+    realName = estrdup(s);
 #endif /* !BERKNAMES */
 #else /* !PASSNAMES */
     {
@@ -140,7 +140,7 @@ setusername (char *tmpbuf)
 	    fgets(buf,sizeof buf,fp);
 	    fclose(fp);
 	    buf[strlen(buf)-1] = '\0';
-	    realName = savestr(buf);
+	    realName = estrdup(buf);
 	}
 	else
 	    s = "PUT_YOUR_NAME_HERE";
@@ -184,7 +184,7 @@ setphostname (char *tmpbuf)
 #  endif /* PHOSTCMD */
 # endif /* HAS_UNAME */
 #endif /* HAS_GETHOSTNAME */
-    localhost = savestr(tmpbuf);
+    localhost = estrdup(tmpbuf);
 
     /* Build the host name that goes in postings */
 
@@ -233,7 +233,7 @@ setphostname (char *tmpbuf)
 	    hostname_ok = FALSE;
 	}
     }
-    phostname = savestr(tmpbuf);
+    phostname = estrdup(tmpbuf);
     return hostname_ok;
 }
 
@@ -261,7 +261,7 @@ export (char *nam, char *val)
 	    int j;
 #ifndef lint
 	    char** tmpenv = (char**)	/* point our wand at memory */
-		safemalloc((MEM_SIZE) (i+2) * sizeof(char*));
+		malloc((i+2) * sizeof(char*));
 #else
 	    char** tmpenv = NULL;
 #endif /* lint */
@@ -273,13 +273,13 @@ export (char *nam, char *val)
 	}
 #ifndef lint
 	else
-	    environ = (char**) saferealloc((char*) environ,
-		(MEM_SIZE) (i+2) * sizeof(char*));
+	    environ = (char**) realloc((char*) environ,
+		(size_t) (i+2) * sizeof(char*));
 					/* just expand it a bit */
 #endif /* lint */
 	environ[i+1] = NULL;	/* make sure it's null terminated */
     }
-    environ[i] = safemalloc((MEM_SIZE)(namlen + strlen(val) + 2));
+    environ[i] = malloc((size_t)(namlen + strlen(val) + 2));
 					/* this may or may not be in */
 					/* the old environ structure */
     sprintf(environ[i],"%s=%s",nam,val);/* all that work just for this */

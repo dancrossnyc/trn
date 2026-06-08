@@ -747,7 +747,7 @@ page_switch (void)
 	if (isspace(*s)) s++;
 	if ((s = compile(&gcompex,s,TRUE,TRUE)) != NULL) {
 			    /* compile regular expression */
-	    printf("\n%s\n",s) FLUSH;
+	    printf("\n%s\n",s);
 	    termdown(2);
 	    return PS_ASK;
 	}
@@ -764,8 +764,7 @@ page_switch (void)
 	    gline = tc_LINES-2;
 #ifdef DEBUG
 	if (debug & DEB_INNERSRCH) {
-	    printf("Start here? %d  >=? %d\n",topline + gline + 1,artline)
-	      FLUSH;
+	    printf("Start here? %d  >=? %d\n",topline + gline + 1,artline);
 	    termdown(1);
 	}
 #endif
@@ -789,7 +788,7 @@ page_switch (void)
 	    }
 #ifdef DEBUG
 	    if (debug & DEB_INNERSRCH)
-		printf("Test %s\n",s) FLUSH;
+		printf("Test %s\n",s);
 #endif
 	    success = execute(&gcompex,s) != NULL;
 	    if (nlptr)
@@ -801,14 +800,13 @@ page_switch (void)
 	}
 	if (!innersearch) {
 	    seekartbuf(artpos);
-	    fputs("(Not found)",stdout) FLUSH;
+	    fputs("(Not found)",stdout);
 	    term_col = 11;
 	    return PS_ASK;
 	}
 #ifdef DEBUG
 	if (debug & DEB_INNERSRCH) {
-	    printf("On page? %ld <=? %ld\n",(long)innersearch,(long)artpos)
-	      FLUSH;
+	    printf("On page? %ld <=? %ld\n",(long)innersearch,(long)artpos);
 	    termdown(1);
 	}
 #endif
@@ -821,7 +819,7 @@ page_switch (void)
 	    highlight = artline - 1;
 #ifdef DEBUG
 	    if (debug & DEB_INNERSRCH) {
-		printf("@ %d\n",highlight) FLUSH;
+		printf("@ %d\n",highlight);
 		termdown(1);
 	    }
 #endif
@@ -856,7 +854,7 @@ page_switch (void)
       refresh_screen:
 #ifdef DEBUG
 	if (debug & DEB_INNERSRCH) {
-	    printf("Topline = %d",topline) FLUSH;
+	    printf("Topline = %d",topline);
 	    fgets(buf, sizeof buf, stdin);
 	}
 #endif
@@ -906,7 +904,7 @@ page_switch (void)
 		    for (pos = artpos - pos; pos-- && !AT_NL(*s); s++)
 			putchar(*s);
 		    color_default();
-		    putchar('\n') FLUSH;
+		    putchar('\n');
 		    topline--;
 		    artpos = vrdary(--artline);
 		    if (artpos < 0)
@@ -1101,7 +1099,7 @@ leave_pager:
       case 'q':	/* quit this article? */
 	return PS_TOEND;
       default:
-	fputs(hforhelp,stdout) FLUSH;
+	fputs(hforhelp,stdout);
 	termdown(1);
 	settle_down();
 	return PS_ASK;
@@ -1115,8 +1113,7 @@ innermore (void)
     if (artpos < innersearch) {		/* not even on page yet? */
 #ifdef DEBUG
 	if (debug & DEB_INNERSRCH)
-	    printf("Not on page %ld < %ld\n",(long)artpos,(long)innersearch)
-	      FLUSH;
+	    printf("Not on page %ld < %ld\n",(long)artpos,(long)innersearch);
 #endif
 	return TRUE;
     }
@@ -1129,7 +1126,7 @@ innermore (void)
 #ifdef DEBUG
 	if (debug & DEB_INNERSRCH) {
 	    printf("There it is %ld = %ld, %d @ %d\n",(long)artpos,
-		(long)innersearch,hide_everything,highlight) FLUSH;
+		(long)innersearch,hide_everything,highlight);
 	    termdown(1);
 	}
 #endif
@@ -1142,8 +1139,7 @@ innermore (void)
     }
 #ifdef DEBUG
     if (debug & DEB_INNERSRCH) {
-	printf("Not far enough? %d <? %d + %d\n",artline,isrchline,gline)
-	  FLUSH;
+	printf("Not far enough? %d <? %d + %d\n",artline,isrchline,gline);
 	termdown(1);
     }
 #endif

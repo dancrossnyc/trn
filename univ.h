@@ -106,36 +106,36 @@ struct univ_item {
 };
 
 /* have we ever been initialized? */
-EXT int univ_ever_init;
+extern int univ_ever_init;
 
 /* How deep are we in the tree? */
-EXT int univ_level;
+extern int univ_level;
 
 /* if TRUE, we are in the "virtual group" second pass */
-EXT bool univ_ng_virtflag INIT(FALSE);
+extern bool univ_ng_virtflag;
 
 /* if TRUE, we are reading an article from a "virtual group" */
-EXT bool univ_read_virtflag INIT(FALSE);
+extern bool univ_read_virtflag;
 
 /* "follow"-related stuff (virtual groups) */
-EXT bool univ_default_cmd INIT(FALSE);
-EXT bool univ_follow INIT(TRUE);
-EXT bool univ_follow_temp INIT(FALSE);
+extern bool univ_default_cmd;
+extern bool univ_follow;
+extern bool univ_follow_temp;
 
 /* if TRUE, the user has loaded their own top univ. config file */
-EXT bool univ_usrtop;
+extern bool univ_usrtop;
 
 /* items which must be saved in context */
-EXT UNIV_ITEM* first_univ;
-EXT UNIV_ITEM* last_univ;
-EXT UNIV_ITEM* sel_page_univ;
-EXT UNIV_ITEM* sel_next_univ;
-EXT char* univ_fname;			/* current filename (may be null) */
-EXT char* univ_label;			/* current label (may be null) */
-EXT char* univ_title;			/* title of current level */
-EXT char* univ_tmp_file;		/* temp. file (may be null) */
-EXT HASHTABLE* univ_ng_hash INIT(0);
-EXT HASHTABLE* univ_vg_hash INIT(0);
+extern UNIV_ITEM* first_univ;
+extern UNIV_ITEM* last_univ;
+extern UNIV_ITEM* sel_page_univ;
+extern UNIV_ITEM* sel_next_univ;
+extern char* univ_fname;			/* current filename (may be null) */
+extern char* univ_label;			/* current label (may be null) */
+extern char* univ_title;			/* title of current level */
+extern char* univ_tmp_file;		/* temp. file (may be null) */
+extern HASHTABLE* univ_ng_hash;
+extern HASHTABLE* univ_vg_hash;
 /* end of items that must be saved */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */

@@ -70,7 +70,7 @@ sa_init_ents (void)
 void
 sa_clean_ents (void)
 {
-    free(sa_ents);
+    safefree(sa_ents);
 }
 
 /* returns entry number that was added */

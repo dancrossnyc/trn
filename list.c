@@ -230,7 +230,7 @@ delete_list (LIST *list)
     while (node) {
 	prevnode = node;
 	node = node->next;
-	free((char*)prevnode);
+	safefree((char *)prevnode);
     }
-    free((char*)list);
+    safefree((char *)list);
 }

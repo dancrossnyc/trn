@@ -145,7 +145,7 @@ ov_data (ART_NUM first, ART_NUM last, bool_int cheating)
     ART_NUM artnum, an;
     char* line;
     char* last_buf = buf;
-    MEM_SIZE last_buflen = LBUFLEN;
+    size_t last_buflen = LBUFLEN;
     bool success = TRUE;
     ART_NUM real_first = first;
     ART_NUM real_last = last;
@@ -373,14 +373,14 @@ ov_parse (char *line, ART_NUM artnum, bool_int remote)
     if (!article->subj)
 	set_subj_line(article, fields[OV_SUBJ], strlen(fields[OV_SUBJ]));
     if (!article->msgid)
-	set_cached_line(article, MSGID_LINE, savestr(fields[OV_MSGID]));
+	set_cached_line(article, MSGID_LINE, estrdup(fields[OV_MSGID]));
     if (!article->from)
-	set_cached_line(article, FROM_LINE, savestr(fields[OV_FROM]));
+	set_cached_line(article, FROM_LINE, estrdup(fields[OV_FROM]));
     if (!article->date)
 	article->date = parsedate(fields[OV_DATE]);
 #ifdef USE_FILTER
     if (!article->refs && fields[OV_REFS])
-	set_cached_line(article, REFS_LINE, *fields[OV_REFS]? savestr(fields[OV_REFS]) : nullstr);
+	set_cached_line(article, REFS_LINE, *fields[OV_REFS]? estrdup(fields[OV_REFS]) : nullstr);
 #endif
     if (!article->bytes && fields[OV_BYTES])
 	set_cached_line(article, BYTES_LINE, fields[OV_BYTES]);
@@ -392,7 +392,7 @@ ov_parse (char *line, ART_NUM artnum, bool_int remote)
 	    /* Exclude an xref for just this group */
 	    cp = index(fields[OV_XREF], ':');
 	    if (cp && index(cp+1, ':'))
-		article->xrefs = savestr(fields[OV_XREF]);
+		article->xrefs = estrdup(fields[OV_XREF]);
 	}
 
 	if (fieldflags[OV_XREF] & FF_HAS_FIELD) {

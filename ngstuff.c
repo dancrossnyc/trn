@@ -63,7 +63,7 @@ escapade (void)
     else {
 	trn_getwd(whereiam, sizeof(whereiam));
 	if (chdir(cwd)) {
-	    printf(nocd,cwd) FLUSH;
+	    printf(nocd,cwd);
 	    sig_catcher(0);
 	}
     }
@@ -76,7 +76,7 @@ escapade (void)
     crmode();				/*   unfriendly again */
     if (docd) {
 	if (chdir(whereiam)) {
-	    printf(nocd,whereiam) FLUSH;
+	    printf(nocd,whereiam);
 	    sig_catcher(0);
 	}
     }
@@ -140,7 +140,7 @@ switcheroo (void)
 	if (docd) {
 	    cwd_check();
 	    if (chdir(whereami)) {		/* -d does chdirs */
-		printf(nocd,whereami) FLUSH;
+		printf(nocd,whereami);
 		sig_catcher(0);
 	    }
 	}
@@ -179,11 +179,11 @@ numnum (void)
 	if (!isdigit(*s))
 	    justone = FALSE;
     if (*s) {
-	cmdlst = savestr(s);
+	cmdlst = estrdup(s);
 	justone = FALSE;
     }
     else if (!justone)
-	cmdlst = savestr("m");
+	cmdlst = estrdup("m");
     *s++ = ',';
     *s = '\0';
     safecpy(tmpbuf,buf,LBUFLEN);
@@ -217,7 +217,7 @@ numnum (void)
 	    max = lastart;
 	    if (min > max)
 		min = max;
-	    sprintf(msg,"(Last article is %ld)",(long)lastart) FLUSH;
+	    sprintf(msg,"(Last article is %ld)",(long)lastart);
 	    warnmsg(msg);
 	}
 	if (max < min) {
@@ -285,7 +285,7 @@ thread_perform (void)
 	one_thread = TRUE;
 	len++;
     }
-    cmdstr = savestr(buf+len);
+    cmdstr = estrdup(buf+len);
     want_unread = !sel_rereading && *cmdstr != 'm';
 
     perform_status_init(ngptr->toread);
@@ -379,7 +379,7 @@ thread_perform (void)
 	}
     }
   break_out:
-    free(cmdstr);
+    safefree(cmdstr);
     return 1;
 }
 
@@ -599,7 +599,7 @@ ngsel_perform (void)
 	one_group = TRUE;
 	len++;
     }
-    cmdstr = savestr(buf+len);
+    cmdstr = estrdup(buf+len);
 
     perform_status_init(newsgroup_toread);
     len = strlen(cmdstr);
@@ -623,7 +623,7 @@ ngsel_perform (void)
     }
 
   break_out:
-    free(cmdstr);
+    safefree(cmdstr);
     return 1;
 }
 
@@ -663,7 +663,7 @@ ng_perform (char *cmdlst, int output_level)
 	  case 'u':
 #ifdef VERBOSE
 	    IF(output_level && verbose) {
-		printf(unsubto,ngptr->rcline) FLUSH;
+		printf(unsubto,ngptr->rcline);
 		termdown(1);
 	    }
 #endif
@@ -722,7 +722,7 @@ addgrp_sel_perform (void)
 	one_group = TRUE;
 	len++;
     }
-    cmdstr = savestr(buf+len);
+    cmdstr = estrdup(buf+len);
 
     perform_status_init(newsgroup_toread);
     len = strlen(cmdstr);
@@ -741,7 +741,7 @@ addgrp_sel_perform (void)
     }
 
   break_out:
-    free(cmdstr);
+    safefree(cmdstr);
     return 1;
 }
 

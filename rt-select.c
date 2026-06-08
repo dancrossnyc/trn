@@ -200,7 +200,7 @@ sel_exit:
     if (sel_mode != SM_ARTICLE || sel_sort == SS_GROUPS
      || sel_sort == SS_STRING) {
 	if (artptr_list) {
-	    free((char*)artptr_list);
+	    safefree((char *)artptr_list);
 	    artptr_list = sel_page_app = NULL;
 	    sort_subjects();
 	}
@@ -254,7 +254,7 @@ sel_dogroups (void)
 	printf("Entering %s:", ngname);
 #ifdef SCAN_ART
 	if (sel_ret == ';') {
-	    ret = do_newsgroup(savestr(";"));
+	    ret = do_newsgroup(estrdup(";"));
 	} else
 #endif
 	    ret = do_newsgroup(nullstr);
@@ -531,10 +531,10 @@ option_selector (void)
 	if (vals[i]) {
 	    if (option_saved_vals[i] && strEQ(vals[i],option_saved_vals[i])) {
 		if (option_saved_vals[i] != option_def_vals[i])
-		    free(option_saved_vals[i]);
+		    safefree(option_saved_vals[i]);
 		option_saved_vals[i] = NULL;
 	    }
-	    free(vals[i]);
+	    safefree(vals[i]);
 	    vals[i] = NULL;
 	}
     }
@@ -551,17 +551,17 @@ univ_read (UNIV_ITEM *ui)
 
     univ_follow_temp = FALSE;
     if (!ui) {
-	printf("NULL UI passed to reader!\n") FLUSH;
+	printf("NULL UI passed to reader!\n");
 	sleep(5);
 	return exit_code;
     }
-    printf("\n") FLUSH;			/* prepare for output msgs... */
+    printf("\n");			/* prepare for output msgs... */
     switch (ui->type) {
       case UN_DEBUG1: {
 	char* s;
 	s = ui->data.str;
 	if (s && *s) {
-	    printf("Not implemented yet (%s)\n",s) FLUSH;
+	    printf("Not implemented yet (%s)\n",s);
 	    sleep(5);
 	    return exit_code;
 	}
@@ -590,7 +590,7 @@ univ_read (UNIV_ITEM *ui)
 
 	if (!np) {
 	    printf("Universal: newsgroup %s not found!",
-		   ui->data.virt.ng) FLUSH;
+		   ui->data.virt.ng);
 	    sleep(5);
 	    return exit_code;
 	}
@@ -600,7 +600,7 @@ univ_read (UNIV_ITEM *ui)
 	    current_ng = np;
 	}
 	ThreadedGroup = (use_threads && !(np->flags & NF_UNTHREADED));
-	printf("Virtual: Entering %s:\n", ngname) FLUSH;
+	printf("Virtual: Entering %s:\n", ngname);
 	ng_go_artnum = ui->data.virt.num;
 	univ_read_virtflag = TRUE;
 	ret = do_newsgroup(nullstr);
@@ -667,7 +667,7 @@ univ_read (UNIV_ITEM *ui)
 
 	if (!np) {
 	    printf("Universal: newsgroup %s not found!",
-		   ui->data.group.ng) FLUSH;
+		   ui->data.group.ng);
 	    sleep(5);
 	    return exit_code;
 	}
@@ -678,10 +678,10 @@ univ_read (UNIV_ITEM *ui)
 	    current_ng = np;
 	}
 	ThreadedGroup = (use_threads && !(np->flags & NF_UNTHREADED));
-	printf("Entering %s:", ngname) FLUSH;
+	printf("Entering %s:", ngname);
 #ifdef SCAN_ART
 	if (sel_ret == ';')
-	    ret = do_newsgroup(savestr(";"));
+	    ret = do_newsgroup(estrdup(";"));
 	else
 #endif
 	    ret = do_newsgroup(nullstr);
@@ -1396,7 +1396,7 @@ select_option (int i)
     color_pop();	/* of COLOR_CMD */
     newline();
     *buf = '\0';
-    oldval = savestr(quote_string(option_value(i)));
+    oldval = estrdup(quote_string(option_value(i)));
     val = vals[i]? vals[i] : oldval;
     clean_screen = in_choice("> ", val, options_ini[i].help_str, 'z');
     if (strNE(buf,val)) {
@@ -1405,17 +1405,17 @@ select_option (int i)
 	parse_string(&to, &from);
 	changed = TRUE;
 	if (vals[i]) {
-	    free(vals[i]);
+	    safefree(vals[i]);
 	    selected_count--;
 	}
 	if (val != oldval && strEQ(buf,oldval))
 	    vals[i] = NULL;
 	else {
-	    vals[i] = savestr(buf);
+	    vals[i] = estrdup(buf);
 	    selected_count++;
 	}
     }
-    free(oldval);
+    safefree(oldval);
     if (clean_screen) {
 	up_line();
 	erase_line(1);
@@ -1816,7 +1816,7 @@ Type t or SP to display/select thread groups (threads the group, if needed).\n\
 Type s to display/select subject groups.\n\
 Type a to display/select individual articles.\n\
 Type q to leave things as they are.\n\n\
-",stdout) FLUSH;
+",stdout);
 	    ELSE
 #endif
 #ifdef TERSE
@@ -1825,7 +1825,7 @@ t or SP selects thread groups (threads the group too).\n\
 s selects subject groups.\n\
 a selects individual articles.\n\
 q does nothing.\n\n\
-",stdout) FLUSH;
+",stdout);
 #endif
 	    clean_screen = FALSE;
 	    goto reask_output;
@@ -1863,21 +1863,21 @@ q does nothing.\n\n\
 Type d or SP to order the displayed items by date.\n\
 Type s to order the items by subject.\n\
 Type p to order the items by score points.\n\
-",stdout) FLUSH;
+",stdout);
 		if (sel_mode == SM_ARTICLE)
 		    fputs("\
 Type a to order the items by author.\n\
 Type n to order the items by number.\n\
 Type g to order the items in subject-groups by date.\n\
-",stdout) FLUSH;
+",stdout);
 		else
 		    fputs("\
 Type c to order the items by count.\n\
-",stdout) FLUSH;
+",stdout);
 		fputs("\
 Typing your selection in upper case it will reverse the selected order.\n\
 Type q to leave things as they are.\n\n\
-",stdout) FLUSH;
+",stdout);
 	    }
 	    ELSE
 #endif
@@ -1887,20 +1887,20 @@ Type q to leave things as they are.\n\n\
 d or SP sorts by date.\n\
 s sorts by subject.\n\
 p sorts by points.\n\
-",stdout) FLUSH;
+",stdout);
 		if (sel_mode == SM_ARTICLE)
 		    fputs("\
 a sorts by author.\n\
 g sorts in subject-groups by date.\n\
-",stdout) FLUSH;
+",stdout);
 		else
 		    fputs("\
 c sorts by count.\n\
-",stdout) FLUSH;
+",stdout);
 		fputs("\
 Upper case reverses the sort.\n\
 q does nothing.\n\n\
-",stdout) FLUSH;
+",stdout);
 	    }
 #endif
 	    clean_screen = FALSE;
@@ -2242,11 +2242,11 @@ newsgroup_commands (char_int ch)
 Type n or SP to order the newsgroups in the .newsrc order.\n\
 Type g to order the items by group name.\n\
 Type c to order the items by count.\n\
-",stdout) FLUSH;
+",stdout);
 		fputs("\
 Typing your selection in upper case it will reverse the selected order.\n\
 Type q to leave things as they are.\n\n\
-",stdout) FLUSH;
+",stdout);
 	    }
 	    ELSE
 #endif
@@ -2256,11 +2256,11 @@ Type q to leave things as they are.\n\n\
 n or SP sorts by .newsrc.\n\
 g sorts by group name.\n\
 c sorts by count.\n\
-",stdout) FLUSH;
+",stdout);
 		fputs("\
 Upper case reverses the sort.\n\
 q does nothing.\n\n\
-",stdout) FLUSH;
+",stdout);
 	    }
 #endif
 	    clean_screen = FALSE;
@@ -2480,11 +2480,11 @@ addgroup_commands (char_int ch)
 Type n or SP to order the items in their naturally occurring order.\n\
 Type g to order the items by newsgroup name.\n\
 Type c to order the items by article count.\n\
-",stdout) FLUSH;
+",stdout);
 		fputs("\
 Typing your selection in upper case it will reverse the selected order.\n\
 Type q to leave things as they are.\n\n\
-",stdout) FLUSH;
+",stdout);
 	    }
 	    ELSE
 #endif
@@ -2494,11 +2494,11 @@ Type q to leave things as they are.\n\n\
 n or SP sorts by natural order.\n\
 g sorts by newsgroup name.\n\
 c sorts by article count.\n\
-",stdout) FLUSH;
+",stdout);
 		fputs("\
 Upper case reverses the sort.\n\
 q does nothing.\n\n\
-",stdout) FLUSH;
+",stdout);
 	    }
 #endif
 	    clean_screen = FALSE;
@@ -2787,11 +2787,11 @@ universal_commands (char_int ch)
 		fputs("\n\
 Type n or SP to order the items in the natural order.\n\
 Type p to order the items by score points.\n\
-",stdout) FLUSH;
+",stdout);
 		fputs("\
 Typing your selection in upper case it will reverse the selected order.\n\
 Type q to leave things as they are.\n\n\
-",stdout) FLUSH;
+",stdout);
 	    }
 	    ELSE
 #endif
@@ -2800,11 +2800,11 @@ Type q to leave things as they are.\n\n\
 		fputs("\n\
 n or SP sorts by natural order.\n\
 p sorts by score.\n\
-",stdout) FLUSH;
+",stdout);
 		fputs("\
 Upper case reverses the sort.\n\
 q does nothing.\n\n\
-",stdout) FLUSH;
+",stdout);
 	    }
 #endif
 	    clean_screen = FALSE;

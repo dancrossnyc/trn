@@ -33,42 +33,6 @@ finalize (int num)
     exit(num);
 }
 
-static char nomem[] = "trn: out of memory!\n";
-
-/* paranoid version of malloc */
-
-#ifndef USE_DEBUGGING_MALLOC
-char*
-safemalloc(MEM_SIZE size)
-{
-    char* ptr;
-
-    ptr = malloc(size ? size : (MEM_SIZE)1);
-    if (!ptr) {
-	fputs(nomem,stdout);
-	finalize(1);
-    }
-    return ptr;
-}
-#endif
-
-/* paranoid version of realloc.  If where is NULL, call malloc */
-
-#ifndef USE_DEBUGGING_MALLOC
-char*
-saferealloc(char* where,MEM_SIZE size)
-{
-    char* ptr;
-
-    ptr = realloc(where, size ? size : (MEM_SIZE)1);
-    if (!ptr) {
-	fputs(nomem,stdout);
-	finalize(1);
-    }
-    return ptr;
-}
-#endif
-
 char *
 dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
 {

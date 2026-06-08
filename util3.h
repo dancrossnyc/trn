@@ -9,10 +9,6 @@ extern char* homedir;
 
 int doshell (char*,char*);
 [[noreturn]] void finalize (int);
-#ifndef USE_DEBUGGING_MALLOC
-char* safemalloc (MEM_SIZE);
-char* saferealloc (char*,MEM_SIZE);
-#endif
 char* dointerp (char*,int,char*,char*,char*);
 int nntp_handle_nested_lists (void);
 char* get_auth_user (void);

@@ -101,7 +101,7 @@ process_list (int flag)
 	    get_ng(node->name,flag);	/* add newsgroup -- maybe */
 	prevnode = node;
 	node = node->next;
-	free((char*)prevnode);
+	safefree((char *)prevnode);
     }
     first_addgroup = NULL;
     last_addgroup = NULL;
@@ -137,7 +137,7 @@ new_nntp_groups (DATASRC *dp)
 	    break;
 #ifdef DEBUG
 	if (debug & DEB_NNTP)
-	    printf("<%s\n", ser_line) FLUSH;
+	    printf("<%s\n", ser_line);
 #endif
 	if (nntp_at_list_end(ser_line))
 	    break;
@@ -199,7 +199,7 @@ new_local_groups (DATASRC *dp)
 
     tmpfp = fopen(dp->extra_name,"r");
     if (tmpfp == NULL) {
-	printf(cantopen,dp->extra_name) FLUSH;
+	printf(cantopen,dp->extra_name);
 	termdown(1);
 	return;
     }
@@ -440,5 +440,5 @@ sort_addgroups (void)
     }
     last_addgroup = lp[0];
     last_addgroup->next = NULL;
-    free((char*)ag_list);
+    safefree((char *)ag_list);
 }

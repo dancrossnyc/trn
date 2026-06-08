@@ -79,7 +79,7 @@ kfile_init (void)
 			auto_flag = thread_cmd_flag[cp-thread_cmd_ltr];
 			data = hashfetch(msgid_hash,buf,strlen(buf));
 			if (!data.dat_ptr)
-			    data.dat_ptr = savestr(buf);
+			    data.dat_ptr = estrdup(buf);
 			else
 			    kf_changethd_cnt++;
 			data.dat_len = auto_flag | age;
@@ -208,24 +208,24 @@ do_kfile (FILE *kfp, int entering)
 #ifdef VERBOSE
 		IF(verbose)
 		    printf("\n(Interrupted at article %ld)\n",(long)art)
-		      FLUSH;
+		     ;
 		ELSE
 #endif
 #ifdef TERSE
-		    printf("\n(Intr at %ld)\n",(long)art) FLUSH;
+		    printf("\n(Intr at %ld)\n",(long)art);
 #endif
 		termdown(2);
 		return -1;
 	    case SRCH_DONE:
 		break;
 	    case SRCH_SUBJDONE:
-		/*fputs("\tsubject not found (?)\n",stdout) FLUSH;*/
+		/*fputs("\tsubject not found (?)\n",stdout);*/
 		break;
 	    case SRCH_NOTFOUND:
-		/*fputs("\tnot found\n",stdout) FLUSH;*/
+		/*fputs("\tnot found\n",stdout);*/
 		break;
 	    case SRCH_FOUND:
-		/*fputs("\tfound\n",stdout) FLUSH;*/
+		/*fputs("\tfound\n",stdout);*/
 		break;
 	    }
 	}
@@ -348,7 +348,7 @@ kill_unwanted (ART_NUM starting, char *message, int entering)
 #else
 	if (message && entering)
 #endif
-	    fputs(message,stdout) FLUSH;
+	    fputs(message,stdout);
 
 	kill_mentioned = FALSE;
 	if (localkfp) {
@@ -471,7 +471,7 @@ rewrite_kfile (ART_NUM thru)
 	open_kfile(KF_LOCAL);		/* and reopen local file */
     }
     else
-	printf(cantcreate,buf) FLUSH;
+	printf(cantcreate,buf);
 }
 
 static int
@@ -518,7 +518,7 @@ age_thread_commands (int keylen, HASHDATUM *data, int elapsed_days)
     if (data->dat_len) {
 	int age = (data->dat_len & KF_AGE_MASK) + elapsed_days;
 	if (age > KF_MAXDAYS) {
-	    free(data->dat_ptr);
+	    safefree(data->dat_ptr);
 	    kf_changethd_cnt++;
 	    return -1;
 	}
@@ -658,7 +658,7 @@ edit_kfile (void)
 	sprintf(cmd_buf,"%s %s",
 	    filexp(getval("VISUAL",getval("EDITOR",defeditor))),buf);
 	printf("\nEditing %s KILL file:\n%s\n",
-	    (in_ng?"local":"global"),cmd_buf) FLUSH;
+	    (in_ng?"local":"global"),cmd_buf);
 	termdown(3);
 	resetty();			/* make sure tty is friendly */
 	r = doshell(sh,cmd_buf);/* invoke the shell */
@@ -690,7 +690,7 @@ edit_kfile (void)
 	}
     }
     else {
-	printf("Can't make %s\n",buf) FLUSH;
+	printf("Can't make %s\n",buf);
 	termdown(1);
     }
     return r;
@@ -754,10 +754,10 @@ kf_append (char *cmd, bool_int local)
 	    fclose(tmpfp);
 	    if (local && !localkfp)
 		open_kfile(KF_LOCAL);
-	    fputs("done\n",stdout) FLUSH;
+	    fputs("done\n",stdout);
 	}
 	else
-	    printf(cantopen,cmd_buf) FLUSH;
+	    printf(cantopen,cmd_buf);
 	termdown(2);
     }
     kf_state |= KFS_NORMAL_LINES;

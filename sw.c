@@ -32,7 +32,7 @@ sw_file (char **tcbufptr)
     if (initfd >= 0) {
 	fstat(initfd,&filestat);
 	if (filestat.st_size >= TCBUF_SIZE-1)
-	    *tcbufptr = saferealloc(*tcbufptr,(MEM_SIZE)filestat.st_size+1);
+	    *tcbufptr = saferealloc(*tcbufptr,(size_t)filestat.st_size+1);
 	if (filestat.st_size) {
 	    int len = read(initfd,*tcbufptr,(int)filestat.st_size);
 	    (*tcbufptr)[len] = '\0';
@@ -86,7 +86,7 @@ sw_list (char *swlist)
     *p++ = '\0';
     *p = '\0';				/* put an extra null on the end */
     if (inquote) {
-	printf("Unmatched %c in switch\n",inquote) FLUSH;
+	printf("Unmatched %c in switch\n",inquote);
 	termdown(1);
     }
     for (p = swlist; *p; /* p += strlen(p)+1 */ ) {
@@ -103,7 +103,7 @@ decode_switch (char *s)
     while (isspace(*s)) s++;		/* ignore leading spaces */
 #ifdef DEBUG
     if (debug) {
-	printf("Switch: %s\n",s) FLUSH;
+	printf("Switch: %s\n",s);
 	termdown(1);
     }
 #endif
@@ -179,7 +179,7 @@ decode_switch (char *s)
 		    debug = 0;
 	    }
 #else
-	    printf("Trn was not compiled with -DDEBUG.\n") FLUSH;
+	    printf("Trn was not compiled with -DDEBUG.\n");
 	    termdown(1);
 #endif
 	    break;
@@ -382,11 +382,11 @@ decode_switch (char *s)
 	default:
 #ifdef VERBOSE
 	    IF(verbose)
-		printf("\nIgnoring unrecognized switch: -%c\n", *s) FLUSH;
+		printf("\nIgnoring unrecognized switch: -%c\n", *s);
 	    ELSE
 #endif
 #ifdef TERSE
-		printf("\nIgnoring -%c\n", *s) FLUSH;
+		printf("\nIgnoring -%c\n", *s);
 #endif
 	    termdown(2);
 	    break;
@@ -420,6 +420,6 @@ write_init_environment (FILE *fp)
 	*s = '=';
     }
     init_environment_cnt = init_environment_max = 0;
-    free((char*)init_environment_strings);
+    safefree((char *)init_environment_strings);
     init_environment_strings = NULL;
 }

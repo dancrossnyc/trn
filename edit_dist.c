@@ -6,7 +6,7 @@
  */
 
 #include "EXTERN.h"
-#include "common.h"		/* Declare MEM_SIZE */
+#include "common.h"		/* Declare size_t */
 #include "util.h"		/* Declare safemalloc() */
 #include "INTERN.h"
 #include "edit_dist.h"
@@ -117,7 +117,7 @@ edit_distn (char *from, int from_len, char *to, int to_len)
     if (from_len <= STRLENTHRESHOLD)
 	buffer = store;
     else
-	buffer = (int*)safemalloc((MEM_SIZE) radix * sizeof (int));
+	buffer = (int*)safemalloc((size_t) radix * sizeof (int));
 
 /* Here's where the fun begins.  We will find the minimum edit distance
    using dynamic programming.  We only need to store two rows of the matrix
@@ -247,7 +247,7 @@ edit_distn (char *from, int from_len, char *to, int to_len)
 
     row = buffer[mod(index + radix - 1)];
     if (buffer != store)
-	free((char*)buffer);
+	safefree((char *)buffer);
     return row;
 } /* edit_distn */
 

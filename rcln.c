@@ -37,11 +37,11 @@ catch_up (NGDATA *np, int leave_count, int output_level)
 #ifdef VERBOSE
 	    IF(verbose)
 		printf("\nMarking all but %d articles in %s as read.\n",
-		       leave_count,np->rcline) FLUSH;
+		       leave_count,np->rcline);
 	    ELSE
 #endif
 #ifdef TERSE
-		printf("\nAll but %d marked as read.\n",leave_count) FLUSH;
+		printf("\nAll but %d marked as read.\n",leave_count);
 #endif
 	}
 	checkexpired(np, getngsize(np) - leave_count + 1);
@@ -51,16 +51,16 @@ catch_up (NGDATA *np, int leave_count, int output_level)
 	if (output_level) {
 #ifdef VERBOSE
 	    IF(verbose)
-		printf("\nMarking %s as all read.\n",np->rcline) FLUSH;
+		printf("\nMarking %s as all read.\n",np->rcline);
 	    ELSE
 #endif
 #ifdef TERSE
-		fputs("\nMarked read\n",stdout) FLUSH;
+		fputs("\nMarked read\n",stdout);
 #endif
 	}
 	sprintf(tmpbuf,"%s: 1-%ld", np->rcline,(long)getngsize(np));
 	free(np->rcline);
-	np->rcline = savestr(tmpbuf);
+	np->rcline = estrdup(tmpbuf);
 	*(np->rcline + np->numoffset - 1) = '\0';
 	if (ng_min_toread > TR_NONE && np->toread > TR_NONE)
 	    newsgroup_toread--;
@@ -93,7 +93,7 @@ addartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
     if (dp != np->rc->datasrc) {	/* punt on cross-host xrefs */
 #ifdef DEBUG
 	if (debug & DEB_XREF_MARKER)
-	    printf("Cross-host xref to group %s ignored.\n",ngnam) FLUSH;
+	    printf("Cross-host xref to group %s ignored.\n",ngnam);
 #endif
 	return 0;
     }
@@ -109,7 +109,7 @@ addartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
     if (artnum > np->ngmax + 200) {	/* allow for incoming articles */
 	printf("\nCorrupt Xref line!!!  %ld --> %s(1..%ld)\n",
 	    artnum,ngnam,
-	    np->ngmax) FLUSH;
+	    np->ngmax);
 	paranoid = TRUE;		/* paranoia reigns supreme */
 	return -1;			/* hope this was the first newsgroup */
     }
@@ -125,7 +125,7 @@ addartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 #ifdef DEBUG
     if (debug & DEB_XREF_MARKER) {
 	printf("%ld->\n%s%c%s\n",(long)artnum,np->rcline, np->subscribechar,
-	  np->rcline + np->numoffset) FLUSH;
+	  np->rcline + np->numoffset);
     }
 #endif
     s = np->rcline + np->numoffset;
@@ -157,7 +157,7 @@ addartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 
     morenum = isdigit(*s);		/* will it need a comma after? */
     *(np->rcline + np->numoffset - 1) = np->subscribechar;
-    mbuf = safemalloc((MEM_SIZE)(strlen(s)+(s - np->rcline)+MAX_DIGITS+2+1));
+    mbuf = safemalloc((size_t)(strlen(s)+(s - np->rcline)+MAX_DIGITS+2+1));
     strcpy(mbuf,np->rcline);		/* make new rc line */
     if (maxt && lastnum && artnum == lastnum+1)
     					/* can we just extend last range? */
@@ -199,7 +199,7 @@ addartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
     strcat(t,s);			/* copy remainder of line */
 #ifdef DEBUG
     if (debug & DEB_XREF_MARKER)
-	printf("%s\n",mbuf) FLUSH;
+	printf("%s\n",mbuf);
 #endif
     free(np->rcline);
     np->rcline = mbuf;		/* pull the switcheroo */
@@ -235,7 +235,7 @@ subartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 #ifdef DEBUG
     if (debug & DEB_XREF_MARKER) {
 	printf("%ld<-\n%s%c%s\n",(long)artnum,np->rcline,np->subscribechar,
-	  np->rcline + np->numoffset) FLUSH;
+	  np->rcline + np->numoffset);
     }
 #endif
     s = np->rcline + np->numoffset;
@@ -252,7 +252,7 @@ subartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 	    ++np->toread;
 #ifdef DEBUG
 	if (debug & DEB_XREF_MARKER)
-	    printf("%s%c %s\n",np->rcline,np->subscribechar,s) FLUSH;
+	    printf("%s%c %s\n",np->rcline,np->subscribechar,s);
 #endif
 	return;
     }
@@ -277,7 +277,7 @@ subartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 		    artnum = 0;
 		}
 		*(np->rcline + np->numoffset - 1) = np->subscribechar;
-		mbuf = safemalloc((MEM_SIZE)(curlen+(artnum?(MAX_DIGITS+1)*2+1:1+1)));
+		mbuf = safemalloc((size_t)(curlen+(artnum?(MAX_DIGITS+1)*2+1:1+1)));
 		*s = '\0';
 		strcpy(mbuf,np->rcline);	/* make new rc line */
 		s = mbuf + (s - np->rcline);
@@ -293,7 +293,7 @@ subartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 		strcat(s,t);		/* copy remainder over */
 #ifdef DEBUG
 		if (debug & DEB_XREF_MARKER) {
-		    printf("%s\n",mbuf) FLUSH;
+		    printf("%s\n",mbuf);
 		}
 #endif
 		free(np->rcline);
@@ -319,7 +319,7 @@ subartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 #ifdef DEBUG
 		if (debug & DEB_XREF_MARKER) {
 		    printf("%s%c%s\n",np->rcline,np->subscribechar,
-		      np->rcline + np->numoffset) FLUSH;
+		      np->rcline + np->numoffset);
 		}
 #endif
 		return;
@@ -360,7 +360,7 @@ set_toread (NGDATA *np, bool_int lax_high_check)
     if (ngsize == TR_BOGUS) {
 	if (!toread_quiet) {
 	    printf("\nInvalid (bogus) newsgroup found: %s\n",np->rcline)
-	      FLUSH;
+	     ;
 	}
 	paranoid = TRUE;
 	if (virgin_ng || np->toread >= ng_min_toread) {
@@ -378,7 +378,7 @@ set_toread (NGDATA *np, bool_int lax_high_check)
     nums = np->rcline + np->numoffset;
     length = strlen(nums);
     if (length+MAX_DIGITS+1 > sizeof tmpbuf)
-	mybuf = safemalloc((MEM_SIZE)(length+MAX_DIGITS+1));
+	mybuf = safemalloc((size_t)(length+MAX_DIGITS+1));
     strcpy(mybuf,nums);
     mybuf[length++] = ',';
     mybuf[length] = '\0';
@@ -404,7 +404,7 @@ set_toread (NGDATA *np, bool_int lax_high_check)
 	unread = (ART_UNREAD)ngsize;	/* assume nothing carried over */
 	if (!toread_quiet) {
 	    printf("\nSomebody reset %s -- assuming nothing read.\n",
-		   np->rcline) FLUSH;
+		   np->rcline);
 	}
 	*(np->rcline + np->numoffset) = '\0';
 	paranoid = TRUE;		/* enough to make a guy paranoid */
@@ -446,7 +446,7 @@ checkexpired (NGDATA *np, ART_NUM a1st)
 #ifdef DEBUG
     if (debug & DEB_XREF_MARKER) {
 	printf("1-%ld->\n%s%c%s\n",(long)(a1st-1),np->rcline,np->subscribechar,
-	  np->rcline + np->numoffset) FLUSH;
+	  np->rcline + np->numoffset);
     }
 #endif
     for (s = np->rcline + np->numoffset; isspace(*s); s++) ;
@@ -461,7 +461,7 @@ checkexpired (NGDATA *np, ART_NUM a1st)
 	    if (3+len <= (int)strlen(np->rcline+np->numoffset))
 		mbuf = np->rcline;
 	    else {
-		mbuf = safemalloc((MEM_SIZE)(np->numoffset+3+len+1));
+		mbuf = safemalloc((size_t)(np->numoffset+3+len+1));
 		strcpy(mbuf, np->rcline);
 	    }
 	    cp = mbuf + np->numoffset;
@@ -485,7 +485,7 @@ checkexpired (NGDATA *np, ART_NUM a1st)
 	if (s - np->rcline >= np->numoffset + nlen)
 	    mbuf = np->rcline;
 	else {
-	    mbuf = safemalloc((MEM_SIZE)(np->numoffset+nlen+len+1));
+	    mbuf = safemalloc((size_t)(np->numoffset+nlen+len+1));
 	    strcpy(mbuf,np->rcline);
 	}
 
@@ -500,7 +500,7 @@ checkexpired (NGDATA *np, ART_NUM a1st)
 	}
 
 	if (!checkflag && np->rcline == mbuf)
-	    np->rcline = saferealloc(np->rcline, (MEM_SIZE)(cp-mbuf+len+1));
+	    np->rcline = saferealloc(np->rcline, (size_t)(cp-mbuf+len+1));
 	else {
 	    if (!checkflag)
 		free(np->rcline);
@@ -512,7 +512,7 @@ checkexpired (NGDATA *np, ART_NUM a1st)
 #ifdef DEBUG
     if (debug & DEB_XREF_MARKER) {
 	printf("%s%c%s\n",np->rcline,np->subscribechar,
-	  np->rcline + np->numoffset) FLUSH;
+	  np->rcline + np->numoffset);
     }
 #endif
 }

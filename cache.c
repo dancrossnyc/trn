@@ -121,15 +121,15 @@ close_cache (void)
     /* Free all the subjects. */
     for (sp = first_subject; sp; sp = next) {
 	next = sp->next;
-	free(sp->str);
-	free((char*)sp);
+	safefree(sp->str);
+	safefree((char *)sp);
     }
     first_subject = last_subject = NULL;
     subject_count = 0;			/* just to be sure */
     parsed_art = 0;
 
     if (artptr_list) {
-	free((char*)artptr_list);
+	safefree((char *)artptr_list);
 	artptr_list = NULL;
     }
     artptr = NULL;
@@ -299,7 +299,7 @@ check_poster (ARTICLE *ap)
 		    char* reply_buf = fetchlines(article_num(ap),REPLY_LINE);
 		    if (in_str(reply_buf,loginName,TRUE))
 			select_subthread(ap,AUTO_SEL_FOL);
-		    free(reply_buf);
+		    safefree(reply_buf);
 #endif
 		}
 	    }
@@ -342,7 +342,7 @@ uncache_article (ARTICLE *ap, bool_int remove_empties)
 	    else
 		sp->next->prev = sp->prev;
 	    hashdelete(subj_hash, sp->str+4, strlen(sp->str+4));
-	    free((char*)sp);
+	    safefree((char *)sp);
 	    ap->subj = NULL;
 	    subject_count--;
 	}
@@ -460,14 +460,14 @@ set_subj_line (
 	    size = 0;
     }
     if (ap->subj && strnEQ(ap->subj->str+4, newsubj+4, size)) {
-	free(newsubj);
+	safefree(newsubj);
 	return;
     }
 
     if (ap->subj) {
 	/* This only happens when we freshen truncated subjects */
 	hashdelete(subj_hash, ap->subj->str+4, strlen(ap->subj->str+4));
-	free(ap->subj->str);
+	safefree(ap->subj->str);
 	ap->subj->str = newsubj;
 	ap->subj->flags |= def_flags;
 	data.dat_ptr = (char*)ap->subj;
@@ -490,7 +490,7 @@ set_subj_line (
 	    data.dat_ptr = (char*)sp;
 	    hashstorelast(data);
 	} else
-	    free(newsubj);
+	    safefree(newsubj);
 	ap->subj = sp;
     }
 }
@@ -542,7 +542,7 @@ decode_header (char *t, char *f, int size)
 			    t[len] = d[len];
 			    len++;
 			}
-			free(d);
+			safefree(d);
 		    }
 #endif
 		    *e = '?';
@@ -607,16 +607,16 @@ set_cached_line (
       case FROM_LINE:
 	ap->flags &= ~AF_FROMTRUNCED;
 	if (ap->from)
-	    free(ap->from);
+	    safefree(ap->from);
 	decode_header(s, s, strlen(s));
 	ap->from = s;
 	break;
 #ifdef DBM_XREFS
       case NGS_LINE:
 	if (ap->xrefs && ap->xrefs != nullstr)
-	    free(ap->xrefs);
+	    safefree(ap->xrefs);
 	if (!index(s, ',')) {	/* if no comma, no Xref! */
-	    free(s);
+	    safefree(s);
 	    s = nullstr;
 	}
 	ap->xrefs = s;
@@ -624,11 +624,11 @@ set_cached_line (
 #else
       case XREF_LINE:
 	if (ap->xrefs && ap->xrefs != nullstr)
-	    free(ap->xrefs);
+	    safefree(ap->xrefs);
 	/* Exclude an xref for just this group or "(none)". */
 	cp = index(s, ':');
 	if (!cp || !index(cp+1, ':')) {
-	    free(s);
+	    safefree(s);
 	    s = nullstr;
 	}
 	ap->xrefs = s;
@@ -636,13 +636,13 @@ set_cached_line (
 #endif
       case MSGID_LINE:
 	if (ap->msgid)
-	    free(ap->msgid);
+	    safefree(ap->msgid);
 	ap->msgid = s;
 	break;
 #ifdef USE_FILTER
       case REFS_LINE:
 	if (ap->refs && ap->refs != nullstr)
-	    free(ap->refs);
+	    safefree(ap->refs);
 	ap->refs = s;
 	break;
 #endif
@@ -713,7 +713,7 @@ look_ahead (void)
 #endif
 	if ((s = compile(&srchcompex,pattern,TRUE,TRUE)) != NULL) {
 				    /* compile regular expression */
-	    printf("\n%s\n",s) FLUSH;
+	    printf("\n%s\n",s);
 	    termdown(2);
 	    srchahead = 0;
 	}
@@ -1009,13 +1009,13 @@ void
 clear_article (ARTICLE *ap)
 {
     if (ap->from)
-	free(ap->from);
+	safefree(ap->from);
     if (ap->msgid)
-	free(ap->msgid);
+	safefree(ap->msgid);
     if (ap->xrefs && ap->xrefs != nullstr)
-	free(ap->xrefs);
+	safefree(ap->xrefs);
 #ifdef USE_FILTER
     if (ap->refs && ap->refs != nullstr)
-        free(ap->refs);
+        safefree(ap->refs);
 #endif
 }

@@ -11,6 +11,7 @@
 
 #include "EXTERN.h"
 #include "common.h"
+#include "util.h"
 #include "util2.h"
 #include "util3.h"
 #include "nntpclient.h"
@@ -152,7 +153,7 @@ Warning: posting exceeds %d columns.  Line %d is the first long one:\n%s\n",
 	    cp = nntp_servername(cp);
     }
     if (strNE(cp,"local")) {
-	server_name = savestr(cp);
+	server_name = estrdup(cp);
 	cp = index(server_name, ';');
 	if (!cp)
 	    cp = index(server_name, ':');
@@ -269,7 +270,7 @@ Warning: posting exceeds %d columns.  Line %d is the first long one:\n%s\n",
 			    if (cp[0] == '?' && cp[1] == '?')
 				cp = "[no description available]\n";
 			    printf("%-23s %s", buff, cp);
-			    free(ngptrs[i]);
+			    safefree(ngptrs[i]);
 			    ngptrs[i] = 0;
 			    ngleft--;
 			}
@@ -282,11 +283,11 @@ Warning: posting exceeds %d columns.  Line %d is the first long one:\n%s\n",
 	    if (!foundactive[i]) {
 		printf("%-23s ** invalid news group -- check spelling **\n",
 		   ngptrs[i]);
-		free(ngptrs[i]);
+		safefree(ngptrs[i]);
 	    }
 	    else if (ngptrs[i]) {
 		printf("%-23s [no description available]\n", ngptrs[i]);
-		free(ngptrs[i]);
+		safefree(ngptrs[i]);
 	    }
 	}
     }

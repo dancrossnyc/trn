@@ -124,7 +124,7 @@ initialize (int argc, char *argv[])
 
     last_init();
 
-    free(tcbuf);			/* recover 1024 bytes */
+    safefree(tcbuf);			/* recover 1024 bytes */
 
 #ifdef USE_TCL
     if (UseTcl
@@ -198,9 +198,9 @@ newsnews_check (void)
 	fstat(fileno(tmpfp),&filestat);
 	if (filestat.st_mtime > (time_t)lasttime) {
 	    while (fgets(buf,sizeof(buf),tmpfp) != NULL)
-		fputs(buf,stdout) FLUSH;
+		fputs(buf,stdout);
 	    get_anything();
-	    putchar('\n') FLUSH;
+	    putchar('\n');
 	}
 	fclose(tmpfp);
     }

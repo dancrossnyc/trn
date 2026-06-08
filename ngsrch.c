@@ -81,9 +81,9 @@ ng_search (
     while (isspace(*s) || *s == ':')
 	s++;
     if (*s)
-	cmdlst = savestr(s);
+	cmdlst = estrdup(s);
     else if (gmode == 's')
-	cmdlst = savestr("+");
+	cmdlst = estrdup("+");
     if (cmdlst)
 	ret = NGS_DONE;
     if ((s = ng_comp(&ngcompex,pattern,TRUE,TRUE)) != NULL) {
@@ -104,7 +104,7 @@ ng_search (
 		if (!cmdlst)
 		    return NGS_FOUND;
 		if (addgrp_perform(gp,cmdlst,output_level && page_line==1)<0) {
-		    free(cmdlst);
+		    safefree(cmdlst);
 		    return NGS_INTR;
 		}
 	    }
@@ -153,7 +153,7 @@ ng_search (
 		    return NGS_FOUND;
 		set_ng(ngptr);
 		if (ng_perform(cmdlst,output_level && page_line == 1) < 0) {
-		    free(cmdlst);
+		    safefree(cmdlst);
 		    return NGS_INTR;
 		}
 	    }
@@ -169,7 +169,7 @@ ng_search (
 		!= ng_start);
 exit:
     if (cmdlst)
-	free(cmdlst);
+	safefree(cmdlst);
     return ret;
 }
 #endif /* NGSEARCH */

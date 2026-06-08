@@ -25,18 +25,16 @@ static char* tildedir = NULL;
 /* copy a string to a safe spot */
 
 char *
-savestr (char *str)
+estrdup(const char *str)
 {
-    char* newaddr = safemalloc((MEM_SIZE)(strlen(str)+1));
-
+    char* newaddr = safemalloc((size_t)(strlen(str)+1));
     strcpy(newaddr,str);
     return newaddr;
 }
 
 /* safe version of string copy */
-
 char *
-safecpy (char *to, char *from, int len)
+safecpy(char *to, const char *from, size_t len)
 {
     char* dest = to;
 
@@ -50,9 +48,8 @@ safecpy (char *to, char *from, int len)
 }
 
 /* copy a string up to some (non-backslashed) delimiter, if any */
-
 char *
-cpytill (char *to, char *from, int delim)
+cpytill(char *to, char *from, int delim)
 {
     while (*from) {
 	if (*from == '\\' && from[1] == delim)
@@ -62,15 +59,14 @@ cpytill (char *to, char *from, int delim)
 	*to++ = *from++;
     }
     *to = '\0';
-    return from;
+    return (char *)from;
 }
 
 /* expand filename via %, ~, and $ interpretation */
 /* returns pointer to static area */
 /* Note that there is a 1-deep cache of ~name interpretation */
-
 char *
-filexp (char *s)
+filexp(char *s)
 {
     static char filename[CBUFLEN];
     char scrbuf[CBUFLEN];
@@ -78,24 +74,24 @@ filexp (char *s)
 
 #ifdef DEBUG
     if (debug & DEB_FILEXP)
-	printf("< %s\n",s) FLUSH;
+	printf("< %s\n",s);
 #endif
     /* interpret any % escapes */
     dointerp(filename,sizeof filename,s,(char*)NULL,(char*)NULL);
 #ifdef DEBUG
     if (debug & DEB_FILEXP)
-	printf("%% %s\n",filename) FLUSH;
+	printf("%% %s\n",filename);
 #endif
     s = filename;
     if (*s == '~') {	/* does destination start with ~? */
 	if (!*(++s) || *s == '/') {
-	    sprintf(scrbuf,"%s%s",homedir,s);
+	    snprintf(scrbuf,sizeof(scrbuf),"%s%s",homedir,s);
 				/* swap $HOME for it */
 #ifdef DEBUG
 	    if (debug & DEB_FILEXP)
-		printf("~ %s\n",scrbuf) FLUSH;
+		printf("~ %s\n",scrbuf);
 #endif
-	    strcpy(filename,scrbuf);
+	    strlcpy(filename,scrbuf,sizeof(filename));
 	}
 	else if (*s == '~' && (!s[1] || s[1] == '/')) {
 	    d = getenv("TRNPREFIX");
@@ -104,7 +100,7 @@ filexp (char *s)
 	    sprintf(scrbuf,"%s%s",d,s+1);
 #ifdef DEBUG
 	    if (debug & DEB_FILEXP)
-		printf("~~ %s\n",scrbuf) FLUSH;
+		printf("~~ %s\n",scrbuf);
 #endif
 	}
 	else {
@@ -117,7 +113,7 @@ filexp (char *s)
 		strcpy(filename, scrbuf);
 #ifdef DEBUG
 		if (debug & DEB_FILEXP)
-		    printf("r %s %s\n",tildename,tildedir) FLUSH;
+		    printf("r %s %s\n",tildename,tildedir);
 #endif
 	    }
 	    else {
@@ -126,15 +122,15 @@ filexp (char *s)
 		if (tildedir)
 		    free(tildedir);
 		tildedir = NULL;
-		tildename = savestr(scrbuf);
+		tildename = estrdup(scrbuf);
 		{
 		    struct passwd* pwd = getpwnam(tildename);
 		    if (pwd == NULL) {
-			printf("%s is an unknown user. Using default.\n",tildename) FLUSH;
+			printf("%s is an unknown user. Using default.\n",tildename);
 			return NULL;
 		    }
 		    sprintf(scrbuf,"%s%s",pwd->pw_dir,s);
-		    tildedir = savestr(pwd->pw_dir);
+		    tildedir = estrdup(pwd->pw_dir);
 		    strcpy(filename,scrbuf);
 		    endpwent();
 		}
@@ -142,11 +138,11 @@ filexp (char *s)
 #else /* !TILDENAME */
 #ifdef VERBOSE
 	    IF(verbose)
-		fputs("~loginname not implemented.\n",stdout) FLUSH;
+		fputs("~loginname not implemented.\n",stdout);
 	    ELSE
 #endif
 #ifdef TERSE
-		fputs("~login not impl.\n",stdout) FLUSH;
+		fputs("~login not impl.\n",stdout);
 #endif
 #endif
 	}
@@ -165,14 +161,14 @@ filexp (char *s)
 	}
 #ifdef DEBUG
 	if (debug & DEB_FILEXP)
-	    printf("$ %s\n",scrbuf) FLUSH;
+	    printf("$ %s\n",scrbuf);
 #endif
 	/* this might do some extra '%'s, but that's how the Mercedes Benz */
 	dointerp(filename,sizeof filename,scrbuf,(char*)NULL,(char*)NULL);
     }
 #ifdef DEBUG
     if (debug & DEB_FILEXP)
-	printf("> %s\n",filename) FLUSH;
+	printf("> %s\n",filename);
 #endif
     return filename;
 }
@@ -180,44 +176,13 @@ filexp (char *s)
 /* return ptr to little string in big string, NULL if not found */
 
 char *
-in_str (char *big, char *little, bool_int case_matters)
+in_str(const char *big, const char *little, bool case_matters)
 {
-    char* t;
-    char* s;
-    char* x;
-
-    for (t = big; *t; t++) {
-	for (x=t,s=little; *s; x++,s++) {
-	    if (!*x)
-		return NULL;
-	    if (case_matters == TRUE) {
-		if (*s != *x)
-		    break;
-	    } else {
-		char c,d;
-		if (isupper(*s))
-		    c = tolower(*s);
-		else
-		    c = *s;
-		if (isupper(*x))
-		    d = tolower(*x);
-		else
-		    d = *x;
-		if ( c != d )
-		    break;
-	   }
-	}
-	if (!*s)
-	    return t;
-    }
-    return NULL;
+    return case_matters ? strstr(big, little) : strcasestr(big, little);
 }
 
-
-
-
 char *
-read_auth_file (char *file, char **pass_ptr)
+read_auth_file(const char *file, char **pass_ptr)
 {
     FILE* fp;
     char* strptr[2];
@@ -230,7 +195,7 @@ read_auth_file (char *file, char **pass_ptr)
 		char* cp = buf + strlen(buf) - 1;
 		if (*cp == '\n')
 		    *cp = '\0';
-		strptr[i] = savestr(buf);
+		strptr[i] = estrdup(buf);
 	    }
 	}
 	fclose(fp);

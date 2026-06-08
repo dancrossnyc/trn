@@ -98,20 +98,20 @@ EXT int just_a_sec INIT(960);		/* 1 sec at current baud rate */
 /* define a few handy macros */
 
 #define termdown(x) term_line+=(x), term_col=0
-#define newline() term_line++, term_col=0, putchar('\n') FLUSH
-#define backspace() tputs(tc_BC,0,putchr) FLUSH
-#define erase_eol() tputs(tc_CE,1,putchr) FLUSH
-#define clear_rest() tputs(tc_CD,tc_LINES,putchr) FLUSH
-#define maybe_eol() if(erase_screen&&erase_each_line)tputs(tc_CE,1,putchr) FLUSH
-#define underline() tputs(tc_US,1,putchr) FLUSH
-#define un_underline() fire_is_out|=UNDERLINE, tputs(tc_UE,1,putchr) FLUSH
-#define underchar() tputs(tc_UC,0,putchr) FLUSH
-#define standout() tputs(tc_SO,1,putchr) FLUSH
-#define un_standout() fire_is_out|=STANDOUT, tputs(tc_SE,1,putchr) FLUSH
-#define up_line() term_line--, tputs(tc_UP,1,putchr) FLUSH
-#define insert_line() tputs(tc_IL,1,putchr) FLUSH
-#define carriage_return() term_col=0, tputs(tc_CR,1,putchr) FLUSH
-#define dingaling() tputs(tc_VB,1,putchr) FLUSH
+#define newline() term_line++, term_col=0, putchar('\n')
+#define backspace() tputs(tc_BC,0,putchr)
+#define erase_eol() tputs(tc_CE,1,putchr)
+#define clear_rest() tputs(tc_CD,tc_LINES,putchr)
+#define maybe_eol() if(erase_screen&&erase_each_line)tputs(tc_CE,1,putchr)
+#define underline() tputs(tc_US,1,putchr)
+#define un_underline() fire_is_out|=UNDERLINE, tputs(tc_UE,1,putchr)
+#define underchar() tputs(tc_UC,0,putchr)
+#define standout() tputs(tc_SO,1,putchr)
+#define un_standout() fire_is_out|=STANDOUT, tputs(tc_SE,1,putchr)
+#define up_line() term_line--, tputs(tc_UP,1,putchr)
+#define insert_line() tputs(tc_IL,1,putchr)
+#define carriage_return() term_col=0, tputs(tc_CR,1,putchr)
+#define dingaling() tputs(tc_VB,1,putchr)
 #else /* !HAS_TERMLIB */
 ..."Don't know how to define the term macros!"
 #endif /* !HAS_TERMLIB */
@@ -148,7 +148,7 @@ bool finish_dblchar (void);
 void eat_typeahead (void);
 void save_typeahead (char*,int);
 void settle_down (void);
-Signal_t alarm_catcher (int);
+void alarm_catcher (int);
 int read_tty (char*,int);
 #if !defined(FIONREAD) && !defined(HAS_RDCHK) && !defined(MSDOS)
 int circfill (void);
@@ -182,12 +182,12 @@ void clear (void);
 void home_cursor (void);
 void goto_xy (int,int);
 #ifdef SIGWINCH
-Signal_t winch_catcher (int);
+void winch_catcher (int);
 #endif
 void termlib_init (void);
 void termlib_reset (void);
 #ifdef NBG_SIGIO
-Signal_t waitkey_sig_handler (int);
+void waitkey_sig_handler (int);
 #endif
 bool wait_key_pause (int);
 void xmouse_init (char*);

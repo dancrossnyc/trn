@@ -157,7 +157,7 @@ valid_article (ARTICLE *article)
 	    for (ap = article->child1; ap; ap = ap->sibling)
 		ap->parent = article;
 	    clear_article(fake_ap);
-	    free((char*)fake_ap);
+	    safefree((char *)fake_ap);
 	    data.dat_ptr = (char*)article;
 	    hashstorelast(data);
 	    return TRUE;
@@ -195,7 +195,7 @@ get_article (char *msgid)
     else if (!(article = (ARTICLE*)data.dat_ptr)) {
 	article = allocate_article(0);
 	data.dat_ptr = (char*)article;
-	article->msgid = savestr(msgid);
+	article->msgid = estrdup(msgid);
 	hashstorelast(data);
     }
     return article;

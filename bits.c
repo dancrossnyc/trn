@@ -67,7 +67,7 @@ rc_to_bits (void)
     i = strlen(s);
 #ifndef lint
     if (i >= LBUFLEN-2)			/* bigger than buf? */
-	mybuf = safemalloc((MEM_SIZE)(i+2));
+	mybuf = safemalloc((size_t)(i+2));
 #endif
     strcpy(mybuf,s);			/* make scratch copy of line */
     if (mybuf[0])
@@ -85,11 +85,11 @@ rc_to_bits (void)
     unread = 0;
 #ifdef DEBUG
     if (debug & DEB_CTLAREA_BITMAP) {
-	printf("\n%s\n",mybuf) FLUSH;
+	printf("\n%s\n",mybuf);
 	termdown(2);
 	for (i = article_first(absfirst); i < firstart; i = article_next(i)) {
 	    if (article_unread(i))
-		printf("%ld ",(long)i) FLUSH;
+		printf("%ld ",(long)i);
 	}
     }
 #endif
@@ -127,11 +127,11 @@ rc_to_bits (void)
 	    article_ptr(i)->flags &= ~AF_UNREAD;
 #ifdef DEBUG
 	if (debug & DEB_CTLAREA_BITMAP) {
-	    printf("\n%s\n",s) FLUSH;
+	    printf("\n%s\n",s);
 	    termdown(2);
 	    for (i = absfirst; i <= lastart; i++) {
 		if (!was_read(i))
-		    printf("%ld ",(long)i) FLUSH;
+		    printf("%ld ",(long)i);
 	    }
 	}
 #endif
@@ -152,7 +152,7 @@ rc_to_bits (void)
     }
 #ifdef DEBUG
     if (debug & DEB_CTLAREA_BITMAP) {
-	fputs("\n(hit CR)",stdout) FLUSH;
+	fputs("\n(hit CR)",stdout);
 	termdown(1);
 	fgets(cmd_buf, sizeof cmd_buf, stdin);
     }
@@ -203,14 +203,14 @@ bits_to_rc (void)
 	    safelen *= 2;
 	    if (mybuf == buf) {		/* currently static? */
 		*s = '\0';
-		mybuf = safemalloc((MEM_SIZE)safelen + 32);
+		mybuf = safemalloc((size_t)safelen + 32);
 		strcpy(mybuf,buf);	/* so we must copy it */
 		s = mybuf + (s-buf);
 					/* fix the pointer, too */
 	    }
 	    else {			/* just grow in place, if possible */
 		int oldlen = s - mybuf;
-		mybuf = saferealloc(mybuf,(MEM_SIZE)safelen + 32);
+		mybuf = saferealloc(mybuf,(size_t)safelen + 32);
 		s = mybuf + oldlen;
 	    }
 	}
@@ -239,19 +239,19 @@ bits_to_rc (void)
     *s++ = '\0';			/* and terminate string */
 #ifdef DEBUG
     if ((debug & DEB_NEWSRC_LINE) && !panic) {
-	printf("%s: %s\n",ngptr->rcline,ngptr->rcline+ngptr->numoffset) FLUSH;
-	printf("%s\n",mybuf) FLUSH;
+	printf("%s: %s\n",ngptr->rcline,ngptr->rcline+ngptr->numoffset);
+	printf("%s\n",mybuf);
 	termdown(2);
     }
 #endif
     free(ngptr->rcline);		/* return old rc line */
     if (mybuf == buf) {
-	ngptr->rcline = safemalloc((MEM_SIZE)(s-buf)+1);
+	ngptr->rcline = safemalloc((size_t)(s-buf)+1);
 					/* grab a new rc line */
 	strcpy(ngptr->rcline, buf);	/* and load it */
     }
     else {
-	mybuf = saferealloc(mybuf,(MEM_SIZE)(s-mybuf)+1);
+	mybuf = saferealloc(mybuf,(size_t)(s-mybuf)+1);
 					/* be nice to the heap */
 	ngptr->rcline = mybuf;
     }
@@ -534,7 +534,7 @@ yankback (void)
 	else {
 #ifdef VERBOSE
 	    printf("\nReturning %ld Marked article%s...\n",(long)dmcount,
-		PLURAL(dmcount)) FLUSH;
+		PLURAL(dmcount));
 #endif
 	    termdown(2);
 	}
@@ -634,10 +634,10 @@ chase_xref (	/* The Xref-line-using version */
     if (!xref_buf || !*xref_buf)
 	return 0;
 
-    xref_buf = savestr(xref_buf);
+    xref_buf = estrdup(xref_buf);
 # ifdef DEBUG
     if (debug & DEB_XREF_MARKER) {
-	printf("Xref: %s\n",xref_buf) FLUSH;
+	printf("Xref: %s\n",xref_buf);
 	termdown(1);
     }
 # endif
@@ -706,7 +706,7 @@ valid_xref_site (ART_NUM artnum, char *site)
     sitebuf = fetchlines(artnum,PATH_LINE);
     if ((s = index(sitebuf, '!')) != NULL) {
 	*s = '\0';
-	inews_site = savestr(sitebuf);
+	inews_site = estrdup(sitebuf);
     }
 #else /* ANCIENT_NEWS */
     /* Grab the site from the Posting-Version line */
@@ -715,11 +715,11 @@ valid_xref_site (ART_NUM artnum, char *site)
 	char* t = index(s+7, '.');
 	if (t)
 	    *t = '\0';
-	inews_site = savestr(s+7);
+	inews_site = estrdup(s+7);
     }
 #endif /* ANCIENT_NEWS */
     else
-	inews_site = savestr(nullstr);
+	inews_site = estrdup(nullstr);
     free(sitebuf);
 
     if (strEQ(site,inews_site))
@@ -727,7 +727,7 @@ valid_xref_site (ART_NUM artnum, char *site)
 
 #ifdef DEBUG
     if (debug) {
-	printf("Xref not from %s -- ignoring\n",inews_site) FLUSH;
+	printf("Xref not from %s -- ignoring\n",inews_site);
 	termdown(1);
     }
 #endif
@@ -781,7 +781,7 @@ chase_xref (		/* The DBM version */
     if (!xref_buf || !*xref_buf)
 	return 0;
 
-    xref_buf = safemalloc((MEM_SIZE)BUFSIZ);
+    xref_buf = safemalloc((size_t)BUFSIZ);
     if (hist_file == NULL) {	/* Init. file accesses */
 # ifdef DEBUG
 	if (debug) {

@@ -22,6 +22,7 @@
 #include "sadisp.h"
 #include "sathread.h"
 #include "scan.h"
+#include "util.h"
 #ifdef SCORE
 #include "score.h"
 #endif
@@ -40,7 +41,7 @@ sa_get_statchars (
 
 /* Debug */
 #if 0
-    printf("entry: sa_get_statchars(%d,%d)\n",(int)a,line) FLUSH;
+    printf("entry: sa_get_statchars(%d,%d)\n",(int)a,line);
 #endif
 
 #if 0
@@ -94,12 +95,12 @@ sa_desc_subject (long e)
 
     if (!s || !*s) {
 	if (s)
-	    free(s);
+	    safefree(s);
 	sprintf(sa_subj_buf,"(no subject)");
 	return sa_subj_buf;
     }
     strncpy(sa_subj_buf,s,250);
-    free(s);
+    safefree(s);
     s1 = sa_subj_buf;
     if (*s1 == 'r' || *s1 == 'R') {
 	if (*++s1 == 'e' || *s1 == 'E') {
@@ -265,14 +266,14 @@ sa_ent_lines (
 	if (s && *s)
 	    num++;	/* just a test */
 	if (s)
-	    free(s);
+	    safefree(s);
     }
     if (sa_mode_desc_keyw) {
 	s = fetchlines(artnum,KEYW_LINE);
 	if (s && *s)
 	    num++;	/* just a test */
 	if (s)
-	    free(s);
+	    safefree(s);
     }
     return num;
 }

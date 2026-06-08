@@ -71,7 +71,7 @@ init_tree (void)
     int num;
 
     while (max_line >= 0)		/* free any previous tree data */
-	free(tree_lines[max_line--]);
+	safefree(tree_lines[max_line--]);
 
     if (!(tree_article = curr_artp) || !tree_article->subj)
 	return;
@@ -454,7 +454,7 @@ tree_puts (char *orig_line, ART_LINE header_line, int is_subject)
     }/* for remainder of line */
 
     /* free allocated copy of line */
-    free(tmpbuf);
+    safefree(tmpbuf);
 
     color_pop();	/* of COLOR_HEADER */
     /* return number of lines displayed */
@@ -489,11 +489,11 @@ entire_tree (ARTICLE *ap)
     if (!ap) {
 #ifdef VERBOSE
 	IF (verbose)
-	    fputs("\nNo article tree to display.\n", stdout) FLUSH;
+	    fputs("\nNo article tree to display.\n", stdout);
 	ELSE
 #endif
 #ifdef TERSE
-	    fputs("\nNo tree.\n", stdout) FLUSH;
+	    fputs("\nNo tree.\n", stdout);
 #endif
 	termdown(2);
 	return;
@@ -504,7 +504,7 @@ entire_tree (ARTICLE *ap)
 	printf("Threading the group. "), fflush(stdout);
 	thread_open();
 	if (!ThreadedGroup) {
-	    printf("*failed*\n") FLUSH;
+	    printf("*failed*\n");
 	    termdown(1);
 	    return;
 	}
@@ -523,7 +523,7 @@ entire_tree (ARTICLE *ap)
     do {
 	if (check_page_line())
 	    return;
-	printf("[%c] %s\n",letters[num>9+26+26? 9+26+26:num],sp->str+4) FLUSH;
+	printf("[%c] %s\n",letters[num>9+26+26? 9+26+26:num],sp->str+4);
 	termdown(1);
 	sp->misc = num++;
 	sp = sp->thread_link;

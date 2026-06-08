@@ -89,8 +89,8 @@ retry_open:
 			uncache_article(ap,FALSE);
 		    else {
 			if (*linkartname)
-			    free(linkartname);
-			linkartname = savestr(tmpbuf);
+			    safefree(linkartname);
+			linkartname = estrdup(tmpbuf);
 		    }
 		}
 	    }

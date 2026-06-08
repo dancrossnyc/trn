@@ -89,7 +89,7 @@ art_search (
 	if (*pattern) {
 	    if (*lastpat)
 		free(lastpat);
-	    lastpat = savestr(pattern);
+	    lastpat = estrdup(pattern);
 	}
 	if (*s) {			/* modifiers or commands? */
 	    while (*++s) {
@@ -148,7 +148,7 @@ art_search (
 		doread = TRUE;
 	    if (*s == 'k')		/* grandfather clause */
 		*s = 'j';
-	    cmdlst = savestr(s);
+	    cmdlst = estrdup(s);
 	    ret = SRCH_DONE;
 	}
 	art_howmuch = howmuch;
@@ -185,24 +185,24 @@ art_search (
 		saltaway = saltmode;
 	    ret = SRCH_DONE;
 	    if (cmdchr == '+') {
-		cmdlst = savestr("+");
+		cmdlst = estrdup("+");
 		if (!ignorethru && kill_thru_kludge)
 		    ignorethru = 1;
 	    }
 	    else if (cmdchr == '.') {
-		cmdlst = savestr(".");
+		cmdlst = estrdup(".");
 		if (!ignorethru && kill_thru_kludge)
 		    ignorethru = 1;
 	    }
 	    else if (cmdchr == 's') {
-		cmdlst = savestr(patbuf);
+		cmdlst = estrdup(patbuf);
 		/*ignorethru = 1;*/
 	    }
 	    else {
 		if (cmdchr == ',')
-		    cmdlst = savestr(",");
+		    cmdlst = estrdup(",");
 		else
-		    cmdlst = savestr("j");
+		    cmdlst = estrdup("j");
 		mark_as_read(article_ptr(art));	/* this article needs to die */
 	    }
 	    if (!*h) {
@@ -221,9 +221,9 @@ art_search (
 #ifdef VERBOSE
 	    if (verbose) {
 		if (cmdchr != '+' && cmdchr != '.')
-		    printf("\nMarking %s \"%s\" as read.\n",finding_str,h) FLUSH;
+		    printf("\nMarking %s \"%s\" as read.\n",finding_str,h);
 		else
-		    printf("\nSelecting %s \"%s\".\n",finding_str,h) FLUSH;
+		    printf("\nSelecting %s \"%s\".\n",finding_str,h);
 		termdown(2);
 	    }
 #endif
@@ -240,7 +240,7 @@ art_search (
 	}
 #ifdef DEBUG
 	if (debug) {
-	    printf("\npattern = %s\n",pattern) FLUSH;
+	    printf("\npattern = %s\n",pattern);
 	    termdown(2);
 	}
 #endif
@@ -256,9 +256,9 @@ art_search (
     if (gmode == 's') {
 	if (!cmdlst) {
 	    if (sel_mode == SM_ARTICLE)/* set the selector's default command */
-		cmdlst = savestr("+");
+		cmdlst = estrdup("+");
 	    else
-		cmdlst = savestr("++");
+		cmdlst = estrdup("++");
 	}
 	ret = SRCH_DONE;
     }
@@ -292,7 +292,7 @@ art_search (
 	}
 	*s++ = ':';
 	if (!cmdlst)
-	    cmdlst = savestr("j");
+	    cmdlst = estrdup("j");
 	safecpy(s,cmdlst,LBUFLEN-(s-saltbuf));
 	kf_append(saltbuf, saltaway == 2? KF_GLOBAL : KF_LOCAL);
     }
@@ -301,7 +301,7 @@ art_search (
 	if (use_threads)
 	    newline();
 	else {
-	    fputs("\nSearching...\n",stdout) FLUSH;
+	    fputs("\nSearching...\n",stdout);
 	    termdown(2);
 	}
 					/* give them something to read */
@@ -386,7 +386,7 @@ wanted (COMPEX *compex, ART_NUM artnum, char_int scope)
 	strncpy(buf+9,fetchsubj(artnum,FALSE),256);
 #ifdef DEBUG
 	if (debug & DEB_SEARCH_AHEAD)
-	    printf("%s\n",buf) FLUSH;
+	    printf("%s\n",buf);
 #endif
 	break;
       case ARTSCOPE_FROM:

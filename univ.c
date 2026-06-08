@@ -27,9 +27,27 @@
 #ifdef SCORE
 #include "score.h"
 #endif
-#include "INTERN.h"
 #include "univ.h"
 #include "univ.ih"
+
+int univ_level = 0;
+int univ_ever_init = 1;
+bool univ_default_cmd = false;
+bool univ_follow = true;
+bool univ_follow_temp = false;
+bool univ_usrtop;
+UNIV_ITEM* first_univ;
+UNIV_ITEM* last_univ;
+UNIV_ITEM* sel_page_univ;
+UNIV_ITEM* sel_next_univ;
+char* univ_fname;                   /* current filename (may be null) */
+char* univ_label;                   /* current label (may be null) */
+char* univ_title;                   /* title of current level */
+char* univ_tmp_file;                /* temp. file (may be null) */
+HASHTABLE* univ_ng_hash = NULL;
+HASHTABLE* univ_vg_hash = NULL;
+bool univ_ng_virtflag = false;
+bool univ_read_virtflag = false;
 
 /* TODO:
  *
@@ -39,15 +57,13 @@
  * Lots more to do...
  */
 
-static bool univ_virt_pass_needed INIT(FALSE);
-
-static int univ_item_counter INIT(1);
-
-static bool univ_done_startup INIT(FALSE);
+static bool univ_virt_pass_needed = false;
+static int univ_item_counter = 1;
+static bool univ_done_startup = false;
 
 /* this score is part of the line format, so it is not ifdefed */
-static int univ_min_score INIT(0);
-static bool univ_use_min_score INIT(FALSE);
+static int univ_min_score = 0;
+static bool univ_use_min_score = false;
 
 void
 univ_init (void)
@@ -68,8 +84,8 @@ univ_startup (void)
     /* later: make user top file an option or environment variable? */
     if (!univ_file_load("%+/univ/top","Top Level",(char*)NULL)) {
 	univ_open();
-	univ_title = savestr("Top Level");
-	univ_fname = savestr("%+/univ/usertop");
+	univ_title = estrdup("Top Level");
+	univ_fname = estrdup("%+/univ/usertop");
 
 	/* read in trn default top file */
 	(void)univ_include_file("%X/sitetop");		/* pure local */
@@ -79,7 +95,7 @@ univ_startup (void)
 	if (!(sys_top_load || user_top_load)) {
 	    /* last resort--all newsgroups */
 	    univ_close();
-	    univ_mask_load(savestr("*"),"All Newsgroups");
+	    univ_mask_load(estrdup("*"),"All Newsgroups");
 	}
 	if (user_top_load) {
 	    univ_usrtop = TRUE;
@@ -111,11 +127,11 @@ univ_close (void)
 	univ_free_data(node);
 	safefree(node->desc);
 	nextnode = node->next;
-	free((char*)node);
+	safefree((char *)node);
     }
     if (univ_tmp_file) {
 	UNLINK(univ_tmp_file);
-	free(univ_tmp_file);
+	safefree(univ_tmp_file);
     }
     safefree(univ_fname);
     safefree(univ_title);
@@ -142,7 +158,7 @@ univ_add (int type, char *desc)
 
     node->flags = 0;
     if (desc)
-	node->desc = savestr(desc);
+	node->desc = estrdup(desc);
     else
 	node->desc = NULL;
     node->type = type;
@@ -239,7 +255,7 @@ univ_add_debug (char *desc, char *txt)
     UNIV_ITEM* ui;
     /* later check text for bad things */
     ui = univ_add(UN_DEBUG1,desc);
-    ui->data.str = savestr(txt);
+    ui->data.str = estrdup(txt);
 }
 
 void
@@ -272,7 +288,7 @@ univ_add_group (char *desc, char *grpname)
 	return;
     }
     ui = univ_add(UN_NEWSGROUP,desc);
-    ui->data.group.ng = savestr(grpname);
+    ui->data.group.ng = estrdup(grpname);
     data.dat_ptr = ui->data.group.ng;
     hashstorelast(data);
 }
@@ -283,8 +299,8 @@ univ_add_mask (char *desc, char *mask)
     UNIV_ITEM* ui;
 
     ui = univ_add(UN_GROUPMASK,desc);
-    ui->data.gmask.masklist = savestr(mask);
-    ui->data.gmask.title = savestr(desc);
+    ui->data.gmask.masklist = estrdup(mask);
+    ui->data.gmask.title = estrdup(desc);
 }
 
 void
@@ -297,10 +313,10 @@ univ_add_file (
     UNIV_ITEM* ui;
 
     ui = univ_add(UN_CONFIGFILE,desc);
-    ui->data.cfile.title = savestr(desc);
-    ui->data.cfile.fname = savestr(fname);
+    ui->data.cfile.title = estrdup(desc);
+    ui->data.cfile.fname = estrdup(fname);
     if (label && *label)
-	ui->data.cfile.label = savestr(label);
+	ui->data.cfile.label = estrdup(label);
     else
 	ui->data.cfile.label = NULL;
 }
@@ -311,7 +327,7 @@ univ_add_virt_num (char *desc, char *grp, ART_NUM art)
     UNIV_ITEM* ui;
 
     ui = univ_add(UN_ARTICLE,desc);
-    ui->data.virt.ng = savestr(grp);
+    ui->data.virt.ng = estrdup(grp);
     ui->data.virt.num = art;
     ui->data.virt.subj = NULL;
     ui->data.virt.from = NULL;
@@ -346,7 +362,7 @@ univ_add_textfile (char *desc, char *name)
       case '%':
       case '/':
 	ui = univ_add(UN_TEXTFILE,desc);
-	ui->data.textfile.fname = savestr(filexp(s));
+	ui->data.textfile.fname = estrdup(filexp(s));
 	break;
     }
 }
@@ -390,7 +406,7 @@ univ_add_virtgroup (char *grpname)
 	ui->data.vgroup.minscore = univ_min_score;
     }
 #endif
-    ui->data.vgroup.ng = savestr(grpname);
+    ui->data.vgroup.ng = estrdup(grpname);
     data.dat_ptr = ui->data.vgroup.ng;
     hashstorelast(data);
 }
@@ -445,7 +461,7 @@ univ_use_pattern (char *pattern, int type)
     UNIV_ITEM* ui;
 
     if (!s || !*s) {
-	printf("\ngroup pattern: empty regular expression\n") FLUSH;
+	printf("\ngroup pattern: empty regular expression\n");
 	return;
     }
     /* XXX later: match all newsgroups in current datasrc to the pattern. */
@@ -550,11 +566,11 @@ univ_use_file (char *fname, char *title, char *label)
 	save_temp = TRUE;
 	begin_top = FALSE;	/* we will need a "begin group" */
 #else /* !USEURL */
-	printf("This copy of trn does not have URL support.\n") FLUSH;
+	printf("This copy of trn does not have URL support.\n");
 	open_name = NULL;
 #endif /* USEURL */
     } else if (*s == ':') {	/* relative to last file's directory */
-	printf("Colon filespec not supported for |%s|\n",s) FLUSH;
+	printf("Colon filespec not supported for |%s|\n",s);
 	open_name = NULL;
     }
     if (!open_name)
@@ -562,7 +578,7 @@ univ_use_file (char *fname, char *title, char *label)
     univ_begin_found = begin_top;
     safefree0(univ_begin_label);
     if (label)
-	univ_begin_label = savestr(label);
+	univ_begin_label = estrdup(label);
     fp = fopen(filexp(open_name),"r");
     if (!fp)
 	return FALSE;		/* unsuccessful (XXX: complain) */
@@ -578,7 +594,7 @@ univ_use_file (char *fname, char *title, char *label)
     }
     fclose(fp);
     if (!univ_begin_found)
-	printf("\"begin group\" not found.\n") FLUSH;
+	printf("\"begin group\" not found.\n");
     if (univ_begin_label)
 	printf("label not found: %s\n",univ_begin_label);
     if (univ_virt_pass_needed) {
@@ -595,7 +611,7 @@ univ_include_file (char *fname)
     bool retval;
 
     old_univ_fname = univ_fname;
-    univ_fname = savestr(fname);	/* LEAK */
+    univ_fname = estrdup(fname);	/* LEAK */
     retval = univ_use_file(univ_fname,univ_title,NULL);
     univ_fname = old_univ_fname;
     return retval;
@@ -709,11 +725,11 @@ univ_do_line (char *line)
     if (*s == '"') {	/* description name */
 	p = cpytill(s,s+1,'"');
 	if (!*p) {
-	    printf("univ: unmatched quote in string:\n\"%s\"\n", s) FLUSH;
+	    printf("univ: unmatched quote in string:\n\"%s\"\n", s);
 	    return TRUE;
 	}
 	*p = '\0';
-	univ_line_desc = savestr(s);
+	univ_line_desc = estrdup(s);
 	s = p+1;
     }
     while (isspace(*s)) s++;
@@ -824,11 +840,11 @@ univ_file_load (char *fname, char *title, char *label)
     univ_open();
 
     if (fname)
-	univ_fname = savestr(fname);
+	univ_fname = estrdup(fname);
     if (title)
-	univ_title = savestr(title);
+	univ_title = estrdup(title);
     if (label)
-	univ_label = savestr(label);
+	univ_label = estrdup(label);
     flag = univ_use_file(fname,title,label);
     if (!flag) {
 	univ_close();
@@ -850,7 +866,7 @@ univ_mask_load (char *mask, char *title)
 
     univ_use_group_line(mask,0);
     if (title)
-	univ_title = savestr(title);
+	univ_title = estrdup(title);
     if (int_count) {
 	int_count = 0;
     }
@@ -863,9 +879,9 @@ univ_redofile (void)
     char* tmp_title;
     char* tmp_label;
 
-    tmp_fname = (univ_fname ? savestr(univ_fname) : 0);
-    tmp_title = (univ_title ? savestr(univ_title) : 0);
-    tmp_label = (univ_label ? savestr(univ_label) : 0);
+    tmp_fname = (univ_fname ? estrdup(univ_fname) : 0);
+    tmp_title = (univ_title ? estrdup(univ_title) : 0);
+    tmp_label = (univ_label ? estrdup(univ_label) : 0);
 
     univ_close();
     if (univ_level)
@@ -885,7 +901,7 @@ univ_edit_new_userfile (void)
     char* s;
     FILE* fp;
 
-    s = savestr(filexp("%+/univ/usertop"));	/* LEAK */
+    s = estrdup(filexp("%+/univ/usertop"));	/* LEAK */
 
     /* later, create a new user top file, and return its filename.
      * later perhaps ask whether to create or edit current file.
@@ -905,14 +921,14 @@ univ_edit_new_userfile (void)
     fp = fopen(s,"w");
     if (!fp) {
 	printf("Could not create new user file.\n");
-	printf("Editing current system file\n") FLUSH;
+	printf("Editing current system file\n");
 	(void)get_anything();
 	return univ_fname;
     }
     fprintf(fp,"# User Toplevel (Universal Selector)\n");
     fclose(fp);
-    printf("New User Toplevel file created.\n") FLUSH;
-    printf("After editing this file, exit and restart trn to use it.\n") FLUSH;
+    printf("New User Toplevel file created.\n");
+    printf("After editing this file, exit and restart trn to use it.\n");
     (void)get_anything();
     univ_usrtop = TRUE;		/* do not overwrite this file */
     return s;
@@ -1012,8 +1028,8 @@ univ_vg_addart (ART_NUM a)
 #ifdef SCORE
     ui->score = score;
 #endif
-    ui->data.virt.subj = savestr(subj);
-    ui->data.virt.from = savestr(from);
+    ui->data.virt.subj = estrdup(subj);
+    ui->data.virt.from = estrdup(from);
 }
 
 
@@ -1044,7 +1060,7 @@ univ_visit_group_main (char *gname)
 
     np = find_ng(gname);
     if (!np) {
-	printf("Univ/Virt: newsgroup %s not found!", gname) FLUSH;
+	printf("Univ/Virt: newsgroup %s not found!", gname);
 	return NG_ERROR;
     }
     /* unsubscribed, bogus, etc. groups are not visited */
@@ -1240,7 +1256,7 @@ univ_help_main (
     bool flag;
 
     univ_open();
-    univ_title = savestr("Extended Help");
+    univ_title = estrdup("Extended Help");
 
     /* first add help on current mode */
     ui = univ_add(UN_HELPKEY, NULL);
@@ -1252,7 +1268,7 @@ univ_help_main (
     univ_include_file("%X/sitehelp/top");
 
     /* read in main help file */
-    univ_fname = savestr("%X/HelpFiles/top");
+    univ_fname = estrdup("%X/HelpFiles/top");
     flag = univ_use_file(univ_fname,univ_title,univ_label);
 
     /* later: if flag is not true, then add message? */

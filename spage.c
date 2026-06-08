@@ -39,7 +39,7 @@ s_fillpage_backward (
 
 /* Debug */
 #if 0
-    printf("entry: s_fillpage_backward(%d)\n",end) FLUSH;
+    printf("entry: s_fillpage_backward(%d)\n",end);
 #endif
 
     page_lines = scr_height - s_top_lines - s_bot_lines;
@@ -132,7 +132,7 @@ s_fillpage_forward (
 
 /* Debug */
 #if 0
-    printf("entry: s_fillpage_forward(%d)\n",start) FLUSH;
+    printf("entry: s_fillpage_forward(%d)\n",start);
 #endif
 
     page_lines = scr_height - s_top_lines - s_bot_lines;
@@ -213,7 +213,7 @@ s_refillpage (void)
 
 /* Debug */
 #if 0
-    printf("entry: s_refillpage\n") FLUSH;
+    printf("entry: s_refillpage\n");
 #endif
 
     page_lines = scr_height - s_top_lines - s_bot_lines;
@@ -371,7 +371,7 @@ s_go_top_ents (void)
 {
     s_top_ent = s_first();
     if (!s_top_ent)
-	printf("s_go_top_ents(): no first entry\n") FLUSH;
+	printf("s_go_top_ents(): no first entry\n");
     assert(s_top_ent);	/* be nicer later */
     if (!s_eligible(s_top_ent))	/* this may save a redraw...*/
 	s_top_ent = s_next_elig(s_top_ent);

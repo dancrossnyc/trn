@@ -68,7 +68,7 @@ sa_get_subj_thread (
     if (data.dat_ptr) {
 	return (long)(data.dat_len);
     }
-    p = mp_savestr(s,MP_SATHREAD);
+    p = mp_estrdup(s,MP_SATHREAD);
     data = hashfetch(sa_thread_hash,p,strlen(s));
     data.dat_ptr = p;
     data.dat_len = (unsigned)(sa_num_threads+1);

@@ -82,22 +82,22 @@ access_ng (void)
 # ifdef VERBOSE
 		IF(verbose)
 		    printf("\nNewsgroup %s does not have a spool directory!\n",
-			   ngname) FLUSH;
+			   ngname);
 		ELSE
 # endif
 # ifdef TERSE
-		    printf("\nNo spool for %s!\n",ngname) FLUSH;
+		    printf("\nNo spool for %s!\n",ngname);
 # endif
 		termdown(2);
 	    } else {
 # ifdef VERBOSE
 		IF(verbose)
 		    printf("\nNewsgroup %s is not currently accessible.\n",
-			   ngname) FLUSH;
+			   ngname);
 		ELSE
 # endif
 # ifdef TERSE
-		    printf("\n%s not readable.\n",ngname) FLUSH;
+		    printf("\n%s not readable.\n",ngname);
 # endif
 		termdown(2);
 	    }
@@ -109,7 +109,7 @@ access_ng (void)
 	/* chdir to newsgroup subdirectory */
 
 	if (chdir(ngdir)) {
-	    printf(nocd,ngdir) FLUSH;
+	    printf(nocd,ngdir);
 	    return 0;
 	}
 	if ((lastart = getngsize(ngptr)) < 0) /* Impossible... */
@@ -131,7 +131,7 @@ chdir_newsdir (void)
     if (chdir(datasrc->spool_dir) || (
 			 !(datasrc->flags & DF_REMOTE) &&
 					    chdir(ngdir))) {
-	printf(nocd,ngdir) FLUSH;
+	printf(nocd,ngdir);
 	sig_catcher(0);
     }
 }
@@ -249,7 +249,7 @@ sort_newsgroups (void)
     }
     last_ng = lp[0];
     last_ng->next = NULL;
-    free((char*)ng_list);
+    safefree((char *)ng_list);
 }
 
 void
@@ -294,12 +294,11 @@ ng_skip (void)
 	    clear();
 # ifdef VERBOSE
 	    IF(verbose)
-		printf("\n(Article %ld exists but is unreadable.)\n",(long)art)
-			FLUSH;
+		printf("\n(Article %ld exists but is unreadable.)\n",(long)art);
 	    ELSE
 # endif
 # ifdef TERSE
-		printf("\n(%ld unreadable.)\n",(long)art) FLUSH;
+		printf("\n(%ld unreadable.)\n",(long)art);
 # endif
 	    termdown(2);
 	    if (novice_delays) {
@@ -345,7 +344,7 @@ getngsize (NGDATA *gp)
     if (!in_ng) {
 	if (redirected) {
 	    if (redirected != nullstr)
-		free(redirected);
+		safefree(redirected);
 	    redirected = NULL;
 	}
 	switch (ch) {
@@ -363,7 +362,7 @@ getngsize (NGDATA *gp)
 	    len = strlen(tmpbuf);
 	    if (tmpbuf[len-1] == '\n')
 		tmpbuf[len-1] = '\0';
-	    redirected = savestr(rindex(tmpbuf, '=') + 1);
+	    redirected = estrdup(rindex(tmpbuf, '=') + 1);
 	    moderated = " (REDIRECTED)";
 	    break;
 	default:

@@ -232,7 +232,7 @@ decode_piece (MIMECAP_ENTRY *mcp, char *first_line)
 
     if (mcp) {
 	if (chdir(dir)) {
-	    printf(nocd,dir) FLUSH;
+	    printf(nocd,dir);
 	    sig_catcher(0);
 	}
     }

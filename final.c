@@ -149,7 +149,7 @@ finalize (int status)
 
 /* come here on interrupt */
 
-Signal_t
+void
 int_catcher (int dummy)
 {
     sigset(SIGINT,int_catcher);
@@ -170,7 +170,7 @@ int_catcher (int dummy)
 
 /* come here on signal other than interrupt, stop, or cont */
 
-Signal_t
+void
 sig_catcher (int signo)
 {
 #ifdef VERBOSE
@@ -262,7 +262,7 @@ sig_catcher (int signo)
     finalize(1);				/* and blow up */
 }
 
-Signal_t
+void
 pipe_catcher (int signo)
 {
     ;/*$$ we lost the current nntp connection */
@@ -272,7 +272,7 @@ pipe_catcher (int signo)
 /* come here on stop signal */
 
 #ifdef SIGTSTP
-Signal_t
+void
 stop_catcher (int signo)
 {
     if (!waiting) {
@@ -280,7 +280,7 @@ stop_catcher (int signo)
 	checkpoint_newsrcs();	/* good chance of crash while stopped */
 	if (bos_on_stop) {
 	    goto_xy(0, tc_LINES-1);
-	    putchar('\n') FLUSH;
+	    putchar('\n');
 	}
 	termlib_reset();
 	resetty();		/* this is the point of all this */

@@ -33,7 +33,7 @@ s_eligible (long ent)
 	return sa_eligible(ent);
 #endif
       default:
-	printf("s_eligible: current type is bad!\n") FLUSH;
+	printf("s_eligible: current type is bad!\n");
 	return FALSE;
     }
 }

@@ -9,6 +9,7 @@
 
 #include "EXTERN.h"
 #include "common.h"
+#include "util.h"
 #include "utf.h"
 #include "INTERN.h"
 
@@ -439,7 +440,7 @@ create_utf8_copy (char *s)
 	}
 
 	/* Create the actual copy */
-	it = malloc(tlen + 1);
+	it = safemalloc(tlen + 1);
 	if (it) {
 	    char *bufptr = it;
 	    for (i = 0; s[i]; ) {

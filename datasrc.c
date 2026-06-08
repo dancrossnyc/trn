@@ -41,7 +41,7 @@ datasrc_init (void)
 
     datasrc_list = new_list(0,0,sizeof(DATASRC),20,LF_ZERO_MEM,NULL);
 
-    nntp_auth_file = savestr(filexp(NNTP_AUTH_FILE));
+    nntp_auth_file = estrdup(filexp(NNTP_AUTH_FILE));
 
     machine = getenv("NNTPSERVER");
     if (machine && strNE(machine,"local")) {
@@ -60,7 +60,7 @@ datasrc_init (void)
     if (!trnaccess_mem)
 	trnaccess_mem = s;
     else if (s)
-	free(s);
+	safefree(s);
 
     if (!machine) {
 	machine = filexp(SERVER_NAME);
@@ -107,7 +107,7 @@ read_datasrcs (char *filename)
 	fstat(fd,&filestat);
 	if (filestat.st_size) {
 	    int len;
-	    filebuf = safemalloc((MEM_SIZE)filestat.st_size+2);
+	    filebuf = safemalloc((size_t)filestat.st_size+2);
 	    len = read(fd,filebuf,(int)filestat.st_size);
 	    (filebuf)[len] = '\0';
 	    prep_ini_data(filebuf,filename);
@@ -150,13 +150,13 @@ new_datasrc (char *name, char **vals)
     else if (!vals[DI_ACTIVE_FILE])
 	return NULL; /*$$*/
 
-    dp->name = savestr(name);
+    dp->name = estrdup(name);
     if (strEQ(name,"default"))
 	dp->flags |= DF_DEFAULT;
 
     if ((v = vals[DI_NNTP_SERVER]) != NULL) {
 	char* cp;
-	dp->newsid = savestr(v);
+	dp->newsid = estrdup(v);
 	if ((cp = index(dp->newsid, ';')) != NULL) {
 	    *cp = '\0';
 	    dp->nntplink.port_number = atoi(cp+1);
@@ -168,10 +168,10 @@ new_datasrc (char *name, char **vals)
 	    dp->act_sf.refetch_secs = defRefetchSecs;
     }
     else
-	dp->newsid = savestr(filexp(vals[DI_ACTIVE_FILE]));
+	dp->newsid = estrdup(filexp(vals[DI_ACTIVE_FILE]));
 
     if (!(dp->spool_dir = file_or_none(vals[DI_SPOOL_DIR])))
-	dp->spool_dir = savestr(tmpdir);
+	dp->spool_dir = estrdup(tmpdir);
 
     dp->over_dir = dir_or_none(dp,vals[DI_OVERVIEW_DIR],DF_TRY_OVERVIEW);
     dp->over_fmt = file_or_none(vals[DI_OVERVIEW_FMT]);
@@ -181,7 +181,7 @@ new_datasrc (char *name, char **vals)
     if (dp->flags & DF_REMOTE) {
 	/* FYI, we know extra_name to be NULL in this case. */
 	if (vals[DI_ACTIVE_FILE]) {
-	    dp->extra_name = savestr(filexp(vals[DI_ACTIVE_FILE]));
+	    dp->extra_name = estrdup(filexp(vals[DI_ACTIVE_FILE]));
 	    if (stat(dp->extra_name,&filestat) >= 0)
 		dp->act_sf.lastfetch = filestat.st_mtime;
 	}
@@ -210,12 +210,12 @@ new_datasrc (char *name, char **vals)
     if ((v = vals[DI_FORCE_AUTH]) != NULL && (*v == 'y' || *v == 'Y'))
 	dp->nntplink.flags |= NNTP_FORCE_AUTH_NEEDED;
     if ((v = vals[DI_AUTH_USER]) != NULL)
-	dp->auth_user = savestr(v);
+	dp->auth_user = estrdup(v);
     if ((v = vals[DI_AUTH_PASS]) != NULL)
-	dp->auth_pass = savestr(v);
+	dp->auth_pass = estrdup(v);
 #ifdef USE_GENAUTH
     if ((v = vals[DI_AUTH_COMMAND]) != NULL)
-	dp->auth_command = savestr(v);
+	dp->auth_command = estrdup(v);
 #endif
     if ((v = vals[DI_XHDR_BROKEN]) != NULL && (*v == 'y' || *v == 'Y'))
 	dp->flags |= DF_XHDR_BROKEN;
@@ -259,7 +259,7 @@ dir_or_none (DATASRC *dp, char *dir, int flag)
     dir = filexp(dir);
     if (strEQ(dir,dp->spool_dir))
 	return dp->spool_dir;
-    return savestr(dir);
+    return estrdup(dir);
 }
 
 static char *
@@ -267,7 +267,7 @@ file_or_none (char *fn)
 {
     if (!fn || !*fn || strEQ(fn, "none") || strEQ(fn, "remote"))
 	return NULL;
-    return savestr(filexp(fn));
+    return estrdup(filexp(fn));
 }
 
 bool
@@ -307,7 +307,7 @@ open_datasrc (DATASRC *dp)
 		dp->flags |= DF_USELISTACT;
 		if (dp->flags & DF_TMPACTFILE) {
 		    dp->flags &= ~DF_TMPACTFILE;
-		    free(dp->extra_name);
+		    safefree(dp->extra_name);
 		    dp->extra_name = NULL;
 		    dp->act_sf.refetch_secs = 0;
 		    success = srcfile_open(&dp->act_sf,(char*)NULL,
@@ -568,7 +568,7 @@ find_grpdesc (DATASRC *dp, char *groupname)
 		dp->flags &= ~DF_TMPGRPDESC;
 		UNLINK(dp->grpdesc);
 	    }
-	    free(dp->grpdesc);
+	    safefree(dp->grpdesc);
 	    dp->grpdesc = NULL;
 	    return nullstr;
 	}
@@ -605,7 +605,7 @@ find_grpdesc (DATASRC *dp, char *groupname)
 	    srcfile_close(&dp->desc_sf);
 	    if (dp->flags & DF_TMPGRPDESC)
 		return find_grpdesc(dp, groupname);
-	    free(dp->grpdesc);
+	    safefree(dp->grpdesc);
 	    dp->grpdesc = NULL;
 	}
     }
@@ -668,7 +668,7 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
 		    use_buffered_nntp_gets = 1;
 		else if (nntp_list(fetchcmd, nullstr, 0) < 0) {
 		    printf("\nCan't get %s file from server: \n%s\n",
-			   fetchcmd, ser_line) FLUSH;
+			   fetchcmd, ser_line);
 		    termdown(2);
 		    fclose(fp);
 		    return 0;
@@ -697,7 +697,7 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
     }
 
     if (filename && fp == NULL) {
-	printf(cantopen, filename) FLUSH;
+	printf(cantopen, filename);
 	termdown(1);
 	return 0;
     }
@@ -725,7 +725,7 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
 	    if (use_buffered_nntp_gets)
 		use_buffered_nntp_gets = 0;
 	    else if (nntp_gets(buf, sizeof buf - 1) < 0) {
-		printf("\nError getting %s file.\n", fetchcmd) FLUSH;
+		printf("\nError getting %s file.\n", fetchcmd);
 		termdown(2);
 		srcfile_close(sfp);
 		setspin(SPIN_OFF);
@@ -780,7 +780,7 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
     if (server) {
 	fflush(fp);
 	if (ferror(fp)) {
-	    printf("\nError writing the %s file %s.\n",fetchcmd,filename) FLUSH;
+	    printf("\nError writing the %s file %s.\n",fetchcmd,filename);
 	    termdown(2);
 	    srcfile_close(sfp);
 	    return 0;
@@ -949,11 +949,11 @@ find_close_match (void)
 		*cp = '\0';
 #ifdef VERBOSE
 	    IF(verbose)
-		printf("(I assume you meant %s)\n", ngptrs[0]) FLUSH;
+		printf("(I assume you meant %s)\n", ngptrs[0]);
 	    ELSE
 #endif
 #ifdef TERSE
-		printf("(Using %s)\n", ngptrs[0]) FLUSH;
+		printf("(Using %s)\n", ngptrs[0]);
 #endif
 	    set_ngname(ngptrs[0]);
 	    if (cp)
@@ -1022,7 +1022,7 @@ get_near_miss (void)
 
 #ifdef VERBOSE
     IF(verbose)
-	printf("However, here are some close matches:\n") FLUSH;
+	printf("However, here are some close matches:\n");
 #endif
     if (ngn > 9)
 	ngn = 9;	/* Since we're using single digits.... */
@@ -1051,7 +1051,7 @@ reask:
 #ifdef VERIFY
     printcmd();
 #endif
-    putchar('\n') FLUSH;
+    putchar('\n');
     switch (*buf) {
         case 'n':
 	case 'N':
@@ -1064,11 +1064,11 @@ reask:
 	case 'H':
 #ifdef VERBOSE
 	    IF(verbose)
-		fputs("  You entered an illegal newsgroup name, and these are the nearest possible\n  matches.  If you want one of these, then enter its number.  Otherwise\n  just say 'n'.\n", stdout) FLUSH;
+		fputs("  You entered an illegal newsgroup name, and these are the nearest possible\n  matches.  If you want one of these, then enter its number.  Otherwise\n  just say 'n'.\n", stdout);
 	    ELSE
 #endif
 #ifdef TERSE
-		fputs("Illegal newsgroup, enter a number or 'n'.\n", stdout) FLUSH;
+		fputs("Illegal newsgroup, enter a number or 'n'.\n", stdout);
 #endif
 	    goto reask;
 	default:
@@ -1086,7 +1086,7 @@ reask:
 		    return 1;
 		}
 	    }
-	    fputs(hforhelp, stdout) FLUSH;
+	    fputs(hforhelp, stdout);
 	    break;
     }
 

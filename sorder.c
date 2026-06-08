@@ -130,9 +130,9 @@ void
 s_order_clean (void)
 {
     if (s_ent_sort)
-	free(s_ent_sort);
+	safefree(s_ent_sort);
     if (s_ent_index)
-	free(s_ent_index);
+	safefree(s_ent_index);
 
     s_ent_sort = NULL;
     s_contexts[s_cur_context].ent_sort = s_ent_sort;

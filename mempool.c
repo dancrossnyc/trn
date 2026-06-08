@@ -93,7 +93,7 @@ mp_free_frag (int f)
 }
 
 char *
-mp_savestr (char *str, int pool)
+mp_estrdup (char *str, int pool)
 {
     int f, oldf;
     int len;
@@ -101,7 +101,7 @@ mp_savestr (char *str, int pool)
 
     if (!str) {
 #if 1
-	printf("\ntrn: mp_savestr(NULL,%d) error.\n",pool);
+	printf("\ntrn: mp_estrdup(NULL,%d) error.\n",pool);
 	assert(FALSE);
 #else
 	return NULL;		/* only a flesh wound... (;-) */

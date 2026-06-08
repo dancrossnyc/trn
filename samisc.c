@@ -37,7 +37,7 @@ int
 check_article (long a)
 {
     if (a < absfirst || a > lastart) {
-	printf("\nArticle %d out of range\n",a) FLUSH;
+	printf("\nArticle %d out of range\n",a);
 	return FALSE;
     }
     return TRUE;

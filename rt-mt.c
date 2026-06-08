@@ -74,8 +74,7 @@ mt_init (void)
     }
     if (size >= (long)(sizeof (BMAP)) - 1) {
 	if (mt_bmap.version != DB_VERSION) {
-	    printf("\nMthreads database is the wrong version -- ignoring it.\n")
-		FLUSH;
+	    printf("\nMthreads database is the wrong version -- ignoring it.\n");
 	    return FALSE;
 	}
 	mybytemap(&my_bmap);
@@ -231,11 +230,11 @@ read_authors (void)
     char* string_ptr;
     char** author_ptr;
 
-    if (!read_item((char**)&author_cnts, (MEM_SIZE)total.author*sizeof (WORD)))
+    if (!read_item((char**)&author_cnts, (size_t)total.author*sizeof (WORD)))
 	return 0;
     safefree0(author_cnts);   /* we don't need these */
 
-    if (!read_item(&strings, (MEM_SIZE)total.string1))
+    if (!read_item(&strings, (size_t)total.string1))
 	return 0;
 
     string_ptr = strings;
@@ -279,11 +278,11 @@ read_subjects (void)
     WORD* subject_cnts;
 
     if (!read_item((char**)&subject_cnts,
-		   (MEM_SIZE)total.subject * sizeof (WORD))) {
+		   (size_t)total.subject * sizeof (WORD))) {
 	/* (Error already logged.) */
 	return 0;
     }
-    free((char*)subject_cnts);		/* we don't need these */
+    safefree((char *)subject_cnts);		/* we don't need these */
 
     /* Use this array when unpacking the article's subject offset. */
     subject_array = (SUBJECT**)safemalloc(total.subject * sizeof (SUBJECT*));
@@ -399,7 +398,7 @@ the_author (int num)
 	invalid_data = TRUE;
 	return NULL;
     }
-    return savestr(author_array[num]);
+    return estrdup(author_array[num]);
 }
 
 /* Our parent/sibling information is a relative offset in the article array.
@@ -510,9 +509,9 @@ read_ids (void)
     char* string_ptr;
     int i, count, len, len2;
 
-    if (!read_item(&strings, (MEM_SIZE)total.string2)
+    if (!read_item(&strings, (size_t)total.string2)
      || !read_item((char**)&ids,
-		(MEM_SIZE)(total.article+total.domain+1) * sizeof (WORD))) {
+		(size_t)(total.article+total.domain+1) * sizeof (WORD))) {
 	return 0;
     }
     wp_bmap(ids, total.article + total.domain + 1);
@@ -563,7 +562,7 @@ read_ids (void)
 			else
 			    kf_changethd_cnt++;
 			data.dat_len = 0;
-			free(data.dat_ptr);
+			safefree(data.dat_ptr);
 		    }
 		    data.dat_ptr = (char*)article;
 		    hashstorelast(data);
@@ -636,7 +635,7 @@ tweak_data (void)
 /* A shorthand for reading a chunk of the file into a malloc'ed array.
 */
 static int
-read_item (char **dest, MEM_SIZE len)
+read_item (char **dest, size_t len)
 {
     long ret;
 
@@ -649,7 +648,7 @@ read_item (char **dest, MEM_SIZE len)
 	ret = fread(*dest, 1, (int)len, fp);
 
     if (ret != len) {
-	free(*dest);
+	safefree(*dest);
 	*dest = NULL;
 	return 0;
     }

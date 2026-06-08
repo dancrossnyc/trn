@@ -15,6 +15,6 @@
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
 void mp_init (void);
-char* mp_savestr (char*,int);
+char* mp_estrdup (char*,int);
 char* mp_malloc (int,int);
 void mp_free (int);

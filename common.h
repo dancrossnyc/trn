@@ -13,34 +13,10 @@
 
 #include <errno.h>
 #include <signal.h>
-#ifdef I_SYS_FILIO
-# include <sys/filio.h>
-#else
-# ifdef I_SYS_IOCTL
-#   include <sys/ioctl.h>
-# endif
-#endif
-#ifdef I_VFORK
-# include <vfork.h>
-#endif
+#include <sys/ioctl.h>
 #include <fcntl.h>
-
-#   include <termios.h>
-#   if !defined (O_NDELAY)
-#     define O_NDELAY O_NONBLOCK	/* Posix-style non-blocking i/o */
-#   endif
-
-#ifdef I_PTEM
-#include <sys/stream.h>
-#include <sys/ptem.h>
-#endif
-
-#ifdef I_TIME
+#include <termios.h>
 #include <time.h>
-#endif
-#ifdef I_SYS_TIME
-#include <sys/time.h>
-#endif
 
 #include "typedef.h"
 
@@ -59,28 +35,13 @@
 #   define BERKELEY 	/* include job control signals? */
 #endif
 
-#if defined(FIONREAD) || defined(HAS_RDCHK) || defined(O_NDELAY) || defined(MSDOS)
+#if defined(FIONREAD) || defined(HAS_RDCHK) || defined(O_NONBLOCK)
 #   define PENDING
 #endif
 
-#ifdef EUNICE
-#   define LINKART		/* add 1 level of possible indirection */
-#   define UNLINK(victim) while (!unlink(victim))
-#else
-#   define UNLINK(victim) unlink(victim)
-#endif
-
-#ifdef HAS_RENAME
-#   define RENAME(from,to) rename(from,to)
-#else
-#   define RENAME(from,to) safelink(from,to), UNLINK(from)
-#endif
-
-#ifdef HAS_STRSTR
-#   define STRSTR(s1,s2) strstr((s1),(s2))
-#else
-#   define STRSTR(s1,s2) trn_strstr((s1),(s2))
-#endif
+#define UNLINK(victim) unlink(victim)
+#define RENAME(from,to) rename(from,to)
+#define STRSTR(s1,s2) strstr((s1),(s2))
 
 /* Valid substitutions for strings marked with % comment are:
  *	%a	Current article number
@@ -329,11 +290,10 @@
 
 #define ElseIf else if
 
-#ifdef DEBUG
-#   define assert(ex) {if (!(ex)){fprintf(stderr,"Assertion failed: file %s, line %d\n", __FILE__, __LINE__);sig_catcher(0);}}
-#else
-#   define assert(ex) ;
+#ifndef DEBUG
+#define NDEBUG
 #endif
+#include <assert.h>
 
 /* If you're strapped for space use the help messages in shell scripts */
 /* if {NG,ART,PAGER,SUBS}HELP is undefined, help messages are in memory */
@@ -725,10 +685,6 @@
 #   undef NICEBG
 #endif
 
-#ifndef HAS_VFORK
-#   define vfork fork
-#endif
-
 /* Winsock is only initialized if NNTP_SUPPORT is defined */
 
 /* TK requires TCL */
@@ -910,19 +866,6 @@ Perhaps you are near or over quota?\n");
     EXT char nocd[] INIT("Can't chdir to directory %s\n");
 #else
     EXT char nocd[] INIT("Can't find %s\n");
-#endif
-
-#ifdef NOLINEBUF
-#define FLUSH ,fflush(stdout)
-#else
-#define FLUSH
-#endif
-
-#ifdef lint
-#undef FLUSH
-#define FLUSH
-#undef putchar
-#define putchar(c)
 #endif
 
 #define nntp_advise(str) fputs(str,stdout)

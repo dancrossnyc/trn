@@ -244,7 +244,7 @@ s_docmd (void)
 	    break;
 #endif
 	  default:
-	    printf("No help available for this mode (yet).\n") FLUSH;
+	    printf("No help available for this mode (yet).\n");
 	    printf("Press any key to continue.\n");
 	    break;
 	}
@@ -379,7 +379,7 @@ s_search (void)
     }
     if (!*search_text) {
 	s_beep();
-	printf("\nNo previous search string.\n") FLUSH;
+	printf("\nNo previous search string.\n");
 	(void)get_anything();
 	s_ref_all = TRUE;
 	return;
@@ -419,7 +419,7 @@ s_search (void)
     }
     if (!ent) {
 	s_beep();
-	printf("\n%s\n",error_msg) FLUSH;
+	printf("\n%s\n",error_msg);
 	(void)get_anything();
 	s_ref_all = TRUE;
 	return;

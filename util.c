@@ -3,6 +3,9 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
+#include <sys/wait.h>
+#include <time.h>
+
 #include "EXTERN.h"
 #include "common.h"
 #include "final.h"
@@ -19,27 +22,19 @@
 #include "util2.h"
 #include "only.h"
 #include "search.h"
-#ifdef I_SYS_WAIT
-#include <sys/wait.h>
-#endif
 #ifdef SCAN
 #include "scan.h"
 #include "smisc.h"	/* s_default_cmd */
 #endif
 #include "univ.h"
 #include "INTERN.h"
-#include "util.ih"
 #include "util.h"
 
-#ifdef UNION_WAIT
-typedef union wait WAIT_STATUS;
-#else
-typedef int WAIT_STATUS;
-#endif
-
-#ifndef USE_DEBUGGING_MALLOC
-static char nomem[] = "trn: out of memory!\n";
-#endif
+bool waiting = false;  	/* waiting for subprocess (in doshell)? */
+bool nowait_fork = false;
+bool export_nntp_fds = false;
+size_t len_last_line_got = 0;
+size_t buflen_last_line_got = 0;
 
 static char null_export[] = "_=X";/* Just in case doshell precedes util_init */
 
@@ -79,21 +74,19 @@ util_init (void)
 }
 
 /* fork and exec a shell command */
-
 int
 doshell (char *shell, char *s)
 {
-    WAIT_STATUS status;
+    int status;
     pid_t pid, w;
     int ret;
 
     xmouse_off();
 
-#ifdef SIGTSTP
     sigset(SIGTSTP,SIG_DFL);
     sigset(SIGTTOU,SIG_DFL);
     sigset(SIGTTIN,SIG_DFL);
-#endif
+
     if (datasrc && (datasrc->flags & DF_REMOTE)) {
 #ifdef USE_GENAUTH
 	if (export_nntp_fds) {
@@ -164,7 +157,7 @@ doshell (char *shell, char *s)
     if (shell == NULL && (shell = getval("SHELL",NULL)) == NULL)
 	shell = PREFSHELL;
     termlib_reset();
-    if ((pid = vfork()) == 0) {
+    if ((pid = fork()) == 0) {
 	if (datasrc && (datasrc->flags & DF_REMOTE)) {
 	    int i;
 	    /* This is necessary to keep the bourne shell from puking */
@@ -193,9 +186,7 @@ doshell (char *shell, char *s)
 	_exit(127);
     }
     sigignore(SIGINT);
-#ifdef SIGQUIT
     sigignore(SIGQUIT);
-#endif
     waiting = TRUE;
     while ((w = wait(&status)) != pid)
 	if (w == -1 && errno != EINTR)
@@ -203,73 +194,23 @@ doshell (char *shell, char *s)
     if (w == -1)
 	ret = -1;
     else
-#ifdef USE_WIFSTAT
 	ret = WEXITSTATUS(status);
-#else
-#ifdef UNION_WAIT
-	ret = status.w_status >> 8;
-#else
-	ret = status;
-#endif /* UNION_WAIT */
-#endif /* USE_WIFSTAT */
     termlib_init();
     xmouse_check();
     waiting = FALSE;
     sigset(SIGINT,int_catcher);
-#ifdef SIGQUIT
     sigset(SIGQUIT,SIG_DFL);
-#endif
-#ifdef SIGTSTP
     sigset(SIGTSTP,stop_catcher);
     sigset(SIGTTOU,stop_catcher);
     sigset(SIGTTIN,stop_catcher);
-#endif
     if (datasrc && datasrc->auth_user)
 	UNLINK(nntp_auth_file);
     return ret;
 }
 
-/* paranoid version of malloc */
-
-#ifndef USE_DEBUGGING_MALLOC
-char*
-safemalloc(MEM_SIZE size)
-{
-    char* ptr;
-
-    ptr = malloc(size ? size : (MEM_SIZE)1);
-    if (!ptr) {
-	fputs(nomem,stdout) FLUSH;
-	sig_catcher(0);
-    }
-    return ptr;
-}
-#endif
-
-/* paranoid version of realloc.  If where is NULL, call malloc */
-
-#ifndef USE_DEBUGGING_MALLOC
-char*
-saferealloc(char* where, MEM_SIZE size)
-{
-    char* ptr;
-
-    if (!where)
-	ptr = malloc(size ? size : (MEM_SIZE)1);
-    else
-	ptr = realloc(where, size ? size : (MEM_SIZE)1);
-    if (!ptr) {
-	fputs(nomem,stdout) FLUSH;
-	sig_catcher(0);
-    }
-    return ptr;
-}
-#endif /* !USE_DEBUGGING_MALLOC */
-
 /* safe version of string concatenate, with \n deletion and space padding */
-
 char *
-safecat (char *to, char *from, int len)
+safecat(char *to, const char *from, size_t len)
 {
     char* dest = to;
 
@@ -318,49 +259,52 @@ eaccess(char* filename, int mod)
  * Get working directory
  */
 char *
-trn_getwd (char *buf, int buflen)
+trn_getwd(char *buf, size_t buflen)
 {
     char* ret;
 
     ret = getcwd(buf, buflen);
     if (!ret) {
-	printf("Cannot determine current working directory!\n") FLUSH;
+	printf("Cannot determine current working directory!\n");
 	finalize(1);
     }
     return ret;
 }
 
 /* just like fgets but will make bigger buffer as necessary */
-
 char *
-get_a_line (char *buffer, int buffer_length, bool_int realloc_ok, FILE *fp)
+get_a_line(char *buffer, size_t buffer_length, bool realloc_ok, FILE *fp)
 {
-    int bufix = 0;
+    size_t bufix = 0;
     int nextch;
 
+    if (buffer_length == 0)
+        return NULL;
+
+    buffer[0] = '\0';
     do {
 	if (bufix >= buffer_length) {
 	    buffer_length *= 2;
 	    if (realloc_ok) {		/* just grow in place, if possible */
-		buffer = saferealloc(buffer,(MEM_SIZE)buffer_length+1);
-	    }
-	    else {
-		char* tmp = safemalloc((MEM_SIZE)buffer_length+1);
-		strncpy(tmp,buffer,buffer_length/2);
+		buffer = saferealloc(buffer, buffer_length + 1);
+	    } else {
+		char* tmp = safemalloc(buffer_length + 1);
+		strlcpy(tmp, buffer, buffer_length / 2);
 		buffer = tmp;
-		realloc_ok = TRUE;
+		realloc_ok = true;
 	    }
 	}
 	if ((nextch = getc(fp)) == EOF) {
-	    if (!bufix)
+	    if (bufix == 0)
 		return NULL;
 	    break;
 	}
-	buffer[bufix++] = (char)nextch;
-    } while (nextch && nextch != '\n');
+	buffer[bufix++] = nextch;
+    } while (nextch != '\0' && nextch != '\n');
     buffer[bufix] = '\0';
     len_last_line_got = bufix;
     buflen_last_line_got = buffer_length;
+
     return buffer;
 }
 
@@ -407,7 +351,7 @@ makedir (char *dirname, int nametype)
 void
 notincl (char *feature)
 {
-    printf("\nNo room for feature \"%s\" on this machine.\n",feature) FLUSH;
+    printf("\nNo room for feature \"%s\" on this machine.\n",feature);
 }
 
 /* grow a static string to at least a certain length */
@@ -417,9 +361,9 @@ growstr (char **strptr, int *curlen, int newlen)
 {
     if (newlen > *curlen) {		/* need more room? */
 	if (*curlen)
-	    *strptr = saferealloc(*strptr,(MEM_SIZE)newlen);
+	    *strptr = saferealloc(*strptr,(size_t)newlen);
 	else
-	    *strptr = safemalloc((MEM_SIZE)newlen);
+	    *strptr = safemalloc(newlen);
 	*curlen = newlen;
     }
 }
@@ -448,39 +392,14 @@ setdef (char *buffer, char *dflt)
     }
 }
 
-#ifndef NO_FILELINKS
 void
 safelink (char *old, char *new)
 {
-#if 0
-    extern int sys_nerr;
-    extern char* sys_errlist[];
-#endif
-
     if (link(old,new)) {
-	printf("Can't link backup (%s) to .newsrc (%s)\n", old, new) FLUSH;
-#if 0
-	if (errno>0 && errno<sys_nerr)
-	    printf("%s\n", sys_errlist[errno]);
-#endif
+	printf("Can't link backup (%s) to .newsrc (%s)\n", old, new);
 	finalize(1);
     }
 }
-#endif
-
-#ifndef HAS_STRSTR
-char *
-trn_strstr (char *s1, char *s2)
-{
-    char* p = s1;
-    int len = strlen(s2);
-
-    for ( ; (p = index(p, *s2)) != NULL; p++)
-	if (strnEQ(p, s2, len))
-	    return p;
-    return NULL;
-}
-#endif /* !HAS_STRSTR */
 
 /* attempts to verify a cryptographic signature. */
 void
@@ -493,35 +412,17 @@ verify_sig (void)
     i = doshell(sh,filexp("grep -s \"BEGIN PRIVACY-ENHANCED MESSAGE\" %A"));
     if (!i) {	/* found RIPEM */
 	i = doshell(sh,filexp(getval("VERIFY_RIPEM",VERIFY_RIPEM)));
-	printf("\nReturned value: %d\n",i) FLUSH;
+	printf("\nReturned value: %d\n",i);
 	return;
     }
     /* PGP */
     i = doshell(sh,filexp("grep -s \"BEGIN PGP\" %A"));
     if (!i) {	/* found PGP */
 	i = doshell(sh,filexp(getval("VERIFY_PGP",VERIFY_PGP)));
-	printf("\nReturned value: %d\n",i) FLUSH;
+	printf("\nReturned value: %d\n",i);
 	return;
     }
-    printf("No PGP/RIPEM signatures detected.\n") FLUSH;
-}
-
-double
-current_time (void)
-{
-#ifdef HAS_GETTIMEOFDAY
-    Timeval t;
-    (void) gettimeofday(&t, (struct timezone*)NULL);
-    return (double)t.tv_usec / 1000000. + t.tv_sec;
-#else
-# ifdef HAS_FTIME
-    Timeval t;
-    ftime(&t);
-    return (double)t.millitm / 1000. + t.time;
-# else
-    return (double)time((time_t*)NULL);
-# endif
-#endif
+    printf("No PGP/RIPEM signatures detected.\n");
 }
 
 time_t
@@ -605,7 +506,7 @@ temp_filename (void)
     char tmpbuf[CBUFLEN];
     extern long our_pid;
     sprintf(tmpbuf,"%s/trn%d.%ld",tmpdir,tmpfile_num++,our_pid);
-    return savestr(tmpbuf);
+    return estrdup(tmpbuf);
 }
 
 char *
@@ -655,7 +556,7 @@ prep_ini_words (INI_WORDS words[])
 void
 unprep_ini_words (INI_WORDS words[])
 {
-    free((char*)INI_VALUES(words));
+    safefree((char *)INI_VALUES(words));
     words[0].checksum = 0;
     words[0].help_str = NULL;
 }
@@ -900,7 +801,7 @@ menu_get_char (void)
     fflush(stdout);
     eat_typeahead();
     getcmd(buf);
-    printf("%c\n",*buf) FLUSH;
+    printf("%c\n",*buf);
     return(*buf);
 }
 

@@ -50,8 +50,8 @@ opt_init (int argc, char *argv[], char **tcbufptr)
     int i;
     char* s;
 
-    sel_grp_dmode = savestr(sel_grp_dmode) + 1;
-    sel_art_dmode = savestr(sel_art_dmode) + 1;
+    sel_grp_dmode = estrdup(sel_grp_dmode) + 1;
+    sel_art_dmode = estrdup(sel_art_dmode) + 1;
     UnivSelBtnCnt = parse_mouse_buttons(&UnivSelBtns,
 	"[Top]^ [PgUp]< [PgDn]> [ OK ]^j [Quit]q [Help]?");
     NewsrcSelBtnCnt = parse_mouse_buttons(&NewsrcSelBtns,
@@ -83,7 +83,7 @@ opt_init (int argc, char *argv[], char **tcbufptr)
 	s = getval("TRNRC","%+/trnrc");
     else
 	s = getval("RNRC","%+/rnrc");
-    ini_file = savestr(filexp(s));
+    ini_file = estrdup(filexp(s));
 
     s = filexp("%+");
     if (stat(s,&filestat) < 0 || !S_ISDIR(filestat.st_mode)) {
@@ -127,7 +127,7 @@ opt_file (char *filename, char **tcbufptr, bool_int bleat)
     if (fd >= 0) {
 	fstat(fd,&filestat);
 	if (filestat.st_size >= TCBUF_SIZE-1) {
-	    filebuf = saferealloc(filebuf,(MEM_SIZE)filestat.st_size+2);
+	    filebuf = saferealloc(filebuf,(size_t)filestat.st_size+2);
 	    *tcbufptr = filebuf;
 	}
 	if (filestat.st_size) {
@@ -173,7 +173,7 @@ opt_file (char *filename, char **tcbufptr, bool_int bleat)
 	close(fd);
     }
     else if (bleat) {
-	printf(cantopen,filename) FLUSH;
+	printf(cantopen,filename);
 	/*termdown(1);*/
     }
 
@@ -199,14 +199,14 @@ set_option (int num, char *s)
 {
     if (option_saved_vals) {
 	if (!option_saved_vals[num]) {
-	    option_saved_vals[num] = savestr(option_value(num));
+	    option_saved_vals[num] = estrdup(option_value(num));
 	    if (!option_def_vals[num])
 		option_def_vals[num] = option_saved_vals[num];
 	}
     }
     else if (option_def_vals) {
 	if (!option_def_vals[num])
-	    option_def_vals[num] = savestr(option_value(num));
+	    option_def_vals[num] = estrdup(option_value(num));
     }
     switch (num) {
       case OI_USE_THREADS:
@@ -276,7 +276,7 @@ set_option (int num, char *s)
 	NewsgroupSelBtnCnt = parse_mouse_buttons(&NewsgroupSelBtns,s);
 	break;
       case OI_NEWSGROUP_SEL_STYLES:
-	free(option_value(OI_NEWSGROUP_SEL_STYLES)-1);
+	safefree(option_value(OI_NEWSGROUP_SEL_STYLES) - 1);
 	sel_grp_dmode = safemalloc(strlen(s)+2);
 	*sel_grp_dmode++ = '*';
 	strcpy(sel_grp_dmode, s);
@@ -309,7 +309,7 @@ set_option (int num, char *s)
 	NewsSelBtnCnt = parse_mouse_buttons(&NewsSelBtns,s);
 	break;
       case OI_NEWS_SEL_STYLES:
-	free(option_value(OI_NEWS_SEL_STYLES)-1);
+	safefree(option_value(OI_NEWS_SEL_STYLES) - 1);
 	sel_art_dmode = safemalloc(strlen(s)+2);
 	*sel_art_dmode++ = '*';
 	strcpy(sel_art_dmode, s);
@@ -361,12 +361,12 @@ set_option (int num, char *s)
 	break;
       case OI_SAVE_DIR:
 	if (!checkflag) {
-	    savedir = savestr(s);
+	    savedir = estrdup(s);
 	    if (cwd) {
 		chdir(cwd);
-		free(cwd);
+		safefree(cwd);
 	    }
-	    cwd = savestr(filexp(s));
+	    cwd = estrdup(filexp(s));
 	}
 	break;
       case OI_ERASE_SCREEN:
@@ -376,7 +376,7 @@ set_option (int num, char *s)
 	novice_delays = YES(s);
 	break;
       case OI_CITED_TEXT_STRING:
-	indstr = savestr(s);
+	indstr = estrdup(s);
 	break;
       case OI_GOTO_LINE_NUM:
 	gline = atoi(s)-1;
@@ -458,7 +458,7 @@ set_option (int num, char *s)
 	}
 	break;
       case OI_MULTIPART_SEPARATOR:
-	multipart_separator = savestr(s);
+	multipart_separator = estrdup(s);
 	break;
       case OI_AUTO_VIEW_INLINE:
 	auto_view_inline = YES(s);
@@ -471,7 +471,7 @@ set_option (int num, char *s)
 	break;
       case OI_CHARSET:
 #ifdef CHARSUBST
-	charsets = savestr(s);
+	charsets = estrdup(s);
 #endif
 	break;
       case OI_INITIAL_GROUP_LIST:
@@ -623,7 +623,7 @@ save_options (char *filename)
 	fstat(fd_in,&filestat);
 	if (filestat.st_size) {
 	    int len;
-	    filebuf = safemalloc((MEM_SIZE)filestat.st_size+2);
+	    filebuf = safemalloc((size_t)filestat.st_size+2);
 	    len = read(fd_in,filebuf,(int)filestat.st_size);
 	    filebuf[len] = '\0';
 	}
@@ -683,7 +683,7 @@ line that sets %sRNINIT.\n", ini_file, t, t);
 	    fprintf(fp_out,"%s\n",quote_string(option_value(i)));
 	    if (option_saved_vals[i]) {
 		if (option_saved_vals[i] != option_def_vals[i])
-		    free(option_saved_vals[i]);
+		    safefree(option_saved_vals[i]);
 		option_saved_vals[i] = NULL;
 	    }
 	}
@@ -1017,7 +1017,7 @@ set_header_list (int flag, int defflag, char *str)
     if (flag == HT_HIDE || flag == HT_DEFHIDE) {
 	/* Free old user_htype list */
 	while (user_htype_cnt > 1)
-	    free(user_htype[--user_htype_cnt].name);
+	    safefree(user_htype[--user_htype_cnt].name);
 	bzero((char*)user_htypeix, sizeof user_htypeix);
     }
 
@@ -1064,7 +1064,7 @@ set_header (char *s, int flag, bool_int setit)
 	for (i = user_htypeix[ch - 'a']; *user_htype[i].name == ch; i--) {
 	    if (len <= user_htype[i].length
 	     && strncaseEQ(s,user_htype[i].name,len)) {
-		free(user_htype[i].name);
+		safefree(user_htype[i].name);
 		user_htype[i].name = NULL;
 		killed = i;
 	    }
@@ -1081,7 +1081,7 @@ set_header (char *s, int flag, bool_int setit)
 	    if (!killed || (add_at && user_htype[add_at].name)) {
 		if (user_htype_cnt >= user_htype_max) {
 		    user_htype = (USER_HEADTYPE*)
-			realloc(user_htype, (user_htype_max += 10)
+			saferealloc(user_htype, (user_htype_max += 10)
 					    * sizeof (USER_HEADTYPE));
 		}
 		if (!add_at) {
@@ -1097,7 +1097,7 @@ set_header (char *s, int flag, bool_int setit)
 		add_at = killed;
 	    user_htype[add_at].length = len;
 	    user_htype[add_at].flags = setit? flag : 0;
-	    user_htype[add_at].name = savestr(s);
+	    user_htype[add_at].name = estrdup(s);
 	    for (s = user_htype[add_at].name; *s; s++) {
 		if (isupper(*s))
 		    *s = tolower(*s);
@@ -1233,7 +1233,7 @@ cwd_check (void)
     char tmpbuf[LBUFLEN];
 
     if (!cwd)
-	cwd = savestr(filexp("~/News"));
+	cwd = estrdup(filexp("~/News"));
     strcpy(tmpbuf,cwd);
     if (chdir(cwd) != 0) {
 	safecpy(tmpbuf,filexp(cwd),sizeof tmpbuf);
@@ -1250,7 +1250,7 @@ cwd_check (void)
 Cannot make directory %s--\n\
 	articles will be saved to %s\n\
 \n\
-",cwd,tmpbuf) FLUSH;
+",cwd,tmpbuf);
 	    ELSE
 #endif
 #ifdef TERSE
@@ -1258,7 +1258,7 @@ Cannot make directory %s--\n\
 Can't make %s--\n\
 	using %s\n\
 \n\
-",cwd,tmpbuf) FLUSH;
+",cwd,tmpbuf);
 #endif
 	}
     }
@@ -1270,13 +1270,13 @@ Can't make %s--\n\
 	    printf("\
 Current directory %s is not writeable--\n\
 	articles will be saved to home directory\n\n\
-",tmpbuf) FLUSH;
+",tmpbuf);
 	ELSE
 #endif
 #ifdef TERSE
-	    printf("%s not writeable--using ~\n\n",tmpbuf) FLUSH;
+	    printf("%s not writeable--using ~\n\n",tmpbuf);
 #endif
 	strcpy(tmpbuf,homedir);
     }
-    cwd = savestr(tmpbuf);
+    cwd = estrdup(tmpbuf);
 }

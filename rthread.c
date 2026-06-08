@@ -184,7 +184,7 @@ cleanup_msgid_hash (int keylen, HASHDATUM *data, int extra)
 	}
 	if (ap->flags & AF_TMPMEM) {
 	    clear_article(ap);
-	    free((char*)ap);
+	    safefree((char *)ap);
 	}
     }
     return ret;
@@ -1628,7 +1628,7 @@ sort_subjects (void)
     last_subject->next = NULL;
     if (sel_mode == SM_THREAD)
 	last_subject->thread_link = sp;
-    free((char*)subj_list);
+    safefree((char *)subj_list);
 }
 
 static int
@@ -1746,7 +1746,7 @@ build_artptrs (void)
 
     if (!artptr_list || artptr_list_size != count) {
 	artptr_list = (ARTICLE**)saferealloc((char*)artptr_list,
-		(MEM_SIZE)count * sizeof (ARTICLE*));
+		(size_t)count * sizeof (ARTICLE*));
 	artptr_list_size = count;
     }
     app = artptr_list;

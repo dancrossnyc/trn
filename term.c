@@ -3,6 +3,7 @@
  */
 /* This software is copyrighted as detailed in the LICENSE file. */
 
+#include <stdint.h>
 
 #include "EXTERN.h"
 #include "common.h"
@@ -137,10 +138,10 @@ term_set (
     if (isatty(devtty)) {
 	devtty = open("/dev/tty",0);
 	if (devtty < 0) {
-	    printf(cantopen,"/dev/tty") FLUSH;
+	    printf(cantopen,"/dev/tty");
 	    finalize(1);
 	}
-	fcntl(devtty,F_SETFL,O_NDELAY);
+	fcntl(devtty,F_SETFL,O_NONBLOCK);
     }
 #endif
 #endif
@@ -151,7 +152,7 @@ term_set (
     s = getenv("TERM");
     status = tgetent(tcbuf,s? s : "dumb");	/* get termcap entry */
     if (status < 1) {
-	printf("No termcap %s found.\n", status ? "file" : "entry") FLUSH;
+	printf("No termcap %s found.\n", status ? "file" : "entry");
 	finalize(1);
     }
     tmpaddr = tcarea;			/* set up strange tgetstr pointer */
@@ -214,7 +215,7 @@ term_set (
     tc_CR = Tgetstr("cr");
     if (!*tc_CR) {
 	if (tgetflag("nc") && *tc_UP) {
-	    tc_CR = safemalloc((MEM_SIZE)strlen(tc_UP)+2);
+	    tc_CR = safemalloc((size_t)strlen(tc_UP)+2);
 	    sprintf(tc_CR,"%s\r",tc_UP);
 	}
 	else
@@ -395,7 +396,7 @@ mac_line (char *line, char *tmpbuf, int tbsize)
 	if (s[1]) {
 	    if ((curmap->km_type[ch] & KM_TMASK) == KM_STRING) {
 		if (tbsize) {
-		    fputs(override,stdout) FLUSH;
+		    fputs(override,stdout);
 		    termdown(2);
 		}
 		free(curmap->km_ptr[ch].km_str);
@@ -408,12 +409,12 @@ mac_line (char *line, char *tmpbuf, int tbsize)
 	}
 	else {
 	    if (tbsize && (curmap->km_type[ch] & KM_TMASK) == KM_KEYMAP) {
-		fputs(override,stdout) FLUSH;
+		fputs(override,stdout);
 		termdown(2);
 	    }
 	    else {
 		curmap->km_type[ch] = KM_STRING + garbage;
-		curmap->km_ptr[ch].km_str = savestr(m);
+		curmap->km_ptr[ch].km_str = estrdup(m);
 	    }
 	}
     }
@@ -654,9 +655,9 @@ edit_buf (char *s, char *cmd)
 	}
 	else if (tmpbuf[1] == '\033') {
 	    *s = '\0';
-	    cpybuf = savestr(buf);
+	    cpybuf = estrdup(buf);
 	    interpsearch(buf, sizeof buf, cpybuf, cmd);
-	    free(cpybuf);
+	    safefree(cpybuf);
 	    s = buf + strlen(buf);
 	    reprint();
 	}
@@ -744,8 +745,8 @@ finish_dblchar (void)
 void
 eat_typeahead (void)
 {
-    static double last_time = 0.;
-    double this_time = current_time();
+    static uint64_t last_time = 0.;
+    uint64_t this_time = current_time_ms();
 
     /* do not eat typeahead while creating virtual group */
     if (univ_ng_virtflag)
@@ -757,7 +758,7 @@ eat_typeahead (void)
 
     /* cancel only keyboard stuff */
     if (!allow_typeahead && !mouse_is_down && !macro_pending()
-     && this_time - last_time > 0.3) {
+     && this_time - last_time > 300) {
 #ifdef PENDING
 	KEYMAP* curmap = topmap;
 	Uchar lc;
@@ -834,7 +835,7 @@ settle_down (void)
 
 bool ignore_EINTR = FALSE;
 
-Signal_t
+void
 alarm_catcher (int signo)
 {
     /*printf("\n*** In alarm catcher **\n"); $$*/
@@ -864,9 +865,9 @@ read_tty (char *addr, int size)
 	    strncpy(addr, ttk_keys, size);      /* return the first bit */
 	    if (len > size)
 		pushstring(ttk_keys+size,0);	/* and push the rest */
-	    free(ttk_keys);			/* every byte counts... */
+	    safefree(ttk_keys);			/* every byte counts... */
 	    /* A plain NULL pointer will not work -- it is "\0" in TCL */
-	    ttk_keys = savestr(nullstr);
+	    ttk_keys = estrdup(nullstr);
 	    return size;
 	}
     }
@@ -907,7 +908,7 @@ pushchar (char_int c)
     if (nextout < 0)
 	nextout = PUSHSIZE - 1;
     if (nextout == nextin) {
-	fputs("\npushback buffer overflow\n",stdout) FLUSH;
+	fputs("\npushback buffer overflow\n",stdout);
 	sig_catcher(0);
     }
     circlebuf[nextout] = c;
@@ -1103,11 +1104,11 @@ reask_anything:
     if (*tmpbuf == 'h') {
 #ifdef VERBOSE
 	IF(verbose)
-	    fputs("\nType q to quit or space to continue.\n",stdout) FLUSH;
+	    fputs("\nType q to quit or space to continue.\n",stdout);
 	ELSE
 #endif
 #ifdef TERSE
-	    fputs("\nq to quit, space to continue.\n",stdout) FLUSH;
+	    fputs("\nq to quit, space to continue.\n",stdout);
 #endif
 	termdown(2);
 	goto reask_anything;
@@ -1498,7 +1499,7 @@ errormsg (char *str)
 	error_occurred = TRUE;
     }
     else if (*str) {
-	printf("\n%s\n", str) FLUSH;
+	printf("\n%s\n", str);
 	termdown(2);
     }
 }
@@ -1507,7 +1508,7 @@ void
 warnmsg (char *str)
 {
     if (gmode != 's') {
-	printf("\n%s\n", str) FLUSH;
+	printf("\n%s\n", str);
 	termdown(2);
 	pad(just_a_sec/3);
     }
@@ -1558,7 +1559,7 @@ reprint (void)
 {
     char* s;
 
-    fputs("^R\n",stdout) FLUSH;
+    fputs("^R\n",stdout);
     termdown(1);
     for (s = buf; *s; s++)
 	echo_char(*s);
@@ -1593,7 +1594,7 @@ clear (void)
 	    putchr('\n');
 	home_cursor();
     }
-    tputs(tc_CR,1,putchr) FLUSH;
+    tputs(tc_CR,1,putchr);
 }
 
 void
@@ -1697,7 +1698,7 @@ line_col_calcs (void)
 #endif
 }
 
-Signal_t
+void
 winch_catcher (int dummy)
 {
     /* Reset signal in case of System V dain bramage */
@@ -1788,12 +1789,12 @@ termlib_reset (void)
 #endif
 
 #ifdef NBG_SIGIO /* SIGIO style */
-Signal_t
+void
 waitkey_sig_handler (int dummy)
 {
 #ifdef DEBUG_NICEBG
     /* CAA: I doubt that printf is safe in a signal handler... */
-    printf("wait_key_pause signal caught!\n") FLUSH;
+    printf("wait_key_pause signal caught!\n");
     fflush(stdout);
 #endif
 }
@@ -1823,7 +1824,7 @@ wait_key_pause (
     if (input_pending())
 	return TRUE;
 #ifdef DEBUG_NICEBG
-    printf("entry: wait_key_pause\n") FLUSH; /* */
+    printf("entry: wait_key_pause\n"); /* */
 #endif
     /* common initialization */
     if (!wait_fd_opened) {
@@ -1850,12 +1851,12 @@ wait_key_pause (
 	int nrd;		/* number read */
 
 #ifdef DEBUG_NICEBG
-	printf("wait_key_pause: using termio(s)\n") FLUSH;
+	printf("wait_key_pause: using termio(s)\n");
 #endif
 	if (!wait_initialized)
 	    wait_initialized = TRUE;
 	if (ioctl(wait_ttyfd,TCGETA,&save_tty) == -1) {
-	    printf("wait_key_pause (term.c): ioctl TCGETA error\n") FLUSH;
+	    printf("wait_key_pause (term.c): ioctl TCGETA error\n");
 	    assert(FALSE);
 	}
 	wait_tty = save_tty;
@@ -1864,7 +1865,7 @@ wait_key_pause (
 	wait_tty.c_cc[VMIN] = 0;
 	wait_tty.c_cc[VTIME] = ticks;
 	if (ioctl(wait_ttyfd,TCSETAF,&wait_tty) == -1) {
-	    printf("wait_key_pause (term.c): ioctl TCSETAF error\n") FLUSH;
+	    printf("wait_key_pause (term.c): ioctl TCSETAF error\n");
 	    assert(FALSE);
 	}
 	nrd = read(wait_ttyfd,&lbuf,1);
@@ -1872,18 +1873,18 @@ wait_key_pause (
 	if (nrd == 1) {
 	    pushchar(lbuf[0]);	/* put it back */
 #ifdef DEBUG_NICEBG
-	    printf("early exit: wait_key_pause\n") FLUSH; /* */
+	    printf("early exit: wait_key_pause\n"); /* */
 #endif
 	}
 #ifdef DEBUG_NICEBG
-	printf("exit: wait_key_pause\n") FLUSH; /* */
+	printf("exit: wait_key_pause\n"); /* */
 #endif
 	return input_pending();
     }
 #endif /* NBG_TERMIO */
 #ifdef NBG_SELECT
 #ifdef DEBUG_NICEBG
-	printf("wait_key_pause: using select\n") FLUSH;
+	printf("wait_key_pause: using select\n");
 #endif
 	if (!wait_initialized) {
 	    wait_tbl_size = wait_ttyfd + 1;
@@ -1898,7 +1899,7 @@ wait_key_pause (
 	(void)select(wait_tbl_size,&wait_fdset,NULL,NULL,&wait_time);
 
 #ifdef DEBUG_NICEBG
-	printf("exit: wait_key_pause\n") FLUSH; /* */
+	printf("exit: wait_key_pause\n"); /* */
 #endif
 	return input_pending();
 #endif /* NBG_SELECT */
@@ -1909,7 +1910,7 @@ wait_key_pause (
  */
     {
 #ifdef DEBUG_NICEBG
-	printf("wait_key_pause: using SIGIO style\n") FLUSH;
+	printf("wait_key_pause: using SIGIO style\n");
 #endif
 	if (!wait_initialized) {	/* not initialized yet? */
 /* Portable? (probably not) */
@@ -1935,7 +1936,7 @@ wait_key_pause (
 	pause();	/* wait for either ALRM or SIGIO signal */
 	(void) alarm(0);
 #ifdef DEBUG_NICEBG
-	printf("exit: wait_key_pause\n") FLUSH;
+	printf("exit: wait_key_pause\n");
 #endif
 	return input_pending();
     }
@@ -2153,14 +2154,12 @@ mouse_input (char *cp)
     y = cp[0] - 33;
 
     if (btn != 3) {
-#if defined(HAS_GETTIMEOFDAY) || defined(HAS_FTIME)
-	static double last_time = 0.;
-	double this_time = current_time();
-	if (last_btn == btn && last_y == y && this_time - last_time <= 0.75
+	static uint64_t last_time = 0.;
+	uint64_t this_time = current_time_ms();
+	if (last_btn == btn && last_y == y && this_time - last_time <= 750
 	 && (last_x == x || last_x == x-1 || last_x == x+1))
 	    btn |= 4;
 	last_time = this_time;
-#endif /* HAS_GETTIMEOFDAY || HAS_FTIME */
 	last_btn = (btn & 3);
 	last_x = x;
 	last_y = y;
@@ -2260,7 +2259,7 @@ add_tc_string (char *capability, char *string)
 
     for (i = 0; i < tc_string_cnt; i++) {
 	if (strEQ(capability, tc_strings[i].capability)) {
-	    free(tc_strings[i].string);
+	    safefree(tc_strings[i].string);
 	    break;
 	}
     }
@@ -2271,10 +2270,10 @@ add_tc_string (char *capability, char *string)
 	    finalize(1);
 	}
 	tc_string_cnt++;
-	tc_strings[i].capability = savestr(capability);
+	tc_strings[i].capability = estrdup(capability);
     }
 
-    tc_strings[i].string = savestr(string);
+    tc_strings[i].string = estrdup(string);
 }
 
 /* Return the named termcap color capability's string. */

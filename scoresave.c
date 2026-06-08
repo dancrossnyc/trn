@@ -48,7 +48,7 @@ sc_sv_add (char *str)
 	lines_alloc += 100;
 	lines = (char**)saferealloc((char*)lines,lines_alloc * sizeof (char*));
     }
-    lines[num_lines] = savestr(str);
+    lines[num_lines] = estrdup(str);
     num_lines++;
 }
 
@@ -67,14 +67,14 @@ sc_sv_delgroup (char *gname)
     if (i == num_lines)
 	return;		/* group not found */
     start = i;
-    free(lines[i]);
+    safefree(lines[i]);
     lines[i] = NULL;
     for (i++; i < num_lines; i++) {
 	s = lines[i];
 	if (s && *s == '!')
 	    break;
 	if (s) {
-	    free(s);
+	    safefree(s);
 	    lines[i] = NULL;
 	}
     }
@@ -98,7 +98,7 @@ sc_sv_getfile (void)
     fp = fopen(filexp(s),"r");
     if (!fp) {
 #if 0
-	printf("Could not open score save file for reading.\n") FLUSH;
+	printf("Could not open score save file for reading.\n");
 #endif
 	return;
     }
@@ -122,14 +122,14 @@ sc_sv_savefile (void)
 	return;
     waiting = TRUE;	/* don't interrupt */
     s = getval("SAVESCOREFILE","%+/savedscores");
-    savename = savestr(filexp(s));
+    savename = estrdup(filexp(s));
     strcpy(lbuf,savename);
     strcat(lbuf,".tmp");
     tmpfp = fopen(lbuf,"w");
     if (!tmpfp) {
 #if 0
 	printf("Could not open score save temp file %s for writing.\n",
-	       lbuf) FLUSH;
+	       lbuf);
 #endif
 	free(savename);
 	waiting = FALSE;
@@ -141,7 +141,7 @@ sc_sv_savefile (void)
 	if (ferror(tmpfp)) {
 	    fclose(tmpfp);
 	    free(savename);
-	    printf("\nWrite error in temporary save file %s\n",lbuf) FLUSH;
+	    printf("\nWrite error in temporary save file %s\n",lbuf);
 	    printf("(keeping old saved scores)\n");
 	    UNLINK(lbuf);
 	    waiting = FALSE;
@@ -349,7 +349,7 @@ sc_load_scores (void)
     if (num_lines == 0)
 	sc_sv_getfile();
 
-    gname = savestr(filexp("%C"));
+    gname = estrdup(filexp("%C"));
 
     for (i = 0; i < num_lines; i++) {
 	s = lines[i];
@@ -413,7 +413,7 @@ sc_load_scores (void)
     /* sloppy plurals (:-) */
     if (verbose)
 	printf("(%d/%d/%d scores loaded/used/unscored)\n",
-	       loaded,used,total-scored) FLUSH;
+	       loaded,used,total-scored);
 
     sc_save_new = total-scored;
 #ifdef SCAN
@@ -432,7 +432,7 @@ sc_save_scores (void)
     last = 0;
 
     waiting = TRUE;	/* DON'T interrupt */
-    gname = savestr(filexp("%C"));
+    gname = estrdup(filexp("%C"));
     /* not being able to open is OK */
     if (num_lines > 0) {
 	sc_sv_delgroup(gname);	/* delete old group */

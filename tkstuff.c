@@ -184,7 +184,7 @@ ttcl_init (void)
 #endif
 
     /* Load the user TCL startup code */
-    if (Tcl_EvalFile(ttcl_interp, savestr(filexp("%+/tclinit")))
+    if (Tcl_EvalFile(ttcl_interp, estrdup(filexp("%+/tclinit")))
 	!= TCL_OK) {
 	/* XXX Later print some message about problem? */
 	/* This file is optional, so don't do anything */
@@ -193,7 +193,7 @@ ttcl_init (void)
 
 #ifdef USE_TK
     if (ttk_running) {
-	if (Tcl_EvalFile(ttcl_interp, savestr(filexp("%+/tkinit")))
+	if (Tcl_EvalFile(ttcl_interp, estrdup(filexp("%+/tkinit")))
 	    != TCL_OK) {
 	    /* XXX Later print some message about problem? */
 	    ttk_running = 0;		/* don't try to run */
@@ -262,7 +262,7 @@ ttcl_eval (char *str)
 
     if (ttcl_running) {
 	if ((len = strlen(str)) > 1020) {
-	    p = savestr(str);
+	    p = estrdup(str);
 	} else {
 	    strcpy(buf,str);
 	    p = buf;
@@ -270,7 +270,7 @@ ttcl_eval (char *str)
 	/* later do error checking */
 	(void)Tcl_Eval(ttcl_interp,p);
 	if (len > 1020) {
-	    free(p);
+	    safefree(p);
 	}
     }
 }

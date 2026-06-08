@@ -141,7 +141,7 @@ main (int argc, char *argv[])
 	    fputs("\
 No unread news in subscribed-to newsgroups.  To subscribe to a new\n\
 newsgroup use the g<newsgroup> command.\n\
-",stdout) FLUSH;
+",stdout);
 	    termdown(2);
 	}
 #endif
@@ -227,25 +227,25 @@ do_multirc (void)
 #ifdef VERBOSE
 			IF(verbose)
 			    printf("\nRestriction %s%s still in effect.\n",
-				   ngtodo[0], maxngtodo > 1 ? ", etc." : nullstr) FLUSH;
+				   ngtodo[0], maxngtodo > 1 ? ", etc." : nullstr);
 		 	ELSE
 #endif
 #ifdef TERSE
-			    fputs("\n(\"Only\" mode.)\n",stdout) FLUSH;
+			    fputs("\n(\"Only\" mode.)\n",stdout);
 #endif
 			termdown(2);
 		    } else {
 #ifdef VERBOSE
 			IF(verbose)
-			    fputs("\nNo articles under restriction.", stdout) FLUSH;
+			    fputs("\nNo articles under restriction.", stdout);
 			ELSE
 #endif
 #ifdef TERSE
-			    fputs("\nNo \"only\" articles.",stdout) FLUSH;
+			    fputs("\nNo \"only\" articles.",stdout);
 #endif
 			termdown(2);
 			end_only();	/* release the restriction */
-			printf("\n%s\n", msg) FLUSH;
+			printf("\n%s\n", msg);
 			termdown(2);
 			retry = TRUE;
 		    }
@@ -331,7 +331,7 @@ do_multirc (void)
 	    case ING_ERASE:
 		goto reinp_newsgroup;
 	    case ING_ERROR:
-		printf("\n%s",hforhelp) FLUSH;
+		printf("\n%s",hforhelp);
 		termdown(2);
 		settle_down();
 		goto reask_newsgroup;
@@ -354,7 +354,7 @@ do_multirc (void)
 		newline();
 		break;
 	    case ING_MESSAGE:
-		printf("\n%s\n", msg) FLUSH;
+		printf("\n%s\n", msg);
 		termdown(2);
 		break;
 	    }
@@ -422,7 +422,7 @@ input_newsgroup (void)
 	if (*buf != 'y')
 	    break;
 	printf("\nThe abandoned changes are in %s.new.\n",
-	       multirc_name(multirc)) FLUSH;
+	       multirc_name(multirc));
 	termdown(2);
 	restore_old_newsrc = TRUE;
 	return ING_QUIT;
@@ -469,11 +469,11 @@ input_newsgroup (void)
 	  case NGS_INTR:
 #ifdef VERBOSE
 	    IF(verbose)
-		fputs("\n(Interrupted)\n",stdout) FLUSH;
+		fputs("\n(Interrupted)\n",stdout);
 	    ELSE
 #endif
 #ifdef TERSE
-		fputs("\n(Intr)\n",stdout) FLUSH;
+		fputs("\n(Intr)\n",stdout);
 #endif
 	    termdown(2);
 	    set_ng(current_ng);
@@ -484,11 +484,11 @@ input_newsgroup (void)
 #ifdef VERBOSE
 	    IF(verbose)
 		fputs("\n\nNot found -- use a or g to add newsgroups\n",
-		      stdout) FLUSH;
+		      stdout);
 	    ELSE
 #endif
 #ifdef TERSE
-		fputs("\n\nNot found\n",stdout) FLUSH;
+		fputs("\n\nNot found\n",stdout);
 #endif
 	    termdown(3);
 	    return ING_ASK;
@@ -525,7 +525,7 @@ input_newsgroup (void)
 			break;
 		if (!ngptr) {
 		    ngptr = current_ng;
-		    printf("\nOnly %d groups. Try again.\n", newsgroup_cnt) FLUSH;
+		    printf("\nOnly %d groups. Try again.\n", newsgroup_cnt);
 		    termdown(2);
 		    return ING_ASK;
 		}
@@ -595,7 +595,7 @@ input_newsgroup (void)
 	    bool read_unthreaded = !(ngptr->flags&NF_UNTHREADED);
 	    ngptr->flags ^= NF_UNTHREADED;
 	    printf("\n\n%s will be read %sthreaded.\n",
-		   ngptr->rcline, read_unthreaded? "un" : nullstr) FLUSH;
+		   ngptr->rcline, read_unthreaded? "un" : nullstr);
 	    set_toread(ngptr, ST_LAX);
 	}
 	termdown(3);
@@ -603,7 +603,7 @@ input_newsgroup (void)
       case 'u':			/* unsubscribe */
 	if (ngptr && ngptr->toread >= TR_NONE) {/* unsubscribable? */
 	    newline();
-	    printf(unsubto,ngptr->rcline) FLUSH;
+	    printf(unsubto,ngptr->rcline);
 	    termdown(1);
 	    ngptr->subscribechar = NEGCHAR;	/* unsubscribe it */
 	    ngptr->toread = TR_UNSUB;		/* and make line invisible */
@@ -645,7 +645,7 @@ reask_abandon:
 	    termdown(2);
 	    goto reask_abandon;
 	} else if (*buf != 'y' && *buf != 'n' && *buf != 'q') {
-	    fputs(hforhelp,stdout) FLUSH;
+	    fputs(hforhelp,stdout);
 	    termdown(1);
 	    settle_down();
 	    goto reask_abandon;
@@ -729,7 +729,7 @@ reask_abandon:
       case 'y': case 'Y': case '\t': /* do normal thing */
       case ' ': case '\r': case '\n':
 	if (!ngptr) {
-	    fputs("\nNot on a newsgroup.",stdout) FLUSH;
+	    fputs("\nNot on a newsgroup.",stdout);
 	    termdown(1);
 	    return ING_ASK;
 	}
@@ -741,7 +741,7 @@ reask_abandon:
 	if (*buf == '.') {		/* start command? */
 	    if (!finish_command(FALSE)) /* get rest of command */
 		return ING_INPUT;
-	    s = savestr(buf+1);		/* do_newsgroup will free it */
+	    s = estrdup(buf+1);		/* do_newsgroup will free it */
 	}
 	else if (*buf == '+' || *buf == 'U' || *buf == '='
 #ifdef SCAN_ART
@@ -750,7 +750,7 @@ reask_abandon:
 	) {
 	    *buf = lastchar; /* restore 0200 if from a macro */
 	    save_typeahead(buf+1, sizeof buf - 1);
-	    s = savestr(buf);
+	    s = estrdup(buf);
 	}
 	else if (*buf == ' ' || *buf == '\r' || *buf == '\n')
 	    s = nullstr;
@@ -781,7 +781,7 @@ reask_abandon:
 	  /* CAA extensions */
 	  case NG_GO_ARTICLE:
 	    ngptr = ng_go_ngptr;
-	    s = savestr("y");		/* enter with minimal fuss */
+	    s = estrdup("y");		/* enter with minimal fuss */
 	    goto redo_newsgroup;
 	  /* later: possible go-to-newsgroup */
 	}

@@ -100,13 +100,6 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  */
 #$d_normsig NORMSIG		/**/
 
-/* HAS_RDCHK:
- *	This symbol, if defined, indicates that the rdchk routine is available
- *	to find out if there is input pending on an IO channel.  Generally
- *	the routine is used only if FIONREAD and O_NDELAY aren't available.
- */
-#$d_rdchk HAS_RDCHK		/**/
-
 /* HAS_SIGBLOCK:
  *	This symbol, if defined, indicates that the sigblock routine is
  *	available to block signal reception.
@@ -119,100 +112,16 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  */
 #$d_sighold HAS_SIGHOLD	/**/
 
-/* HAS_STRCASECMP:
- *	This symbol, if defined, indicates that the strcasecmp() routine is
- *	available for case-insensitive string compares.
- */
-#$d_strccmp HAS_STRCASECMP	/**/
-
-/* UNION_WAIT:
- *	This symbol if defined indicates to the C program that the argument
- *	for the wait() system call should be declared as 'union wait status'
- *	instead of 'int status'. You probably need to include <sys/wait.h>
- *	in the former case (see I_SYSWAIT).
- */
-#$d_uwait UNION_WAIT		/**/
-
-/* HAS_VFORK:
- *	This symbol, if defined, indicates that vfork() exists.
- */
-#$d_vfork HAS_VFORK	/**/
-
-/* Signal_t:
- *	This symbol's value is either "void" or "int", corresponding to the
- *	appropriate return type of a signal handler.  Thus, you can declare
- *	a signal handler using "Signal_t (*handler)()", and define the
- *	handler using "Signal_t handler(sig)".
- */
-#define Signal_t $signal_t	/* Signal handler's return type */
-
-/* USE_WIFSTAT:
- *	This symbol, if defined, indicates to the C program that the argument
- *	for the WIFxxx set of macros such as WIFSIGNALED or WIFEXITED can
- *	be of the same kind as the one used to hold the wait() status. Should
- *	only matter on HP-UX, where the macros are incorrectly written and
- *	therefore cause programs using them with an 'union wait' variable
- *	to not compile properly. See also UNION_WAIT.
- */
-#$d_wifstat USE_WIFSTAT		/**/
-
 /* DEFEDITOR:
  *	This symbol contains the full pathname of the default editor.
  */
 #define DEFEDITOR "$defeditor"		/**/
-
-/* I_STDLIB:
- *	This symbol, if defined, indicates that <stdlib.h> exists and should
- *	be included.
- */
-#$i_stdlib I_STDLIB		/**/
-
-/* I_STRING:
- *	This symbol, if defined, indicates to the C program that it should
- *	include <string.h> (USG systems) instead of <strings.h> (BSD systems).
- */
-#$i_string I_STRING		/**/
-
-/* I_SYS_DIR:
- *	This symbol, if defined, indicates to the C program that it should
- *	include <sys/dir.h>.
- */
-#$i_sysdir I_SYS_DIR		/**/
-
-/* I_SYS_IOCTL:
- *	This symbol, if defined, indicates that <sys/ioctl.h> exists and should
- *	be included. Otherwise, include <sgtty.h> or <termio.h>.
- */
-/* I_SYS_FILIO:
- *	This symbol, if defined, indicates that <sys/filio.h> exists and
- *	should be included instead of <sys/ioctl.h>.
- */
-#$i_sysioctl	I_SYS_IOCTL		/**/
-#$i_sysfilio	I_SYS_FILIO		/**/
-
-/* I_SYS_WAIT:
- *	This symbol, if defined, indicates to the C program that it should
- *	include <sys/wait.h>.
- */
-#$i_syswait I_SYS_WAIT	/**/
-
-/* I_UNISTD:
- *	This symbol, if defined, indicates to the C program that it should
- *	include <unistd.h>.
- */
-#$i_unistd I_UNISTD		/**/
 
 /* I_UTIME:
  *	This symbol, if defined, indicates to the C program that it should
  *	include <utime.h>.
  */
 #$i_utime I_UTIME		/**/
-
-/* I_VFORK:
- *	This symbol, if defined, indicates to the C program that it should
- *	include vfork.h.
- */
-#$i_vfork I_VFORK	/**/
 
 /* MAILFILE:
  *	This symbol contains the interpretable name of the mail spool file
@@ -265,27 +174,6 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
 #define ACTIVE "$active"		/**/
 #$d_acttimes ACTIVE_TIMES "$acttimes"		/**/
 
-/* HAS_FTIME:
- *	This symbol, if defined, indicates that the ftime() routine exists.
- *	It is basically a sub-second accuracy clock, but is less accurate
- *	than gettimeofday(2) anyway. The type "Timeval" should be used to
- *	refer to "struct timeb".
- */
-/* HAS_GETTIMEOFDAY:
- *	This symbol, if defined, indicates that the gettimeofday() system
- *	call is available for a sub-second accuracy clock. Usually, the file
- *	<sys/resource.h> needs to be included (see I_SYS_RESOURCE).
- *	The type "Timeval" should be used to refer to "struct timeval".
- */
-#$d_ftime HAS_FTIME		/**/
-#$d_gettimeod HAS_GETTIMEOFDAY	/**/
-#ifdef HAS_GETTIMEOFDAY
-#define Timeval struct timeval	/* Structure used by gettimeofday() */
-#endif
-#if defined(HAS_FTIME) && !defined(Timeval)
-#define Timeval struct timeb		/* Structure used by ftime() */
-#endif
-
 /* HAS_GETHOSTNAME:
  *	This symbol, if defined, indicates that the C program may use the
  *	gethostname() routine to derive the host name.
@@ -314,17 +202,6 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
 #$d_phostcmd PHOSTCMD "$aphostcmd"	/* How to get the host name */
 #$d_resinit HAS_RES_INIT	/**/
 #$d_getdname HAS_GETDOMAINNAME	/**/
-
-/* HAS_GETWD:
- *	This symbol, if defined, indicates that the getwd routine is
- *	available to get the working directory.
- */
-/* HAS_GETCWD:
- *	This symbol, if defined, indicates that the getcwd routine is
- *	available to get the working directory.
- */
-#$d_getwd HAS_GETWD		/**/
-#$d_getcwd HAS_GETCWD		/**/
 
 /* HAS_TERMLIB:
  *	This symbol, when defined, indicates that termlib-style routines

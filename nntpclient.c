@@ -13,10 +13,8 @@
 
 time_t last_command_diff;
 
-char* savestr (char*);
-#ifndef USE_DEBUGGING_MALLOC
-char* safemalloc (MEM_SIZE);
-#endif
+char* estrdup (char*);
+char* safemalloc (size_t);
 #ifdef NNTP_HANDLE_TIMEOUT
 int nntp_handle_timeout (void);
 #endif
@@ -86,7 +84,7 @@ nntp_connect (char *machine, bool_int verbose)
 	break;
     case NNTP_POSTOK_VAL:
 	if (verbose)
-	    printf("Done.\n") FLUSH;
+	    printf("Done.\n");
 	response = 1;
 	break;
     default:
@@ -132,9 +130,9 @@ int
 nntp_command (char *bp)
 {
     time_t now;
-#if defined(DEBUG) && defined(FLUSH)
+#if defined(DEBUG)
     if (debug & DEB_NNTP)
-	printf(">%s\n", bp) FLUSH;
+	printf(">%s\n", bp);
 #endif
 #if defined(NNTP_HANDLE_TIMEOUT) || defined(NNTP_HANDLE_AUTH_ERR)
     strcpy(last_command, bp);
@@ -217,9 +215,9 @@ nntp_check (void)
     len = strlen(ser_line);
     if (len >= 2 && ser_line[len-1] == '\n' && ser_line[len-2] == '\r')
 	ser_line[len-2] = '\0';
-#if defined(DEBUG) && defined(FLUSH)
+#if defined(DEBUG)
     if (debug & DEB_NNTP)
-	printf("<%s\n", ser_line) FLUSH;
+	printf("<%s\n", ser_line);
 #endif
 #ifdef NNTP_HANDLE_AUTH_ERR
     if (atoi(ser_line) == NNTP_AUTH_NEEDED_VAL) {

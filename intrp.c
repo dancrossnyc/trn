@@ -74,11 +74,11 @@ intrp_init (char *tcbuf, int tcbuf_len)
     if (checkflag)			/* that getwd below takes ~1/3 sec. */
 	return;				/* and we do not need it for -c */
     trn_getwd(tcbuf, tcbuf_len);	/* find working directory name */
-    origdir = savestr(tcbuf);		/* and remember it */
+    origdir = estrdup(tcbuf);		/* and remember it */
 
     /* name of header file (%h) */
 
-    headname = savestr(filexp(HEADNAME));
+    headname = estrdup(filexp(HEADNAME));
 
     /* the hostname to use in local-article comparisons */
 #if HOSTBITS != 0
@@ -358,7 +358,7 @@ dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
 			proc_sprintf = FALSE;
 		    }
 		    if ((s = compile(&cond_compex,scrbuf,TRUE,TRUE)) != NULL) {
-			printf("%s: %s\n",scrbuf,s) FLUSH;
+			printf("%s: %s\n",scrbuf,s);
 			pattern += strlen(pattern);
 			free_compex(&cond_compex);
 			goto getout;
@@ -415,7 +415,7 @@ dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
 #ifdef PROMPTTTY
 		case '"':
 		    pattern = dointerp(scrbuf,(sizeof scrbuf),pattern+1,"\"",cmd);
-		    fputs(scrbuf,stdout) FLUSH;
+		    fputs(scrbuf,stdout);
 		    resetty();
 		    fgets(scrbuf, sizeof scrbuf, stdin);
 		    noecho();
@@ -846,7 +846,7 @@ dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
 			    strcpy(from_buf,tmpbuf);
 			    strcat(from_buf,s3);
 			} else {
-			    from_buf = savestr(tmpbuf);
+			    from_buf = estrdup(tmpbuf);
 			}
 			s = from_buf;
 		    }
@@ -1123,6 +1123,6 @@ normalize_refs (char *refs)
 static void
 abort_interp (void)
 {
-    fputs("\n% interp buffer overflow!\n",stdout) FLUSH;
+    fputs("\n% interp buffer overflow!\n",stdout);
     sig_catcher(0);
 }

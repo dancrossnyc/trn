@@ -7,6 +7,7 @@
 #include "common.h"
 #include "env.h"
 #include "init.h"
+#include "util.h"
 #include "util2.h"
 #include "util3.h"
 #include "nntpclient.h"
@@ -70,7 +71,7 @@ main (int argc, char *argv[])
 	    cp = nntp_servername(cp);
     }
     if (cp && *cp && strNE(cp,"local")) {
-	server_name = savestr(cp);
+	server_name = estrdup(cp);
 	cp = index(server_name, ';');
 	if (cp) {
 	    *cp = '\0';

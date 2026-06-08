@@ -4,29 +4,37 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #include "utf.h"
 
-EXT bool waiting INIT(FALSE);  	/* waiting for subprocess (in doshell)? */
-EXT bool nowait_fork INIT(FALSE);
-EXT bool export_nntp_fds INIT(FALSE);
+extern bool waiting;  	/* waiting for subprocess (in doshell)? */
+extern bool nowait_fork;
+extern bool export_nntp_fds;
 
 /* the strlen and the buffer length of "some_buf" after a call to:
  *     some_buf = get_a_line(bufptr,bufsize,realloc,fp); */
-EXT int len_last_line_got INIT(0);
-EXT MEM_SIZE buflen_last_line_got INIT(0);
+extern size_t len_last_line_got;
+extern size_t buflen_last_line_got;
 
-#define AT_GREY_SPACE(s) ((s) && ((!at_norm_char(s)) || ((*s) && (*s) == ' ')))
-#define AT_NORM_CHAR(s)  at_norm_char(s)
+static inline bool
+AT_GREY_SPACE(const char *s) {
+    return s != NULL && (!at_norm_char(s) || (*s != '\0' && *s == ' '));
+}
+
+static inline bool
+AT_NORM_CHAR(const char *s) {
+    return at_norm_char(s);
+}
 
 /* is the string for makedir a directory name or a filename? */
-
 #define MD_DIR 	0
 #define MD_FILE 1
 
 /* a template for parsing an ini file */
-
 struct ini_words {
-    int checksum;
+    unsigned int checksum;
     char* item;
     char* help_str;
 };
@@ -35,24 +43,23 @@ struct ini_words {
 #define INI_VALUES(words)      ((char**)(words)[0].help_str)
 #define INI_VALUE(words,num)   INI_VALUES(words)[num]
 
-#define safefree(ptr)  if (!ptr) ; else free((char*)(ptr))
-#define safefree0(ptr)  if (!ptr) ; else free((char*)(ptr)), (ptr)=0
+#define safefree0(ptr)  ptr = safefree(ptr)
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
 void util_init (void);
-int doshell (char*,char*);
-#ifndef USE_DEBUGGING_MALLOC
-char* safemalloc (MEM_SIZE);
-char* saferealloc (char*,MEM_SIZE);
-#endif
-char* safecat (char*,char*,int);
+int doshell (char*, char*);
+void* safemalloc(size_t);
+void* saferealloc(void*, size_t);
+void *safefree(void*);
+char *estrdup(const char *);
+char* safecat (char*, const char*, size_t);
 #ifdef SETUIDGID
 int eaccess (char*,int);
 #endif
-char* trn_getwd (char*,int);
-char* get_a_line (char*,int,bool_int,FILE*);
-int makedir (char*,int);
+char* trn_getwd (char*, size_t);
+char* get_a_line(char*, size_t, bool, FILE*);
+int makedir (char*, int);
 void notincl (char*);
 void growstr (char**,int*,int);
 void setdef (char*,char*);
@@ -63,7 +70,7 @@ void safelink (char*,char*);
 char* trn_strstr (char*,char*);
 #endif
 void verify_sig (void);
-double current_time (void);
+uint64_t current_time_ms (void);
 time_t text2secs (char*,time_t);
 char* secs2text (time_t);
 char* temp_filename (void);

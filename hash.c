@@ -83,7 +83,7 @@ hashdestroy (HASHTABLE *tbl)
     }
     tbl->ht_magic = 0;			/* de-certify this table */
     tbl->ht_addr = NULL;
-    free((char*)tbl);
+    safefree((char *)tbl);
 }
 
 void
@@ -262,7 +262,7 @@ hefree (				/* free a hash entry */
 {
 #ifdef HASH_FREE_ENTRIES
     if (reusables >= RETAIN)		/* compost heap is full? */
-	free((char*)hp);		/* yup, just pitch this one */
+	safefree((char *)hp);		/* yup, just pitch this one */
     else {				/* no, just stash for reuse */
 	++reusables;
 	hp->he_next = hereuse;

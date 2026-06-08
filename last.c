@@ -20,7 +20,7 @@ static long starttime;
 void
 last_init (void)
 {
-    lastfile = savestr(filexp(LASTNAME));
+    lastfile = estrdup(filexp(LASTNAME));
 
     starttime = (long)time((time_t*)NULL);
     readlast();
@@ -35,7 +35,7 @@ readlast (void)
 	    buf[strlen(buf)-1] = '\0';
 	    if (*buf) {
 		safefree0(lastngname);
-		lastngname = savestr(buf);
+		lastngname = estrdup(buf);
 	    }
 	    fscanf(tmpfp,"%ld %ld %ld %ld",&lasttime,&lastactsiz,
 					   &lastnewtime,&lastextranum);
@@ -65,7 +65,7 @@ writelast (void)
 	RENAME(buf,lastfile);
     }
     else {
-	printf(cantcreate,buf) FLUSH;
+	printf(cantcreate,buf);
 	/*termdown(1);*/
     }
 }

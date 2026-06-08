@@ -57,7 +57,7 @@ sc_init (
 
     if (lastart == 0 || lastart < absfirst) {
 #if 0
-	printf("No articles exist to be scored.\n") FLUSH;
+	printf("No articles exist to be scored.\n");
 #endif
 	return;
     }
@@ -162,7 +162,7 @@ sc_init (
 	}
     }
     if (sf_verbose)
-	putchar('\n') FLUSH;
+	putchar('\n');
 
     sc_initialized = TRUE;
 }
@@ -187,7 +187,7 @@ sc_cleanup (void)
     sc_initialized = FALSE;
 
     if (sf_verbose)
-	printf("Done.\n") FLUSH;
+	printf("Done.\n");
 }
 
 void
@@ -256,7 +256,7 @@ sc_score_art (
 {
     if (a < absfirst || a > lastart) {
 #if 0
- 	printf("\nsc_score_art: illegal article# %d\n",a) FLUSH;
+ 	printf("\nsc_score_art: illegal article# %d\n",a);
 #endif
 	return LOWSCORE;		/* definitely unavailable */
     }
@@ -412,7 +412,7 @@ sc_rescore_arts (void)
 	sc_sf_delay = FALSE;
     }
     if (!sc_initialized) {
-	printf("\nScoring is not initialized, aborting command.\n") FLUSH;
+	printf("\nScoring is not initialized, aborting command.\n");
 	return;
     }
     /* I think sc_do_spin will always be false, but why take chances? */
@@ -455,7 +455,7 @@ sc_append (char *line)
 	sc_sf_delay = FALSE;
     }
     if (!sc_initialized) {
-	printf("\nScoring is not initialized, aborting command.\n") FLUSH;
+	printf("\nScoring is not initialized, aborting command.\n");
 	return;
     }
     if (!*line) {
@@ -469,7 +469,7 @@ sc_append (char *line)
 	printf("\nRescoring articles...");
 	fflush(stdout);
 	sc_rescore_arts();
-	printf("Done.\n") FLUSH;
+	printf("Done.\n");
 #ifdef SCAN_ART
 	if (sa_initialized)
 	    s_top_ent = -1;		/* reset top of page */
@@ -511,7 +511,7 @@ sc_score_cmd (char *line)
 	sc_sf_delay = FALSE;
     }
     if (!sc_initialized) {
-	printf("\nScoring is not initialized, aborting command.\n") FLUSH;
+	printf("\nScoring is not initialized, aborting command.\n");
 	return;
     }
     if (!*line) {
@@ -535,10 +535,10 @@ sc_score_cmd (char *line)
 	setspin(SPIN_POP);
 	/* consider a "done" message later,
 	 * *if* lookahead did all the arts */
-	putchar('\n') FLUSH;
+	putchar('\n');
 	break;
       case 'r':	/* rescore */
-	printf("Rescoring articles...\n") FLUSH;
+	printf("Rescoring articles...\n");
 	sc_rescore();
 	break;
       case 's':	/* verbose score for this article */
@@ -552,9 +552,9 @@ sc_score_cmd (char *line)
 	j = sc_score_art(art,TRUE);
 	if (i != j) {
 	    /* Consider resubmitting article to filter? */
-	    printf("Other scoring total: %ld\n", j - i) FLUSH;
+	    printf("Other scoring total: %ld\n", j - i);
 	}
-	printf("Total score is %ld\n",i) FLUSH;
+	printf("Total score is %ld\n",i);
 	break;
       case 'e':	/* edit scorefile or other file */
 	for (s = line+1; *s == ' ' || *s == '\t'; s++) ;

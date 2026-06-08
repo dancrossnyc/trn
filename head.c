@@ -62,7 +62,7 @@ dumpheader (char *where)
     for (i = HEAD_FIRST-1; i < HEAD_LAST; i++) {
 	printf("%15s %4ld %4ld %03o\n",htype[i].name,
 	       (long)htype[i].minpos, (long)htype[i].maxpos,
-	       htype[i].flags) FLUSH;
+	       htype[i].flags);
     }
 }
 #endif
@@ -123,8 +123,8 @@ get_header_num (char *s)
 	char* bp;
 	char ch;
 	if (htype[CUSTOM_LINE].name != nullstr)
-	    free(htype[CUSTOM_LINE].name);
-	htype[CUSTOM_LINE].name = savestr(msg);
+	    safefree(htype[CUSTOM_LINE].name);
+	htype[CUSTOM_LINE].name = estrdup(msg);
 	htype[CUSTOM_LINE].length = end - s;
 	htype[CUSTOM_LINE].flags = htype[i].flags;
 	htype[CUSTOM_LINE].minpos = -1;
@@ -184,7 +184,7 @@ end_header_line (void)
 	    if (!get_cached_line(parsed_artp, in_header, TRUE)) {
 		int start = htype[in_header].minpos
 			  + htype[in_header].length + 1;
-		MEM_SIZE size;
+		size_t size;
 		while (headbuf[start] == ' ' || headbuf[start] == '\t')
 		    start++;
 		size = artpos - start + 1 - 1;	/* pre-strip newline */
@@ -269,8 +269,8 @@ end_header (void)
 	    growstr(&references, &reflen, reflen + strlen(inreply) + 1);
 	    safecat(references, inreply, reflen);
 	    thread_article(ap, references);
-	    free(inreply);
-	    free(references);
+	    safefree(inreply);
+	    safefree(references);
 	    artp = artp_hold;
 	    check_poster(ap);
 	}
@@ -374,10 +374,10 @@ fetchlines (
 	/* If the line is not in the cache, this will parse the header */
 	s = fetchcache(artnum,which_line,FILL_CACHE);
 	if (s)
-	    return savestr(s);
+	    return estrdup(s);
     }
     if ((firstpos = htype[which_line].minpos) < 0)
-	return savestr(nullstr);
+	return estrdup(nullstr);
 
     firstpos += htype[which_line].length + 1;
     lastpos = htype[which_line].maxpos;
@@ -390,7 +390,7 @@ fetchlines (
 	fgets(cmd_buf, sizeof cmd_buf, stdin);
     }
 #endif
-    s = safemalloc((MEM_SIZE)size);
+    s = safemalloc((size_t)size);
     safecpy(s,t,size);
     return s;
 }
@@ -415,10 +415,10 @@ mp_fetchlines (
 	/* If the line is not in the cache, this will parse the header */
 	s = fetchcache(artnum,which_line,FILL_CACHE);
 	if (s)
-	    return mp_savestr(s,pool);
+	    return mp_estrdup(s,pool);
     }
     if ((firstpos = htype[which_line].minpos) < 0)
-	return mp_savestr(nullstr,pool);
+	return mp_estrdup(nullstr,pool);
 
     firstpos += htype[which_line].length + 1;
     lastpos = htype[which_line].maxpos;
@@ -443,7 +443,7 @@ char *
 prefetchlines (
     ART_NUM artnum,				/* article to get line from */
     int which_line,				/* type of line desired */
-    bool_int copy				/* do you want it savestr()ed? */
+    bool_int copy				/* do you want it estrdup()ed? */
 )
 {
     char* s;
@@ -462,13 +462,13 @@ prefetchlines (
 	s = fetchcache(artnum,which_line,DONT_FILL_CACHE);
 	if (s) {
 	    if (copy)
-		s = savestr(s);
+		s = estrdup(s);
 	    return s;
 	}
 
 	spin(20);
 	if (copy)
-	    s = safemalloc((MEM_SIZE)(size = LBUFLEN));
+	    s = safemalloc((size_t)(size = LBUFLEN));
 	else {
 	    s = cmd_buf;
 	    size = sizeof cmd_buf;
@@ -490,12 +490,12 @@ prefetchlines (
 	if (nntp_check() > 0) {
 	    char* line;
 	    char* last_buf = ser_line;
-	    MEM_SIZE last_buflen = sizeof ser_line;
+	    size_t last_buflen = sizeof ser_line;
 	    for (;;) {
 		line = nntp_get_a_line(last_buf,last_buflen,last_buf!=ser_line);
 # ifdef DEBUG
 		if (debug & DEB_NNTP)
-		    printf("<%s", line? line : "<EOF>") FLUSH;
+		    printf("<%s", line? line : "<EOF>");
 # endif
 		if (nntp_at_list_end(line))
 		    break;
@@ -517,7 +517,7 @@ prefetchlines (
 		if (which_line == SUBJ_LINE)
 		    set_subj_line(ap, t, strlen(t));
 		else if (cached)
-		    set_cached_line(ap, which_line, savestr(t));
+		    set_cached_line(ap, which_line, estrdup(t));
 		if (num == artnum)
 		    safecat(s,t,size);
 	    }
@@ -537,7 +537,7 @@ prefetchlines (
 		uncache_article(article_ptr(priornum),FALSE);
 	}
 	if (copy)
-	    s = saferealloc(s, (MEM_SIZE)strlen(s)+1);
+	    s = saferealloc(s, (size_t)strlen(s)+1);
 	return s;
     }
 
@@ -549,7 +549,7 @@ prefetchlines (
 	s = nullstr;
     if (s) {
 	if (copy)
-	    s = savestr(s);
+	    s = estrdup(s);
 	return s;
     }
 
@@ -559,7 +559,7 @@ prefetchlines (
     t = headbuf + firstpos;
     while (*t == ' ' || *t == '\t') t++, size--;
     if (copy)
-	s = safemalloc((MEM_SIZE)size);
+	s = safemalloc((size_t)size);
     else {				/* hope this is okay--we're */
 	s = cmd_buf;			/* really scraping for space here */
 	if (size > sizeof cmd_buf)

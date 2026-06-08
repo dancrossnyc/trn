@@ -66,7 +66,7 @@ static ARTICLE* the_article (int,int);
 static int read_articles (void);
 static int read_ids (void);
 static void tweak_data (void);
-static int read_item (char**,MEM_SIZE);
+static int read_item (char**,size_t);
 static void mybytemap (BMAP*);
 static void wp_bmap (WORD*,int);
 static void lp_bmap (LONG*,int);

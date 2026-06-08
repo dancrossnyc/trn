@@ -46,7 +46,7 @@ mime_init (void)
 
     if ((mcname = getenv("MIMECAPS")) == NULL)
 	mcname = getval("MAILCAPS", MIMECAP);
-    mcname = s = savestr(mcname);
+    mcname = s = estrdup(mcname);
     do {
 	if ((t = index(s, ':')) != NULL)
 	    *t++ = '\0';
@@ -54,7 +54,7 @@ mime_init (void)
 	    mime_ReadMimecap(s);
 	s = t;
     } while (s && *s);
-    free(mcname);
+    safefree(mcname);
 }
 
 void
@@ -108,8 +108,8 @@ mime_ReadMimecap (char *mcname)
 	    continue;
 	}
 	mcp = mimecap_ptr(++i);
-	mcp->contenttype = savestr(t);
-	mcp->command = savestr(mime_ParseEntryArg(&s));
+	mcp->contenttype = estrdup(t);
+	mcp->command = estrdup(mime_ParseEntryArg(&s));
 	while (s) {
 	    t = mime_ParseEntryArg(&s);
 	    if ((arg = index(t, '=')) != NULL) {
@@ -128,16 +128,16 @@ mime_ReadMimecap (char *mcname)
 		else if (strcaseEQ(t, "copiousoutput"))
 		    mcp->flags |= MCF_COPIOUSOUTPUT;
 		else if (arg && strcaseEQ(t, "test"))
-		    mcp->testcommand = savestr(arg);
+		    mcp->testcommand = estrdup(arg);
 		else if (arg && strcaseEQ(t, "description"))
-		    mcp->label = savestr(arg);
+		    mcp->label = estrdup(arg);
 		else if (arg && strcaseEQ(t, "label"))
-		    mcp->label = savestr(arg); /* bogus old name for description */
+		    mcp->label = estrdup(arg); /* bogus old name for description */
 	    }
 	}
     }
     mimecap_list->high = i;
-    free(bp);
+    safefree(bp);
     fclose(fp);
 }
 
@@ -272,7 +272,7 @@ mime_PopSection (void)
     MIME_SECT* mp = mime_section->prev;
     if (mp) {
 	mime_ClearStruct(mime_section);
-	free((char*)mime_section);
+	safefree((char *)mime_section);
 	mime_section = mp;
 	mime_state = mp->type;
 	return TRUE;
@@ -311,23 +311,23 @@ mime_SetArticle (void)
 
     s = fetchlines(art,CONTTYPE_LINE);
     mime_ParseType(mime_section,s);
-    free(s);
+    safefree(s);
 
     if (is_mime) {
 	s = fetchlines(art,CONTXFER_LINE);
 	mime_ParseEncoding(mime_section,s);
-	free(s);
+	safefree(s);
 
 	s = fetchlines(art,CONTDISP_LINE);
 	mime_ParseDisposition(mime_section,s);
-	free(s);
+	safefree(s);
 
 	mime_state = mime_section->type;
 	if (mime_state == NOT_MIME
 	 || (mime_state == TEXT_MIME && mime_section->encoding == MENCODE_NONE))
 	    is_mime = FALSE;
 	else if (!mime_section->type_name)
-	    mime_section->type_name = savestr(text_plain);
+	    mime_section->type_name = estrdup(text_plain);
     }
 }
 
@@ -345,11 +345,11 @@ mime_ParseType (MIME_SECT *mp, char *s)
 	mp->type = NOT_MIME;
 	return;
     }
-    mp->type_name = savestr(s);
+    mp->type_name = estrdup(s);
     t = mime_FindParam(mp->type_params,"name");
     if (t) {
 	safefree(mp->filename);
-	mp->filename = savestr(t);
+	mp->filename = estrdup(t);
     }
 
     if (strncaseEQ(s, "text", 4)) {
@@ -375,7 +375,7 @@ mime_ParseType (MIME_SECT *mp, char *s)
 	    if (!t)
 		return;
 	    safefree(mp->filename);
-	    mp->filename = savestr(t);
+	    mp->filename = estrdup(t);
 	    t = mime_FindParam(mp->type_params,"number");
 	    if (t)
 		mp->part = (short)atoi(t);
@@ -401,7 +401,7 @@ mime_ParseType (MIME_SECT *mp, char *s)
 	if (strncaseEQ(s, "alternative", 11))
 	    mp->flags |= MSF_ALTERNATIVE;
 	safefree(mp->boundary);
-	mp->boundary = savestr(t);
+	mp->boundary = estrdup(t);
 	mp->boundary_len = (short)strlen(t);
 	mp->type = MULTIPART_MIME;
 	return;
@@ -433,7 +433,7 @@ mime_ParseDisposition (MIME_SECT *mp, char *s)
     s = mime_FindParam(params,"filename");
     if (s) {
 	safefree(mp->filename);
-	mp->filename = savestr(s);
+	mp->filename = estrdup(s);
     }
     safefree(params);
 }
@@ -533,7 +533,7 @@ mime_ParseSubheader (FILE *ifp, char *next_line)
 	  case CONTNAME_LINE:
 	    safefree(mime_section->filename);
 	    s = mime_SkipWhitespace(s+1);
-	    mime_section->filename = savestr(s);
+	    mime_section->filename = estrdup(s);
 	    break;
 #if 0
 	  case CONTLEN_LINE:
@@ -544,7 +544,7 @@ mime_ParseSubheader (FILE *ifp, char *next_line)
     }
     mime_state = mime_section->type;
     if (!mime_section->type_name)
-	mime_section->type_name = savestr(text_plain);
+	mime_section->type_name = estrdup(text_plain);
 }
 
 void
@@ -623,7 +623,7 @@ mime_ParseParams (char *str)
     char* e;
     s = e = mime_SkipWhitespace(str);
     while (*e && *e != ';' && !isspace(*e) && *e != '(') e++;
-    t = savestr(mime_SkipWhitespace(e));
+    t = estrdup(mime_SkipWhitespace(e));
     *e = '\0';
     if (s != str)
 	safecpy(str, s, e - s + 1);
@@ -1590,7 +1590,7 @@ tag_action (char *t, char *word, bool_int opening_tag)
     if (mime_section->html & HF_NEED_INDENT)	printf("HF_NEED_INDENT ");
     if (mime_section->html & HF_SPACE_OK)	printf("HF_SPACE_OK ");
     if (mime_section->html & HF_COMPACT)	printf("HF_COMPACT ");
-    printf("\n") FLUSH;
+    printf("\n");
 #endif
     return t;
 }

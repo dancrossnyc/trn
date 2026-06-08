@@ -58,7 +58,7 @@ matchlist (char *patlist, char *s)
 	    *p++ = ',';
 
 	if (err != NULL) {
-	    printf("\n%s\n", err) FLUSH;
+	    printf("\n%s\n", err);
 	    finalize(1);
 	}
 

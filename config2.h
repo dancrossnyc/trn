@@ -10,12 +10,6 @@
 #include <unistd.h>
 #include <pwd.h>
 
-#ifdef USE_DEBUGGING_MALLOC
-#   include "malloc.h"
-#   define safemalloc malloc
-#   define saferealloc realloc
-#endif
-
 #define bool_int int
 #define char_int int
 #ifndef TRUE

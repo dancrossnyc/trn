@@ -51,7 +51,7 @@ sa_refresh_top (void)
 	printf(" follow");
     color_pop();	/* of COLOR_SCORE */
     erase_eol();
-    printf("\n") FLUSH;
+    printf("\n");
 }
 
 void
