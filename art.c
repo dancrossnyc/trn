@@ -52,12 +52,47 @@
 #include "tktree.h"
 #endif
 #include "color.h"
-#include "INTERN.h"
 #include "art.h"
 #include "artstate.h"			/* somebody has to do it */
 
-#define LINE_PTR(pos) (artbuf + (pos) - htype[PAST_HEADER].minpos)
-#define LINE_OFFSET(ptr) ((ptr) - artbuf + htype[PAST_HEADER].minpos)
+ART_LINE highlight = -1;
+ART_LINE first_view;
+ART_POS raw_artsize;
+ART_POS artsize;
+char art_line[LBUFLEN];
+int gline = 0;
+ART_POS innersearch = 0;
+ART_LINE innerlight = 0;
+char hide_everything = 0;
+
+bool reread = FALSE;
+bool do_fseek = FALSE;
+bool oldsubject = FALSE;
+ART_LINE topline = -1;
+bool do_hiding = TRUE;
+bool is_mime = FALSE;
+bool multimedia_mime = FALSE;
+bool rotate = FALSE;
+char* prompt;
+char* firstline = NULL;
+char* hideline = NULL;
+char* pagestop = NULL;
+COMPEX hide_compex;
+COMPEX page_compex;
+
+//#define _LINE_PTR(pos) (artbuf + (pos) - htype[PAST_HEADER].minpos)
+//#define _LINE_OFFSET(ptr) ((ptr) - artbuf + htype[PAST_HEADER].minpos)
+//
+static inline char *
+LINE_PTR(size_t pos)
+{
+	return artbuf + pos - htype[PAST_HEADER].minpos;
+}
+static inline size_t
+LINE_OFFSET(char *ptr)
+{
+	return ptr - artbuf + htype[PAST_HEADER].minpos;
+}
 
 /* page_switch() return values */
 

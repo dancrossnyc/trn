@@ -700,22 +700,22 @@
 
 /* file statistics area */
 
-EXT struct stat filestat;
+extern struct stat filestat;
 
 /* various things of type char */
 
-EXT char msg[CBUFLEN];		/* general purpose message buffer */
-EXT char buf[LBUFLEN+1];	/* general purpose line buffer */
-EXT char cmd_buf[CBUFLEN];	/* buffer for formatting system commands */
-EXT char* indstr INIT(">");	/* indent for old article embedded in followup */
+extern char msg[CBUFLEN];	/* general purpose message buffer */
+extern char buf[LBUFLEN+1];	/* general purpose line buffer */
+extern char cmd_buf[CBUFLEN];	/* buffer for formatting system commands */
+extern char* indstr;		/* indent for old article embedded in followup */
 
-EXT char* cwd INIT(NULL);	/* current working directory */
-EXT char* dfltcmd INIT(NULL);	/* 1st char is default command */
+extern char* cwd;		/* current working directory */
+extern char* dfltcmd;		/* 1st char is default command */
 
 /* switches */
 
 #ifdef DEBUG
-    EXT int debug INIT(0);				/* -D */
+    extern int debug;		/* -D */
 #   define DEB_COREDUMPSOK 2
 #   define DEB_HEADER 4
 #   define DEB_INTRP 8
@@ -733,140 +733,135 @@ EXT char* dfltcmd INIT(NULL);	/* 1st char is default command */
 #endif
 
 #ifdef ARTSEARCH
-EXT int scanon INIT(0);					/* -S */
+extern int scanon;					/* -S */
 #endif
 
-EXT bool use_threads INIT(THREAD_INIT);			/* -x */
-EXT int max_tree_lines INIT(6);
+extern bool use_threads;			/* -x */
+extern int max_tree_lines;
 
-EXT char UnivSelCmds[3] INIT("Z>");
-EXT char NewsrcSelCmds[3] INIT("Z>");
-EXT char AddSelCmds[3] INIT("Z>");
-EXT char NewsgroupSelCmds[3] INIT("Z>");
-EXT char NewsSelCmds[3] INIT("Z>");
-EXT char OptionSelCmds[3] INIT("Z>");
+extern char UnivSelCmds[3];
+extern char NewsrcSelCmds[3];
+extern char AddSelCmds[3];
+extern char NewsgroupSelCmds[3];
+extern char NewsSelCmds[3];
+extern char OptionSelCmds[3];
 
-EXT int UnivSelBtnCnt;
-EXT int NewsrcSelBtnCnt;
-EXT int AddSelBtnCnt;
-EXT int NewsgroupSelBtnCnt;
-EXT int NewsSelBtnCnt;
-EXT int OptionSelBtnCnt;
-EXT int ArtPagerBtnCnt;
+extern int UnivSelBtnCnt;
+extern int NewsrcSelBtnCnt;
+extern int AddSelBtnCnt;
+extern int NewsgroupSelBtnCnt;
+extern int NewsSelBtnCnt;
+extern int OptionSelBtnCnt;
+extern int ArtPagerBtnCnt;
 
-EXT char* UnivSelBtns INIT(NULL);
-EXT char* NewsrcSelBtns INIT(NULL);
-EXT char* AddSelBtns INIT(NULL);
-EXT char* NewsgroupSelBtns INIT(NULL);
-EXT char* NewsSelBtns INIT(NULL);
-EXT char* OptionSelBtns INIT(NULL);
-EXT char* ArtPagerBtns INIT(NULL);
+extern char* UnivSelBtns;
+extern char* NewsrcSelBtns;
+extern char* AddSelBtns;
+extern char* NewsgroupSelBtns;
+extern char* NewsSelBtns;
+extern char* OptionSelBtns;
+extern char* ArtPagerBtns;
 
-EXT bool dont_filter_control INIT(FALSE);		/* -j */
-EXT int  join_subject_len INIT(0);			/* -J */
-EXT bool kill_thru_kludge INIT(TRUE);			/* -k */
-EXT bool keep_the_group_static INIT(FALSE);		/* -K */
-EXT bool mbox_always INIT(FALSE);			/* -M */
-EXT bool norm_always INIT(FALSE);			/* -N */
-EXT bool thread_always INIT(FALSE);			/* -a */
-EXT int auto_arrow_macros INIT(2);			/* -A */
-EXT bool breadth_first INIT(FALSE);			/* -b */
-EXT bool bkgnd_spinner INIT(FALSE);			/* -B */
-EXT bool novice_delays INIT(TRUE);			/* +f */
-EXT int olden_days INIT(FALSE);				/* -o */
-EXT char auto_select_postings INIT(0);			/* -p */
-EXT bool checkflag INIT(FALSE);				/* -c */
-EXT char* savedir INIT(NULL);				/* -d */
-EXT bool suppress_cn INIT(FALSE);			/* -s */
-EXT int countdown INIT(5);	/* how many lines to list before invoking -s */
-EXT bool muck_up_clear INIT(FALSE);			/* -loco */
-EXT bool erase_screen INIT(FALSE);			/* -e */
-EXT bool can_home INIT(FALSE);
-EXT bool erase_each_line INIT(FALSE);			/* fancy -e */
-EXT int findlast INIT(0);				/* -r */
-EXT bool allow_typeahead INIT(FALSE);			/* -T */
+extern bool dont_filter_control;		/* -j */
+extern int  join_subject_len;			/* -J */
+extern bool kill_thru_kludge;			/* -k */
+extern bool keep_the_group_static;		/* -K */
+extern bool mbox_always;			/* -M */
+extern bool norm_always;			/* -N */
+extern bool thread_always;			/* -a */
+extern int auto_arrow_macros;			/* -A */
+extern bool breadth_first;			/* -b */
+extern bool bkgnd_spinner;			/* -B */
+extern bool novice_delays;			/* +f */
+extern int olden_days;				/* -o */
+extern char auto_select_postings;			/* -p */
+extern bool checkflag;				/* -c */
+extern char* savedir;				/* -d */
+extern bool suppress_cn;			/* -s */
+extern int countdown;	/* how many lines to list before invoking -s */
+extern bool muck_up_clear;			/* -loco */
+extern bool erase_screen;			/* -e */
+extern bool can_home;
+extern bool erase_each_line;			/* fancy -e */
+extern int findlast;				/* -r */
+extern bool allow_typeahead;			/* -T */
 #ifdef EDIT_DISTANCE
-EXT bool fuzzyGet INIT(FALSE);				/* -G */
+extern bool fuzzyGet;				/* -G */
 #endif
 #ifdef VERBOSE
 #   ifdef TERSE
-EXT bool verbose INIT(TRUE);				/* +t */
+extern bool verbose;				/* +t */
 #   endif
 #endif
-EXT bool unbroken_subjects INIT(FALSE);			/* -u */
-EXT bool unsafe_rc_saves INIT(FALSE);			/* -U */
+extern bool unbroken_subjects;			/* -u */
+extern bool unsafe_rc_saves;			/* -U */
 #ifdef VERIFY
-EXT bool verify INIT(FALSE);				/* -v */
+extern bool verify;				/* -v */
 #endif
-EXT bool quickstart INIT(FALSE);			/* -q */
+extern bool quickstart;			/* -q */
 
 #define DEFAULT_REFETCH_SECS  4L*60*60	/* 4 hours */
-EXT time_t defRefetchSecs INIT(DEFAULT_REFETCH_SECS);	/* -z */
+extern time_t defRefetchSecs;	/* -z */
 
-EXT int word_wrap_offset INIT(8);  /* right-hand column size (0 is off) */
+extern int word_wrap_offset;  /* right-hand column size (0 is off) */
 
 #define NOMARKING 0
 #define STANDOUT 1
 #define UNDERLINE 2
 #define LASTMARKING 3
-EXT int marking INIT(NOMARKING);			/* -m */
+extern int marking;			/* -m */
 #define HALFPAGE_MARKING 1
 #define BACKPAGE_MARKING 2
-EXT int marking_areas INIT(HALFPAGE_MARKING);
+extern int marking_areas;
 
-EXT ART_LINE initlines INIT(0);				/* -i */
-EXT bool append_unsub					/* -I */
-#ifdef APPEND_UNSUB
-     INIT(1);
-#else
-     INIT(0);
-#endif
+extern ART_LINE initlines;				/* -i */
+extern bool append_unsub;				/* -I */
 
-EXT bool UseUnivSelector INIT(FALSE);
-EXT bool UseNewsrcSelector INIT(FALSE);
-EXT bool UseAddSelector INIT(TRUE);
-EXT bool UseNewsgroupSelector INIT(TRUE);
-EXT int UseNewsSelector INIT(SELECT_INIT-1);
-EXT bool UseMouse INIT(FALSE);
-EXT char MouseModes[32] INIT("acjlptwvK");
-EXT bool use_colors INIT(FALSE);
-EXT bool UseTk INIT(FALSE);
-EXT bool UseTcl INIT(FALSE);
-EXT bool UseSelNum INIT(FALSE);
-EXT bool SelNumGoto INIT(FALSE);
+extern bool UseUnivSelector;
+extern bool UseNewsrcSelector;
+extern bool UseAddSelector;
+extern bool UseNewsgroupSelector;
+extern int UseNewsSelector;
+extern bool UseMouse;
+extern char MouseModes[32];
+extern bool use_colors;
+extern bool UseTk;
+extern bool UseTcl;
+extern bool UseSelNum;
+extern bool SelNumGoto;
 /* miscellania */
 
-EXT bool in_ng INIT(FALSE);		/* TRUE if in a newsgroup */
-EXT char mode INIT('i');		/* current state of trn */
-EXT char gmode INIT('I');		/* general mode of trn */
+extern bool in_ng;		/* TRUE if in a newsgroup */
+extern char mode;		/* current state of trn */
+extern char gmode;		/* general mode of trn */
 
-EXT FILE* tmpfp INIT(NULL);	/* scratch fp used for .rnlock, .rnlast, etc. */
+extern FILE* tmpfp;	/* scratch fp used for .rnlock, .rnlast, etc. */
 
-#define PLURAL(num) ((num)==1? nullstr : ess)
+//#define PLURAL(num) ((num)==1? nullstr : ess)
+static inline const char *
+PLURAL(size_t num)
+{
+	return num == 1 ? "" : "s";
+}
 #define ALLBITS(val,bits) (((val) & (bits)) == (bits))
 
 /* Factored strings */
 
-EXT char nullstr[1] INIT("");
-EXT char ess[2] INIT("s");
-EXT char sh[] INIT(SH);
-EXT char defeditor[] INIT(DEFEDITOR);
-EXT char hforhelp[] INIT("Type h for help.\n");
+extern char nullstr[1];
+extern char ess[2];
+extern char sh[];
+extern char defeditor[];
+extern char hforhelp[];
 #ifdef STRICTCR
-EXT char badcr[] INIT("\nUnnecessary CR ignored.\n");
+extern char badcr[];
 #endif
-EXT char readerr[] INIT("rn read error");
-EXT char unsubto[] INIT("Unsubscribed to newsgroup %s\n");
-EXT char cantopen[] INIT("Can't open %s\n");
-EXT char cantcreate[] INIT("Can't create %s\n");
-EXT char cantrecreate[] INIT("Can't recreate %s -- restoring older version.\n\
-Perhaps you are near or over quota?\n");
+extern char readerr[];
+extern char unsubto[];
+extern char cantopen[];
+extern char cantcreate[];
+extern char cantrecreate[];
 
-#ifdef VERBOSE
-    EXT char nocd[] INIT("Can't chdir to directory %s\n");
-#else
-    EXT char nocd[] INIT("Can't find %s\n");
-#endif
+extern char nocd[];
 
 #define nntp_advise(str) fputs(str,stdout)
 #define nntp_init_error(str) fputs(str,stdout)

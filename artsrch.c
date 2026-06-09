@@ -28,8 +28,16 @@
 #include "rthread.h"
 #include "rt-util.h"
 #include "rt-select.h"
-#include "INTERN.h"
 #include "artsrch.h"
+
+char* lastpat = nullstr;
+COMPEX sub_compex;
+COMPEX art_compex;
+COMPEX* bra_compex = &(art_compex);
+char scopestr[] = "sfHhbBa";
+int art_howmuch;
+int art_srchhdr;
+bool art_doread;
 
 void
 artsrch_init (void)

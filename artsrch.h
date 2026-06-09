@@ -18,11 +18,11 @@
 #define SRCH_ERROR 6
 #endif
 
-EXT char* lastpat INIT(nullstr);	/* last search pattern */
+extern char* lastpat;		/* last search pattern */
 #ifdef ARTSEARCH
-EXT COMPEX sub_compex;		/* last compiled subject search */
-EXT COMPEX art_compex;		/* last compiled normal search */
-EXT COMPEX* bra_compex INIT(&(art_compex)); /* current compex with brackets */
+extern COMPEX sub_compex;	/* last compiled subject search */
+extern COMPEX art_compex;	/* last compiled normal search */
+extern COMPEX* bra_compex;	/* current compex with brackets */
 
 #define ARTSCOPE_SUBJECT	0
 #define ARTSCOPE_FROM		1
@@ -32,10 +32,10 @@ EXT COMPEX* bra_compex INIT(&(art_compex)); /* current compex with brackets */
 #define ARTSCOPE_BODY		5
 #define ARTSCOPE_ARTICLE	6
 
-EXT char scopestr[] INIT("sfHhbBa");
-EXT int art_howmuch;		/* search scope */
-EXT int art_srchhdr;		/* specific header number to search */
-EXT bool art_doread;		/* search read articles? */
+extern char scopestr[];
+extern int art_howmuch;		/* search scope */
+extern int art_srchhdr;		/* specific header number to search */
+extern bool art_doread;		/* search read articles? */
 #endif
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */

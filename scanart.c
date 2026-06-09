@@ -8,7 +8,6 @@
 
 #include "EXTERN.h"
 #include "common.h"
-#ifdef SCAN_ART
 #include "hash.h"
 #include "cache.h"
 #include "ng.h"		/* variable art, the next article to read. */
@@ -26,6 +25,41 @@
 #include "EXTERN.h"
 #include "samain.h"
 #include "samisc.h"
+
+SA_ENTRYDATA* sa_ents = (SA_ENTRYDATA*)0;
+int sa_num_ents = 0;
+int sa_ents_alloc = 0;
+bool sa_initialized = FALSE;
+bool sa_never_initialized = TRUE;
+bool sa_in = FALSE;
+bool sa_go = FALSE;
+bool sa_go_explicit = FALSE;
+bool sa_context_init = FALSE;
+ART_NUM sa_art = 0;
+bool sa_do_selthreads = FALSE;
+bool sa_mode_read_elig = FALSE;
+
+#ifdef SCORE
+int sa_mode_order = 2;
+#else
+int sa_mode_order = 1;
+#endif
+
+bool sa_mark_stay = FALSE;
+bool sa_unzoomrefold = FALSE;
+bool sa_mode_fold = FALSE;
+bool sa_follow = TRUE;
+bool sa_mode_desc_artnum = FALSE;
+bool sa_mode_desc_author = TRUE;
+#ifdef SCORE
+bool sa_mode_desc_score = TRUE;
+#else
+bool sa_mode_desc_score = FALSE;
+#endif
+bool sa_mode_desc_threadcount = FALSE;
+bool sa_mode_desc_subject = TRUE;
+bool sa_mode_desc_summary = FALSE;
+bool sa_mode_desc_keyw = FALSE;
 
 int
 sa_main (void)
@@ -114,4 +148,3 @@ sa_cleanup (void)
     clear();		/* should something else clear the screen? */
     sa_initialized = FALSE;		/* goodbye... */
 }
-#endif /* SCAN */

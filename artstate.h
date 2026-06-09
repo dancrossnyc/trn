@@ -3,23 +3,23 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-EXT bool reread INIT(FALSE);		/* consider current art temporarily */
-					/* unread? */
+extern bool reread;		/* consider current art temporarily */
+				/* unread? */
 
-EXT bool do_fseek INIT(FALSE);	/* should we back up in article file? */
+extern bool do_fseek;		/* should we back up in article file? */
 
-EXT bool oldsubject INIT(FALSE);	/* not 1st art in subject thread */
-EXT ART_LINE topline INIT(-1);		/* top line of current screen */
-EXT bool do_hiding INIT(TRUE);		/* hide header lines with -h? */
-EXT bool is_mime INIT(FALSE);		/* process mime in an article? */
-EXT bool multimedia_mime INIT(FALSE);	/* images/audio to see/hear? */
-EXT bool rotate INIT(FALSE);		/* has rotation been requested? */
-EXT char* prompt;			/* pointer to current prompt */
+extern bool oldsubject;		/* not 1st art in subject thread */
+extern ART_LINE topline;	/* top line of current screen */
+extern bool do_hiding;		/* hide header lines with -h? */
+extern bool is_mime;		/* process mime in an article? */
+extern bool multimedia_mime;	/* images/audio to see/hear? */
+extern bool rotate;		/* has rotation been requested? */
+extern char* prompt;		/* pointer to current prompt */
 
-EXT char* firstline INIT(NULL);		/* special first line? */
+extern char* firstline;		/* special first line? */
 #ifdef CUSTOMLINES
-EXT char* hideline INIT(NULL);		/* custom line hiding? */
-EXT char* pagestop INIT(NULL);		/* custom page terminator? */
-EXT COMPEX hide_compex;
-EXT COMPEX page_compex;
+extern char* hideline;		/* custom line hiding? */
+extern char* pagestop;		/* custom page terminator? */
+extern COMPEX hide_compex;
+extern COMPEX page_compex;
 #endif

@@ -29,31 +29,31 @@ struct sa_entrydata {
     char sa_flags;		/* status bitmap (marked, select, etc...) */
 };
 
-EXT SA_ENTRYDATA* sa_ents INIT((SA_ENTRYDATA*)0);
-EXT int sa_num_ents INIT(0);
-EXT int sa_ents_alloc INIT(0);
+extern SA_ENTRYDATA* sa_ents;
+extern int sa_num_ents;
+extern int sa_ents_alloc;
 
-EXT bool sa_initialized INIT(FALSE);	/* Have we initialized? */
-EXT bool sa_never_initialized INIT(TRUE); /* Have we ever initialized? */
+extern bool sa_initialized;	/* Have we initialized? */
+extern bool sa_never_initialized; /* Have we ever initialized? */
 
 /* note: sa_in should be checked for returning to SA */
-EXT bool sa_in INIT(FALSE);		/* Are we "in" SA? */
+extern bool sa_in;		/* Are we "in" SA? */
 
-EXT bool sa_go INIT(FALSE);		/* go to sa.  Do not pass GO (:-) */
-EXT bool sa_go_explicit INIT(FALSE);	/* want to bypass read-next-marked */
+extern bool sa_go;		/* go to sa.  Do not pass GO (:-) */
+extern bool sa_go_explicit;	/* want to bypass read-next-marked */
 
-EXT bool sa_context_init INIT(FALSE);	/* has context been initialized? */
+extern bool sa_context_init;	/* has context been initialized? */
 
 /* used to pass an article number to read soon */
-EXT ART_NUM sa_art INIT(0);
+extern ART_NUM sa_art;
 
 /* reimplement later */
 /* select threads from TRN thread selector */
-EXT bool sa_do_selthreads INIT(FALSE);
+extern bool sa_do_selthreads;
 
 /* TRUE if read articles are eligible */
 /* in scanart.h for world-visibilty */
-EXT bool sa_mode_read_elig INIT(FALSE);
+extern bool sa_mode_read_elig;
 
 /* Options */
 /* Display order variable:
@@ -61,38 +61,30 @@ EXT bool sa_mode_read_elig INIT(FALSE);
  * 1: Arrival order
  * 2: Descending score
  */
-#ifdef SCORE
-EXT int sa_mode_order INIT(2);
-#else
-EXT int sa_mode_order INIT(1);
-#endif
+extern int sa_mode_order;
 
 /* if TRUE, don't move the cursor after marking or selecting articles */
-EXT bool sa_mark_stay INIT(FALSE);
+extern bool sa_mark_stay;
 
 /* if TRUE, re-"fold" after an un-zoom operation. */
 /* This flag is useful for very slow terminals */
-EXT bool sa_unzoomrefold INIT(FALSE);
+extern bool sa_unzoomrefold;
 
 /* TRUE if in "fold" mode */
-EXT bool sa_mode_fold INIT(FALSE);
+extern bool sa_mode_fold;
 
 /* Follow threads by default? */
-EXT bool sa_follow INIT(TRUE);
+extern bool sa_follow;
 
 /* Options: what to display */
-EXT bool sa_mode_desc_artnum INIT(FALSE);	/* show art#s */
-EXT bool sa_mode_desc_author INIT(TRUE);	/* show author */
-#ifdef SCORE
-EXT bool sa_mode_desc_score INIT(TRUE);		/* show score */
-#else
-EXT bool sa_mode_desc_score INIT(FALSE);	/* show score */
-#endif
+extern bool sa_mode_desc_artnum;	/* show art#s */
+extern bool sa_mode_desc_author;	/* show author */
+extern bool sa_mode_desc_score;	/* show score */
 /* flags to determine whether to display various things */
-EXT bool sa_mode_desc_threadcount INIT(FALSE);
-EXT bool sa_mode_desc_subject INIT(TRUE);
-EXT bool sa_mode_desc_summary INIT(FALSE);
-EXT bool sa_mode_desc_keyw INIT(FALSE);
+extern bool sa_mode_desc_threadcount;
+extern bool sa_mode_desc_subject;
+extern bool sa_mode_desc_summary;
+extern bool sa_mode_desc_keyw;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
