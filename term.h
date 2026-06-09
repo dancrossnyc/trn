@@ -10,19 +10,19 @@ extern char *tgetstr(const char *id, char **area);
 extern char *tgoto(const char *cap, int col, int row);
 extern int tputs(const char *str, int affcnt, int (*putc)(int));
 
-EXT char ERASECH;		/* rubout character */
-EXT char KILLCH;		/* line delete character */
-EXT char circlebuf[PUSHSIZE];
-EXT int nextin INIT(0);
-EXT int nextout INIT(0);
-EXT unsigned char lastchar;
+extern char ERASECH;		/* rubout character */
+extern char KILLCH;		/* line delete character */
+extern char circlebuf[PUSHSIZE];
+extern int nextin;
+extern int nextout;
+extern unsigned char lastchar;
 
 /* stuff wanted by terminal mode diddling routines */
 
-EXT struct termios _tty, _oldtty;
+extern struct termios _tty, _oldtty;
 
-EXT int _tty_ch INIT(2);
-EXT bool bizarre INIT(FALSE);		/* do we need to restore terminal? */
+extern int _tty_ch;
+extern bool bizarre;		/* do we need to restore terminal? */
 
 /* terminal mode diddling routines */
 
@@ -53,47 +53,40 @@ EXT bool bizarre INIT(FALSE);		/* do we need to restore terminal? */
  */
 
 #ifdef HAS_TERMLIB
-EXT int tc_GT;				/* hardware tabs */
-EXT char* tc_BC INIT(NULL);		/* backspace character */
-EXT char* tc_UP INIT(NULL);		/* move cursor up one line */
-EXT char* tc_CR INIT(NULL);		/* get to left margin, somehow */
-EXT char* tc_VB INIT(NULL);		/* visible bell */
-EXT char* tc_CL INIT(NULL);		/* home and clear screen */
-EXT char* tc_CE INIT(NULL);		/* clear to end of line */
-EXT char* tc_TI INIT(NULL);		/* initialize terminal */
-EXT char* tc_TE INIT(NULL);		/* reset terminal */
-EXT char* tc_KS INIT(NULL);		/* enter `keypad transmit' mode */
-EXT char* tc_KE INIT(NULL);		/* exit `keypad transmit' mode */
-EXT char* tc_CM INIT(NULL);		/* cursor motion */
-EXT char* tc_HO INIT(NULL);		/* home cursor */
-EXT char* tc_IL INIT(NULL);		/* insert line */
-EXT char* tc_CD INIT(NULL);		/* clear to end of display */
-EXT char* tc_SO INIT(NULL);		/* begin standout mode */
-EXT char* tc_SE INIT(NULL);		/* end standout mode */
-EXT int tc_SG INIT(0);			/* blanks left by SO and SE */
-EXT char* tc_US INIT(NULL);		/* start underline mode */
-EXT char* tc_UE INIT(NULL);		/* end underline mode */
-EXT char* tc_UC INIT(NULL);		/* underline a character,
-						 if that's how it's done */
-EXT int tc_UG INIT(0);			/* blanks left by US and UE */
-EXT bool tc_AM INIT(FALSE);		/* does terminal have automatic
-								 margins? */
-EXT bool tc_XN INIT(FALSE);		/* does it eat 1st newline after
-							 automatic wrap? */
-EXT char tc_PC INIT(0);			/* pad character for use by tputs() */
+extern int tc_GT;				/* hardware tabs */
+extern char* tc_BC;		/* backspace character */
+extern char* tc_UP;		/* move cursor up one line */
+extern char* tc_CR;		/* get to left margin, somehow */
+extern char* tc_VB;		/* visible bell */
+extern char* tc_CL;		/* home and clear screen */
+extern char* tc_CE;		/* clear to end of line */
+extern char* tc_TI;		/* initialize terminal */
+extern char* tc_TE;		/* reset terminal */
+extern char* tc_KS;		/* enter `keypad transmit' mode */
+extern char* tc_KE;		/* exit `keypad transmit' mode */
+extern char* tc_CM;		/* cursor motion */
+extern char* tc_HO;		/* home cursor */
+extern char* tc_IL;		/* insert line */
+extern char* tc_CD;		/* clear to end of display */
+extern char* tc_SO;		/* begin standout mode */
+extern char* tc_SE;		/* end standout mode */
+extern int tc_SG;		/* blanks left by SO and SE */
+extern char* tc_US;		/* start underline mode */
+extern char* tc_UE;		/* end underline mode */
+extern char* tc_UC;		/* underline a character, if that's how it's done */
+extern int tc_UG;		/* blanks left by US and UE */
+extern bool tc_AM;		/* does terminal have automatic margins? */
+extern bool tc_XN;		/* does it eat 1st newline after automatic wrap? */
+extern char tc_PC;		/* pad character for use by tputs() */
 
-#ifdef _POSIX_SOURCE
-EXT speed_t outspeed INIT(0);		/* terminal output speed, */
-#else
-EXT long outspeed INIT(0);		/* 	for use by tputs() */
-#endif
+extern speed_t outspeed;	/* terminal output speed, */
 
-EXT int fire_is_out INIT(1);
-EXT int tc_LINES INIT(0), tc_COLS INIT(0);/* size of screen */
-EXT int term_line, term_col;		/* position of cursor */
-EXT int term_scrolled;			/* how many lines scrolled away */
-EXT int just_a_sec INIT(960);		/* 1 sec at current baud rate */
-					/* (number of nulls) */
+extern int fire_is_out;
+extern int tc_LINES, tc_COLS;	/* size of screen */
+extern int term_line, term_col;	/* position of cursor */
+extern int term_scrolled;	/* how many lines scrolled away */
+extern int just_a_sec;		/* 1 sec at current baud rate */
+				/* (number of nulls) */
 
 /* define a few handy macros */
 
@@ -119,16 +112,16 @@ EXT int just_a_sec INIT(960);		/* 1 sec at current baud rate */
 #define input_pending() finput_pending(TRUE)
 #define macro_pending() finput_pending(FALSE)
 
-EXT int page_line INIT(1);	/* line number for paging in
+extern int page_line;	/* line number for paging in
 				 print_line (origin 1) */
-EXT bool error_occurred INIT(FALSE);
+extern bool error_occurred;
 
-EXT char* mousebar_btns;
-EXT int mousebar_cnt INIT(0);
-EXT int mousebar_start INIT(0);
-EXT int mousebar_width INIT(0);
-EXT bool xmouse_is_on INIT(FALSE);
-EXT bool mouse_is_down INIT(FALSE);
+extern char* mousebar_btns;
+extern int mousebar_cnt;
+extern int mousebar_start;
+extern int mousebar_width;
+extern bool xmouse_is_on;
+extern bool mouse_is_down;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

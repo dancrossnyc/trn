@@ -37,9 +37,23 @@
 #include "util.h"
 #include "util2.h"
 #include "utf.h"
-#include "INTERN.h"
 #include "cache.h"
 #include "cache.ih"
+
+LIST* article_list = 0;
+ARTICLE** artptr_list = 0;
+ARTICLE** artptr;
+ART_NUM artptr_list_size = 0;
+ART_NUM srchahead = 0;
+ART_NUM first_cached;
+ART_NUM last_cached;
+bool cached_all_in_range;
+ARTICLE* sentinel_artp;
+SUBJECT* first_subject = 0;
+SUBJECT* last_subject = 0;
+bool untrim_cache = FALSE;
+ART_NUM subj_to_get;
+ART_NUM xref_to_get;
 
 #ifdef PENDING
 #   ifdef ARTSEARCH

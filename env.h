@@ -21,6 +21,5 @@ bool env_init (char*,bool_int);
 bool setusername (char*);
 bool setphostname (char*);
 char* getval (char*,char*);
-char* export (char*,char*);
-void un_export (char*);
-void re_export (char*,char*,int);
+const char* export (const char*, const char*);
+void unexport (const char*);

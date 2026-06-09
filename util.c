@@ -36,17 +36,15 @@ bool export_nntp_fds = false;
 size_t len_last_line_got = 0;
 size_t buflen_last_line_got = 0;
 
-static char null_export[] = "_=X";/* Just in case doshell precedes util_init */
-
-static char* newsactive_export = null_export + 2;
-static char* grpdesc_export = null_export + 2;
-static char* quotechars_export = null_export + 2;
-static char* nntpserver_export = null_export + 2;
-static char* nntpfds_export = null_export + 2;
+static const char* newsactive_export = "NEWSACTIVE";
+static const char* grpdesc_export = "NEWSDESCRIPTIONS";
+static const char* quotechars_export = "QUOTECHARS";
+static const char* nntpserver_export = "NNTPSERVER";
+static const char* nntpfds_export = "NNTPFDS";
 #ifdef USE_GENAUTH
-static char* nntpauth_export = null_export + 2;
+static const char* nntpauth_export = "NNTP_AUTH_FDS";
 #endif
-static char* nntpforce_export = null_export + 2;
+static const char* nntpforce_export = "NNTP_FORCE_AUTH";
 
 void
 util_init (void)
@@ -57,7 +55,7 @@ util_init (void)
     for (i = 0, cp = buf; i < 512; i++)
 	*cp++ = 'X';
     *cp = '\0';
-    newsactive_export = export("NEWSACTIVE", buf);
+    export("NEWSACTIVE", buf);
     grpdesc_export = export("NEWSDESCRIPTIONS", buf);
     nntpserver_export = export("NNTPSERVER", buf);
     buf[64] = '\0';
@@ -96,23 +94,23 @@ doshell (char *shell, char *s)
 	    }
 	    sprintf(buf,"%d.%d.%d",(int)fileno(nntplink.rd_fp),
 		    (int)fileno(nntplink.wr_fp),nntplink.cookiefd);
-	    re_export(nntpauth_export, buf, 512);
+	    export(nntpauth_export, buf);
 	}
 	else
-	    un_export(nntpauth_export);
+	    unexport(nntpauth_export);
 #endif
 	if (!export_nntp_fds || !nntplink.rd_fp)
-	    un_export(nntpfds_export);
+	    unexport(nntpfds_export);
 	else {
 	    sprintf(buf,"%d.%d",(int)fileno(nntplink.rd_fp),
 				(int)fileno(nntplink.wr_fp));
-	    re_export(nntpfds_export, buf, 64);
+	    export(nntpfds_export, buf);
 	}
-	re_export(nntpserver_export,datasrc->newsid,512);
+	export(nntpserver_export, datasrc->newsid);
 	if (datasrc->nntplink.flags & NNTP_FORCE_AUTH_NEEDED)
-	    re_export(nntpforce_export,"yes",3);
+	    export(nntpforce_export,"yes");
 	else
-	    un_export(nntpforce_export);
+	    unexport(nntpforce_export);
 	if (datasrc->auth_user) {
 	    int fd;
 	    if ((fd = open(nntp_auth_file, O_WRONLY|O_CREAT, 0600)) >= 0) {
@@ -126,34 +124,34 @@ doshell (char *shell, char *s)
 	    }
 	}
 	if (nntplink.port_number) {
-	    int len = strlen(nntpserver_export);
-	    sprintf(buf,";%d",nntplink.port_number);
-	    if (len + (int)strlen(buf) < 511)
-		strcpy(nntpserver_export+len, buf);
+	    char tbuf[8192];
+	    snprintf(tbuf, sizeof(tbuf), "%s;%d",
+	        getenv(nntpserver_export), nntplink.port_number);
+	    export(nntpserver_export, tbuf);
 	}
 	if (datasrc->act_sf.fp)
-	    re_export(newsactive_export, datasrc->extra_name, 512);
+	    export(newsactive_export, datasrc->extra_name);
 	else
-	    re_export(newsactive_export, "none", 512);
+	    export(newsactive_export, "none");
     } else {
-	un_export(nntpfds_export);
+	unexport(nntpfds_export);
 #ifdef USE_GENAUTH
-	un_export(nntpauth_export);
+	unexport(nntpauth_export);
 #endif
-	un_export(nntpserver_export);
-	un_export(nntpforce_export);
+	unexport(nntpserver_export);
+	unexport(nntpforce_export);
 	if (datasrc)
-	    re_export(newsactive_export, datasrc->newsid, 512);
+	    export(newsactive_export, datasrc->newsid);
 	else
-	    un_export(newsactive_export);
+	    unexport(newsactive_export);
     }
     if (datasrc)
-	re_export(grpdesc_export, datasrc->grpdesc, 512);
+	export(grpdesc_export, datasrc->grpdesc);
     else
-	un_export(grpdesc_export);
+	unexport(grpdesc_export);
     interp(buf,64-1+2,"%I");
     buf[strlen(buf)-1] = '\0';
-    re_export(quotechars_export, buf+1, 64);
+    export(quotechars_export, buf+1);
     if (shell == NULL && (shell = getval("SHELL",NULL)) == NULL)
 	shell = PREFSHELL;
     termlib_reset();

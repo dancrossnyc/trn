@@ -104,32 +104,32 @@ struct article {
 			  && article_exists(an))
 #define is_unavailable(an)  (!is_available(an))
 
-EXT LIST* article_list INIT(0);		/* a list of ARTICLEs */
-EXT ARTICLE** artptr_list INIT(0);	/* the article-selector creates this */
-EXT ARTICLE** artptr;			/* ditto -- used for article order */
-EXT ART_NUM artptr_list_size INIT(0);
+extern LIST* article_list;	/* a list of ARTICLEs */
+extern ARTICLE** artptr_list;	/* the article-selector creates this */
+extern ARTICLE** artptr;	/* ditto -- used for article order */
+extern ART_NUM artptr_list_size;
 
 #ifdef ARTSEARCH
-EXT ART_NUM srchahead INIT(0); 	/* are we in subject scan mode? */
+extern ART_NUM srchahead; 	/* are we in subject scan mode? */
 				/* (if so, contains art # found or -1) */
 #endif
 
-EXT ART_NUM first_cached;
-EXT ART_NUM last_cached;
-EXT bool cached_all_in_range;
-EXT ARTICLE* sentinel_artp;
+extern ART_NUM first_cached;
+extern ART_NUM last_cached;
+extern bool cached_all_in_range;
+extern ARTICLE* sentinel_artp;
 
 #define DONT_FILL_CACHE	0
 #define FILL_CACHE	1
 
-EXT SUBJECT* first_subject INIT(0);
-EXT SUBJECT* last_subject INIT(0);
+extern SUBJECT* first_subject;
+extern SUBJECT* last_subject;
 
-EXT bool untrim_cache INIT(FALSE);
+extern bool untrim_cache;
 
 #ifdef PENDING
-EXT ART_NUM subj_to_get;
-EXT ART_NUM xref_to_get;
+extern ART_NUM subj_to_get;
+extern ART_NUM xref_to_get;
 #endif
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */

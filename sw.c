@@ -21,13 +21,23 @@
 #include "ngdata.h"
 #include "rt-page.h"
 #include "charsubst.h"
-#include "INTERN.h"
 #include "sw.h"
+
+typedef struct Environment Environment;
+struct Environment {
+	char *name;
+	char *value;
+};
+
+static Environment *init_environment = NULL;
+static size_t init_environment_cnt = 0;
+static size_t init_environment_max = 0;
+static void save_init_environment (const char *, const char *);
 
 void
 sw_file (char **tcbufptr)
 {
-    int initfd = open(*tcbufptr,0);
+    int initfd = open(*tcbufptr, 0);
 
     if (initfd >= 0) {
 	fstat(initfd,&filestat);
@@ -96,7 +106,6 @@ sw_list (char *swlist)
 }
 
 /* decode a single switch */
-
 void
 decode_switch (char *s)
 {
@@ -115,6 +124,7 @@ decode_switch (char *s)
     else {				/* normal switch */
 	bool upordown = *s == '-' ? TRUE : FALSE;
 	char tmpbuf[LBUFLEN];
+	char *name, *value;
 
 	switch (*++s) {
 #ifdef TERMMOD
@@ -188,18 +198,19 @@ decode_switch (char *s)
 	    break;
 	case 'E':
 	    if (*++s == '=') s++;
-	    strcpy(tmpbuf,s);
-	    s = index(tmpbuf,'=');
+	    name = s;
+	    strlcpy(tmpbuf, s, sizeof(tmpbuf));
+	    s = strchr(tmpbuf, '=');
 	    if (s) {
 		*s++ = '\0';
-		s = export(tmpbuf,s) - (s-tmpbuf);
+		value = s;
+		export(name, value);
 		if (mode == 'i')
-		    save_init_environment(s);
-	    }
-	    else {
-		s = export(tmpbuf,nullstr) - strlen(tmpbuf) - 1;
+		    save_init_environment(name, value);
+	    } else {
+		export(name, nullstr);
 		if (mode == 'i')
-		    save_init_environment(s);
+		    save_init_environment(name, value);
 	    }
 	    break;
 	case 'f':
@@ -282,7 +293,8 @@ decode_switch (char *s)
 	    set_option(OI_NEWS_SEL_MODE, s);
 	    if (*++s) {
 		char tmpbuf[4];
-		sprintf(tmpbuf, "%s%c", isupper(*s)? "r " : nullstr, *s);
+		snprintf(tmpbuf, sizeof(tmpbuf), "%s%c",
+		    isupper(*s)? "r " : nullstr, *s);
 		set_option(OI_NEWS_SEL_ORDER, tmpbuf);
 	    }
 	    break;
@@ -394,32 +406,44 @@ decode_switch (char *s)
     }
 }
 
-void
-save_init_environment (char *str)
+static size_t
+szmax(size_t a, size_t b)
 {
+	return a > b ? a : b;
+}
+
+static void
+save_init_environment(const char *n, const char *v)
+{
+    char *name = estrdup(n);
+    char *value = estrdup(v);
+    Environment *p;
     if (init_environment_cnt >= init_environment_max) {
-	init_environment_max += 32;
-	init_environment_strings = (char**)
-	  saferealloc((char*)init_environment_strings,
-		      init_environment_max * sizeof (char*));
+	size_t max = szmax(32, init_environment_max * 2);
+	size_t cursz = init_environment_cnt * sizeof(Environment);
+	size_t newsz = max * sizeof(Environment);
+	p = saferealloc(init_environment, newsz);
+	assert(p != NULL);
+	memset(p + cursz, 0, newsz - cursz);
+	init_environment = p;
+	init_environment_max = max;
     }
-    init_environment_strings[init_environment_cnt++] = str;
+    p = init_environment + init_environment_cnt++;
+    p->name = name;
+    p->value = value;
+    init_environment_cnt++;
 }
 
 void
-write_init_environment (FILE *fp)
+write_init_environment(FILE *fp)
 {
-    int i;
-    char* s;
-    for (i = 0; i < init_environment_cnt; i++) {
-	s = index(init_environment_strings[i],'=');
-	if (!s)
-	    continue;
-	*s = '\0';
-	fprintf(fp, "%s=%s\n", init_environment_strings[i],quote_string(s+1));
-	*s = '=';
+    for (size_t i = 0; i < init_environment_cnt; i++) {
+	Environment *ienv = init_environment + i;
+	fprintf(fp, "%s=%s\n", ienv->name, quote_string(ienv->value));
+	safefree(ienv->name);
+	safefree(ienv->value);
     }
+    safefree(init_environment);
     init_environment_cnt = init_environment_max = 0;
-    safefree((char *)init_environment_strings);
-    init_environment_strings = NULL;
+    init_environment = NULL;
 }

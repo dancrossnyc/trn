@@ -59,15 +59,6 @@
 # endif
 #endif
 
-#ifdef SUPPLEMENT_STRING_H
-char*	index();
-char*	rindex();
-char*	strcat();
-char*	strcpy();
-#endif
-
-
-
 #ifndef FILE_REF
 #   define FILE_REF(s) (*(s) == '/' ? '/' : 0)
 #endif

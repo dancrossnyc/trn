@@ -2,6 +2,7 @@
  */
 /* This software is copyrighted as detailed in the LICENSE file. */
 
+#include <stdbool.h>
 
 #ifndef UTF_H_INCLUDED
 #define UTF_H_INCLUDED
@@ -38,7 +39,7 @@ int insert_unicode_at(char *, CODE_POINT);
 #define INVALID_CODE_POINT ((CODE_POINT) ~0L)
 CODE_POINT code_point_at(const char *);
 
-int put_char_adv(char **, bool_int);
+int put_char_adv(char **, bool);
 
 char *create_utf8_copy(char *);
 

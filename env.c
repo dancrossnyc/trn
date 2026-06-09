@@ -196,69 +196,15 @@ getval (char *nam, char *def)
 static bool firstexport = TRUE;
 extern char** environ;
 
-char *
-export (char *nam, char *val)
+const char *
+export(const char *name, const char *value)
 {
-    int namlen = strlen(nam);
-    int i=envix(nam,namlen);	/* where does it go? */
-
-    if (!environ[i]) {			/* does not exist yet */
-	if (firstexport) {		/* need we copy environment? */
-	    int j;
-#ifndef lint
-	    char** tmpenv = (char**)	/* point our wand at memory */
-		malloc((i+2) * sizeof(char*));
-#else
-	    char** tmpenv = NULL;
-#endif /* lint */
-
-	    firstexport = FALSE;
-	    for (j = 0; j < i; j++)	/* copy environment */
-		tmpenv[j] = environ[j];
-	    environ = tmpenv;		/* tell exec where it is now */
-	}
-#ifndef lint
-	else
-	    environ = (char**) realloc((char*) environ,
-		(size_t) (i+2) * sizeof(char*));
-					/* just expand it a bit */
-#endif /* lint */
-	environ[i+1] = NULL;	/* make sure it's null terminated */
-    }
-    environ[i] = malloc((size_t)(namlen + strlen(val) + 2));
-					/* this may or may not be in */
-					/* the old environ structure */
-    sprintf(environ[i],"%s=%s",nam,val);/* all that work just for this */
-    return environ[i] + namlen + 1;
+    setenv(name, value, 1);
+    return name;
 }
 
 void
-un_export (char *export_val)
+unexport(const char *name)
 {
-    if (export_val[-1] == '=' && export_val[-2] != '_') {
-	export_val[0] = export_val[-2];
-	export_val[1] = '\0';
-	export_val[-2] = '_';
-    }
+    unsetenv(name);
 }
-
-void
-re_export (char *export_val, char *new_val, int limit)
-{
-    if (export_val[-1] == '=' && export_val[-2] == '_' && !export_val[1])
-	export_val[-2] = export_val[0];
-    safecpy(export_val, new_val, limit+1);
-}
-
-static int
-envix (char *nam, int len)
-{
-    int i;
-
-    for (i = 0; environ[i]; i++) {
-	if (strnEQ(environ[i],nam,len) && environ[i][len] == '=')
-	    break;			/* strnEQ must come first to avoid */
-    }					/* potential SEGV's */
-    return i;
-}
-

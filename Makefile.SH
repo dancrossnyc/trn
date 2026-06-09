@@ -34,8 +34,8 @@ CC = $cc
 #MSDOSLINK = tlink
 TOUCH = touch
 YACC = $yacc
-#LINT = lint
-lintflags = -phbvxac $vincludes
+LINT = clang
+lintflags = --analyze
 
 CFLAGS = $optimize $ccflags $vincludes
 TKINC = $tkinc
@@ -57,7 +57,7 @@ strftimec = $strftimec
 strftimeo = $strftimeo
 installfilexp = $filexp
 
-libs = $termlib $jobslib -lm $libs
+libs = trn-rs/target/debug/libtrn.a $termlib $jobslib -lm $libs
 tklibs = $tklibs
 !GROK!THIS!
 $cat >>Makefile <<'!NO!SUBS!'
@@ -95,8 +95,8 @@ h9 = tkstuff.h tktree.h
 h = $(h1) $(h2) $(h3) $(h4) $(h5) $(h6) $(h7all) $(h8) $(h9)
 
 c1 = addng.c art.c artio.c artsrch.c autosub.c backpage.c bits.c cache.c
-c2 = charsubst.c datasrc.c decode.c edit_dist.c env.c final.c hash.c head.c
-c3 = help.c init.c intrp.c kfile.c last.c list.c mime.c ng.c ngdata.c
+c2 = charsubst.c common.c datasrc.c decode.c edit_dist.c env.c final.c hash.c
+c3 = head.c help.c init.c intrp.c kfile.c last.c list.c mime.c ng.c ngdata.c
 c4 = ngsrch.c ngstuff.c only.c opt.c rcln.c rcstuff.c respond.c rthread.c
 c5 = rt-mt.c rt-ov.c rt-process.c rt-page.c rt-select.c rt-util.c rt-wumpus.c
 c6 = search.c $(strftimec) sw.c term.c trn.c util.c util2.c utf.h
@@ -110,7 +110,7 @@ c10 = tkstuff.c tktree.c
 c = $(c1) $(c2) $(c3) $(c4) $(c5) $(c6) $(c7) $(c8all) $(c9) $(c10)
 
 obj1 = addng.$(o) art.$(o) artio.$(o) artsrch.$(o) autosub.$(o) backpage.$(o)
-obj2 = bits.$(o) cache.$(o) charsubst.$(o) datasrc.$(o) decode.$(o)
+obj2 = bits.$(o) cache.$(o) charsubst.$(o) common.$(o) datasrc.$(o) decode.$(o)
 obj3 = edit_dist.$(o) env.$(o) final.$(o) hash.$(o) head.$(o) help.$(o)
 obj4 = init.$(o) intrp.$(o) kfile.$(o) last.$(o) list.$(o) mime.$(o) ng.$(o)
 obj5 = ngdata.$(o) ngsrch.$(o) ngstuff.$(o) only.$(o) opt.$(o) rcln.$(o)

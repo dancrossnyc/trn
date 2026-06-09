@@ -45,25 +45,17 @@
 void
 final_init (void)
 {
-#ifdef SIGTSTP
     sigset(SIGTSTP, stop_catcher);	/* job control signals */
     sigset(SIGTTOU, stop_catcher);	/* job control signals */
     sigset(SIGTTIN, stop_catcher);	/* job control signals */
-#endif
 
     sigset(SIGINT, int_catcher);	/* always catch interrupts */
-#ifdef SIGHUP
     sigset(SIGHUP, sig_catcher);	/* and hangups */
-#endif
-#ifdef SIGWINCH
     sigset(SIGWINCH, winch_catcher);
-#endif
     sigset(SIGPIPE,pipe_catcher);
 
-#ifndef lint
 #ifdef SIGEMT
     sigignore(SIGEMT);		/* Ignore EMT signals from old [t]rn's */
-#endif
 #endif
 
 #ifdef DEBUG
@@ -76,9 +68,7 @@ final_init (void)
     sigset(SIGTRAP, sig_catcher);
 #endif
     sigset(SIGFPE, sig_catcher);
-#ifdef SIGBUS
     sigset(SIGBUS, sig_catcher);
-#endif
     sigset(SIGSEGV, sig_catcher);
 #ifdef SIGSYS
     sigset(SIGSYS, sig_catcher);

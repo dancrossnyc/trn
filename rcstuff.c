@@ -514,9 +514,7 @@ open_newsrc (NEWSRC *rp)
 	    np->rcline = estrdup(some_buf);  /* make semipermanent copy */
 	else {
 	    /*NOSTRICT*/
-#ifndef lint
 	    some_buf = saferealloc(some_buf,(size_t)(length+1));
-#endif
 	    np->rcline = some_buf;
 	}
 	if (*some_buf == ' ' || *some_buf == '\t'
@@ -649,9 +647,7 @@ parse_rcline (NGDATA *np)
     for (s=np->rcline; *s && *s!=':' && *s!=NEGCHAR && !isspace(*s); s++) ;
     len = s - np->rcline;
     if ((!*s || isspace(*s)) && !checkflag) {
-#ifndef lint
 	np->rcline = saferealloc(np->rcline,(size_t)len + 3);
-#endif
 	s = np->rcline + len;
 	strcpy(s, ": ");
     }
@@ -704,9 +700,7 @@ abandon_ng (NGDATA *np)
 	    np->rcline = estrdup(some_buf);
 	else {
 	    /*NOSTRICT*/
-#ifndef lint
 	    some_buf = saferealloc(some_buf, (size_t)(len_last_line_got));
-#endif /* lint */
 	    np->rcline = some_buf;
 	}
     }

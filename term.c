@@ -38,14 +38,67 @@
 #endif
 #include "univ.h"
 #include "color.h"
-#include "INTERN.h"
 #include "term.h"
 #include "term.ih"
 #include "utf.h"
 
-#ifdef u3b2
-#undef TIOCGWINSZ
-#endif
+char ERASECH;		/* rubout character */
+char KILLCH;		/* line delete character */
+char circlebuf[PUSHSIZE];
+int nextin = 0;
+int nextout = 0;
+unsigned char lastchar;
+
+struct termios _tty, _oldtty;
+
+int _tty_ch = 2;
+bool bizarre = FALSE;	/* do we need to restore terminal? */
+
+int tc_GT;		/* hardware tabs */
+char* tc_BC = NULL;	/* backspace character */
+char* tc_UP = NULL;	/* move cursor up one line */
+char* tc_CR = NULL;	/* get to left margin, somehow */
+char* tc_VB = NULL;	/* visible bell */
+char* tc_CL = NULL;	/* home and clear screen */
+char* tc_CE = NULL;	/* clear to end of line */
+char* tc_TI = NULL;	/* initialize terminal */
+char* tc_TE = NULL;	/* reset terminal */
+char* tc_KS = NULL;	/* enter `keypad transmit' mode */
+char* tc_KE = NULL;	/* exit `keypad transmit' mode */
+char* tc_CM = NULL;	/* cursor motion */
+char* tc_HO = NULL;	/* home cursor */
+char* tc_IL = NULL;	/* insert line */
+char* tc_CD = NULL;	/* clear to end of display */
+char* tc_SO = NULL;	/* begin standout mode */
+char* tc_SE = NULL;	/* end standout mode */
+int tc_SG = 0;		/* blanks left by SO and SE */
+char* tc_US = NULL;	/* start underline mode */
+char* tc_UE = NULL;	/* end underline mode */
+char* tc_UC = NULL;	/* underline a character, if that's how it's done */
+int tc_UG = 0;		/* blanks left by US and UE */
+bool tc_AM = FALSE;	/* does terminal have automatic margins? */
+bool tc_XN = FALSE;	/* does it eat 1st newline after automatic wrap? */
+char tc_PC = 0;		/* pad character for use by tputs() */
+
+speed_t outspeed = 0;	/* terminal output speed, */
+
+int fire_is_out = 1;
+int tc_LINES = 0;	/* size of screen: lines */
+int tc_COLS = 0;	/* size of screen: columns */
+int term_line, term_col;/* position of cursor */
+int term_scrolled;	/* how many lines scrolled away */
+int just_a_sec = 960;	/* 1 sec at current baud rate */
+			/* (number of nulls) */
+
+int page_line = 1;	/* line number for paging in print_line (origin 1) */
+bool error_occurred = FALSE;
+
+char* mousebar_btns;
+int mousebar_cnt = 0;
+int mousebar_start = 0;
+int mousebar_width = 0;
+bool xmouse_is_on = FALSE;
+bool mouse_is_down = FALSE;
 
 #undef	USETITE		/* use terminal init/exit seqences (not recommended) */
 #undef	USEKSKE		/* use keypad start/end sequences */
@@ -54,8 +107,8 @@ char tcarea[TCSIZE];	/* area for "compiled" termcap strings */
 
 static KEYMAP*	topmap INIT(NULL);
 
-static char* lines_export = NULL;
-static char* cols_export = NULL;
+static const char* lines_export = "LINES";
+static const char* cols_export = "COLUMNS";
 
 static int leftcost, upcost;
 static bool got_a_char = FALSE;	/* TRUE if we got a char since eating */
@@ -426,11 +479,7 @@ newkeymap (void)
     int i;
     KEYMAP* map;
 
-#ifndef lint
     map = (KEYMAP*)safemalloc(sizeof(KEYMAP));
-#else
-    map = NULL;
-#endif /* lint */
     for (i = 127; i >= 0; i--) {
 	map->km_ptr[i].km_km = NULL;
 	map->km_type[i] = KM_NOTHIN;
@@ -511,10 +560,6 @@ int
 putchr (char_int ch)
 {
     putchar(ch);
-#ifdef lint
-    ch = '\0';
-    ch = ch;
-#endif
     return 0;
 }
 
@@ -1708,11 +1753,14 @@ winch_catcher (int dummy)
     {	struct winsize ws;
 	if (ioctl(0, TIOCGWINSZ, &ws) >= 0 && ws.ws_row > 0 && ws.ws_col > 0) {
 	    if (tc_LINES != ws.ws_row || tc_COLS != ws.ws_col) {
+		char numstr[64];
 		tc_LINES = ws.ws_row;
 		tc_COLS = ws.ws_col;
 		line_col_calcs();
-		sprintf(lines_export, "%d", tc_LINES);
-		sprintf(cols_export, "%d", tc_COLS);
+		snprintf(numstr, sizeof(numstr), "%d", tc_LINES);
+		export(lines_export, numstr);
+		snprintf(numstr, sizeof(numstr), "%d", tc_COLS);
+		export(cols_export, numstr);
 		if (gmode == 's' || mode == 'a' || mode == 'p') {
 		    forceme("\f");	/* cause a refresh */
 					/* (defined only if TIOCSTI defined) */

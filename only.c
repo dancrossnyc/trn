@@ -34,9 +34,7 @@ setngtodo (char *pat)
 	return;
     if (i < MAXNGTODO) {
 	ngtodo[i] = estrdup(pat);
-#ifndef lint
 	compextodo[i] = (COMPEX*)safemalloc(sizeof(COMPEX));
-#endif
 	init_compex(compextodo[i]);
 	compile(compextodo[i],pat,TRUE,TRUE);
 	if ((s = ng_comp(compextodo[i],pat,TRUE,TRUE)) != NULL) {
@@ -81,9 +79,7 @@ end_only (void)
 	for (i = save_maxngtodo; i < maxngtodo + save_maxngtodo; i++) {
 	    free(ngtodo[i]);
 	    free_compex(compextodo[i]);
-#ifndef lint
-	    free((char*)compextodo[i]);
-#endif
+	    free(compextodo[i]);
 	}
 	maxngtodo = 0;
 	ng_min_toread = 1;

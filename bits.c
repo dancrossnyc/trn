@@ -65,10 +65,8 @@ rc_to_bits (void)
     for (s = ngptr->rcline + ngptr->numoffset; *s == ' '; s++) ;
 					/* find numbers in rc line */
     i = strlen(s);
-#ifndef lint
     if (i >= LBUFLEN-2)			/* bigger than buf? */
 	mybuf = safemalloc((size_t)(i+2));
-#endif
     strcpy(mybuf,s);			/* make scratch copy of line */
     if (mybuf[0])
 	mybuf[i++] = ',';		/* put extra comma on the end */

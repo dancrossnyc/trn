@@ -49,15 +49,11 @@ vrdary (ART_LINE indx)
     offset = (indx - subindx) * sizeof(varybuf[0]);
     if (offset != oldoffset) {
 	if (oldoffset >= 0) {
-#ifndef lint
 	    (void)lseek(varyfd,oldoffset,0);
 	    write(varyfd, (char*)varybuf,sizeof(varybuf));
-#endif /* lint */
 	}
-#ifndef lint
 	(void)lseek(varyfd,offset,0);
 	read(varyfd,(char*)varybuf,sizeof(varybuf));
-#endif /* lint */
 	oldoffset = offset;
     }
     return varybuf[subindx];
@@ -86,15 +82,11 @@ vwtary (ART_LINE indx, ART_POS newvalue)
     offset = (indx - subindx) * sizeof(varybuf[0]);
     if (offset != oldoffset) {
 	if (oldoffset >= 0) {
-#ifndef lint
 	    (void)lseek(varyfd,oldoffset,0);
 	    write(varyfd,(char*)varybuf,sizeof(varybuf));
-#endif /* lint */
 	}
-#ifndef lint
 	(void)lseek(varyfd,offset,0);
 	read(varyfd,(char*)varybuf,sizeof(varybuf));
-#endif /* lint */
 	oldoffset = offset;
     }
     varybuf[subindx] = newvalue;

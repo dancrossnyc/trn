@@ -390,7 +390,7 @@ at_norm_char (const char *s)
 }
 
 int
-put_char_adv (char **strptr, bool_int outputok)
+put_char_adv (char **strptr, bool outputok)
 {
     int it;
     if (strptr == NULL) {

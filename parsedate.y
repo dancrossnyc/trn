@@ -113,12 +113,6 @@ spec	: /* NULL */
 
 item	: time {
 	    yyHaveTime++;
-#ifdef lint
-	    /* I am compulsive about lint natterings... */
-	    if (yyHaveTime == -1) {
-		YYERROR;
-	    }
-#endif /* lint */
 	}
 	| time zone {
 	    yyHaveTime++;
