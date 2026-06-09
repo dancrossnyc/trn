@@ -131,7 +131,7 @@ sc_sv_savefile (void)
 	printf("Could not open score save temp file %s for writing.\n",
 	       lbuf);
 #endif
-	free(savename);
+	safefree(savename);
 	waiting = FALSE;
 	return;
     }
@@ -140,7 +140,7 @@ sc_sv_savefile (void)
 	    fprintf(tmpfp,"%s\n",lines[i]);
 	if (ferror(tmpfp)) {
 	    fclose(tmpfp);
-	    free(savename);
+	    safefree(savename);
 	    printf("\nWrite error in temporary save file %s\n",lbuf);
 	    printf("(keeping old saved scores)\n");
 	    UNLINK(lbuf);

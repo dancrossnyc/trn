@@ -59,7 +59,7 @@ catch_up (NGDATA *np, int leave_count, int output_level)
 #endif
 	}
 	sprintf(tmpbuf,"%s: 1-%ld", np->rcline,(long)getngsize(np));
-	free(np->rcline);
+	safefree(np->rcline);
 	np->rcline = estrdup(tmpbuf);
 	*(np->rcline + np->numoffset - 1) = '\0';
 	if (ng_min_toread > TR_NONE && np->toread > TR_NONE)
@@ -201,7 +201,7 @@ addartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
     if (debug & DEB_XREF_MARKER)
 	printf("%s\n",mbuf);
 #endif
-    free(np->rcline);
+    safefree(np->rcline);
     np->rcline = mbuf;		/* pull the switcheroo */
     *(np->rcline + np->numoffset - 1) = '\0';
 					/* wipe out : or ! */
@@ -296,7 +296,7 @@ subartnum (DATASRC *dp, ART_NUM artnum, char *ngnam)
 		    printf("%s\n",mbuf);
 		}
 #endif
-		free(np->rcline);
+		safefree(np->rcline);
 		np->rcline = mbuf;	/* pull the switcheroo */
 		*(np->rcline + np->numoffset - 1) = '\0';
 					/* wipe out : or ! */
@@ -427,7 +427,7 @@ set_toread (NGDATA *np, bool_int lax_high_check)
     np->toread = (ART_UNREAD)unread;	/* remember how many are left */
 
     if (mybuf != tmpbuf)
-	free(mybuf);
+	safefree(mybuf);
 }
 
 /* make sure expired articles are marked as read */
@@ -468,7 +468,7 @@ checkexpired (NGDATA *np, ART_NUM a1st)
 	    *cp++ = ' '; *cp++ = '1'; *cp++ = '-';
 	    safecpy(cp, s, len+1);
 	    if (np->rcline != mbuf) {
-		free(np->rcline);
+		safefree(np->rcline);
 		np->rcline = mbuf;
 	    }
 	    np->rc->flags |= RF_RCCHANGED;
@@ -503,7 +503,7 @@ checkexpired (NGDATA *np, ART_NUM a1st)
 	    np->rcline = saferealloc(np->rcline, (size_t)(cp-mbuf+len+1));
 	else {
 	    if (!checkflag)
-		free(np->rcline);
+		safefree(np->rcline);
 	    np->rcline = mbuf;
 	}
 	np->rc->flags |= RF_RCCHANGED;

@@ -29,7 +29,7 @@ static char *test_dectrl__null () {
 
 static char *test_dectrl__ascii_all_printable () {
     char *before = "This is a test.";
-    char *after = strdup(before);
+    char *after = estrdup(before);
     dectrl(after);
     printf("Test %d:\n", tests_run);
     printf("Before   : \"%s\"\n", before);
@@ -42,7 +42,7 @@ static char *test_dectrl__ascii_all_printable () {
 
 static char *test_dectrl__ascii_some_nonprintable () {
     char *before = "This\tis\fa\177test.";
-    char *after = strdup(before);
+    char *after = estrdup(before);
     char *expected = "This is a test.";
     dectrl(after);
     printf("Test %d:\n", tests_run);
@@ -57,7 +57,7 @@ static char *test_dectrl__ascii_some_nonprintable () {
 
 static char *test_dectrl__iso_8859_1 () {
     char *before = "« La Liberté guidant le peuple. »";
-    char *after = strdup(before);
+    char *after = estrdup(before);
     dectrl(after);
     printf("Test %d:\n", tests_run);
     printf("Before   : \"%s\"\n", before);
@@ -70,7 +70,7 @@ static char *test_dectrl__iso_8859_1 () {
 
 static char *test_dectrl__cjk_basic () {
     char *before = "寧化飛灰，不作浮塵";
-    char *after = strdup(before);
+    char *after = estrdup(before);
     dectrl(after);
     printf("Test %d:\n", tests_run);
     printf("Before   : \"%s\"\n", before);

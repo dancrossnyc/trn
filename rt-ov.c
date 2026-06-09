@@ -309,7 +309,7 @@ beginning:
     }
     setspin(SPIN_POP);
     if (last_buf != buf)
-	free(last_buf);
+	safefree(last_buf);
     return success;
 }
 

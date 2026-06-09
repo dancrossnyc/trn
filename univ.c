@@ -1192,7 +1192,7 @@ sort_univ (void)
     last_univ = lp[0];
     last_univ->next = NULL;
 
-    free((char*)univ_sort_list);
+    safefree(univ_sort_list);
 }
 
 /* return a description of the article */

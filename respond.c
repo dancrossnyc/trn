@@ -567,9 +567,9 @@ cancel_article (void)
 	export_nntp_fds = FALSE;
     }
 done:
-    free(ngs_buf);
-    free(from_buf);
-    free(reply_buf);
+    safefree(ngs_buf);
+    safefree(from_buf);
+    safefree(reply_buf);
     return r;
 }
 
@@ -644,9 +644,9 @@ supersede_article (void)		/* Supersedes: */
 	r = 0;
     }
 done:
-    free(ngs_buf);
-    free(from_buf);
-    free(reply_buf);
+    safefree(ngs_buf);
+    safefree(from_buf);
+    safefree(reply_buf);
     return r;
 }
 
@@ -745,7 +745,7 @@ reply (void)
     safecpy(cmd_buf,filexp(maildoer),sizeof cmd_buf);
     invoke(cmd_buf,origdir);
 done:
-    free(maildoer);
+    safefree(maildoer);
 }
 
 void
@@ -851,7 +851,7 @@ forward (void)
     safecpy(cmd_buf,filexp(maildoer),sizeof cmd_buf);
     invoke(cmd_buf,origdir);
   done:
-    free(maildoer);
+    safefree(maildoer);
 #ifdef REGEX_WORKS_RIGHT
     free_compex(&mime_compex);
 #else

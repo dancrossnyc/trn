@@ -957,7 +957,7 @@ find_close_match (void)
 	    ret = get_near_miss();
 	    break;
     }
-    free((char*)ngptrs);
+    safefree(ngptrs);
     return ret;
 }
 

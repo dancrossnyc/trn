@@ -452,7 +452,7 @@ mac_line (char *line, char *tmpbuf, int tbsize)
 		    fputs(override,stdout);
 		    termdown(2);
 		}
-		free(curmap->km_ptr[ch].km_str);
+		safefree(curmap->km_ptr[ch].km_str);
 		curmap->km_ptr[ch].km_str = NULL;
 	    }
 	    curmap->km_type[ch] = KM_KEYMAP + garbage;

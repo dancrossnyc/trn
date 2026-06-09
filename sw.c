@@ -237,7 +237,7 @@ decode_switch (char *s)
 	    if (!s[1]) {
 		/* Free old user_htype list */
 		while (user_htype_cnt > 1)
-		    free(user_htype[--user_htype_cnt].name);
+		    safefree(user_htype[--user_htype_cnt].name);
 		bzero((char*)user_htypeix, 26);
 	    }
 	    /* FALL THROUGH */

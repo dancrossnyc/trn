@@ -22,16 +22,6 @@ static char* tildename = NULL;
 static char* tildedir = NULL;
 #endif
 
-/* copy a string to a safe spot */
-
-char *
-estrdup(const char *str)
-{
-    char* newaddr = safemalloc((size_t)(strlen(str)+1));
-    strcpy(newaddr,str);
-    return newaddr;
-}
-
 /* safe version of string copy */
 char *
 safecpy(char *to, const char *from, size_t len)
@@ -118,9 +108,9 @@ filexp(char *s)
 	    }
 	    else {
 		if (tildename)
-		    free(tildename);
+		    safefree(tildename);
 		if (tildedir)
-		    free(tildedir);
+		    safefree(tildedir);
 		tildedir = NULL;
 		tildename = estrdup(scrbuf);
 		{

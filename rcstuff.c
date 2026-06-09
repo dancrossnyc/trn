@@ -679,7 +679,7 @@ abandon_ng (NGDATA *np)
 		break;
 	    }
 	    if (some_buf != buf)
-		free(some_buf);
+		safefree(some_buf);
 	}
 	fclose(rcfp);
     } else if (errno != ENOENT) {
@@ -695,7 +695,7 @@ abandon_ng (NGDATA *np)
 	np->abs1st = 0;		/* force group to be re-calculated */
     }
     else {
-	free(np->rcline);
+	safefree(np->rcline);
 	if (some_buf == buf)
 	    np->rcline = estrdup(some_buf);
 	else {

@@ -80,7 +80,7 @@ mp_free_frag (int f)
 #if 0
     /* old code to actually free the blocks */
     if (mpfrags[f].data)
-	free(mpfrags[f].data);
+	safefree(mpfrags[f].data);
     mpfrags[f].lastfree = NULL;
     mpfrags[f].bytesfree = 0;
 #else

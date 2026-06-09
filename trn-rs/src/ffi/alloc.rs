@@ -3,11 +3,13 @@
 //! This replaces the elderly `safemalloc` function and friends.
 //! This lets us use the Rust memory allocator from C code.
 
-use std::alloc::System;
-use std::ffi::c_void;
+use std::alloc::{alloc_zeroed, realloc, dealloc, Layout};
+use std::ffi::{c_char, c_void, CStr};
 
-#[global_allocator]
-static A: System = System;
+/// The alignment constant.  We allocate blocks of memory that
+/// are both sized and aligned sized to multiples of `ALIGN`
+/// bytes.
+const ALIGN: usize = 64;
 
 /// A wrapper around the allocator API's `system` allocator with
 /// well-defined semantics around size==0, for FFI.  Initializes
@@ -26,14 +28,16 @@ unsafe fn rsmalloc(size: usize) -> *mut u8 {
     if size == 0 {
         return std::ptr::null_mut();
     }
-    let ptr = unsafe { libc::malloc(size).cast::<u8>() };
+    let size = size.next_multiple_of(ALIGN) + ALIGN;
+    let layout = Layout::from_size_align(size, ALIGN).expect("layout makes sense");
+    let ptr = unsafe { alloc_zeroed(layout) };
     if ptr.is_null() {
         return std::ptr::null_mut();
     }
     unsafe {
-        std::ptr::write_bytes(ptr, 0, size);
+        std::ptr::write(ptr.cast(), layout);
     }
-    ptr
+    ptr.wrapping_add(ALIGN)
 }
 
 /// A wrapper around the Rust allocator API's `dealloc` function
@@ -49,11 +53,13 @@ unsafe fn rsmalloc(size: usize) -> *mut u8 {
 /// pointer points to, and that the pointer has not already been
 /// freed.
 unsafe fn rsfree(ptr: *mut u8) {
-    if ptr.is_null() {
+    if ptr.is_null() || !ptr.addr().is_multiple_of(ALIGN) {
         return;
     }
+    let ptr = ptr.wrapping_sub(ALIGN);
+    let layout = unsafe { std::ptr::read(ptr.cast::<Layout>()) };
     unsafe {
-        libc::free(ptr.cast());
+        dealloc(ptr, layout);
     }
 }
 
@@ -85,7 +91,6 @@ unsafe fn rsfree(ptr: *mut u8) {
 /// sure that any alignment for any value the pointer is used to
 /// refer to is suitably aligned.  The caller must similarly
 /// take care to initialize elements beyond the old size.
-#[unsafe(no_mangle)]
 unsafe fn rsrealloc(ptr: *mut u8, size: usize) -> *mut u8 {
     if size == 0 {
         unsafe {
@@ -96,11 +101,34 @@ unsafe fn rsrealloc(ptr: *mut u8, size: usize) -> *mut u8 {
     if ptr.is_null() {
         return unsafe { rsmalloc(size) };
     }
-    let ptr = unsafe { libc::realloc(ptr.cast(), size).cast::<u8>() };
-    if ptr.is_null() {
+    if !ptr.addr().is_multiple_of(ALIGN) {
         return std::ptr::null_mut();
     }
-    ptr
+    let optr = ptr.wrapping_sub(ALIGN);
+    let olayout = unsafe { std::ptr::read(optr.cast::<Layout>()) };
+    let oalign = olayout.align();
+    let osize = olayout.size();
+    assert_eq!(oalign, ALIGN);
+    assert!(osize.is_multiple_of(ALIGN));
+    assert!(osize > ALIGN);
+    let nsize = size.next_multiple_of(ALIGN) + ALIGN;
+    if nsize == osize {
+        return ptr;
+    }
+    let nptr = unsafe { realloc(optr, olayout, nsize) };
+    if nptr.is_null() {
+        return std::ptr::null_mut();
+    }
+    if osize < nsize {
+        unsafe {
+            std::ptr::write_bytes(nptr.wrapping_add(osize), 0, nsize - osize);
+        }
+    }
+    let layout = Layout::from_size_align(nsize, ALIGN);
+    unsafe {
+        std::ptr::write(nptr.cast(), layout);
+    }
+    nptr.wrapping_add(ALIGN)
 }
 
 #[unsafe(no_mangle)]
@@ -125,6 +153,19 @@ pub unsafe extern "C" fn safefree(ptr: *mut c_void) -> *mut c_void {
         rsfree(ptr.cast());
     }
     std::ptr::null_mut()
+}
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn estrdup(cstrp: *mut c_char) -> *mut c_char {
+    assert!(!cstrp.is_null(), "estrdup: string is null");
+    let cstr = unsafe { CStr::from_ptr(cstrp) };
+    let bs = cstr.to_bytes_with_nul();
+    let buf = unsafe { rsmalloc(bs.len()) };
+    assert!(!buf.is_null());
+    unsafe {
+        std::ptr::copy(bs.as_ptr(), buf, bs.len());
+    }
+    buf.cast()
 }
 
 #[cfg(test)]

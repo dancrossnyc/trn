@@ -513,7 +513,7 @@ sf_do_command (
 	    return FALSE;
 	}
 	if (sf_abbr[(int)ch])
-	    free(sf_abbr[(int)ch]);
+	    safefree(sf_abbr[(int)ch]);
 	sf_abbr[(int)ch] = estrdup(sf_cmd_fname(s));
 	return TRUE;
     }
@@ -693,7 +693,7 @@ sf_do_line (
 	    printf("Bad pattern : |%s|\n",s);
 	    printf("Compex returns: |%s|\n",s2);
 	    free_compex(sf_compex);
-	    free(sf_compex);
+	    safefree(sf_compex);
 	    sf_entries[sf_num_entries-1].compex = NULL;
 	    return FALSE;
 	} else
@@ -765,7 +765,7 @@ sf_do_file (char *fname)
     sf_entries[sf_num_entries-1].score = sf_file_level;
     sf_entries[sf_num_entries-1].str2 = NULL;
     sf_entries[sf_num_entries-1].str1 = estrdup(safefilename);
-    free(safefilename);
+    safefree(safefilename);
     sf_file_level--;
 }
 
@@ -894,7 +894,7 @@ Type a score now or delete the colon to abort this entry:\n");
     buf[1] = FINISHCMD;
     i = finish_command(TRUE);	/* print the CR */
     if (!i) { /* there was no score */
-	free(s);
+	safefree(s);
 	return NULL;
     }
     strcpy(lbuf,buf+1);
@@ -902,7 +902,7 @@ Type a score now or delete the colon to abort this entry:\n");
     lbuf[i] = ' ';
     lbuf[i+1] = '\0';
     strcat(lbuf,s);
-    free(s);
+    safefree(s);
     return lbuf;
 }
 
@@ -1159,7 +1159,7 @@ sf_exclude_file(char* fname)
      */
     if (newnum==0) {
 	sf_num_entries = 0;
-	free(sf_entries);
+	safefree(sf_entries);
 	sf_entries = NULL;
 	return;
     }
@@ -1171,7 +1171,7 @@ sf_exclude_file(char* fname)
     if (end < sf_num_entries-1)
 	bcopy((char*)(sf_entries+end+1), (char*)(tmp_entries+start),
 		(sf_num_entries-end-1) * sizeof (SF_ENTRY));
-    free(sf_entries);
+    safefree(sf_entries);
     sf_entries = tmp_entries;
     sf_num_entries = newnum;
     if (sf_verbose)

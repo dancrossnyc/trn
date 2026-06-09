@@ -522,7 +522,7 @@ prefetchlines (
 		    safecat(s,t,size);
 	    }
 	    if (last_buf != ser_line)
-		free(last_buf);
+		safefree(last_buf);
 	} else {
 	    hasxhdr = FALSE;
 	    lastnum = artnum;

@@ -96,7 +96,7 @@ art_search (
 	pattern = buf;
 	if (*pattern) {
 	    if (*lastpat)
-		free(lastpat);
+		safefree(lastpat);
 	    lastpat = estrdup(pattern);
 	}
 	if (*s) {			/* modifiers or commands? */
@@ -357,7 +357,7 @@ art_search (
 		if (!cmdlst)
 		    return SRCH_FOUND;
 		if (perform(cmdlst,output_level && page_line == 1) < 0) {
-		    free(cmdlst);
+		    safefree(cmdlst);
 		    return SRCH_INTR;
 		}
 	    }
@@ -371,7 +371,7 @@ art_search (
     }
 exit:
     if (cmdlst)
-	free(cmdlst);
+	safefree(cmdlst);
     return ret;
 }
 #endif /* ARTSEARCH */

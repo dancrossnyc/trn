@@ -6,7 +6,7 @@ for patch. Version 1.1. Author: davison@borland.com
 #define ERR(a) {fputs(a,stderr);exit(1);}
 #define NUM(x) {for(x=0;*cp<='9'&&*cp>='0';)x=x*10+*cp++-'0';ch= *cp++;}
 struct Ln {struct Ln *lk; char t; char s[1];} r,*h,*ln;
-char bf[2048],*cp,ch,*malloc();
+char bf[2048],*cp,ch;
 long os,ol,ns,nl,ne,lncnt;
 main()
 {
@@ -42,7 +42,7 @@ main()
    case' ':if(!ol--) goto bad;
 	printf("  %s",cp);
    case'+':if(!nl--) goto bad;
-	ln = (struct Ln*)malloc(sizeof(*ln)+strlen(cp));
+	ln = (struct Ln*)safemalloc(sizeof(*ln)+strlen(cp));
 	if(!ln) ERR("Out of memory!\n")
 	ln->lk=0, ln->t=ch, strcpy(ln->s,cp);
 	h->lk=ln, h=ln;

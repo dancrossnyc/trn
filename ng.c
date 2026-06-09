@@ -276,7 +276,7 @@ do_newsgroup (
 	    else {
 		hide_pending();
 		pushstring(start_command, 0);
-		free(start_command);
+		safefree(start_command);
 	    }
 	    start_command = NULL;
 	    if (input_pending()) {

@@ -223,7 +223,7 @@ numnum (void)
 	if (max < min) {
 	    errormsg("Bad range");
 	    if (cmdlst)
-		free(cmdlst);
+		safefree(cmdlst);
 	    return NN_ASK;
 	}
 	if (justone) {
@@ -243,7 +243,7 @@ numnum (void)
 #endif
 		errormsg(msg);
 		if (cmdlst)
-		    free(cmdlst);
+		    safefree(cmdlst);
 		return NN_ASK;
 	    }
 	    if (!output_level)
@@ -252,7 +252,7 @@ numnum (void)
     }
     art = oldart;
     if (cmdlst)
-	free(cmdlst);
+	safefree(cmdlst);
     return NN_NORM;
 }
 

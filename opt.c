@@ -1262,7 +1262,7 @@ Can't make %s--\n\
 #endif
 	}
     }
-    free(cwd);
+    safefree(cwd);
     trn_getwd(tmpbuf, sizeof(tmpbuf));
     if (eaccess(tmpbuf,2)) {
 #ifdef VERBOSE

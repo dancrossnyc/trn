@@ -77,9 +77,9 @@ end_only (void)
 	    sprintf(msg, "Exiting \"only\".");
 #endif
 	for (i = save_maxngtodo; i < maxngtodo + save_maxngtodo; i++) {
-	    free(ngtodo[i]);
+	    safefree(ngtodo[i]);
 	    free_compex(compextodo[i]);
-	    free(compextodo[i]);
+	    safefree(compextodo[i]);
 	}
 	maxngtodo = 0;
 	ng_min_toread = 1;

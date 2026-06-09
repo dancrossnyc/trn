@@ -305,7 +305,7 @@ static char *test_terminate_string_at_visual_index__null () {
 
 static char *test_terminate_string_at_visual_index__negative_index () {
     char *before = "abcdefg";
-    char *after = strdup(before);
+    char *after = estrdup(before);
     char *expected = "";
     terminate_string_at_visual_index(after, -12345);
     printf("Test %d:\n", tests_run);
@@ -319,7 +319,7 @@ static char *test_terminate_string_at_visual_index__negative_index () {
 
 static char *test_terminate_string_at_visual_index__ascii () {
     char *before = "abcdefg";
-    char *after = strdup(before);;
+    char *after = estrdup(before);
     char *expected = "abcde";
     terminate_string_at_visual_index(after, 5);
     printf("Test %d:\n", tests_run);
@@ -333,7 +333,7 @@ static char *test_terminate_string_at_visual_index__ascii () {
 
 static char *test_terminate_string_at_visual_index__iso8859_1 () {
     char *before = "áíúéóäïüëö";
-    char *after = strdup(before);;
+    char *after = estrdup(before);
     char *expected = "áíúéó";
     terminate_string_at_visual_index(after, 5);
     printf("Test %d:\n", tests_run);
@@ -347,7 +347,7 @@ static char *test_terminate_string_at_visual_index__iso8859_1 () {
 
 static char *test_terminate_string_at_visual_index__cjk_basic () {
     char *before = "寧化飛灰不作浮塵";
-    char *after = strdup(before);;
+    char *after = estrdup(before);
     char *expected = "寧化飛灰";
     terminate_string_at_visual_index(after, 8);
     printf("Test %d:\n", tests_run);
@@ -361,7 +361,7 @@ static char *test_terminate_string_at_visual_index__cjk_basic () {
 
 static char *test_terminate_string_at_visual_index__cjk_basic_at_wrong_boundary () {
     char *before = "寧化飛灰不作浮塵";
-    char *after = strdup(before);;
+    char *after = estrdup(before);
     char *expected = "寧化飛灰 ";
     terminate_string_at_visual_index(after, 9);
     printf("Test %d:\n", tests_run);

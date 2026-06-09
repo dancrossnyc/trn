@@ -821,7 +821,7 @@ dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
 
 			s2 = fetchlines(art,FROM_LINE);
 			strcpy(tmpbuf,s2);
-			free(s2);
+			safefree(s2);
 			for (s2=tmpbuf;
 			     (*s2 && (*s2 != '@') && (*s2 !=' '));s2++)
 				; /* EMPTY */

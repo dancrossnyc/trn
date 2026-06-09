@@ -18,7 +18,7 @@ int tests_run = 0;
 
 static char *test_compress_name__SAIC () {
     char *before = "School of the Art Institute of Chicago";
-    char *after = strdup(before);
+    char *after = estrdup(before);
     char *expected = "School o t A I o Chicago";
     compress_name(after, NAME_MAX);
     printf("Test %d:\n", tests_run);
@@ -32,7 +32,7 @@ static char *test_compress_name__SAIC () {
 
 static char *test_compress_name__PCS () {
     char *before = "IEEE Professional Communication Society";
-    char *after = strdup(before);
+    char *after = estrdup(before);
     char *expected = "IEEE P C Society";
     compress_name(after, NAME_MAX);
     printf("Test %d:\n", tests_run);

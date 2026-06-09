@@ -156,7 +156,7 @@ rc_to_bits (void)
     }
 #endif
     if (mybuf != buf)
-	free(mybuf);
+	safefree(mybuf);
     ngptr->toread = unread;
 }
 
@@ -242,7 +242,7 @@ bits_to_rc (void)
 	termdown(2);
     }
 #endif
-    free(ngptr->rcline);		/* return old rc line */
+    safefree(ngptr->rcline);		/* return old rc line */
     if (mybuf == buf) {
 	ngptr->rcline = safemalloc((size_t)(s-buf)+1);
 					/* grab a new rc line */
@@ -675,7 +675,7 @@ chase_xref (	/* The Xref-line-using version */
 		curxref++;
 	}
     }
-    free(xref_buf);
+    safefree(xref_buf);
     return 0;
 }
 
@@ -698,7 +698,7 @@ valid_xref_site (ART_NUM artnum, char *site)
 	return TRUE;
 
     if (inews_site)
-	free(inews_site);
+	safefree(inews_site);
 #ifndef ANCIENT_NEWS
     /* Grab the site from the first component of the Path line */
     sitebuf = fetchlines(artnum,PATH_LINE);
@@ -718,7 +718,7 @@ valid_xref_site (ART_NUM artnum, char *site)
 #endif /* ANCIENT_NEWS */
     else
 	inews_site = estrdup(nullstr);
-    free(sitebuf);
+    safefree(sitebuf);
 
     if (strEQ(site,inews_site))
 	return TRUE;
@@ -848,8 +848,8 @@ chase_xref (		/* The DBM version */
 	    curxref++;
     }
   wild_goose:
-    free(xref_buf);
-    free(ident_buf);
+    safefree(xref_buf);
+    safefree(ident_buf);
     return 0;
 }
 #endif /* DBM_XREFS */

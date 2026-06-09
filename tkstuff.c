@@ -102,7 +102,7 @@ ttcl_init (void)
 	ttk_idle_pending_buf = pending_buf;
 
 	/* plain NULL pointer does not work (it is "NULL" in TCL) */
-	ttk_keys = (char*)malloc(sizeof(char));
+	ttk_keys = (char*)safemalloc(sizeof(char));
 	if (!ttk_keys)		/* sheer paranoia */
 	    return;
 	*ttk_keys = '\0';
