@@ -27,7 +27,7 @@ int valid_header (char*);
 void append_signature (void);
 
 int
-main (int argc, char *argv[])
+main(int argc, char *argv[])
 {
     bool has_fromline, in_header, has_pathline;
     bool found_nl, had_nl;
