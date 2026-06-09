@@ -1,0 +1,1 @@
+(echo '#include "EXTERN.h"'; grep '^EXT ' "$@") | cpp | sed 's/[ 	]*$//;/^#/d;s/^ //;/^[ 	]*$/d;s/[ 	]*;$/;/'
