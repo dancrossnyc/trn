@@ -798,7 +798,7 @@ dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
 		    s = datasrc? datasrc->thread_dir : nullstr;
 		    break;
 		case 'x':			/* news library */
-		    s = lib;
+		    s = newslib;
 		    break;
 		case 'X':			/* rn library */
 		    s = rnlib;

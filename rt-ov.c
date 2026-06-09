@@ -203,7 +203,7 @@ beginning:
 	if (cheating)
 	    setspin(SPIN_BACKGROUND);
 	else {
-	    int lots2do = ((datasrc->flags & DF_REMOTE)? netspeed : 20) * 100;
+	    int lots2do = 2000;
 	    if (spin_estimate > spin_todo)
 		spin_estimate = spin_todo;
 	    setspin(spin_estimate > lots2do? SPIN_BARGRAPH : SPIN_FOREGROUND);

@@ -546,13 +546,6 @@ find_grpdesc (DATASRC *dp, char *groupname)
 	if ((dp->flags & DF_REMOTE) && dp->desc_sf.refetch_secs) {
 	    /*DATASRC* save_datasrc = datasrc;*/
 	    set_datasrc(dp);
-	    if ((dp->flags & (DF_TMPGRPDESC|DF_NOXGTITLE)) == DF_TMPGRPDESC
-	     && netspeed < 5) {
-		(void)srcfile_open(&dp->desc_sf,(char*)NULL,/*$$check return?*/
-				   (char*)NULL,(char*)NULL);
-		grouplen = strlen(groupname);
-		goto try_xgtitle;
-	    }
 	    spin_todo = dp->desc_sf.recent_cnt;
 	    ret = srcfile_open(&dp->desc_sf, dp->grpdesc,
 			       "newsgroups", dp->newsid);
@@ -674,8 +667,7 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
 		    return 0;
 		}
 		sfp->lastfetch = now;
-		if (netspeed > 8)
-		    spin_todo = 0;
+	        spin_todo = 0;
 	    }
 	}
 	else {
@@ -735,7 +727,7 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
 		break;
 	    strcat(buf,"\n");
 	    fputs(buf, fp);
-	    spin(200 * netspeed);
+	    spin(4000);
 	}
 	ElseIf (!fgets(buf, sizeof buf, fp))
 	    break;

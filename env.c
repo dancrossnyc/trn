@@ -3,6 +3,8 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
+#include <unistd.h>
+
 #include "EXTERN.h"
 #include "common.h"
 #include "init.h"
@@ -12,12 +14,6 @@
 #include "INTERN.h"
 #include "env.h"
 #include "env.ih"
-
-#ifdef HAS_RES_INIT
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <resolv.h>
-#endif
 
 bool
 env_init (char *tcbuf, bool_int lax)
@@ -56,19 +52,6 @@ env_init (char *tcbuf, bool_int lax)
     if (!setphostname(tcbuf))
 	fully_successful = FALSE;
 
-    {
-	char* cp = getval("NETSPEED","5");
-	if (*cp == 'f')
-	    netspeed = 10;
-	else if (*cp == 's')
-	    netspeed = 1;
-	else {
-	    netspeed = atoi(cp);
-	    if (netspeed < 1)
-		netspeed = 1;
-	}
-    }
-
     return fully_successful;
 }
 
@@ -81,7 +64,7 @@ env_init2 (void)
 	homedir = "/";
     dotdir = getval("DOTDIR",homedir);
     trndir = estrdup(filexp(getval("TRNDIR",TRNDIR)));
-    lib = estrdup(filexp(NEWSLIB));
+    newslib = estrdup(filexp(NEWSLIB));
     rnlib = estrdup(filexp(PRIVLIB));
 }
 
@@ -158,32 +141,7 @@ setphostname (char *tmpbuf)
 
     /* Find the local hostname */
 
-#ifdef HAS_GETHOSTNAME
     gethostname(tmpbuf,TCBUF_SIZE);
-#else
-# ifdef HAS_UNAME
-    /* get sysname */
-    uname(&utsn);
-    strcpy(tmpbuf,utsn.nodename);
-# else
-#  ifdef PHOSTCMD
-    {
-	FILE* popen();
-	FILE* pipefp = popen(PHOSTCMD,"r");
-
-	if (pipefp == NULL) {
-	    printf("Can't find hostname\n");
-	    finalize(1);
-	}
-	fgets(tmpbuf,TCBUF_SIZE,pipefp);
-	tmpbuf[strlen(tmpbuf)-1] = '\0';	/* wipe out newline */
-	pclose(pipefp);
-    }
-#  else
-    strcpy(tmpbuf, "!INVALID!");
-#  endif /* PHOSTCMD */
-# endif /* HAS_UNAME */
-#endif /* HAS_GETHOSTNAME */
     localhost = estrdup(tmpbuf);
 
     /* Build the host name that goes in postings */
@@ -216,18 +174,6 @@ setphostname (char *tmpbuf)
     if (!index(tmpbuf,'.')) {
 	if (*tmpbuf)
 	    strcat(tmpbuf, ".");
-#ifdef HAS_RES_INIT
-	if (!(_res.options & RES_INIT))
-	    res_init();
-	if (_res.defdname != NULL)
-	    strcat(tmpbuf,_res.defdname);
-	else
-#endif
-#ifdef HAS_GETDOMAINNAME
-	if (getdomainname(buf,LBUFLEN) == 0)
-	    strcat(tmpbuf,buf);
-	else
-#endif
 	{
 	    strcat(tmpbuf,"UNKNOWN.HOST");
 	    hostname_ok = FALSE;

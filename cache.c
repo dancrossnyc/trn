@@ -911,7 +911,7 @@ art_data (ART_NUM first, ART_NUM last, bool_int cheating, bool_int all_articles)
     if (cheating)
 	setspin(SPIN_BACKGROUND);
     else {
-	int lots2do = ((datasrc->flags & DF_REMOTE)? netspeed : 20) * 25;
+	int lots2do = 500;
 	setspin(spin_estimate > lots2do? SPIN_BARGRAPH : SPIN_FOREGROUND);
     }
     /*assert(first >= absfirst && last <= lastart);*/

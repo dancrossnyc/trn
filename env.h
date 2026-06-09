@@ -4,18 +4,16 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-EXT char* homedir INIT(NULL);		/* login directory */
-EXT char* dotdir INIT(NULL);		/* where . files go */
-EXT char* trndir INIT(NULL);		/* usually %./.trn */
-EXT char* lib INIT(NULL);		/* news library */
-EXT char* rnlib INIT(NULL);		/* private news program library */
-EXT char* tmpdir INIT(NULL);		/* where tmp files go */
-EXT char* loginName INIT(NULL);		/* login id of user */
-EXT char* realName INIT(NULL);		/* real name of user */
-EXT char* phostname INIT(NULL);		/* host name in a posting */
-EXT char* localhost INIT(NULL);		/* local host name */
-
-EXT int netspeed INIT(20);		/* how fast our net-connection is */
+extern char* homedir;		/* login directory */
+extern char* dotdir;		/* where . files go */
+extern char* trndir;		/* usually %./.trn */
+extern char* newslib;		/* news library */
+extern char* rnlib;		/* private news program library */
+extern char* tmpdir;		/* where tmp files go */
+extern char* loginName;		/* login id of user */
+extern char* realName;		/* real name of user */
+extern char* phostname;		/* host name in a posting */
+extern char* localhost;		/* local host name */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
