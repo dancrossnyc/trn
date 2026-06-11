@@ -864,10 +864,11 @@ srcfile_close (SRCFILE *sfp)
 }
 
 static int
-srcfile_cmp (char *key, int keylen, HASHDATUM data)
+srcfile_cmp(const void *key, size_t keylen, HASHDATUM data)
 {
     /* We already know that the lengths are equal, just compare the strings */
-    return bcmp(key, ((LISTNODE*)data.dat_ptr)->data + data.dat_len, keylen);
+    LISTNODE *node = data.dat_ptr;
+    return memcmp(key, node->data + data.dat_len, keylen);
 }
 
 #ifdef EDIT_DISTANCE

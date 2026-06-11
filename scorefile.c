@@ -1167,10 +1167,10 @@ sf_exclude_file(char* fname)
     tmp_entries = (SF_ENTRY*)safemalloc(newnum*sizeof(SF_ENTRY));
     /* copy the parts into tmp_entries */
     if (start > 0)
-	bcopy((char*)sf_entries,(char*)tmp_entries,start * sizeof (SF_ENTRY));
+	memmove(tmp_entries, sf_entries, start * sizeof (SF_ENTRY));
     if (end < sf_num_entries-1)
-	bcopy((char*)(sf_entries+end+1), (char*)(tmp_entries+start),
-		(sf_num_entries-end-1) * sizeof (SF_ENTRY));
+	memmove(tmp_entries + start, sf_entries + end + 1,
+		(sf_num_entries - end - 1) * sizeof (SF_ENTRY));
     safefree(sf_entries);
     sf_entries = tmp_entries;
     sf_num_entries = newnum;

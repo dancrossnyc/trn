@@ -1,4 +1,5 @@
-/* addng.ih
+/*
+ * addng.ih
  */
 /* This software is copyrighted as detailed in the LICENSE file. */
 
@@ -6,7 +7,7 @@ static int addgroup_cnt;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static int addng_cmp (char*,int,HASHDATUM);
+static int addng_cmp (const void *, size_t, HASHDATUM);
 static int build_addgroup_list (int,HASHDATUM*,int);
 static void process_list (int);
 #ifdef SUPPORT_NNTP

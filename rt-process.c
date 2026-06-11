@@ -60,12 +60,12 @@ fix_msgid (char *msgid)
 }
 
 int
-msgid_cmp (char *key, int keylen, HASHDATUM data)
+msgid_cmp (const void *key, size_t keylen, HASHDATUM data)
 {
     /* We already know that the lengths are equal, just compare the strings */
     if (data.dat_len)
-	return bcmp(key, data.dat_ptr, keylen);
-    return bcmp(key, ((ARTICLE*)data.dat_ptr)->msgid, keylen);
+	return memcmp(key, data.dat_ptr, keylen);
+    return memcmp(key, ((ARTICLE*)data.dat_ptr)->msgid, keylen);
 }
 
 SUBJECT* fake_had_subj; /* the fake-turned-real article had this subject */

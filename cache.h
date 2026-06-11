@@ -148,7 +148,7 @@ void set_subj_line (ARTICLE*,char*,int);
 int decode_header (char*,char*,int);
 void dectrl (char*);
 void set_cached_line (ARTICLE*,int,char*);
-int subject_cmp (char*,int,HASHDATUM);
+int subject_cmp (const void *, size_t, HASHDATUM);
 #ifdef PENDING
 void look_ahead (void);
 #endif

@@ -27,9 +27,10 @@
 #include "addng.ih"
 
 static int
-addng_cmp (char *key, int keylen, HASHDATUM data)
+addng_cmp(const void *key, size_t keylen, HASHDATUM data)
 {
-	return bcmp(key, ((ADDGROUP*)data.dat_ptr)->name, keylen);
+    ADDGROUP *ag = data.dat_ptr;
+    return memcmp(key, ag->name, keylen);
 }
 
 static int

@@ -1,27 +1,31 @@
 /* hash.ih
  */
 
-#define BADTBL(tbl)	((tbl) == NULL || (tbl)->ht_magic != HASHMAG)
-
-#define HASHMAG  ((char)0257)
+static const unsigned char HASHMAG = 0257;
 
 struct hashent {
-    HASHENT* he_next;		/* in hash chain */
+    HASHENT *he_next;		/* in hash chain */
     HASHDATUM he_data;
-    int he_keylen;		/* to help verify a match */
+    size_t he_keylen;		/* to help verify a match */
 };
 
 struct hashtable {
-    HASHENT** ht_addr;		/* array of HASHENT pointers */
-    unsigned ht_size;
-    char ht_magic;
-    int (*ht_cmp) (char*,int,HASHDATUM);
+    HASHENT **ht_addr;		/* array of HASHENT pointers */
+    size_t ht_size;
+    unsigned char ht_magic;
+    int (*ht_cmp)(const void *, size_t, HASHDATUM);
 };
+
+static inline bool
+BADTBL(HASHTABLE *tbl)
+{
+    return tbl == NULL || tbl->ht_magic != HASHMAG;
+}
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-static HASHENT** hashfind (HASHTABLE*,char*,int);
-static unsigned hash (char*,int);
-static int default_cmp (char*,int,HASHDATUM);
-static HASHENT* healloc (void);
-static void hefree (HASHENT*);
+static HASHENT **hashfind(HASHTABLE*, const void *, size_t);
+static unsigned int hash(const void *, size_t);
+static int default_cmp(const void*, size_t, HASHDATUM);
+static HASHENT *healloc(void);
+static void hefree(HASHENT *);

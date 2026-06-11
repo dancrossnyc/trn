@@ -670,10 +670,10 @@ set_cached_line (
 }
 
 int
-subject_cmp (char *key, int keylen, HASHDATUM data)
+subject_cmp(const void *key, size_t keylen, HASHDATUM data)
 {
     /* We already know that the lengths are equal, just compare the strings */
-    return bcmp(key, ((SUBJECT*)data.dat_ptr)->str+4, keylen);
+    return memcmp(key, ((SUBJECT*)data.dat_ptr)->str+4, keylen);
 }
 
 /* see what we can do while they are reading */

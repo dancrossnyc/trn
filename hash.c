@@ -34,20 +34,20 @@ static HASHENT* hereuse = NULL;
 static int reusables = 0;
 
 HASHTABLE*
-hashcreate(unsigned size, int (*cmpfunc)(char*,int,HASHDATUM))
+hashcreate(unsigned size, int (*cmpfunc)(const void *, size_t, HASHDATUM))
 {
     HASHTABLE* tbl;
     /* allocate HASHTABLE and (HASHENT*) array together to reduce the
     ** number of malloc calls. */
     struct alignalloc {
-	HASHTABLE ht;
-	HASHENT* hepa[1];	/* longer than it looks */
+        HASHTABLE ht;
+        HASHENT* hepa[1];	/* longer than it looks */
     }* aap;
 
     if (size < 1)		/* size < 1 is nonsense */
-	size = 1;
+        size = 1;
     aap = (struct alignalloc*)
-	safemalloc(sizeof *aap + (size-1)*sizeof (HASHENT*));
+        safemalloc(sizeof *aap + (size-1)*sizeof (HASHENT*));
     bzero((char*)aap, sizeof *aap + (size-1)*sizeof (HASHENT*));
     tbl = &aap->ht;
     tbl->ht_size = size;
@@ -70,16 +70,16 @@ hashdestroy (HASHTABLE *tbl)
     int tblsize;
 
     if (BADTBL(tbl))
-	return;
+        return;
     tblsize = tbl->ht_size;
     hepp = tbl->ht_addr;
     for (idx = 0; idx < tblsize; idx++) {
-	for (hp = hepp[idx]; hp != NULL; hp = next) {
-	    next = hp->he_next;
-	    hp->he_next = NULL;
-	    hefree(hp);
-	}
-	hepp[idx] = NULL;
+        for (hp = hepp[idx]; hp != NULL; hp = next) {
+            next = hp->he_next;
+            hp->he_next = NULL;
+            hefree(hp);
+        }
+        hepp[idx] = NULL;
     }
     tbl->ht_magic = 0;			/* de-certify this table */
     tbl->ht_addr = NULL;
@@ -87,7 +87,7 @@ hashdestroy (HASHTABLE *tbl)
 }
 
 void
-hashstore (HASHTABLE *tbl, char *key, int keylen, HASHDATUM data)
+hashstore(HASHTABLE *tbl, char *key, int keylen, HASHDATUM data)
 {
     HASHENT* hp;
     HASHENT** nextp;
@@ -95,10 +95,10 @@ hashstore (HASHTABLE *tbl, char *key, int keylen, HASHDATUM data)
     nextp = hashfind(tbl, key, keylen);
     hp = *nextp;
     if (hp == NULL) {			/* absent; allocate an entry */
-	hp = healloc();
-	hp->he_next = NULL;
-	hp->he_keylen = keylen;
-	*nextp = hp;			/* append to hash chain */
+        hp = healloc();
+        hp->he_next = NULL;
+        hp->he_keylen = keylen;
+        *nextp = hp;			/* append to hash chain */
     }
     hp->he_data = data;		/* supersede any old data for this key */
 }
@@ -112,7 +112,7 @@ hashdelete (HASHTABLE *tbl, char *key, int keylen)
     nextp = hashfind(tbl, key, keylen);
     hp = *nextp;
     if (hp == NULL)			/* absent */
-	return;
+        return;
     *nextp = hp->he_next;		/* skip this entry */
     hp->he_next = NULL;
     hp->he_data.dat_ptr = NULL;
@@ -134,7 +134,7 @@ hashfetch (HASHTABLE *tbl, char *key, int keylen)
     slast_keylen = keylen;
     hp = *nextp;
     if (hp == NULL)			/* absent */
-	return errdatum;
+        return errdatum;
     return hp->he_data;
 }
 
@@ -145,10 +145,10 @@ hashstorelast (HASHDATUM data)
 
     hp = *slast_nextp;
     if (hp == NULL) {			/* absent; allocate an entry */
-	hp = healloc();
-	hp->he_next = NULL;
-	hp->he_keylen = slast_keylen;
-	*slast_nextp = hp;		/* append to hash chain */
+        hp = healloc();
+        hp->he_next = NULL;
+        hp->he_keylen = slast_keylen;
+        *slast_nextp = hp;		/* append to hash chain */
     }
     hp->he_data = data;		/* supersede any old data for this key */
 }
@@ -166,21 +166,21 @@ hashwalk(HASHTABLE* tbl, int (*nodefunc)(int,HASHDATUM*,int), int extra)
     int tblsize;
 
     if (BADTBL(tbl))
-	return;
+        return;
     hepp = tbl->ht_addr;
     tblsize = tbl->ht_size;
     for (idx = 0; idx < tblsize; idx++) {
-	slast_nextp = &hepp[idx];
-	for (hp = *slast_nextp; hp != NULL; hp = next) {
-	    next = hp->he_next;
-	    if ((*nodefunc)(hp->he_keylen, &hp->he_data, extra) < 0) {
-		*slast_nextp = next;
-		hp->he_next = NULL;
-		hefree(hp);
-	    }
-	    else
-		slast_nextp = &hp->he_next;
-	}
+        slast_nextp = &hepp[idx];
+        for (hp = *slast_nextp; hp != NULL; hp = next) {
+            next = hp->he_next;
+            if ((*nodefunc)(hp->he_keylen, &hp->he_data, extra) < 0) {
+                *slast_nextp = next;
+                hp->he_next = NULL;
+                hefree(hp);
+            }
+            else
+                slast_nextp = &hp->he_next;
+        }
     }
 }
 
@@ -190,7 +190,7 @@ hashwalk(HASHTABLE* tbl, int (*nodefunc)(int,HASHDATUM*,int), int extra)
 ** to be inserted, if insertion is desired.
 */
 static HASHENT **
-hashfind (HASHTABLE *tbl, char *key, int keylen)
+hashfind(HASHTABLE *tbl, const void *key, size_t keylen)
 {
     HASHENT* hp;
     HASHENT* prevhp = NULL;
@@ -198,34 +198,39 @@ hashfind (HASHTABLE *tbl, char *key, int keylen)
     unsigned size;
 
     if (BADTBL(tbl)) {
-	fputs("Hash table is invalid.",stderr);
-	finalize(1);
+        fputs("Hash table is invalid.",stderr);
+        finalize(1);
     }
     size = tbl->ht_size;
     hepp = &tbl->ht_addr[hash(key,keylen) % size];
     for (hp = *hepp; hp != NULL; prevhp = hp, hp = hp->he_next) {
-	if (hp->he_keylen == keylen && !(*tbl->ht_cmp)(key, keylen, hp->he_data))
-	    break;
+        if (hp->he_keylen == keylen && !(*tbl->ht_cmp)(key, keylen, hp->he_data))
+            break;
     }
     /* assert: *(returned value) == hp */
     return (prevhp == NULL? hepp: &prevhp->he_next);
 }
 
-static unsigned
-hash (char *key, int keylen)
+static unsigned int
+hash(const void *key, size_t keylen)
 {
-    unsigned hash = 0;
+    const unsigned int MULTIPLIER = 31;
+    const unsigned char *p = key;
+    unsigned int hash = 0;
 
-    while (keylen--)
-	hash += *key++;
+    while (keylen > 0) {
+        hash = hash * MULTIPLIER + *p++;
+        --keylen;
+    }
+
     return hash;
 }
 
 static int
-default_cmp (char *key, int keylen, HASHDATUM data)
+default_cmp(const void *key, size_t keylen, HASHDATUM data)
 {
     /* We already know that the lengths are equal, just compare the strings */
-    return bcmp(key, data.dat_ptr, keylen);
+    return memcmp(key, data.dat_ptr, keylen);
 }
 
 static HASHENT *
@@ -234,17 +239,17 @@ healloc (void)				/* allocate a hash entry */
     HASHENT* hp;
 
     if (hereuse == NULL) {
-	int i;
+        int i;
 
-	/* make a nice big block of hashents to play with */
-	hp = (HASHENT*)safemalloc(HEBLOCKSIZE * sizeof (HASHENT));
-	/* set up the pointers within the block */
-	for (i = 0; i < HEBLOCKSIZE-1; i++)
-	    (hp+i)->he_next = hp + i + 1;
-	/* The last block is the end of the list */
-	(hp+i)->he_next = NULL;
-	hereuse = hp;		/* start of list is the first item */
-	reusables += HEBLOCKSIZE;
+        /* make a nice big block of hashents to play with */
+        hp = (HASHENT*)safemalloc(HEBLOCKSIZE * sizeof (HASHENT));
+        /* set up the pointers within the block */
+        for (i = 0; i < HEBLOCKSIZE-1; i++)
+            (hp+i)->he_next = hp + i + 1;
+        /* The last block is the end of the list */
+        (hp+i)->he_next = NULL;
+        hereuse = hp;		/* start of list is the first item */
+        reusables += HEBLOCKSIZE;
     }
 
     /* pull the first reusable one off the pile */
@@ -257,16 +262,16 @@ healloc (void)				/* allocate a hash entry */
 
 static void
 hefree (				/* free a hash entry */
-    HASHENT *hp
+HASHENT *hp
 )
 {
 #ifdef HASH_FREE_ENTRIES
     if (reusables >= RETAIN)		/* compost heap is full? */
-	safefree((char *)hp);		/* yup, just pitch this one */
+        safefree((char *)hp);		/* yup, just pitch this one */
     else {				/* no, just stash for reuse */
-	++reusables;
-	hp->he_next = hereuse;
-	hereuse = hp;
+        ++reusables;
+        hp->he_next = hereuse;
+        hereuse = hp;
     }
 #else
     /* always add to list */

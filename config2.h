@@ -43,11 +43,6 @@
 #   define rindex strrchr
 # endif
 #endif
-#ifdef HAS_MEMCMP
-# ifndef bcmp
-#   define bcmp(s,d,l) memcmp((s),(d),(l))
-# endif
-#endif
 #ifdef HAS_MEMCPY
 # ifndef bcopy
 #   define bcopy(s,d,l) memcpy((d),(s),(l))
