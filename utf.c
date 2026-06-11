@@ -307,7 +307,8 @@ code_point_at (const char *s)
 int
 insert_utf8_at (char *s, CODE_POINT c)
 {
-    int it;
+    int it = 1;
+
     /* FIXME - should we check if s has enough space? */
     if (s == NULL)
 	it = 0;
@@ -426,9 +427,9 @@ create_utf8_copy (char *s)
 {
     char *it = s;
     if (s != NULL) {
-	int slen;
-	int tlen;
-	int i;
+	int slen = 0;
+	int tlen = 0;
+	int i = 0;
 	char buf[7];
 
 	/* Precalculate size of required space */
