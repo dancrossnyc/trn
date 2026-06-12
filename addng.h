@@ -20,11 +20,11 @@ struct addgroup {
 
 #define AGF_EXCLUDED	0x20
 
-EXT ADDGROUP* first_addgroup;
-EXT ADDGROUP* last_addgroup;
+extern ADDGROUP* first_addgroup;
+extern ADDGROUP* last_addgroup;
 
-EXT ADDGROUP* sel_page_gp;
-EXT ADDGROUP* sel_next_gp;
+extern ADDGROUP* sel_page_gp;
+extern ADDGROUP* sel_next_gp;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

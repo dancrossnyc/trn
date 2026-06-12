@@ -19,17 +19,6 @@
 /* grab this many hashents at a time (under 1024 for malloc overhead) */
 #define HEBLOCKSIZE 1000
 
-/* define the following if you actually want to free the hashents
- * You probably don't want to do this with the usual malloc...
- */
-/* #define HASH_FREE_ENTRIES */
-
-/* CAA: increased from 600.  Each threaded article requires at least
- *      one hashent, and various newsgroup hashes can easily get large.
- */
-/* tunable parameters */
-#define RETAIN 1000		/* retain & recycle this many HASHENTs */
-
 static HASHENT* hereuse = NULL;
 static int reusables = 0;
 
@@ -46,9 +35,8 @@ hashcreate(unsigned size, int (*cmpfunc)(const void *, size_t, HASHDATUM))
 
     if (size < 1)		/* size < 1 is nonsense */
         size = 1;
-    aap = (struct alignalloc*)
-        safemalloc(sizeof *aap + (size-1)*sizeof (HASHENT*));
-    bzero((char*)aap, sizeof *aap + (size-1)*sizeof (HASHENT*));
+    aap =  safemalloc(sizeof *aap + (size - 1)*sizeof(HASHENT*));
+    memset(aap, 0, sizeof *aap + (size - 1)*sizeof(HASHENT*));
     tbl = &aap->ht;
     tbl->ht_size = size;
     tbl->ht_magic = HASHMAG;
@@ -61,7 +49,7 @@ hashcreate(unsigned size, int (*cmpfunc)(const void *, size_t, HASHDATUM))
 ** invalidate tbl to prevent further use via other pointers to it.
 */
 void
-hashdestroy (HASHTABLE *tbl)
+hashdestroy(HASHTABLE *tbl)
 {
     unsigned idx;
     HASHENT* hp;
@@ -83,7 +71,7 @@ hashdestroy (HASHTABLE *tbl)
     }
     tbl->ht_magic = 0;			/* de-certify this table */
     tbl->ht_addr = NULL;
-    safefree((char *)tbl);
+    safefree(tbl);
 }
 
 void
@@ -195,18 +183,23 @@ hashfind(HASHTABLE *tbl, const void *key, size_t keylen)
     HASHENT* hp;
     HASHENT* prevhp = NULL;
     HASHENT** hepp;
-    unsigned size;
+    unsigned int size;
 
     if (BADTBL(tbl)) {
         fputs("Hash table is invalid.",stderr);
         finalize(1);
     }
     size = tbl->ht_size;
-    hepp = &tbl->ht_addr[hash(key,keylen) % size];
-    for (hp = *hepp; hp != NULL; prevhp = hp, hp = hp->he_next) {
-        if (hp->he_keylen == keylen && !(*tbl->ht_cmp)(key, keylen, hp->he_data))
+    hepp = &tbl->ht_addr[hash(key, keylen) % size];
+    for (hp = *hepp;
+      hp != NULL;
+      prevhp = hp, hp = hp->he_next)
+    {
+        if (hp->he_keylen == keylen &&
+          (*tbl->ht_cmp)(key, keylen, hp->he_data) == 0)
             break;
     }
+
     /* assert: *(returned value) == hp */
     return (prevhp == NULL? hepp: &prevhp->he_next);
 }
@@ -242,7 +235,7 @@ healloc (void)				/* allocate a hash entry */
         int i;
 
         /* make a nice big block of hashents to play with */
-        hp = (HASHENT*)safemalloc(HEBLOCKSIZE * sizeof (HASHENT));
+        hp = safemalloc(HEBLOCKSIZE * sizeof (HASHENT));
         /* set up the pointers within the block */
         for (i = 0; i < HEBLOCKSIZE-1; i++)
             (hp+i)->he_next = hp + i + 1;
@@ -260,25 +253,23 @@ healloc (void)				/* allocate a hash entry */
     return hp;
 }
 
+/* free a hash entry */
 static void
-hefree (				/* free a hash entry */
-HASHENT *hp
-)
+hefree(HASHENT *hp)
 {
-#ifdef HASH_FREE_ENTRIES
-    if (reusables >= RETAIN)		/* compost heap is full? */
-        safefree((char *)hp);		/* yup, just pitch this one */
-    else {				/* no, just stash for reuse */
-        ++reusables;
-        hp->he_next = hereuse;
-        hereuse = hp;
+    /* tunable parameters */
+    const bool HASH_FREE_ENTRIES = false;
+    const size_t RETAIN = 1000;	  /* retain & recycle this many HASHENTs */
+
+    /* compost heap is full? */
+    /* yup, just pitch this one */
+    if (HASH_FREE_ENTRIES && reusables >= RETAIN) {
+        safefree(hp);
+        return;
     }
-#else
-    /* always add to list */
     ++reusables;
     hp->he_next = hereuse;
     hereuse = hp;
-#endif
 }
 
 /*

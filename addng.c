@@ -22,9 +22,14 @@
 #include "final.h"
 #include "autosub.h"
 #include "rt-select.h"
-#include "INTERN.h"
 #include "addng.h"
 #include "addng.ih"
+
+ADDGROUP* first_addgroup;
+ADDGROUP* last_addgroup;
+
+ADDGROUP* sel_page_gp;
+ADDGROUP* sel_next_gp;
 
 static int
 addng_cmp(const void *key, size_t keylen, HASHDATUM data)

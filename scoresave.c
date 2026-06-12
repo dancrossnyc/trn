@@ -26,15 +26,17 @@
 #include "samisc.h"
 #endif
 #include "score.h"
-#include "INTERN.h"
 #include "scoresave.h"
+
+long sc_save_new = 0;	 	/* new articles (unloaded) */
+long sc_loaded_count = 0;	/* how many articles were loaded? */
 
 static int num_lines = 0;
 static int lines_alloc = 0;
 static char** lines = NULL;
 
 static char lbuf[LBUFLEN];
-static char lbuf2[LBUFLEN];		/* what's another buffer between... */
+static char lbuf2[LBUFLEN];	/* what's another buffer between... */
 
 static int loaded;
 static int used;

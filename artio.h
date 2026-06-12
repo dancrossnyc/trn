@@ -3,26 +3,30 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-EXT ART_POS artpos INIT(0);	/* byte position in article file */
+static const int WRAPPED_NL = '\003';
+static inline bool
+AT_NL(int c)
+{
+    return c == '\n' || c == WRAPPED_NL;
+}
 
-EXT ART_LINE artline INIT(0);	/* current line number in article file */
-EXT FILE* artfp INIT(NULL);	/* current article file pointer */
-EXT ART_NUM openart INIT(0);	/* the article number we have open */
+extern ART_POS artpos;		/* byte position in article file */
 
-EXT char* artbuf;
-EXT long artbuf_size;
-EXT long artbuf_pos;
-EXT long artbuf_seek;
-EXT long artbuf_len;
+extern ART_LINE artline;	/* current line number in article file */
+extern FILE* artfp;		/* current article file pointer */
+extern ART_NUM openart;		/* the article number we have open */
+
+extern char* artbuf;
+extern long artbuf_size;
+extern long artbuf_pos;
+extern long artbuf_seek;
+extern long artbuf_len;
+
+extern char wrapped_nl;
+extern char* linkartname;	/* real name of article for Eunice */
 
 #define WRAPPED_NL  '\003'
 #define AT_NL(c) ((c) == '\n' || (c) == WRAPPED_NL)
-
-EXT char wrapped_nl INIT(WRAPPED_NL);
-
-#ifdef LINKART
-EXT char* linkartname INIT(nullstr);/* real name of article for Eunice */
-#endif
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

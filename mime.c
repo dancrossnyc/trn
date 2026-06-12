@@ -535,11 +535,6 @@ mime_ParseSubheader (FILE *ifp, char *next_line)
 	    s = mime_SkipWhitespace(s+1);
 	    mime_section->filename = estrdup(s);
 	    break;
-#if 0
-	  case CONTLEN_LINE:
-	    mime_section->content_len = atol(s+1);
-	    break;
-#endif
 	}
     }
     mime_state = mime_section->type;
@@ -774,12 +769,12 @@ mime_Description (MIME_SECT *mp, char *s, int limit)
     else if (len+3 >= limit)
 	strcpy(s+limit-3, "...]\n");
     else {
-#if 0
-	sprintf(s+len, "...%s]\n", fn + flen - (limit-(len+3)));
-#else
-	safecpy(s+len, fn, limit - (len+3));
-	strcat(s, "...]\n");
-#endif
+        if (0) {
+	    sprintf(s+len, "...%s]\n", fn + flen - (limit-(len+3)));
+	} else {
+	    safecpy(s+len, fn, limit - (len+3));
+	    strcat(s, "...]\n");
+	}
     }
 }
 

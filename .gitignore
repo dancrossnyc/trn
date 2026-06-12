@@ -8,14 +8,12 @@ patchlevel2.h
 *.o
 access.def
 all
-config.h
 config.sh
 filexp
 environment
 inews
 makedepend
 makedir
-Makefile
 mbox.saver
 mkpro
 mktd

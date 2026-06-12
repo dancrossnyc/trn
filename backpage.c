@@ -8,10 +8,15 @@
 #include "intrp.h"
 #include "util2.h"
 #include "final.h"
-#include "INTERN.h"
 #include "backpage.h"
 
 ART_LINE maxindx = -1;
+
+long oldoffset = -1;            /* offset to block currently in window */
+
+int varyfd = 0;                 /* virtual array file for storing  */
+                                /* file offsets */
+ART_POS varybuf[VARYSIZE];      /* current window onto virtual array */
 
 void
 backpage_init (void)

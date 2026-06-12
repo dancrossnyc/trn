@@ -1,8 +1,3 @@
-case $CONFIG in
-'') . ./config.sh ;;
-esac
-echo "Extracting config.h (with variable substitutions)"
-sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#un-def!#undef!'
 /*
  * This file was produced by running the config_h.SH script, which
  * gets its values from config.sh, which is generally produced by
@@ -12,15 +7,15 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  * that running config_h.SH again will wipe out any changes you've made.
  * For a more permanent change edit config.sh and rerun config_h.SH.
  *
- * \$Id: Config_h.U,v 3.0.1.5 1997/02/28 14:57:43 ram Exp $
+ * $Id: Config_h.U,v 3.0.1.5 1997/02/28 14:57:43 ram Exp $
  */
 
 /*
- * Package name      : $package
- * Source directory  : $src
- * Configuration time: $cf_time
- * Configured by     : $cf_by
- * Target system     : $myuname
+ * Package name      : trn
+ * Source directory  : .
+ * Configuration time: Wed Jun  3 12:34:13 UTC 2026
+ * Configured by     : cross
+ * Target system     : openbsd spitfire.i.gajendra.net 7.9 generic.mp#449 amd64 
  */
 
 #ifndef _config_h_
@@ -30,7 +25,7 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  *	This symbol indicates the C compiler can check for function attributes,
  *	such as printf formats. This is normally only supported by GNU cc.
  */
-#$d_attribut HASATTRIBUTE 	/**/
+#define HASATTRIBUTE 	/**/
 #ifndef HASATTRIBUTE
 #define __attribute__(_arg_)
 #endif
@@ -40,92 +35,92 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  *	available for sequential access of the passwd database.
  *	If this is not available, the older getpw() function may be available.
  */
-#$d_getpwent HAS_GETPWENT		/**/
+#define HAS_GETPWENT		/**/
 
 /* INTERNET:
  *	This symbol, if defined, indicates that there is a mailer available
  *	which supports internet-style addresses (user@site.domain).
  */
-#$d_internet	INTERNET	/**/
+#define	INTERNET	/**/
 
 /* HAS_MEMCMP:
  *	This symbol, if defined, indicates that the memcmp routine is available
  *	to compare blocks of memory.
  */
-#$d_memcmp HAS_MEMCMP	/**/
+#define HAS_MEMCMP	/**/
 
 /* HAS_MEMCPY:
  *	This symbol, if defined, indicates that the memcpy routine is available
  *	to copy blocks of memory.
  */
-#$d_memcpy HAS_MEMCPY	/**/
+#define HAS_MEMCPY	/**/
 
 /* HAS_MEMSET:
  *	This symbol, if defined, indicates that the memset routine is available
  *	to set blocks of memory.
  */
-#$d_memset HAS_MEMSET	/**/
+#define HAS_MEMSET	/**/
 
 /* HAS_MKDIR:
  *	This symbol, if defined, indicates that the mkdir routine is available
  *	to create directories.  Otherwise you should fork off a new process to
  *	exec /bin/mkdir.
  */
-#$d_mkdir HAS_MKDIR		/**/
+#define HAS_MKDIR		/**/
 
 /* NEWS_ADMIN:
  *	This symbol, if defined, contains the login name of the news
  *	administrator.
  */
-#$d_newsadm NEWS_ADMIN "$newsadmin"		/**/
+#define NEWS_ADMIN "news"		/**/
 
 /* NOLINEBUF:
  *	This symbol, if defined, indicates that stdout is not buffered, so that
  *	the program can call setbuf() or setlinebuf() for efficiency.
  */
-#$d_nolnbuf	NOLINEBUF	/**/
+/*#define	NOLINEBUF	*//**/
 
 /* NORMSIG:
  *	This symbol, if defined, indicates that normal signal handling routines
  *	should be used, as opposed to the ones in 4.1bsd (sigset, etc.).
  */
-#$d_normsig NORMSIG		/**/
+#define NORMSIG		/**/
 
 /* HAS_SIGBLOCK:
  *	This symbol, if defined, indicates that the sigblock routine is
  *	available to block signal reception.
  */
-#$d_sigblock HAS_SIGBLOCK	/**/
+#define HAS_SIGBLOCK	/**/
 
 /* HAS_SIGHOLD:
  *	This symbol, if defined, indicates that the sighold routine is
  *	available to hold signals.
  */
-#$d_sighold HAS_SIGHOLD	/**/
+/*#define HAS_SIGHOLD	*//**/
 
 /* DEFEDITOR:
  *	This symbol contains the full pathname of the default editor.
  */
-#define DEFEDITOR "$defeditor"		/**/
+#define DEFEDITOR "/usr/bin/vi"		/**/
 
 /* I_UTIME:
  *	This symbol, if defined, indicates to the C program that it should
  *	include <utime.h>.
  */
-#$i_utime I_UTIME		/**/
+#define I_UTIME		/**/
 
 /* MAILFILE:
  *	This symbol contains the interpretable name of the mail spool file
  *	for the current user.  The program must be prepared to substitute
  *	the HOME directory for %~, and the login id for %L.
  */
-#define MAILFILE "$mailfile"		/**/
+#define MAILFILE "/var/mail/%L"		/**/
 
 /* MBOXCHAR:
  *	This symbol contains a character which will match the beginning
  *	of a mailbox file.
  */
-#define MBOXCHAR '$mboxchar'		/**/
+#define MBOXCHAR 'F'		/**/
 
 /* PASSNAMES:
  *	This symbol, if defined, indicates that full names are stored in
@@ -136,24 +131,24 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  *	the /etc/passwd file in Berkeley format (name first thing, everything
  *	up to first comma, with & replaced by capitalized login id, yuck).
  */
-#$d_passnames PASSNAMES /*  (undef to take name from ~/.fullname) */
-#$d_berknames BERKNAMES /* (that is, ":name,stuff:") */
+#define PASSNAMES /*  (undef to take name from ~/.fullname) */
+#define BERKNAMES /* (that is, ":name,stuff:") */
 
 /* INSTALLPREFIX:
  *	This symbol contains the name of the install prefix for this package.
  */
-#define INSTALLPREFIX "$prefix"		/**/
+#define INSTALLPREFIX "/usr/local"		/**/
 
 /* PREFSHELL:
  *	This symbol contains the full name of the preferred user shell on this
  *	system.  Usual values are /bin/csh, /bin/ksh, /bin/sh.
  */
-#define PREFSHELL "$prefshell"		/**/
+#define PREFSHELL "/bin/ksh"		/**/
 
 /* ROOTID:
  *	This symbol contains the uid of root, normally 0.
  */
-#define ROOTID $rootid		/**/
+#define ROOTID 0		/**/
 
 /* ACTIVE:
  *	The name of the active file for the news system.  This file contains
@@ -162,8 +157,8 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
 /* ACTIVE_TIMES:
  *	The name of the active.times file for the news system.
  */
-#define ACTIVE "$active"		/**/
-#$d_acttimes ACTIVE_TIMES "$acttimes"		/**/
+#define ACTIVE "remote"		/**/
+#define ACTIVE_TIMES "remote"		/**/
 
 /* HAS_GETHOSTNAME:
  *	This symbol, if defined, indicates that the C program may use the
@@ -188,23 +183,23 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  *	This symbol, if defined, indicates that the C program may use the
  *	getdomainname() routine to derive the domain.
  */
-#$d_gethname HAS_GETHOSTNAME	/**/
-#$d_uname HAS_UNAME		/**/
-#$d_phostcmd PHOSTCMD "$aphostcmd"	/* How to get the host name */
-#$d_resinit HAS_RES_INIT	/**/
-#$d_getdname HAS_GETDOMAINNAME	/**/
+#define HAS_GETHOSTNAME	/**/
+/*#define HAS_UNAME		*//**/
+/*#define PHOSTCMD ""	*//* How to get the host name */
+/*#define HAS_RES_INIT	*//**/
+/*#define HAS_GETDOMAINNAME	*//**/
 
 /* HAS_TERMLIB:
  *	This symbol, when defined, indicates that termlib-style routines
  *	are available.  There is nothing to include.
  */
-#$d_havetlib	HAS_TERMLIB	/**/
+#define	HAS_TERMLIB	/**/
 
 /* IGNOREORG:
  *	This symbol, if defined, indicates that the ORGANIZATION environment
  *	variable does not contain an organization name.
  */
-#$d_ignoreorg IGNOREORG		/**/
+/*#define IGNOREORG		*//**/
 
 /* SUPPORT_NNTP:
  *	This symbol, if defined, indicates that NNTP support is possible.
@@ -225,55 +220,55 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  *	This symbol, if defined, indicates that there's a local spool
  *	directory configured into trn.
  */
-#$d_nntp SUPPORT_NNTP	/**/
-#$d_genauth USE_GENAUTH	/**/
-#define SERVER_NAME "$servername"  	/**/
-#$d_xthread SUPPORT_XTHREAD  	/**/
-#$d_local HAS_LOCAL_SPOOL	/**/
+#define SUPPORT_NNTP	/**/
+#define USE_GENAUTH	/**/
+#define SERVER_NAME "/usr/local/etc/nntpserver"  	/**/
+#define SUPPORT_XTHREAD  	/**/
+/*#define HAS_LOCAL_SPOOL	*//**/
 
 /* void:
  *	This symbol is used for void functions.  On implementations which
  *	support void appropriately, its value is "void".  Otherwise, its
  *	value should be set to "int".
  */
-#$d_novoid void int	/**/
+/*#define void int	*//**/
 
 /* HAS_RENAME:
  *	This symbol, if defined, indicates that the rename routine is available
  *	to rename files.  Otherwise you should do the unlink(), link(), unlink()
  *	trick.
  */
-#$d_rename HAS_RENAME	/**/
+#define HAS_RENAME	/**/
 
 /* size_t:
  *	This symbol is defined as an int if no size_t definition exists.
  */
-#$d_sizet	size_t int		/**/
+/*#define	size_t int		*//**/
 
 /* HAS_STRCHR:
  *	This symbol is defined to indicate that the strchr()/strrchr()
  *	functions are available for string searching. If not, try the
  *	index()/rindex() pair.
  */
-#$d_strchr HAS_STRCHR	/**/
+#define HAS_STRCHR	/**/
 
 /* HAS_STRFTIME:
  *	This symbol, if defined, indicates that the strftime routine is
  *	available to format locale-specific times.
  */
-#$d_strftime HAS_STRFTIME		/**/
+#define HAS_STRFTIME		/**/
 
 /* HAS_STRSTR:
  *	This symbol, if defined, indicates that the strstr routine is
  *	available to find substrings.
  */
-#$d_strstr HAS_STRSTR	/**/
+#define HAS_STRSTR	/**/
 
 /* I_PTEM:
  *	This symbol, if defined, indicates to the C program that it should
  *	include ptem.h.
  */
-#$i_ptem I_PTEM		/**/
+/*#define I_PTEM		*//**/
 
 /* I_TIME:
  *	This symbol, if defined, indicates to the C program that it should
@@ -283,15 +278,15 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  *	This symbol, if defined, indicates to the C program that it should
  *	include <sys/time.h>.
  */
-#$i_time I_TIME		/**/
-#$i_systime I_SYS_TIME		/**/
+/*#define I_TIME		*//**/
+#define I_SYS_TIME		/**/
 
 /* MIMECAP:
  *	This symbol contains the pathname of mimecap file, which controls
  *	what programs get run when handling mime articles.  It is often
  *	metamail's "mailcap" file, and is the same format.
  */
-#define MIMECAP "%./.mimecap:~/.mailcap:$mimecap"		/**/
+#define MIMECAP "%./.mimecap:~/.mailcap:/usr/local/etc/mimecap"		/**/
 
 /* NEWSLIB:
  *	This symbol contains the name of the directory serving as the news
@@ -309,23 +304,23 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  *	Contains the full path and filename of the list of default
  *	subscriptions, or nothing.
  */
-#define NEWSLIB "$newslib"		/**/
-#define EXTRAINEWS "$extrainews"	/**/
-#define GROUPDESC "$groupdesc"	/**/
-#define SUBSCRIPTIONS "$subscriptions"	/**/
+#define NEWSLIB "/tmp"		/**/
+#define EXTRAINEWS ""	/**/
+#define GROUPDESC ""	/**/
+#define SUBSCRIPTIONS ""	/**/
 
 /* NEWSSPOOL:
  *	This symbol contains the directory name where news articles are
  *	spooled.  The program must be prepared to do ~ expansion on it.
  */
-#define NEWSSPOOL "$newsspool"		/**/
+#define NEWSSPOOL "none"		/**/
 
 /* ORGNAME:
  *	This symbol contains either the organizaton name or the full pathname
  *	of a file containing the organization name, which the program must
  *	be prepared to open and substitute the contents of.
  */
-#define ORGNAME "$orgname"		/**/
+#define ORGNAME "/usr/local/etc/trn/organization"		/**/
 
 /* PHOSTNAME:
  *	This symbol contains the posting host's name or a file from which
@@ -335,8 +330,8 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  *	Set to TRUE if we should compare only the domain portion of the
  *	hostname when looking for local articles.
  */
-#define PHOSTNAME "$phost"		/**/
-#define HOSTBITS $hostbits	/**/
+#define PHOSTNAME "spitfire.i.gajendra.net"		/**/
+#define HOSTBITS 2	/**/
 
 /* PRIVLIB:
  *	This symbol contains the name of the private library for this package.
@@ -344,7 +339,7 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  *	execution path, but it should be accessible by the world.  The program
  *	should be prepared to do ~ expansion.
  */
-#define PRIVLIB "$privlib"		/**/
+#define PRIVLIB "/usr/local/lib/trn"		/**/
 
 /* SCAN:
  *	This is defined if you want strn's scan mode.
@@ -352,8 +347,8 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
 /* SCORE:
  *	This is defined if you want strn's article scoring.
  */
-#$strn SCAN		/**/
-#$strn SCORE		/**/
+#define SCAN		/**/
+#define SCORE		/**/
 
 /* THREAD_DIR:
  *	This symbol indicates where the thread files go.
@@ -364,14 +359,14 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
 /* OVERVIEW_FMT:
  *	The overview.fmt file.
  */
-#define THREAD_DIR	"$threaddir"		/**/
-#define OVERVIEW_DIR	"$overviewdir"		/**/
-#define OVERVIEW_FMT	"$overviewfmt"		/**/
+#define THREAD_DIR	"remote"		/**/
+#define OVERVIEW_DIR	"remote"		/**/
+#define OVERVIEW_FMT	"none"		/**/
 
 /* USE_TK:
  *	This is defined if you want to link trn with Tk.
  */
-#$tk USE_TK		/**/
+/*#define USE_TK		*//**/
 
 /* THREAD_INIT:
  *	This symbol indicates we act like trn no matter what our name is.
@@ -379,13 +374,12 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
 /* SELECT_INIT:
  *	This symbol indicates we default to the selector for group entry.
  */
-#define THREAD_INIT	$trn_init
-#define SELECT_INIT	$trn_select
+#define THREAD_INIT	FALSE
+#define SELECT_INIT	TRUE
 
-#define CALL_INEWS "$useinews -h <%h"
-#define NEWSPOSTER "$bin/Pnews -h %h"
-#define MAILPOSTER "$bin/Rnmail -h %h"
+#define CALL_INEWS "/usr/local/bin/inews -h <%h"
+#define NEWSPOSTER "/usr/local/bin/Pnews -h %h"
+#define MAILPOSTER "/usr/local/bin/Rnmail -h %h"
 /*#define ANCIENT_NEWS	*//* if your B news system is <= 2.10.1 */
 
 #endif
-!GROK!THIS!

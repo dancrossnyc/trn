@@ -3,9 +3,8 @@
  *
  */
 
-EXT long sc_save_new INIT(0);	/* new articles (unloaded) */
-
-EXT int sc_loaded_count INIT(0);	/* how many articles were loaded? */
+extern long sc_save_new;	/* new articles (unloaded) */
+extern long sc_loaded_count;	/* how many articles were loaded? */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

@@ -5,6 +5,7 @@
 
 #include "EXTERN.h"
 #include "common.h"
+#include "charsubst.h"
 #include "list.h"
 #include "hash.h"
 #include "ngdata.h"
@@ -26,8 +27,21 @@
 #include "util2.h"
 #include "color.h"
 #include "decode.h"
-#include "INTERN.h"
 #include "artio.h"
+
+ART_POS artpos = 0;	/* byte position in article file */
+ART_LINE artline = 0;	/* current line number in article file */
+FILE* artfp = NULL;	/* current article file pointer */
+ART_NUM openart = 0;	/* the article number we have open */
+
+char* artbuf;
+long artbuf_size;
+long artbuf_pos;
+long artbuf_seek;
+long artbuf_len;
+
+char wrapped_nl = WRAPPED_NL;
+char* linkartname = nullstr; /* real name of article for Eunice */
 
 void
 artio_init (void)
@@ -64,38 +78,12 @@ retry_open:
 	/*artio_setbuf(artfp);$$*/
     }
     if (!artfp) {
-#ifdef ETIMEDOUT
 	if (errno == ETIMEDOUT)
 	    goto retry_open;
-#endif
 	if (errno == EINTR)
 	    goto retry_open;
 	uncache_article(ap,FALSE);
     } else {
-#ifdef LINKART
-	if (!(datasrc->flags & DF_REMOTE))
-	{
-	    char tmpbuf[256];
-	    char* s;
-
-	    if (!fstat(fileno(artfp),&filestat)
-	     && filestat.st_size < sizeof tmpbuf) {
-		fgets(tmpbuf,sizeof tmpbuf,artfp);
-		if (FILE_REF(tmpbuf)) {	/* is a "link" to another article */
-		    fclose(artfp);
-		    if ((s = index(tmpbuf,'\n')) != NULL)
-			*s = '\0';
-		    if (!(artfp = fopen(tmpbuf,"r")))
-			uncache_article(ap,FALSE);
-		    else {
-			if (*linkartname)
-			    safefree(linkartname);
-			linkartname = estrdup(tmpbuf);
-		    }
-		}
-	    }
-	}
-#endif
 	openart = artnum;		/* remember what we did here */
 	seekart(pos);
     }
@@ -243,9 +231,7 @@ readartbuf (bool_int view_inline)
   mime_switch:
     switch (mime_state) {
       case ISOTEXT_MIME:
-#if 0 /*def CHARSUBST*/
-	charsubst = "a"; /*$$*/
-#endif
+        if (0) charsubst = "a"; /*$$*/
 	mime_state = TEXT_MIME;
 	/* FALL THROUGH */
       case TEXT_MIME:

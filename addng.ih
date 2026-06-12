@@ -10,9 +10,7 @@ static int addgroup_cnt;
 static int addng_cmp (const void *, size_t, HASHDATUM);
 static int build_addgroup_list (int,HASHDATUM*,int);
 static void process_list (int);
-#ifdef SUPPORT_NNTP
 static void new_nntp_groups (DATASRC*);
-#endif
 static void new_local_groups (DATASRC*);
 static void add_to_hash (HASHTABLE*,char*,int,char_int);
 static void add_to_list (char*,int,char_int);
