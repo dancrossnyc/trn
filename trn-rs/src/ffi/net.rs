@@ -17,7 +17,7 @@ fn servport(port: u16, servp: *const c_char) -> Option<u16> {
         "snttp" | "nntps" => Some(563),
         "http" => Some(80),
         "https" => Some(443),
-        "ftp" => Some(22),
+        "ftp" => Some(21),
         service => {
             let sep = unsafe { libc::getservbyname(servp, c"tcp".as_ptr()) };
             if sep.is_null() {
@@ -25,7 +25,8 @@ fn servport(port: u16, servp: *const c_char) -> Option<u16> {
                 return None;
             }
             let se = unsafe { &*sep };
-            let port = u16::try_from(se.s_port).expect("port is 16 bits");
+            let portbe = u16::try_from(se.s_port).expect("port is 16 bits");
+            let port = u16::from_be(portbe);
             Some(port)
         }
     }
