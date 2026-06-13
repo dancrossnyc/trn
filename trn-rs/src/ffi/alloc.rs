@@ -124,7 +124,7 @@ unsafe fn rsrealloc(ptr: *mut u8, size: usize) -> *mut u8 {
             std::ptr::write_bytes(nptr.wrapping_add(osize), 0, nsize - osize);
         }
     }
-    let layout = Layout::from_size_align(nsize, ALIGN);
+    let layout = Layout::from_size_align(nsize, ALIGN).expect("layout makes sense");
     unsafe {
         std::ptr::write(nptr.cast(), layout);
     }
@@ -147,6 +147,9 @@ pub unsafe extern "C" fn saferealloc(ptr: *mut c_void, size: usize) -> *mut c_vo
     ptr.cast()
 }
 
+/// Returns a constant nil pointer so that the caller can do
+/// things like, `p = safefree(p);` to free and null out the
+/// pointer.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn safefree(ptr: *mut c_void) -> *mut c_void {
     unsafe {
@@ -156,7 +159,7 @@ pub unsafe extern "C" fn safefree(ptr: *mut c_void) -> *mut c_void {
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn estrdup(cstrp: *mut c_char) -> *mut c_char {
+pub unsafe extern "C" fn estrdup(cstrp: *const c_char) -> *mut c_char {
     assert!(!cstrp.is_null(), "estrdup: string is null");
     let cstr = unsafe { CStr::from_ptr(cstrp) };
     let bs = cstr.to_bytes_with_nul();
