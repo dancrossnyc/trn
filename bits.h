@@ -3,7 +3,7 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-EXT int dmcount INIT(0);
+extern int dmcount;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

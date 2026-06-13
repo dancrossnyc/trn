@@ -30,9 +30,10 @@
 #include "rt-process.h"
 #include "rt-select.h"
 #include "rt-util.h"
-#include "INTERN.h"
 #include "bits.h"
 #include "bits.ih"
+
+int dmcount = 0;
 
 #ifdef DBM_XREFS
 #    ifdef NULL

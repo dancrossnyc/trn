@@ -66,9 +66,6 @@ void setdef (char*,char*);
 #ifndef NO_FILELINKS
 void safelink (char*,char*);
 #endif
-#ifndef HAS_STRSTR
-char* trn_strstr (char*,char*);
-#endif
 void verify_sig (void);
 uint64_t current_time_ms (void);
 time_t text2secs (char*,time_t);

@@ -19,9 +19,12 @@
 #include "artstate.h"
 #include "util2.h"
 #include "utf.h"
-#include "INTERN.h"
 #include "charsubst.h"
 #include "charsubst.ih"
+
+/* Conversions are: plain, ISO->USascii, TeX->ISO, ISO->USascii monospaced */
+char* charsets = "patm";
+char* charsubst;
 
 #ifdef CHARSUBST
 
