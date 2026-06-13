@@ -6,6 +6,12 @@ edition = "2024"
 [lib]
 crate-type = ["staticlib"]
 
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
+
 [dependencies]
 libc = "0.2.186"
 nix = "0.31.3"
