@@ -1,6 +1,6 @@
 /// Makes a TCP connection to a remote machine.
-
 use std::ffi::{c_char, c_int};
+use std::sync::Mutex;
 
 unsafe fn cptr_as_str<'a>(cstrp: *const c_char) -> &'a str {
     assert!(!cstrp.is_null());
@@ -19,7 +19,9 @@ fn servport(port: u16, servp: *const c_char) -> Option<u16> {
         "https" => Some(443),
         "ftp" => Some(21),
         service => {
-            let sep = unsafe { libc::getservbyname(servp, c"tcp".as_ptr()) };
+            static LOOKUP: Mutex<()> = Mutex::new(());
+            let _lookup = LOOKUP.lock().expect("Locked getservbyname mutex");
+            let sep = unsafe { nix::libc::getservbyname(servp, c"tcp".as_ptr()) };
             if sep.is_null() {
                 eprintln!("{service}/tcp: Unknown service.");
                 return None;
@@ -33,7 +35,11 @@ fn servport(port: u16, servp: *const c_char) -> Option<u16> {
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn get_tcp_socket(hostp: *const c_char, rport: u16, servp: *const c_char) -> c_int {
+pub unsafe extern "C" fn get_tcp_socket(
+    hostp: *const c_char,
+    rport: u16,
+    servp: *const c_char,
+) -> c_int {
     use std::net::TcpStream;
     use std::os::fd::IntoRawFd;
 

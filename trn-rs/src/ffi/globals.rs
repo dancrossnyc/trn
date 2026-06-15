@@ -1,5 +1,4 @@
 /// !!!DANGER!!! !!!DANGER!!! This is awful.
-
 use std::ffi::c_char;
 
 /// Login directory

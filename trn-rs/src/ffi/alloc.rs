@@ -3,8 +3,8 @@
 //! This replaces the elderly `safemalloc` function and friends.
 //! This lets us use the Rust memory allocator from C code.
 
-use std::alloc::{alloc_zeroed, realloc, dealloc, Layout};
-use std::ffi::{c_char, c_void, CStr};
+use std::alloc::{Layout, alloc_zeroed, dealloc, realloc};
+use std::ffi::{CStr, c_char, c_void};
 
 /// The alignment constant.  We allocate blocks of memory that
 /// are both sized and aligned sized to multiples of `ALIGN`
@@ -53,9 +53,10 @@ unsafe fn rsmalloc(size: usize) -> *mut u8 {
 /// pointer points to, and that the pointer has not already been
 /// freed.
 unsafe fn rsfree(ptr: *mut u8) {
-    if ptr.is_null() || !ptr.addr().is_multiple_of(ALIGN) {
+    if ptr.is_null() {
         return;
     }
+    assert!(ptr.addr().is_multiple_of(ALIGN));
     let ptr = ptr.wrapping_sub(ALIGN);
     let layout = unsafe { std::ptr::read(ptr.cast::<Layout>()) };
     unsafe {
@@ -174,17 +175,18 @@ pub unsafe extern "C" fn estrdup(cstrp: *const c_char) -> *mut c_char {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::ptr::{copy, null_mut, read, write};
 
     #[test]
     fn malloc0() {
         let ptr = unsafe { rsmalloc(0) };
-        assert_eq!(ptr, std::ptr::null_mut());
+        assert_eq!(ptr, null_mut());
     }
 
     #[test]
     fn malloc1() {
         let ptr = unsafe { rsmalloc(1) };
-        assert_ne!(ptr, std::ptr::null_mut());
+        assert_ne!(ptr, null_mut());
         unsafe {
             rsfree(ptr);
         }
@@ -194,15 +196,51 @@ mod tests {
     fn mallocmut() {
         let vptr = unsafe { rsmalloc(1) };
         let ptr = vptr.cast::<u8>();
-        let zero = unsafe { std::ptr::read(ptr) };
+        let zero = unsafe { read(ptr) };
         assert_eq!(zero, 0);
         unsafe {
-            std::ptr::write(ptr, 1);
+            write(ptr, 1);
         }
-        let one = unsafe { std::ptr::read(ptr) };
+        let one = unsafe { read(ptr) };
         assert_eq!(one, 1);
         unsafe {
             rsfree(vptr);
+        }
+    }
+
+    #[test]
+    fn realloc_null() {
+        let vptr = unsafe { rsrealloc(null_mut(), 1) };
+        assert_ne!(vptr, null_mut());
+        unsafe {
+            rsfree(vptr);
+        }
+    }
+
+    #[test]
+    fn realloc0_frees() {
+        let vptr = unsafe { rsmalloc(8) };
+        assert_ne!(vptr, null_mut());
+        let nil = unsafe { rsrealloc(vptr, 0) };
+        assert_eq!(nil, null_mut());
+    }
+
+    #[test]
+    fn realloc() {
+        let vptr = unsafe { rsmalloc(8) };
+        assert_ne!(vptr, null_mut());
+        unsafe {
+            let bs = b"12345678";
+            copy(bs.as_ptr(), vptr.cast::<u8>(), 8);
+        }
+        let nvptr = unsafe { rsrealloc(vptr, 16) };
+        assert_ne!(nvptr, null_mut());
+        let first = unsafe { read(nvptr.cast::<[u8; 8]>()) };
+        assert_eq!(first, *b"12345678");
+        let second = unsafe { read(nvptr.wrapping_add(8).cast::<[u8; 8]>()) };
+        assert_eq!(second, [0u8, 0, 0, 0, 0, 0, 0, 0]);
+        unsafe {
+            rsfree(nvptr);
         }
     }
 }
