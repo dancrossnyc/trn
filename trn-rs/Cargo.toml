@@ -14,3 +14,4 @@ panic = "abort"
 
 [dependencies]
 nix = "0.31.3"
+terminfo = "0.9.0"

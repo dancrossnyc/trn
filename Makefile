@@ -7,7 +7,7 @@
 #    -DNO_LISTGROUP               avoids attempting to use LISTGROUP
 #    -DREPLYTO_POSTER_CHECKING    makes -p also check Reply-To (slow)
 
-srcdir = /a/cross/ports/trn
+srcdir = /a/cross/projects/trn
 VPATH = 
 extra_cleanup = 
 
