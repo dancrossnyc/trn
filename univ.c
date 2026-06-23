@@ -416,46 +416,6 @@ static bool univ_begin_found INIT(FALSE);
 /* label to start working with */
 static char* univ_begin_label INIT(NULL);
 
-/* univ_DoMatch uses a modified Wildmat function which is
- * based on Rich $alz's wildmat, reduced to the simple case of *
- * and text.  The complete version can be found in wildmat.c.
- */
-/* an improbable number */
-#define ABORT			-42
-
-/*
-**  Match text and p, return TRUE, FALSE, or ABORT.
-*/
-static bool
-univ_DoMatch (const char *text, const char *p)
-{
-    wildmat(text, p);
-#if 0
-    int	matched;
-
-    for ( ; *p; text++, p++) {
-	if (*p == '*') {
-	    while (*++p == '*')
-		/* Consecutive stars act just like one. */
-		continue;
-	    if (*p == '\0')
-		/* Trailing star matches everything. */
-		return TRUE;
-	    while (*text)
-		if ((matched = univ_DoMatch(text++, p)) != FALSE)
-		    return matched;
-	    return ABORT;
-	}
-	if (*text != *p) {
-	    if (*text == '\0')
-		return ABORT;
-	    return FALSE;
-	}
-    }
-    return *text == '\0';
-#endif
-}
-
 /* type: 0=newsgroup, 1=virtual (more in future?) */
 void
 univ_use_pattern (char *pattern, int type)
@@ -477,7 +437,7 @@ univ_use_pattern (char *pattern, int type)
 	  case 0:
 	    for (ui = first_univ; ui; ui = ui->next) {
 		if (ui->type == UN_NEWSGROUP && ui->data.group.ng
-		  && univ_DoMatch(ui->data.group.ng,s) == TRUE) {
+		  && wildmat(ui->data.group.ng,s) == TRUE) {
 		    ui->type = UN_GROUP_DESEL;
 		}
 	    }
@@ -485,7 +445,7 @@ univ_use_pattern (char *pattern, int type)
 	  case 1:
 	    for (ui = first_univ; ui; ui = ui->next) {
 		if (ui->type == UN_VGROUP && ui->data.vgroup.ng
-		  && univ_DoMatch(ui->data.vgroup.ng,s) == TRUE) {
+		  && wildmat(ui->data.vgroup.ng,s) == TRUE) {
 		    ui->type = UN_VGROUP_DESEL;
 		}
 	    }
@@ -496,14 +456,14 @@ univ_use_pattern (char *pattern, int type)
 	switch (type) {
 	  case 0:
 	    for (np = first_ng; np; np = np->next) {
-		if (univ_DoMatch(np->rcline,s) == TRUE) {
+		if (wildmat(np->rcline,s) == TRUE) {
 		    univ_add_group(np->rcline,np->rcline);
 		}
 	    }
 	    break;
 	  case 1:
 	    for (np = first_ng; np; np = np->next) {
-		if (univ_DoMatch(np->rcline,s) == TRUE) {
+		if (wildmat(np->rcline,s) == TRUE) {
 		    univ_add_virtgroup(np->rcline);
 		}
 	    }
