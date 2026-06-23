@@ -298,6 +298,21 @@ pub fn execute(prog: &Program, s: &[u8]) -> Result<bool> {
     Ok(curr.contains(prog.len() - 1))
 }
 
+use std::ffi::{c_char, CStr};
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn wildmat(pp: *const c_char, tp: *const c_char) -> bool {
+    if pp.is_null() || tp.is_null() {
+        return false;
+    }
+    let pattern = unsafe { CStr::from_ptr(pp) };
+    let text = unsafe { CStr::from_ptr(tp) };
+    let Ok(obj) = compile(pattern.to_bytes()) else {
+        return false;
+    };
+    execute(&obj, text.to_bytes()).unwrap_or(false)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

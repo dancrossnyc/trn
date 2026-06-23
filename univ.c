@@ -29,6 +29,7 @@
 #endif
 #include "univ.h"
 #include "univ.ih"
+#include "wildmat.h"
 
 int univ_level = 0;
 int univ_ever_init = 1;
@@ -425,9 +426,11 @@ static char* univ_begin_label INIT(NULL);
 /*
 **  Match text and p, return TRUE, FALSE, or ABORT.
 */
-static int
-univ_DoMatch (char *text, char *p)
+static bool
+univ_DoMatch (const char *text, const char *p)
 {
+    wildmat(text, p);
+#if 0
     int	matched;
 
     for ( ; *p; text++, p++) {
@@ -450,6 +453,7 @@ univ_DoMatch (char *text, char *p)
 	}
     }
     return *text == '\0';
+#endif
 }
 
 /* type: 0=newsgroup, 1=virtual (more in future?) */

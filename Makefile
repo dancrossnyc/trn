@@ -19,8 +19,7 @@ lintflags = --analyze
 
 CFLAGS = -g -pthread -I/usr/local/include 
 TKINC = 
-RUSTLIBS= -lc++abi -lm -lutil -lexecinfo -lcompiler_rt
-LDFLAGS =  -pthread -L/usr/local/lib -L/opt/local/lib
+LDFLAGS =  -pthread -L/usr/local/lib -L/opt/local/lib -lc++abi -lm -lutil -lexecinfo -lcompiler_rt
 TKLDFLAGS = 
 
 o = o
@@ -35,8 +34,7 @@ strftimec =
 strftimeo = 
 installfilexp = /usr/local/lib/trn/filexp
 
-cratelib = trn-rs/target/debug/libtrn.a
-libs = $(cratelib) -lcurses  -lm -lintl $(RUSTLIBS)
+libs = trn-rs/target/debug/libtrn.a -lcurses  -lm -lintl
 tklibs = 
 public_backup = trn$(exe) trn-artchk$(exe) $(nntpexe) $(msdosexe)
 public_diff = Pnews Rnmail
@@ -74,7 +72,7 @@ c3 = head.c help.c init.c intrp.c kfile.c last.c list.c mime.c ng.c ngdata.c
 c4 = ngsrch.c ngstuff.c only.c opt.c rcln.c rcstuff.c respond.c rthread.c
 c5 = rt-mt.c rt-ov.c rt-process.c rt-page.c rt-select.c rt-util.c rt-wumpus.c
 c6 = search.c $(strftimec) sw.c term.c trn.c util.c util2.c utf.h
-c7 = uudecode.c $(nntpsrc) $(msdossrc) wildmat.c color.c filter.c
+c7 = uudecode.c $(nntpsrc) $(msdossrc) color.c filter.c
 c8a = scan.c scmd.c sdisp.c smisc.c sorder.c spage.c
 c8b = scanart.c samain.c samisc.c sadisp.c sacmd.c sadesc.c sathread.c
 c8c = url.c mempool.c univ.c
@@ -92,7 +90,7 @@ obj6 = rcstuff.$(o) respond.$(o) rthread.$(o) rt-mt.$(o) rt-ov.$(o)
 obj7 = rt-process.$(o) rt-page.$(o) rt-select.$(o) rt-util.$(o) rt-wumpus.$(o)
 obj8 = search.$(o) $(strftimeo) sw.$(o) term.$(o) trn.$(o) util.$(o) util2.$(o) utf.$(o)
 obj9 = uudecode.$(o) parsedate.$(o) $(nntpobj1) $(nntpobj2)
-obj10= $(msdosobj) wildmat.$(o) color.$(o) filter.$(o)
+obj10= $(msdosobj) color.$(o) filter.$(o)
 obj11a = scan.$(o) scmd.$(o) sdisp.$(o) smisc.$(o) sorder.$(o) spage.$(o)
 obj11b = scanart.$(o) samain.$(o) samisc.$(o) sadisp.$(o) sacmd.$(o) sadesc.$(o) sathread.$(o)
 obj11c = url.$(o) mempool.$(o) univ.$(o)
@@ -112,29 +110,28 @@ SHELL = /bin/sh
 .c.$(o):
 	$(CC) -c $(CFLAGS) $<
 
-all: Makefile $(cratelib) $(public) $(inewsexe) $(private) $(util) Policy.sh
+all: Makefile $(public) $(inewsexe) $(private) $(util) Policy.sh
 	$(TOUCH) all
 
-trn$(exe): $(cratelib) $(obj)
+trn$(exe): $(obj)
 	$(CC) $(LDFLAGS) $(TKLDFLAGS) $(obj) $(tklibs) $(libs) -o trn$(exe)
 
 nntpinit.$(o): nntpinit.c
 	$(CC) -c $(CFLAGS) $(NNTPFLAGS) $<
 
-nntplistobjs = nntplist.$(o) $(nntpobj1) util2.$(o) util3.$(o) \
-	wildmat.$(o)
+nntplistobjs = nntplist.$(o) $(nntpobj1) util2.$(o) util3.$(o)
 
-nntplist$(exe): $(cratelib) $(nntplistobjs)
+nntplist$(exe): $(nntplistobjs)
 	$(CC) $(LDFLAGS) $(nntplistobjs) -o nntplist$(exe) $(libs)
 
 inewsobjs = inews.$(o) $(nntpobj1) env.$(o) util2.$(o) util3.$(o)
 
-inews$(exe): $(cratelib) $(inewsobjs)
+inews$(exe): $(inewsobjs)
 	$(CC) $(LDFLAGS) $(inewsobjs) -o inews$(exe) $(libs)
 
 trnchkobjs = trn-artchk.$(o) $(nntpobj1) util2.$(o) util3.$(o)
 
-trn-artchk$(exe): $(cratelib) $(trnchkobjs)
+trn-artchk$(exe): $(trnchkobjs)
 	$(CC) $(LDFLAGS) $(trnchkobjs) -o trn-artchk$(exe) $(libs)
 
 tkstuff.o: tkstuff.c
@@ -203,7 +200,6 @@ clean:
 	@echo 'Use "make spotless" to even remove config.sh, Policy.sh, and .config.'
 	rm -rf UU $(extra_cleanup)
 	rm -f *.$(o) core $(addedbymake)
-	cd trn-rs && cargo clean
 
 realclean:
 	@echo 'You can use "Configure -S" to reverse this.'
@@ -241,9 +237,6 @@ Makefile: Makefile.SH config.sh dependencies
 
 Pnews: patchlevel.h
 newsnews: patchlevel.h
-
-$(cratelib):
-	cd trn-rs && cargo build
 
 tar: MANIFEST patchlevel.h
 	export PATH || false # stop the make unless we are compatible

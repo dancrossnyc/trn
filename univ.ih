@@ -5,7 +5,7 @@
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
 static void univ_free_data (UNIV_ITEM*);
-static int univ_DoMatch (char*,char*);
+static bool univ_DoMatch (const char*, const char*);
 static bool univ_use_file (char*,char*,char*);
 static bool univ_include_file (char*);
 static void univ_do_line_ext1 (char*,char*);

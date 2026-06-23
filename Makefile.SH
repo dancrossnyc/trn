@@ -100,7 +100,7 @@ c3 = head.c help.c init.c intrp.c kfile.c last.c list.c mime.c ng.c ngdata.c
 c4 = ngsrch.c ngstuff.c only.c opt.c rcln.c rcstuff.c respond.c rthread.c
 c5 = rt-mt.c rt-ov.c rt-process.c rt-page.c rt-select.c rt-util.c rt-wumpus.c
 c6 = search.c $(strftimec) sw.c term.c trn.c util.c util2.c utf.h
-c7 = uudecode.c $(nntpsrc) $(msdossrc) wildmat.c color.c filter.c
+c7 = uudecode.c $(nntpsrc) $(msdossrc) color.c filter.c
 c8a = scan.c scmd.c sdisp.c smisc.c sorder.c spage.c
 c8b = scanart.c samain.c samisc.c sadisp.c sacmd.c sadesc.c sathread.c
 c8c = url.c mempool.c univ.c
@@ -118,7 +118,7 @@ obj6 = rcstuff.$(o) respond.$(o) rthread.$(o) rt-mt.$(o) rt-ov.$(o)
 obj7 = rt-process.$(o) rt-page.$(o) rt-select.$(o) rt-util.$(o) rt-wumpus.$(o)
 obj8 = search.$(o) $(strftimeo) sw.$(o) term.$(o) trn.$(o) util.$(o) util2.$(o) utf.$(o)
 obj9 = uudecode.$(o) parsedate.$(o) $(nntpobj1) $(nntpobj2)
-obj10= $(msdosobj) wildmat.$(o) color.$(o) filter.$(o)
+obj10= $(msdosobj) color.$(o) filter.$(o)
 obj11a = scan.$(o) scmd.$(o) sdisp.$(o) smisc.$(o) sorder.$(o) spage.$(o)
 obj11b = scanart.$(o) samain.$(o) samisc.$(o) sadisp.$(o) sacmd.$(o) sadesc.$(o) sathread.$(o)
 obj11c = url.$(o) mempool.$(o) univ.$(o)
@@ -154,8 +154,7 @@ trn$(exe): $(obj)
 #NNTP#MSDOS
 #NNTP#MSDOSnntplist: nntplist.exe
 #NNTP
-#NNTPnntplistobjs = nntplist.$(o) $(nntpobj1) util2.$(o) util3.$(o) \
-#NNTP	wildmat.$(o)
+#NNTPnntplistobjs = nntplist.$(o) $(nntpobj1) util2.$(o) util3.$(o)
 #NNTP
 #NNTPnntplist$(exe): $(nntplistobjs)
 #NNTP#MSDOS	$(LINK) $(LINKFLAGS) @nntplist.lnk
