@@ -130,7 +130,7 @@ obj = $(obj1) $(obj2) $(obj3) $(obj4) $(obj5) $(obj6) $(obj7) $(obj8) \
 	$(obj9) $(obj10) $(obj11all) $(obj12) $(obj13)
 
 addedbymake = $(public) $(inewsexe) $(private) $(util)\
-	Makefile.old config.h parsedate.c cppstdin myinstall all
+	Makefile.old parsedate.c cppstdin myinstall all
 
 # grrr
 SHELL = /bin/sh
