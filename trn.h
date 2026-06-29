@@ -42,7 +42,7 @@ void trn_init (void);
 int main (int,char**);
 void do_multirc (void);
 int input_newsgroup (void);
-void check_active_refetch (bool_int);
+void check_active_refetch (bool);
 void trn_version (void);
 void set_ngname (char*);
 char* getngdir (char*);

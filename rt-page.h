@@ -46,19 +46,19 @@ extern SEL_ITEM sel_items[MAX_SEL];
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-bool set_sel_mode (char_int);
+bool set_sel_mode (int);
 char* get_sel_order (int);
 bool set_sel_order (int,char*);
-bool set_sel_sort (int,char_int);
+bool set_sel_sort (int,int);
 void set_selector (int,int);
-void init_pages (bool_int);
+void init_pages (bool);
 bool first_page (void);
 bool last_page (void);
 bool next_page (void);
 bool prev_page (void);
 bool calc_page (SEL_UNION);
-void display_page_title (bool_int);
+void display_page_title (bool);
 void display_page (void);
 void update_page (void);
-void output_sel (int,int,bool_int);
+void output_sel (int,int,bool);
 void display_option (int,int);

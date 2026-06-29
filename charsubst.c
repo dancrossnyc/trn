@@ -41,7 +41,7 @@ static Uchar textbl[96] = {
 static char texchar = '\0';
 
 int
-putsubstchar (int c, int limit, bool_int outputok)
+putsubstchar (int c, int limit, bool outputok)
 {
     Uchar d, oc[2], nc[5];
     int t, i = 0;
@@ -166,7 +166,7 @@ current_charsubst (void)
 }
 
 int
-strcharsubst (char *outb, char *inb, int limit, char_int subst)
+strcharsubst (char *outb, char *inb, int limit, int subst)
 {
     char* s;
     int len;

@@ -107,7 +107,7 @@ init_tree (void)
 
     str = tree_buff;		/* initialize first line's data */
     *str++ = ' ';
-    node_on_line = FALSE;
+    node_on_line = false;
     line_num = 0;
     /* cache our portion of the tree */
     cache_tree(thread, 0, tree_indent);
@@ -185,7 +185,7 @@ cache_tree (ARTICLE *ap, int depth, char *cp)
 		*cp = '|';
 	    else
 		*cp = ' ';
-	    node_on_line = TRUE;
+	    node_on_line = true;
 	    break;
 	}
 	case 2:
@@ -213,7 +213,7 @@ cache_tree (ARTICLE *ap, int depth, char *cp)
 		}
 	    }
 	    line_num++;
-	    node_on_line = FALSE;
+	    node_on_line = false;
 	}
 	if (!(ap = ap->sibling) || line_num > max_line)
 	    break;
@@ -498,7 +498,7 @@ entire_tree (ARTICLE *ap)
     }
 
     if (!ThreadedGroup) {
-	ThreadedGroup = TRUE;
+	ThreadedGroup = true;
 	printf("Threading the group. "), fflush(stdout);
 	thread_open();
 	if (!ThreadedGroup) {

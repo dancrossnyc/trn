@@ -88,12 +88,12 @@ int ngdlen = 0;		/* current malloced size of ngdir */
 
 int ing_state;
 
-bool  write_less = FALSE;	/* write .newsrc less often */
+bool  write_less = false;	/* write .newsrc less often */
 
 char* auto_start_cmd = NULL;	/* command to auto-start with */
-bool  auto_started = FALSE;	/* have we auto-started? */
+bool  auto_started = false;	/* have we auto-started? */
 
-bool  is_strn = FALSE;		/* Is this "strn", or trn/rn? */
+bool  is_strn = false;		/* Is this "strn", or trn/rn? */
 
 char patchlevel[] = PATCHLEVEL;
 
@@ -103,8 +103,8 @@ trn_init (void)
     ;
 }
 
-static bool restore_old_newsrc = FALSE;
-static bool go_forward = TRUE;
+static bool restore_old_newsrc = false;
+static bool go_forward = true;
 
 int
 main (int argc, char *argv[])
@@ -120,12 +120,12 @@ main (int argc, char *argv[])
 #if !THREAD_INIT
     /* Default to threaded operation if our name starts with a 't' or 's'. */
     if (*s == 't' || *s == 's')
-	use_threads = TRUE;
+	use_threads = true;
     else
 	UseNewsSelector = -1;
 #endif
     if (*s == 's')
-	is_strn = TRUE;
+	is_strn = true;
 #ifdef USE_TK /*XXX remove this?*/
     if (s[1] == 'k')
 	UseTk = 1;
@@ -141,7 +141,7 @@ main (int argc, char *argv[])
 
 #ifdef FINDNEWNG
     if (find_new_groups()) {		/* did we add any new groups? */
-	foundany = TRUE;
+	foundany = true;
 	starthere = NULL;		/* start ng scan from the top */
     }
 #endif
@@ -171,7 +171,7 @@ newsgroup use the g<newsgroup> command.\n\
 void
 do_multirc (void)
 {
-    bool special = FALSE;	/* allow newsgroup with no unread news? */
+    bool special = false;	/* allow newsgroup with no unread news? */
     char mode_save = mode;
     char gmode_save = gmode;
 
@@ -183,7 +183,7 @@ do_multirc (void)
 	    /* section copied from bug_out below */
 	    /* now write the newsrc(s) back out */
 	    if (!write_newsrcs(multirc))
-		restore_old_newsrc = TRUE; /*$$ ask to retry! */
+		restore_old_newsrc = true; /*$$ ask to retry! */
 	    if (restore_old_newsrc)
 		get_old_newsrcs(multirc);
 	    finalize(0);
@@ -205,14 +205,14 @@ do_multirc (void)
 	    goto bug_out;
 	}
 	starthere = ngptr;
-	UseNewsgroupSelector = FALSE;
+	UseNewsgroupSelector = false;
     }
 
     /* loop through all unread news */
   restart:
     current_ng = first_ng;
     for (;;) {
-	bool retry = FALSE;
+	bool retry = false;
 	if (findlast > 0) {
 	    findlast = -1;
 	    starthere = NULL;
@@ -260,7 +260,7 @@ do_multirc (void)
 			end_only();	/* release the restriction */
 			printf("\n%s\n", msg);
 			termdown(2);
-			retry = TRUE;
+			retry = true;
 		    }
 		}
 	    }
@@ -280,7 +280,7 @@ do_multirc (void)
 			set_ng(current_ng);
 		    }
 		} else
-		    shoe_fits = TRUE;
+		    shoe_fits = true;
 		if (ngptr->toread < (special? TR_NONE : ng_min_toread)
 		 || !shoe_fits) {		/* unwanted newsgroup? */
 		    if (go_forward)
@@ -295,7 +295,7 @@ do_multirc (void)
 		    continue;
 		}
 	    }
-	    special = FALSE;	/* go back to normal mode */
+	    special = false;	/* go back to normal mode */
 	    if (ngptr != current_ng) {
 		recent_ng = current_ng;	/* remember previous newsgroup */
 		current_ng = ngptr;	/* remember current newsgroup */
@@ -336,7 +336,7 @@ do_multirc (void)
 	    fflush(stdout);
     reinp_newsgroup:
 	    if (special || (ngptr && ngptr->toread > 0))
-		retry = TRUE;
+		retry = true;
 	    switch (input_newsgroup()) {
 	    case ING_ASK:
 		goto reask_newsgroup;
@@ -359,7 +359,7 @@ do_multirc (void)
 		    goto restart;
 		goto bug_out;
 	    case ING_SPECIAL:
-		special = TRUE;
+		special = true;
 		break;
 	    case ING_NORM:
 		break;
@@ -373,13 +373,13 @@ do_multirc (void)
 	    }
 	}
     loop_break:;
-	check_active_refetch(FALSE);
+	check_active_refetch(false);
     }
 
 bug_out:
     /* now write the newsrc(s) back out */
     if (!write_newsrcs(multirc))
-	restore_old_newsrc = TRUE; /*$$ ask to retry! */
+	restore_old_newsrc = true; /*$$ ask to retry! */
     if (restore_old_newsrc)
 	get_old_newsrcs(multirc);
 
@@ -407,7 +407,7 @@ input_newsgroup (void)
 	*buf = buf[2];
 
   do_command:
-    go_forward = TRUE;		/* default to forward motion */
+    go_forward = true;		/* default to forward motion */
     switch (*buf) {
       case 'P':			/* goto previous newsgroup */
       case 'p':			/* find previous unread newsgroup */
@@ -415,7 +415,7 @@ input_newsgroup (void)
 	    ngptr = last_ng;
 	else if (ngptr != first_ng)
 	    ngptr = ngptr->prev;
-	go_forward = FALSE;	/* go backward in the newsrc */
+	go_forward = false;	/* go backward in the newsrc */
 	ing_state = INGS_CLEAN;
 	if (*buf == 'P')
 	    return ING_SPECIAL;
@@ -437,7 +437,7 @@ input_newsgroup (void)
 	printf("\nThe abandoned changes are in %s.new.\n",
 	       multirc_name(multirc));
 	termdown(2);
-	restore_old_newsrc = TRUE;
+	restore_old_newsrc = true;
 	return ING_QUIT;
       case 'q': case 'Q':	/* quit? */
 	newline();
@@ -472,7 +472,7 @@ input_newsgroup (void)
 	return ING_ASK;
       case '/': case '?':	/* scan for newsgroup pattern */
 #ifdef NGSEARCH
-	switch (ng_search(buf,TRUE)) {
+	switch (ng_search(buf,true)) {
 	  case NGS_ERROR:
 	    set_ng(current_ng);
 	    return ING_ASK;
@@ -518,7 +518,7 @@ input_newsgroup (void)
 	break;
 #endif
       case 'g':	/* goto named newsgroup */
-	if (!finish_command(FALSE))
+	if (!finish_command(false))
 	    return ING_INPUT;
 	for (s = buf+1; *s == ' '; s++) ; /* skip leading spaces */
 #ifdef RELOCATE
@@ -677,18 +677,18 @@ reask_abandon:
 #ifdef FINDNEWNG
 	bool doscan = (*buf == 'a');
 #endif
-	if (!finish_command(TRUE)) /* get rest of command */
+	if (!finish_command(true)) /* get rest of command */
 	    return ING_INPUT;
 	*msg = '\0';
 	end_only();
 	if (buf[1]) {
-	    bool minusd = in_str(buf+1,"-d", TRUE) != NULL;
+	    bool minusd = in_str(buf+1,"-d", true) != NULL;
 	    sw_list(buf+1);
 	    if (minusd)
 		cwd_check();
 #ifdef FINDNEWNG
 	    if (doscan && maxngtodo)
-		scanactive(TRUE);
+		scanactive(true);
 #endif
 	    ng_min_toread = *buf == empty_only_char && maxngtodo
 			  ? TR_NONE : TR_ONE;
@@ -703,14 +703,14 @@ reask_abandon:
 	    return ING_INPUT;	/* if rubbed out, try something else */
 	return ING_ASK;
       case 'l': {		/* list other newsgroups */
-	if (!finish_command(TRUE)) /* get rest of command */
+	if (!finish_command(true)) /* get rest of command */
 	    return ING_INPUT;	/* if rubbed out, try something else */
 	for (s = buf+1; *s == ' '; s++) ; /* skip leading spaces */
 	push_only();
 	if (*s)
 	    sw_list(s);
 	page_start();
-	scanactive(FALSE);
+	scanactive(false);
 	pop_only();
 	return ING_ASK;
       }
@@ -719,7 +719,7 @@ reask_abandon:
 	if (gmode == 's')
 	    return ING_ERASE;
       ng_start_sel:
-	UseNewsgroupSelector = TRUE;
+	UseNewsgroupSelector = true;
 	switch (newsgroup_selector()) {
 	  case Ctl('n'):
 	    end_only();
@@ -732,7 +732,7 @@ reask_abandon:
 	  case 'q':
 	     return ING_QUIT;
 	}
-	UseNewsgroupSelector = FALSE;
+	UseNewsgroupSelector = false;
 	return ING_ASK;
 #ifdef SCAN_ART
       case ';':
@@ -752,7 +752,7 @@ reask_abandon:
 	 */
 	s = nullstr;
 	if (*buf == '.') {		/* start command? */
-	    if (!finish_command(FALSE)) /* get rest of command */
+	    if (!finish_command(false)) /* get rest of command */
 		return ING_INPUT;
 	    s = estrdup(buf+1);		/* do_newsgroup will free it */
 	}
@@ -819,7 +819,7 @@ reask_abandon:
 }
 
 void
-check_active_refetch (bool_int force)
+check_active_refetch (bool force)
 {
     DATASRC* dp;
     time_t now = time((time_t*)NULL);

@@ -828,7 +828,7 @@ extern bool UseSelNum;
 extern bool SelNumGoto;
 /* miscellania */
 
-extern bool in_ng;		/* TRUE if in a newsgroup */
+extern bool in_ng;		/* true if in a newsgroup */
 extern char mode;		/* current state of trn */
 extern char gmode;		/* general mode of trn */
 

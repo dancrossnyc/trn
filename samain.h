@@ -30,10 +30,10 @@
 /* misc. buffer */
 extern char sa_buf[LBUFLEN];
 
-/* TRUE if in "zoom" (display only selected) mode */
+/* true if in "zoom" (display only selected) mode */
 extern bool sa_mode_zoom;
 
-/* if TRUE, the already-read articles have been added to the order arrays */
+/* if true, the already-read articles have been added to the order arrays */
 extern bool sa_order_read;
 
 /* contains the scan-context number for the current article scan */

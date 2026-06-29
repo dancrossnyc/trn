@@ -43,7 +43,7 @@ ngsrch_init (void)
 int
 ng_search (
     char *patbuf,		/* if patbuf != buf, get_cmd must */
-    int get_cmd			/*   be set to FALSE!!! */
+    int get_cmd			/*   be set to false!!! */
 )
 {
     char cmdchr = *patbuf;	/* what kind of search? */
@@ -57,20 +57,20 @@ ng_search (
 
     int_count = 0;
     if (get_cmd && buf == patbuf)
-	if (!finish_command(FALSE))	/* get rest of command */
+	if (!finish_command(false))	/* get rest of command */
 	    return NGS_ABORT;
 
     perform_status_init(newsgroup_toread);
     s = cpytill(buf,patbuf+1,cmdchr);	/* ok to cpy buf+1 to buf */
     for (pattern = buf; *pattern == ' '; pattern++) ;
     if (*pattern)
-	ng_doempty = FALSE;
+	ng_doempty = false;
 
     if (*s) {				/* modifiers or commands? */
 	while (*++s) {
 	    switch (*s) {
 	    case 'r':
-		ng_doempty = TRUE;
+		ng_doempty = true;
 		break;
 	    default:
 		goto loop_break;
@@ -86,7 +86,7 @@ ng_search (
 	cmdlst = estrdup("+");
     if (cmdlst)
 	ret = NGS_DONE;
-    if ((s = ng_comp(&ngcompex,pattern,TRUE,TRUE)) != NULL) {
+    if ((s = ng_comp(&ngcompex,pattern,true,true)) != NULL) {
 					/* compile regular expression */
 	errormsg(s);
 	ret = NGS_ERROR;
@@ -183,7 +183,7 @@ ng_wanted (NGDATA *np)
 #endif /* NGSEARCH */
 
 char *
-ng_comp (COMPEX *compex, char *pattern, bool_int RE, bool_int fold)
+ng_comp (COMPEX *compex, char *pattern, bool RE, bool fold)
 {
     char ng_pattern[128];
     char* s = pattern;

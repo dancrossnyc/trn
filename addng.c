@@ -67,7 +67,7 @@ find_new_groups (void)
 
     /* Skip this check if the -q flag was given. */
     if (quickstart)
-	return FALSE;
+	return false;
 
     for (rp = multirc->first; rp; rp = rp->next) {
 	if (ALLBITS(rp->flags, RF_ADD_NEWGROUPS | RF_ACTIVE)) {
@@ -121,7 +121,7 @@ new_nntp_groups (DATASRC *dp)
     int len;
     time_t server_time;
     NGDATA* np;
-    bool foundSomething = FALSE;
+    bool foundSomething = false;
     long high, low;
     HASHTABLE* newngs;
 
@@ -146,7 +146,7 @@ new_nntp_groups (DATASRC *dp)
 #endif
 	if (nntp_at_list_end(ser_line))
 	    break;
-	foundSomething = TRUE;
+	foundSomething = true;
 	if ((s = index(ser_line, ' ')) != NULL)
 	    len = s - ser_line;
 	else
@@ -235,7 +235,7 @@ new_local_groups (DATASRC *dp)
 }
 
 static void
-add_to_hash (HASHTABLE *ng, char *name, int toread, char_int ch)
+add_to_hash (HASHTABLE *ng, char *name, int toread, int ch)
 {
     HASHDATUM data;
     ADDGROUP* node;
@@ -263,7 +263,7 @@ add_to_hash (HASHTABLE *ng, char *name, int toread, char_int ch)
 }
 
 static void
-add_to_list (char *name, int toread, char_int ch)
+add_to_list (char *name, int toread, int ch)
 {
     ADDGROUP* node = first_addgroup;
 
@@ -301,7 +301,7 @@ add_to_list (char *name, int toread, char_int ch)
 }
 
 bool
-scanactive (bool_int add_matching)
+scanactive (bool add_matching)
 {
     DATASRC* dp;
     NG_NUM oldcnt = newsgroup_cnt;	/* remember # of newsgroups */
@@ -356,7 +356,7 @@ list_groups (int keylen, HASHDATUM *data, int add_matching)
 }
 
 static void
-scanline (char *actline, bool_int add_matching)
+scanline (char *actline, bool add_matching)
 {
     char* s;
     NGDATA* np;

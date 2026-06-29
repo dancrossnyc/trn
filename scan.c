@@ -55,7 +55,7 @@ s_init_context (int cnum, int type)
     /* s_num_contexts not incremented until last moment */
     if (cnum < 0 || cnum > s_num_contexts) {
 	printf("s_init_context: illegal context number %d!\n",cnum);
-	assert(FALSE);
+	assert(false);
     }
     p = s_contexts + cnum;
     p->type = type;
@@ -170,7 +170,7 @@ s_change_context (
 
     if (newcontext < 0 || newcontext >= s_num_contexts) {
 	printf("s_change_context: bad context number %d!\n",newcontext);
-	assert(FALSE);
+	assert(false);
     }
     s_cur_context = newcontext;
     p = s_contexts + newcontext;

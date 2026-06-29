@@ -7,5 +7,5 @@
 
 char* sa_get_statchars (long,int);
 char* sa_desc_subject (long);
-char* sa_get_desc (long,int,bool_int);
+char* sa_get_desc (long,int,bool);
 int sa_ent_lines (long);

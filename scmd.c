@@ -37,14 +37,14 @@ void s_search();
 void
 s_go_bot (void)
 {
-    s_ref_bot = TRUE;			/* help uses whole screen */
+    s_ref_bot = true;			/* help uses whole screen */
     s_goxy(0,tc_LINES-s_bot_lines);	/* go to bottom bar */
     erase_eol();			/* erase to end of line */
     s_goxy(0,tc_LINES-s_bot_lines);	/* go (back?) to bottom bar */
 }
 
 /* finishes a command on the bottom line... */
-/* returns TRUE if command entered, FALSE if wiped out... */
+/* returns true if command entered, false if wiped out... */
 int
 s_finish_cmd (char *string)
 {
@@ -54,7 +54,7 @@ s_finish_cmd (char *string)
 	fflush(stdout);
     }
     buf[1] = FINISHCMD;
-    return finish_command(FALSE);	/* do not echo newline */
+    return finish_command(false);	/* do not echo newline */
 }
 
 /* returns an entry # selected, S_QUIT, or S_ERR */
@@ -64,15 +64,15 @@ s_cmdloop (void)
     int i;
 
     /* initialization stuff for entry into s_cmdloop */
-    s_ref_all = TRUE;
+    s_ref_all = true;
     eat_typeahead();	/* no typeahead before entry */
-    while(TRUE) {
+    while(true) {
 	s_refresh();
 	s_place_ptr();		/* place article pointer */
-	bos_on_stop = TRUE;
+	bos_on_stop = true;
 	s_lookahead();		/* do something useful while waiting */
 	getcmd(buf);
-	bos_on_stop = FALSE;
+	bos_on_stop = false;
 	eat_typeahead();	/* stay in control. */
 	/* check for window resizing and refresh */
 	/* if window is resized, refill and redraw */
@@ -84,7 +84,7 @@ s_cmdloop (void)
 	    *buf = Ctl('l');
 	    (void)s_docmd();
 	    *buf = ch;
-	    s_resized = FALSE;		/* dealt with */
+	    s_resized = false;		/* dealt with */
 	}
 	i = s_docmd();
 	if (i == S_NOTFOUND) {	/* command not in common set */
@@ -151,7 +151,7 @@ s_docmd (void)
 	else {
 	    if (!s_next_elig(page_ents[s_bot_ent].entnum)) {
 		s_beep();
-		s_refill = TRUE;
+		s_refill = true;
 		break;
 	    }
 	    s_go_next_page();	/* will jump to top too... */
@@ -171,7 +171,7 @@ s_docmd (void)
 		s_go_prev_page();
 		s_ptr_page_line = s_bot_ent; /* go to page bot. */
 	    } else {
-		s_refill = TRUE;
+		s_refill = true;
 		s_beep();
 	    }
 	}
@@ -217,23 +217,23 @@ s_docmd (void)
 	break;
       case Ctl('r'):	/* refresh screen */
       case Ctl('l'):
-	  s_ref_all = TRUE;
+	  s_ref_all = true;
 	break;
       case Ctl('f'):	/* refresh (mail) display */
 #ifdef MAILCALL
-	setmail(TRUE);
+	setmail(true);
 #endif
-	s_ref_bot = TRUE;
+	s_ref_bot = true;
 	break;
       case 'h': /* universal help */
 	s_go_bot();
-	s_ref_all = TRUE;
+	s_ref_all = true;
 	univ_help(UHELP_SCANART);
 	eat_typeahead();
 	break;
       case 'H':	/* help */
 	s_go_bot();
-	s_ref_all = TRUE;
+	s_ref_all = true;
 	/* any commands typed during help are unused. (might change) */
 	switch (s_cur_type) {
 #ifdef SCAN_ART
@@ -251,7 +251,7 @@ s_docmd (void)
 	break;
       case '!':	/* shell command */
 	s_go_bot();
-	s_ref_all = TRUE;			/* will need refresh */
+	s_ref_all = true;			/* will need refresh */
 	if (!escapade())
 	    (void)get_anything();
 	eat_typeahead();
@@ -263,7 +263,7 @@ s_docmd (void)
  * It may be necessary for this code to do the context saving.
  */
 	s_go_bot();
-	s_ref_all = TRUE;			/* will need refresh */
+	s_ref_all = true;			/* will need refresh */
 	if (!switcheroo())		/* XXX same semantics in trn4? */
 	    (void)get_anything();
 	eat_typeahead();
@@ -290,7 +290,7 @@ s_docmd (void)
 	    s_desc_cols -= s_itemnum_cols;
 	    s_itemnum = 1;
 	}
-	s_ref_all = TRUE;
+	s_ref_all = true;
 	break;
       default:
 	return S_NOTFOUND;		/* not one of the simple commands */
@@ -311,14 +311,14 @@ s_match_description (long ent)
 
     lines = s_ent_lines(ent);
     for (i = 1; i <= lines; i++) {
-	strncpy(lbuf,s_get_desc(ent,i,FALSE),LBUFLEN);
+	strncpy(lbuf,s_get_desc(ent,i,false),LBUFLEN);
 	for (s = lbuf; *s; s++)
 	    if (isupper(*s))
 		*s = tolower(*s);		/* convert to lower case */
 	if (STRSTR(lbuf,search_text))
-	    return TRUE;
+	    return true;
     }
-    return FALSE;
+    return false;
 }
 
 long
@@ -358,7 +358,7 @@ s_search (void)
     char* error_msg;
 
     if (!search_init) {
-	search_init = TRUE;
+	search_init = true;
 	search_text[0] = '\0';
     }
     s_rub_ptr();
@@ -379,7 +379,7 @@ s_search (void)
 	s_beep();
 	printf("\nNo previous search string.\n");
 	(void)get_anything();
-	s_ref_all = TRUE;
+	s_ref_all = true;
 	return;
     }
     s_go_bot();
@@ -419,7 +419,7 @@ s_search (void)
 	s_beep();
 	printf("\n%s\n",error_msg);
 	(void)get_anything();
-	s_ref_all = TRUE;
+	s_ref_all = true;
 	return;
     }
     for (i = 0; i <= s_bot_ent; i++)
@@ -431,34 +431,34 @@ s_search (void)
     if (fill_type == 1) {
 	(void)s_fillpage_backward(ent);
 	s_go_bot_page();
-	s_refill = TRUE;
-	s_ref_all = TRUE;
+	s_refill = true;
+	s_ref_all = true;
     }
     else {
 	(void)s_fillpage_forward(ent);
 	s_go_top_page();
-	s_ref_all = TRUE;
+	s_ref_all = true;
     }
 }
 
 void
-s_jumpnum (char_int firstchar)
+s_jumpnum (int firstchar)
 {
     int value;
     bool jump_verbose;
 
-    jump_verbose = TRUE;
+    jump_verbose = true;
     value = firstchar - '0';
 
     s_rub_ptr();
 #ifdef NICEBG
     wait_key_pause(10);
     if (input_pending())
-	jump_verbose = FALSE;
+	jump_verbose = false;
 #endif
     if (jump_verbose) {
 	s_go_bot();
-	s_ref_bot = TRUE;
+	s_ref_bot = true;
 	printf("Jump to item: %c",firstchar);
 	fflush(stdout);
     }

@@ -23,4 +23,4 @@ void mark_as_read (ARTICLE*);
 void mark_missing_articles (void);
 void check_first (ART_NUM);
 void yankback (void);
-int chase_xrefs (bool_int);
+int chase_xrefs (bool);

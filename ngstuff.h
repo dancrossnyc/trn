@@ -12,7 +12,7 @@ extern bool one_command;	/* no ':' processing in perform() */
 
 /* CAA: given the new and complex universal/help possibilities,
  *      the following interlock variable may save some trouble.
- *      (if TRUE, we are currently processing options)
+ *      (if true, we are currently processing options)
  */
 extern bool option_sel_ilock;
 

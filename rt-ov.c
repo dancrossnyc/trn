@@ -39,16 +39,16 @@ ov_init (void)
 	int ret;
 	/* Check if the server is XOVER compliant */
 	if (nntp_command("XOVER") <= 0)
-	    return FALSE;
+	    return false;
 	if (nntp_check() < 0)
-	    return FALSE;/*$$*/
+	    return false;/*$$*/
 	if (atoi(ser_line) == NNTP_BAD_COMMAND_VAL)
-	    return FALSE;
+	    return false;
 	/* Just in case... */
 	if (*ser_line == NNTP_CLASS_OK)
 	    nntp_finish_list();
 	if ((ret = nntp_list("overview.fmt",nullstr,0)) < -1)
-	    return FALSE;
+	    return false;
 	has_overview_fmt = ret > 0;
     }
     else
@@ -84,7 +84,7 @@ ov_init (void)
 	}
 	if (!fieldflags[OV_SUBJ] || !fieldflags[OV_MSGID]
 	 || !fieldflags[OV_FROM] || !fieldflags[OV_DATE])
-	    return FALSE;
+	    return false;
 	if (i < OV_MAX_FIELDS) {
 	    int j;
 	    for (j = OV_MAX_FIELDS; j--; ) {
@@ -104,7 +104,7 @@ ov_init (void)
 	fieldflags[OV_XREF] = FF_CHECK4FIELD | FF_CHECK4HDR;
     }
     datasrc->flags |= DF_TRY_OVERVIEW;
-    return TRUE;
+    return true;
 }
 
 int
@@ -138,13 +138,13 @@ ov_num (char *hdr, char *end)
 /* Process the data in the group's news-overview file.
 */
 bool
-ov_data (ART_NUM first, ART_NUM last, bool_int cheating)
+ov_data (ART_NUM first, ART_NUM last, bool cheating)
 {
     ART_NUM artnum, an;
     char* line;
     char* last_buf = buf;
     size_t last_buflen = LBUFLEN;
-    bool success = TRUE;
+    bool success = true;
     ART_NUM real_first = first;
     ART_NUM real_last = last;
     int line_cnt;
@@ -180,7 +180,7 @@ beginning:
     if (remote) {
 	sprintf(ser_line, "XOVER %ld-%ld", (long)first, (long)last);
 	if (nntp_command(ser_line) <= 0 || nntp_check() <= 0) {
-	    success = FALSE;
+	    success = false;
 	    goto exit;
 	}
 # ifdef VERBOSE
@@ -191,7 +191,7 @@ beginning:
     ElseIf (datasrc->ov_opened < started_request - 60*60) {
 	ov_close();
 	if ((datasrc->ov_in = fopen(ov_name(ngname), "r")) == NULL)
-	    return FALSE;
+	    return false;
 #ifdef VERBOSE
 	IF(verbose && !first_subject)
 	    printf("\nReading overview file."), fflush(stdout);
@@ -235,18 +235,18 @@ beginning:
 	ov_parse(line, artnum = an, remote);
 	if (int_count) {
 	    int_count = 0;
-	    success = FALSE;
+	    success = false;
 	    if (!remote)
 		break;
 	}
 	if (!remote && cheating) {
 	    if (input_pending()) {
-		success = FALSE;
+		success = false;
 		break;
 	    }
 	    if (curr_artp != sentinel_artp) {
 		pushchar('\f' | 0200);
-		success = FALSE;
+		success = false;
 		break;
 	    }
 	}
@@ -276,12 +276,12 @@ beginning:
   exit:
     if (int_count || !success) {
 	int_count = 0;
-	success = FALSE;
+	success = false;
     }
     else if (remote) {
 	if (cheating && curr_artp != sentinel_artp) {
 	    pushchar('\f' | 0200);
-	    success = FALSE;
+	    success = false;
 	} else if (last < real_last) {
 	    if (!cheating || !input_pending()) {
 		long elapsed_time = time((time_t*)NULL) - started_request;
@@ -296,14 +296,14 @@ beginning:
 		last = real_last;
 		goto beginning;
 	    }
-	    success = FALSE;
+	    success = false;
 	}
     }
     if (!cheating && datasrc->ov_in)
 	fseek(datasrc->ov_in, 0L, 0);	/* rewind it for the cheating phase */
     if (success && real_first <= first_cached) {
 	first_cached = real_first;
-	cached_all_in_range = TRUE;
+	cached_all_in_range = true;
     }
     setspin(SPIN_POP);
     if (last_buf != buf)
@@ -312,7 +312,7 @@ beginning:
 }
 
 static void
-ov_parse (char *line, ART_NUM artnum, bool_int remote)
+ov_parse (char *line, ART_NUM artnum, bool remote)
 {
     ARTICLE* article;
     int i;
@@ -480,6 +480,6 @@ ov_field (ARTICLE *ap, int num)
 	return cmd_buf;
     }
 
-    s = get_cached_line(ap, hdrnum[fn], TRUE);
+    s = get_cached_line(ap, hdrnum[fn], true);
     return s? s : nullstr;
 }

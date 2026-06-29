@@ -21,4 +21,4 @@ void ngsrch_init (void);
 int ng_search (char*,int);
 bool ng_wanted (NGDATA*);
 #endif
-char* ng_comp (COMPEX*,char*,bool_int,bool_int);
+char* ng_comp (COMPEX*,char*,bool,bool);

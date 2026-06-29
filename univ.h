@@ -111,10 +111,10 @@ extern int univ_ever_init;
 /* How deep are we in the tree? */
 extern int univ_level;
 
-/* if TRUE, we are in the "virtual group" second pass */
+/* if true, we are in the "virtual group" second pass */
 extern bool univ_ng_virtflag;
 
-/* if TRUE, we are reading an article from a "virtual group" */
+/* if true, we are reading an article from a "virtual group" */
 extern bool univ_read_virtflag;
 
 /* "follow"-related stuff (virtual groups) */
@@ -122,7 +122,7 @@ extern bool univ_default_cmd;
 extern bool univ_follow;
 extern bool univ_follow_temp;
 
-/* if TRUE, the user has loaded their own top univ. config file */
+/* if true, the user has loaded their own top univ. config file */
 extern bool univ_usrtop;
 
 /* items which must be saved in context */

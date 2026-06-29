@@ -318,7 +318,7 @@
  *	to read its name.
  */
 /* HOSTBITS:
- *	Set to TRUE if we should compare only the domain portion of the
+ *	Set to true if we should compare only the domain portion of the
  *	hostname when looking for local articles.
  */
 #define PHOSTNAME "spitfire.i.gajendra.net"		/**/
@@ -365,8 +365,8 @@
 /* SELECT_INIT:
  *	This symbol indicates we default to the selector for group entry.
  */
-#define THREAD_INIT	FALSE
-#define SELECT_INIT	TRUE
+#define THREAD_INIT	false
+#define SELECT_INIT	true
 
 #define CALL_INEWS "/usr/local/bin/inews -h <%h"
 #define NEWSPOSTER "/usr/local/bin/Pnews -h %h"

@@ -82,11 +82,11 @@ thread_open (void)
     if ((datasrc->flags & DF_TRY_OVERVIEW) && !cached_all_in_range) {
 	if (thread_always) {
 	    spin_todo = spin_estimate = lastart - absfirst + 1;
-	    (void) ov_data(absfirst, lastart, FALSE);
+	    (void) ov_data(absfirst, lastart, false);
 	    if (datasrc->ov_opened && find_existing && datasrc->over_dir == NULL) {
 		mark_missing_articles();
 		rc_to_bits();
-		find_existing = FALSE;
+		find_existing = false;
 	    }
 	}
 	else {
@@ -94,10 +94,10 @@ thread_open (void)
 	    spin_estimate = ngptr->toread;
 	    if (firstart > lastart) {
 		/* If no unread articles, see if ov. exists as fast as possible */
-		(void) ov_data(absfirst, absfirst, FALSE);
-		cached_all_in_range = FALSE;
+		(void) ov_data(absfirst, absfirst, false);
+		cached_all_in_range = false;
 	    } else
-		(void) ov_data(firstart, lastart, FALSE);
+		(void) ov_data(firstart, lastart, false);
 	}
     }
     if (find_existing) {
@@ -166,7 +166,7 @@ thread_close (void)
     sel_page_app = 0;
     sel_last_ap = 0;
     sel_last_sp = 0;
-    selected_only = FALSE;
+    selected_only = false;
     sel_exclusive = 0;
     ov_close();
 }
@@ -199,7 +199,7 @@ top_article (void)
 {
     art = lastart+1;
     artp = NULL;
-    inc_art(selected_only, FALSE);
+    inc_art(selected_only, false);
     if (art > lastart && last_cached < lastart)
 	art = firstart;
 }
@@ -246,11 +246,11 @@ last_art (SUBJECT *sp)
 }
 
 /* Bump art/artp to the next article, wrapping from thread to thread.
-** If sel_flag is TRUE, only stops at selected articles.
-** If rereading is FALSE, only stops at unread articles.
+** If sel_flag is true, only stops at selected articles.
+** If rereading is false, only stops at unread articles.
 */
 void
-inc_art (bool_int sel_flag, bool_int rereading)
+inc_art (bool sel_flag, bool rereading)
 {
     ARTICLE* ap = artp;
     int subj_mask = (rereading? 0 : SF_VISIT);
@@ -342,11 +342,11 @@ inc_art (bool_int sel_flag, bool_int rereading)
 }
 
 /* Bump art/artp to the previous article, wrapping from thread to thread.
-** If sel_flag is TRUE, only stops at selected articles.
-** If rereading is FALSE, only stops at unread articles.
+** If sel_flag is true, only stops at selected articles.
+** If rereading is false, only stops at unread articles.
 */
 void
-dec_art (bool_int sel_flag, bool_int rereading)
+dec_art (bool sel_flag, bool rereading)
 {
     ARTICLE* ap = artp;
     int subj_mask = (rereading? 0 : SF_VISIT);
@@ -514,7 +514,7 @@ done:
 }
 
 /* Find the next art/artp with the same subject as this one.  Returns
-** FALSE if no such article exists.
+** false if no such article exists.
 */
 bool
 next_art_with_subj (void)
@@ -522,14 +522,14 @@ next_art_with_subj (void)
     ARTICLE* ap = artp;
 
     if (!ap)
-	return FALSE;
+	return false;
 
     do {
 	ap = ap->subj_next;
 	if (!ap) {
 	    if (!art)
 		art = firstart;
-	    return FALSE;
+	    return false;
 	}
     } while (!ALLBITS(ap->flags, AF_EXISTS | AF_UNREAD)
 	  || (selected_only && !(ap->flags & AF_SEL)));
@@ -538,11 +538,11 @@ next_art_with_subj (void)
 #ifdef ARTSEARCH
     srchahead = -1;
 #endif
-    return TRUE;
+    return true;
 }
 
 /* Find the previous art/artp with the same subject as this one.  Returns
-** FALSE if no such article exists.
+** false if no such article exists.
 */
 bool
 prev_art_with_subj (void)
@@ -551,7 +551,7 @@ prev_art_with_subj (void)
     ARTICLE* ap2;
 
     if (!ap)
-	return FALSE;
+	return false;
 
     do {
 	ap2 = ap->subj->articles;
@@ -565,13 +565,13 @@ prev_art_with_subj (void)
 	if (!ap) {
 	    if (!art)
 		art = lastart;
-	    return FALSE;
+	    return false;
 	}
     } while (!(ap->flags & AF_EXISTS)
 	  || (selected_only && !(ap->flags & AF_SEL)));
     artp = ap;
     art = article_num(ap);
-    return TRUE;
+    return true;
 }
 
 SUBJECT *
@@ -678,7 +678,7 @@ select_subject (SUBJECT *subj, int auto_flags)
 	    selected_subj_cnt++;
 	subj->flags = (subj->flags & ~SF_DEL)
 		    | sel_mask | SF_VISIT | SF_WASSELECTED;
-	selected_only = TRUE;
+	selected_only = true;
     } else
 	subj->flags |= SF_WASSELECTED;
 }
@@ -741,7 +741,7 @@ select_subthread (ARTICLE *ap, int auto_flags)
 	if (!(subj->flags & sel_mask))
 	    selected_subj_cnt++;
 	subj->flags = (subj->flags & ~SF_DEL) | sel_mask | SF_VISIT;
-	selected_only = TRUE;
+	selected_only = true;
     }
 }
 
@@ -842,7 +842,7 @@ deselect_all (void)
     sel_page_app = 0;
     sel_last_ap = 0;
     sel_last_sp = 0;
-    selected_only = FALSE;
+    selected_only = false;
 }
 
 /* Kill all unread articles attached to this article's subject.
@@ -1074,7 +1074,7 @@ subj_art (SUBJECT *sp)
     while (ap && (ap->flags & art_mask) != art_mask)
 	ap = next_art(ap);
     if (!ap) {
-	reread = TRUE;
+	reread = true;
 	ap = first_art(sp);
 	if (selected_only) {
 	    while (ap && !(ap->flags & AF_SEL))
@@ -1103,11 +1103,11 @@ visit_next_thread (void)
 	    artp = ap;
 	    return;
 	}
-	reread = FALSE;
+	reread = false;
     }
     artp = NULL;
     art = lastart+1;
-    forcelast = TRUE;
+    forcelast = true;
 }
 
 /* Find previous thread (or last if artp == NULL).  If articles are selected,
@@ -1126,23 +1126,23 @@ visit_prev_thread (void)
 	    artp = ap;
 	    return;
 	}
-	reread = FALSE;
+	reread = false;
     }
     artp = NULL;
     art = lastart+1;
-    forcelast = TRUE;
+    forcelast = true;
 }
 
-/* Find artp's parent or oldest ancestor.  Returns FALSE if no such
+/* Find artp's parent or oldest ancestor.  Returns false if no such
 ** article.  Sets art and artp otherwise.
 */
 bool
-find_parent (bool_int keep_going)
+find_parent (bool keep_going)
 {
     ARTICLE* ap = artp;
 
     if (!ap->parent)
-	return FALSE;
+	return false;
 
     do {
 	ap = ap->parent;
@@ -1150,19 +1150,19 @@ find_parent (bool_int keep_going)
 
     artp = ap;
     art = article_num(ap);
-    return TRUE;
+    return true;
 }
 
-/* Find artp's first child or youngest decendent.  Returns FALSE if no
+/* Find artp's first child or youngest decendent.  Returns false if no
 ** such article.  Sets art and artp otherwise.
 */
 bool
-find_leaf (bool_int keep_going)
+find_leaf (bool keep_going)
 {
     ARTICLE* ap = artp;
 
     if (!ap->child1)
-	return FALSE;
+	return false;
 
     do {
 	ap = ap->child1;
@@ -1170,11 +1170,11 @@ find_leaf (bool_int keep_going)
 
     artp = ap;
     art = article_num(ap);
-    return TRUE;
+    return true;
 }
 
 /* Find the next "sibling" of artp, including cousins that are the
-** same distance down the thread as we are.  Returns FALSE if no such
+** same distance down the thread as we are.  Returns false if no such
 ** article.  Sets art and artp otherwise.
 */
 bool
@@ -1192,14 +1192,14 @@ find_next_sib (void)
 	    if ((tb = first_sib(ta, ascent)) != NULL) {
 		artp = tb;
 		art = article_num(tb);
-		return TRUE;
+		return true;
 	    }
 	}
 	if (!(ta = ta->parent))
 	    break;
 	ascent++;
     }
-    return FALSE;
+    return false;
 }
 
 /* A recursive routine to find the first node at the proper depth.  This
@@ -1225,7 +1225,7 @@ first_sib (ARTICLE *ta, int depth)
 }
 
 /* Find the previous "sibling" of artp, including cousins that are
-** the same distance down the thread as we are.  Returns FALSE if no
+** the same distance down the thread as we are.  Returns false if no
 ** such article.  Sets art and artp otherwise.
 */
 bool
@@ -1246,13 +1246,13 @@ find_prev_sib (void)
 	if ((tb = last_sib(ta, ascent, tb)) != NULL) {
 	    artp = tb;
 	    art = article_num(tb);
-	    return TRUE;
+	    return true;
 	}
 	if (!(ta = ta->parent))
 	    break;
 	ascent++;
     }
-    return FALSE;
+    return false;
 }
 
 /* A recursive routine to find the last node at the proper depth.  This
@@ -1419,7 +1419,7 @@ subject_score_high (SUBJECT *sp)
     /* find highest score of desired articles */
     for (ap = sp->articles; ap; ap = ap->subj_next) {
 	if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == desired_flags) {
-	    sc = sc_score_art(article_num(ap),FALSE);
+	    sc = sc_score_art(article_num(ap),false);
 	    if ((!hiscore_found) || (sc>hiscore)) {
 		hiscore_found = 1;
 		hiscore = sc;
@@ -1690,8 +1690,8 @@ artorder_lines (ARTICLE **art1, ARTICLE **art2)
 static int
 artorder_score (ARTICLE **art1, ARTICLE **art2)
 {
-    int eq = sc_score_art(article_num(*art2),FALSE)
-	   - sc_score_art(article_num(*art1),FALSE);
+    int eq = sc_score_art(article_num(*art2),false)
+	   - sc_score_art(article_num(*art1),false);
     return eq? eq > 0? sel_direction : -sel_direction : 0;
 }
 #endif

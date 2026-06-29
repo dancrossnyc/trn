@@ -46,7 +46,7 @@ respond_init (void)
 int
 save_article (void)
 {
-    bool_int use_pref;
+    bool use_pref;
     char* s;
     char* c;
     char altbuf[CBUFLEN];
@@ -79,7 +79,7 @@ save_article (void)
 	sig_catcher(0);
     }
     if (cmd == 'e') {		/* is this an extract command? */
-	static bool custom_extract = FALSE;
+	static bool custom_extract = false;
 	char* cmdstr;
 	int partOpt = 0, totalOpt = 0;
 
@@ -164,7 +164,7 @@ save_article (void)
 	else if (is_mime) {
 	    printf("Extracting MIME article into %s:\n", c);
 	    termdown(1);
-	    mime_DecodeArticle(FALSE);
+	    mime_DecodeArticle(false);
 	}
 	else {
 	    char* filename;
@@ -311,11 +311,11 @@ save_article (void)
 	tmpfp = NULL;
 	if (!there) {
 	    if (mbox_always)
-		mailbox = TRUE;
+		mailbox = true;
 	    else if (norm_always)
-		mailbox = FALSE;
+		mailbox = false;
 	    else {
-		char* dflt = (in_str(savename,"%a", TRUE) ? "nyq" : "ynq");
+		char* dflt = (in_str(savename,"%a", true) ? "nyq" : "ynq");
 
 		sprintf(cmd_buf,
 		"\nFile %s doesn't exist--\n	use mailbox format?",s);
@@ -346,10 +346,10 @@ q to abort.\n\
 		    goto reask_save;
 		}
 		else if (*buf == 'n') {
-		    mailbox = FALSE;
+		    mailbox = false;
 		}
 		else if (*buf == 'y') {
-		    mailbox = TRUE;
+		    mailbox = true;
 		}
 		else if (*buf == 'q') {
 		    goto s_bomb;
@@ -363,11 +363,11 @@ q to abort.\n\
 	    }
 	}
 	else if (S_ISCHR(filestat.st_mode))
-	    mailbox = FALSE;
+	    mailbox = false;
 	else {
 	    tmpfp = fopen(s,"r+");
 	    if (!tmpfp)
-		mailbox = FALSE;
+		mailbox = false;
 	    else {
 		if (fread(buf,1,LBUFLEN,tmpfp)) {
 		    c = buf;
@@ -395,7 +395,7 @@ q to abort.\n\
 	    crmode();
 	}
 	else if (tmpfp != NULL || (tmpfp = fopen(savedest, "a")) != NULL) {
-	    bool quote_From = FALSE;
+	    bool quote_From = false;
 	    fseek(tmpfp,0,2);
 	    if (mailbox) {
 #if MBOXCHAR == '\001'
@@ -403,7 +403,7 @@ q to abort.\n\
 #else
 		interp(cmd_buf, sizeof cmd_buf, "From %t %`LANG= date`\n");
 		fputs(cmd_buf, tmpfp);
-		quote_From = TRUE;
+		quote_From = true;
 #endif
 	    }
 	    if (savefrom == 0 && art != 0)
@@ -460,7 +460,7 @@ view_article (void)
     printf("Processing attachments...\n");
     termdown(1);
     if (is_mime)
-	mime_DecodeArticle(TRUE);
+	mime_DecodeArticle(true);
     else {
 	char* filename;
 	int part, total;
@@ -529,9 +529,9 @@ cancel_article (void)
     from_buf = fetchlines(art,FROM_LINE);
     ngs_buf = fetchlines(art,NGS_LINE);
     if (strcaseNE(getval("FROM",""),from_buf)
-     && (!in_str(from_buf,hostname,FALSE)
-      || (!in_str(from_buf,loginName,TRUE)
-       && !in_str(reply_buf,loginName,TRUE)
+     && (!in_str(from_buf,hostname,false)
+      || (!in_str(from_buf,loginName,true)
+       && !in_str(reply_buf,loginName,true)
 #ifdef NEWS_ADMIN
        && myuid != newsuid
 #endif
@@ -565,9 +565,9 @@ cancel_article (void)
 	fclose(tmpfp);
 	fputs("\nCanceling...\n",stdout);
 	termdown(2);
-	export_nntp_fds = TRUE;
+	export_nntp_fds = true;
 	r = doshell(sh,filexp(getval("CANCEL",CALL_INEWS)));
-	export_nntp_fds = FALSE;
+	export_nntp_fds = false;
     }
 done:
     safefree(ngs_buf);
@@ -603,9 +603,9 @@ supersede_article (void)		/* Supersedes: */
     from_buf = fetchlines(art,FROM_LINE);
     ngs_buf = fetchlines(art,NGS_LINE);
     if (strcaseNE(getval("FROM",""),from_buf)
-     && (!in_str(from_buf,hostname,FALSE)
-      || (!in_str(from_buf,loginName,TRUE)
-       && !in_str(reply_buf,loginName,TRUE)
+     && (!in_str(from_buf,hostname,false)
+      || (!in_str(from_buf,loginName,true)
+       && !in_str(reply_buf,loginName,true)
 #ifdef NEWS_ADMIN
        && myuid != newsuid
 #endif
@@ -665,9 +665,9 @@ follow_it_up (void)
 	    ret = 1;
 	else
 	{
-	    export_nntp_fds = TRUE;
+	    export_nntp_fds = true;
 	    ret = invoke(filexp(CALL_INEWS),origdir);
-	    export_nntp_fds = FALSE;
+	    export_nntp_fds = false;
 	}
 	if (ret) {
 	    int appended = 0;
@@ -707,7 +707,7 @@ reply (void)
     }
     interp(hbuf, sizeof hbuf, getval("MAILHEADER",MAILHEADER));
     fputs(hbuf,tmpfp);
-    if (!in_str(maildoer,"%h",TRUE)) {
+    if (!in_str(maildoer,"%h",true)) {
 #ifdef VERBOSE
 	IF(verbose)
 	    printf("\n%s\n(Above lines saved in file %s)\n",buf,headname)
@@ -729,7 +729,7 @@ reply (void)
 	clear_artbuf();
 	seekart(htype[PAST_HEADER].minpos);
 	wrapped_nl = '\n';
-	while ((s = readartbuf(FALSE)) != NULL) {
+	while ((s = readartbuf(false)) != NULL) {
 	    if ((t = index(s, '\n')) != NULL)
 		*t = '\0';
 #ifdef CHARSUBST
@@ -777,7 +777,7 @@ forward (void)
     interp(hbuf, sizeof hbuf, getval("FORWARDHEADER",FORWARDHEADER));
     fputs(hbuf,tmpfp);
 #ifdef REGEX_WORKS_RIGHT
-    if (!compile(&mime_compex,"Content-Type: multipart/.*; *boundary=\"\\([^\"]*\\)\"",TRUE,TRUE)
+    if (!compile(&mime_compex,"Content-Type: multipart/.*; *boundary=\"\\([^\"]*\\)\"",true,true)
      && execute(&mime_compex,hbuf) != NULL)
 	mime_boundary = getbracket(&mime_compex,1);
     else
@@ -811,7 +811,7 @@ forward (void)
 	}
     }
 #endif
-    if (!in_str(maildoer,"%h",TRUE)) {
+    if (!in_str(maildoer,"%h",true)) {
 #ifdef VERBOSE
 	IF(verbose)
 	    printf("\n%s\n(Above lines saved in file %s)\n",hbuf,headname)
@@ -905,7 +905,7 @@ trim the quoted article down as much as possible.)\n\
 	clear_artbuf();
 	seekart(htype[PAST_HEADER].minpos);
 	wrapped_nl = '\n';
-	while ((s = readartbuf(FALSE)) != NULL) {
+	while ((s = readartbuf(false)) != NULL) {
 	    if ((t = index(s, '\n')) != NULL)
 		*t = '\0';
 #ifdef CHARSUBST
@@ -979,7 +979,7 @@ cut_line (char *str)
     ** string lines.  Make sure it has the cut-phrase and at least six
     ** '-'s or '='s.  If only four '-'s are present, check for a duplicate
     ** of the cut phrase.  If over 20 unknown characters are encountered,
-    ** assume it isn't a cut line.  If we succeed, return TRUE.
+    ** assume it isn't a cut line.  If we succeed, return true.
     */
     for (cp = str, dash_cnt = equal_cnt = other_cnt = 0; *cp; cp++) {
 	switch (*cp) {
@@ -1000,14 +1000,14 @@ cut_line (char *str)
 	case ']':
 	case '{':
 	case '}':
-	    return FALSE;
+	    return false;
 	default:
 	    other_cnt++;
 	    break;
 	}
     }
     if (dash_cnt < 4 && equal_cnt < 6)
-	return FALSE;
+	return false;
 
     got_flag = 0;
 
@@ -1024,7 +1024,7 @@ cut_line (char *str)
 		    if (strEQ(word, "line")
 		     || strEQ(word, "here"))
 			if ((other_cnt -= 4) <= 20)
-			    return TRUE;
+			    return true;
 		    break;
 		case 1:
 		    if (strEQ(word, "this")) {
@@ -1035,7 +1035,7 @@ cut_line (char *str)
 			other_cnt -= 4;
 			if ((dash_cnt >= 6 || equal_cnt >= 6)
 			 && other_cnt <= 20)
-			    return TRUE;
+			    return true;
 			dash_cnt = 6;
 			got_flag = 0;
 		    }
@@ -1054,6 +1054,6 @@ cut_line (char *str)
 	}
     } /* for *str */
 
-    return FALSE;
+    return false;
 }
 #endif

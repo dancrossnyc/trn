@@ -63,7 +63,7 @@
 typedef Uchar	TRANSTABLE[ASCSIZ];
 
 static TRANSTABLE trans;
-static bool folding = FALSE;
+static bool folding = false;
 
 static int err;
 static char* FirstCharacter;
@@ -401,53 +401,53 @@ advance (COMPEX *compex, char *lp, char *ep)
 
 	    case CCHR:
 		if (trt[*(Uchar*)ep++] != trt[*(Uchar*)lp])
-		    return FALSE;
+		    return false;
 		lp++;
 		continue;
 
 	    case CDOT:
-		if (*lp == '\n') return FALSE;
+		if (*lp == '\n') return false;
 		lp++;
 		continue;
 
 	    case CDOL:
 		if (!*lp || *lp == '\n')
 		    continue;
-		return FALSE;
+		return false;
 
 	    case CIRC:
 		if (lp == FirstCharacter || lp[-1]=='\n')
 		    continue;
-		return FALSE;
+		return false;
 
 	    case WORD:
 		if (isalnum(*lp)) {
 		    lp++;
 		    continue;
 		}
-		return FALSE;
+		return false;
 
 	    case NWORD:
 		if (!isalnum(*lp)) {
 		    lp++;
 		    continue;
 		}
-		return FALSE;
+		return false;
 
 	    case WBOUND:
 		if ((lp == FirstCharacter || !isalnum(lp[-1])) !=
 			(!*lp || !isalnum(*lp)) )
 		    continue;
-		return FALSE;
+		return false;
 
 	    case NWBOUND:
 		if ((lp == FirstCharacter || !isalnum(lp[-1])) ==
 			(!*lp || !isalnum(*lp)))
 		    continue;
-		return FALSE;
+		return false;
 
 	    case CEND:
-		return TRUE;
+		return true;
 
 	    case CCL:
 		if (cclass(ep, *lp, 1)) {
@@ -455,7 +455,7 @@ advance (COMPEX *compex, char *lp, char *ep)
 		    lp++;
 		    continue;
 		}
-		return FALSE;
+		return false;
 
 	    case NCCL:
 		if (cclass(ep, *lp, 0)) {
@@ -463,7 +463,7 @@ advance (COMPEX *compex, char *lp, char *ep)
 		    lp++;
 		    continue;
 		}
-		return FALSE;
+		return false;
 
 	    case CBRA:
 		compex->braslist[(unsigned char)*ep++] = lp;
@@ -479,20 +479,20 @@ advance (COMPEX *compex, char *lp, char *ep)
 	    case CBACK:
 		if (compex->braelist[i = *ep++] == 0) {
 		    fputs("bad braces\n",stdout);
-		    err = TRUE;
-		    return FALSE;
+		    err = true;
+		    return false;
 		}
 		if (backref(compex, i, lp)) {
 		    lp += compex->braelist[i] - compex->braslist[i];
 		    continue;
 		}
-		return FALSE;
+		return false;
 
 	    case CBACK | STAR:
 		if (compex->braelist[i = *ep++] == 0) {
 		    fputs("bad braces\n",stdout);
-		    err = TRUE;
-		    return FALSE;
+		    err = true;
+		    return false;
 		}
 		curlp = lp;
 		while (backref(compex, i, lp)) {
@@ -500,7 +500,7 @@ advance (COMPEX *compex, char *lp, char *ep)
 		}
 		while (lp >= curlp) {
 		    if (advance(compex, lp, ep))
-			return TRUE;
+			return true;
 		    lp -= compex->braelist[i] - compex->braslist[i];
 		}
 		continue;
@@ -537,17 +537,17 @@ advance (COMPEX *compex, char *lp, char *ep)
 		do {
 		    lp--;
 		    if (advance(compex, lp, ep))
-			return TRUE;
+			return true;
 		} while (lp > curlp);
-		return FALSE;
+		return false;
 
 	    default:
 		fputs("Badly compiled pattern\n",stdout);
-		err = TRUE;
+		err = true;
 		return -1;
 	}
     }
-    return FALSE;
+    return false;
 }
 
 bool
@@ -560,9 +560,9 @@ backref (COMPEX *compex, int i, char *lp)
 	bp++;
 	lp++;
 	if (bp >= compex->braelist[i])
-	    return TRUE;
+	    return true;
     }
-    return FALSE;
+    return false;
 }
 
 bool

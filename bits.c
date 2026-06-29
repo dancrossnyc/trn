@@ -169,11 +169,11 @@ set_firstart (char *s)
 	firstart = atol(s+2)+1;		/* process first range thusly */
 	if (firstart < absfirst)
 	    firstart = absfirst;
-	return TRUE;
+	return true;
     }
 
     firstart = absfirst;
-    return FALSE;
+    return false;
 }
 
 /* reconstruct the .newsrc line in a human readable form */
@@ -555,7 +555,7 @@ yank_article (char *ptr, int arg)
 }
 
 int
-chase_xrefs (bool_int until_key)
+chase_xrefs (bool until_key)
 {
     if (!chase_count)
 	return 1;
@@ -573,14 +573,14 @@ check_chase (char *ptr, int until_key)
     ARTICLE* ap = (ARTICLE*)ptr;
 
     if (ap->flags & AF_KCHASE) {
-	chase_xref(article_num(ap),TRUE);
+	chase_xref(article_num(ap),true);
 	ap->flags &= ~AF_KCHASE;
 	if (!--chase_count)
 	    return 1;
     }
 #ifdef MCHASE
     if (ap->flags & AF_MCHASE) {
-	chase_xref(article_num(ap),TRUE);
+	chase_xref(article_num(ap),true);
 	ap->flags &= ~AF_MCHASE;
 	if (!--chase_count)
 	    return 1;
@@ -695,7 +695,7 @@ valid_xref_site (ART_NUM artnum, char *site)
     char* s;
 
     if (inews_site && strEQ(site,inews_site))
-	return TRUE;
+	return true;
 
     if (inews_site)
 	safefree(inews_site);
@@ -709,7 +709,7 @@ valid_xref_site (ART_NUM artnum, char *site)
 #else /* ANCIENT_NEWS */
     /* Grab the site from the Posting-Version line */
     sitebuf = fetchlines(artnum,RVER_LINE);
-    if ((s = in_str(sitebuf,"; site ",TRUE)) != NULL) {
+    if ((s = in_str(sitebuf,"; site ",true)) != NULL) {
 	char* t = index(s+7, '.');
 	if (t)
 	    *t = '\0';
@@ -721,7 +721,7 @@ valid_xref_site (ART_NUM artnum, char *site)
     safefree(sitebuf);
 
     if (strEQ(site,inews_site))
-	return TRUE;
+	return true;
 
 #ifdef DEBUG
     if (debug) {
@@ -729,7 +729,7 @@ valid_xref_site (ART_NUM artnum, char *site)
 	termdown(1);
     }
 #endif
-    return FALSE;
+    return false;
 }
 # endif /* VALIDATE_XREF_SITE */
 

@@ -10,7 +10,7 @@
 /* specific scoreflag meanings:  (note: bad placement, but where else?) */
 /* author has a score (match on FROM: line) */
 #define SFLAG_AUTHOR 1
-/* if TRUE, the article has been scored */
+/* if true, the article has been scored */
 #define SFLAG_SCORED 16
 #define SCORED(a) (article_ptr(a)->scoreflags & SFLAG_SCORED)
 
@@ -18,7 +18,7 @@ extern  bool kill_thresh_active;
 extern  int kill_thresh;   /* KILL articles at or below this score */
 
 extern  ART_NUM sc_fill_max;	   /* maximum art# scored by fill-routine */
-extern  bool sc_fill_read; /* TRUE if also scoring read arts... */
+extern  bool sc_fill_read; /* true if also scoring read arts... */
 
 /* has score been initialized (are we "in" scoring?) */
 extern  bool sc_initialized;
@@ -42,18 +42,18 @@ extern  bool sc_rescoring;	/* are we rescoring now? */
 
 extern  bool sc_do_spin;	/* actually do the score spinner */
 
-extern  bool sc_sf_delay;	/* if TRUE, delay loading rule files */
+extern  bool sc_sf_delay;	/* if true, delay loading rule files */
 extern  bool sc_sf_force_init;	/* If true, always sf_init() */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-void sc_init (bool_int);
+void sc_init (bool);
 void sc_cleanup (void);
 void sc_set_score (ART_NUM,int);
 void sc_score_art_basic (ART_NUM);
-int sc_score_art (ART_NUM,bool_int);
+int sc_score_art (ART_NUM,bool);
 void sc_fill_scorelist (ART_NUM,ART_NUM);
-void sc_lookahead (bool_int,bool_int);
+void sc_lookahead (bool,bool);
 int sc_percent_scored (void);
 void sc_rescore_arts (void);
 void sc_append (char*);

@@ -81,7 +81,7 @@ retry_open:
 	    goto retry_open;
 	if (errno == EINTR)
 	    goto retry_open;
-	uncache_article(ap,FALSE);
+	uncache_article(ap,false);
     } else {
 	openart = artnum;		/* remember what we did here */
 	seekart(pos);
@@ -143,7 +143,7 @@ seekartbuf (ART_POS pos)
     artbuf_pos = artbuf_len;
 
     while (artbuf_pos < pos) {
-	if (!readartbuf(FALSE))
+	if (!readartbuf(false))
 	    return -1;
     }
 
@@ -153,7 +153,7 @@ seekartbuf (ART_POS pos)
 }
 
 char *
-readartbuf (bool_int view_inline)
+readartbuf (bool view_inline)
 {
     char* bp;
     char* s;
@@ -286,7 +286,7 @@ readartbuf (bool_int view_inline)
 				    MCF_NEEDSTERMINAL|MCF_COPIOUSOUTPUT);
 	if (mcp) {
 	    int save_term_line = term_line;
-	    nowait_fork = TRUE;
+	    nowait_fork = true;
 	    color_object(COLOR_MIMEDESC, 1);
 	    if (decode_piece(mcp,bp) != 0) {
 		strcpy(bp = artbuf + artbuf_pos, art_line);
@@ -298,8 +298,8 @@ readartbuf (bool_int view_inline)
 		mime_state = SKIP_MIME;
 	    color_pop();
 	    chdir_newsdir();
-	    erase_line(FALSE);
-	    nowait_fork = FALSE;
+	    erase_line(false);
+	    nowait_fork = false;
 	    first_view = artline;
 	    term_line = save_term_line;
 	    if (mime_state != SKIP_MIME)
@@ -368,7 +368,7 @@ readartbuf (bool_int view_inline)
       case IMAGE_MIME:
       case AUDIO_MIME:
 	if (!mime_article.total && !multimedia_mime)
-	    multimedia_mime = TRUE;
+	    multimedia_mime = true;
 	/* FALL THROUGH */
       default:
 	if (view_inline && first_view < artline

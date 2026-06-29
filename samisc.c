@@ -36,9 +36,9 @@ check_article (long a)
 {
     if (a < absfirst || a > lastart) {
 	printf("\nArticle %d out of range\n",a);
-	return FALSE;
+	return false;
     }
-    return TRUE;
+    return true;
 }
 #else
 /* note that argument is used twice. */
@@ -56,22 +56,22 @@ sa_basic_elig (long a)
 
     /* "run the gauntlet" style (:-) */
     if (!sa_mode_read_elig && was_read(artnum))
-	return FALSE;
+	return false;
     if (sa_mode_zoom && !sa_selected1(a))
-	return FALSE;
+	return false;
 #ifdef SCORE
     if (sa_mode_order == 2)	/* score order */
 	if (!SCORED(artnum))
-	    return FALSE;
+	    return false;
 #endif
     /* now just check availability */
     if (is_unavailable(artnum)) {
 	if (!was_read(artnum))
 	    oneless_artnum(artnum);
-	return FALSE;		/* don't try positively unavailable */
+	return false;		/* don't try positively unavailable */
     }
     /* consider later positively checking availability */
-    return TRUE;	/* passed all tests */
+    return true;	/* passed all tests */
 }
 
 bool
@@ -80,13 +80,13 @@ sa_eligible (long a)
 
     assert(check_article(sa_ents[a].artnum));
     if (!sa_basic_elig(a))
-	return FALSE;		/* must always be basic-eligible */
+	return false;		/* must always be basic-eligible */
     if (!sa_mode_fold)
-	return TRUE;		/* just use basic-eligible */
+	return true;		/* just use basic-eligible */
     else {
 	if (sa_subj_thread_prev(a))
-	    return FALSE;	/* there was an earlier match */
-	return TRUE;		/* no prior matches */
+	    return false;	/* there was an earlier match */
+	return true;		/* no prior matches */
     }
 }
 
@@ -138,7 +138,7 @@ sa_selthreads (void)
 #ifdef SCORE
     /* if scoring, make sure that this article is scored... */
 		    if (sa_mode_order == 2)	/* score order */
-			sc_score_art(art,FALSE);
+			sc_score_art(art,false);
 #endif
 		    }
 		}/* for all articles */
@@ -206,8 +206,8 @@ sa_compare (
 	if (!SCORED(sa_ents[b].artnum))	/* only b unscored */
 	    return -1;		/* move unscored (b) to end */
 
-	i = sc_score_art(sa_ents[a].artnum,TRUE);
-	j = sc_score_art(sa_ents[b].artnum,TRUE);
+	i = sc_score_art(sa_ents[a].artnum,true);
+	j = sc_score_art(sa_ents[b].artnum,true);
 	if (i < j)
 	    return 1;
 	if (i > j)

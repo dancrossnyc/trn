@@ -14,9 +14,9 @@
 #include "env.ih"
 
 bool
-env_init (char *tcbuf, bool_int lax)
+env_init (char *tcbuf, bool lax)
 {
-    bool fully_successful = TRUE;
+    bool fully_successful = true;
 
     if ((homedir = getenv("HOME")) == NULL)
 	homedir = getenv("LOGDIR");
@@ -42,13 +42,13 @@ env_init (char *tcbuf, bool_int lax)
 	    loginName = nullstr;
 	if (!realName)
 	    realName = nullstr;
-	fully_successful = FALSE;
+	fully_successful = false;
     }
     env_init2();
 
     /* set phostname to the hostname of our local machine */
     if (!setphostname(tcbuf))
-	fully_successful = FALSE;
+	fully_successful = false;
 
     return fully_successful;
 }
@@ -135,7 +135,7 @@ bool
 setphostname (char *tmpbuf)
 {
     FILE* fp;
-    bool hostname_ok = TRUE;
+    bool hostname_ok = true;
 
     /* Find the local hostname */
 
@@ -174,7 +174,7 @@ setphostname (char *tmpbuf)
 	    strcat(tmpbuf, ".");
 	{
 	    strcat(tmpbuf,"UNKNOWN.HOST");
-	    hostname_ok = FALSE;
+	    hostname_ok = false;
 	}
     }
     phostname = estrdup(tmpbuf);
@@ -191,7 +191,7 @@ getval (char *nam, char *def)
     return val;
 }
 
-static bool firstexport = TRUE;
+static bool firstexport = true;
 extern char** environ;
 
 const char *

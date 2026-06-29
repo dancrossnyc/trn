@@ -22,5 +22,5 @@ static void unlock_newsrc(NEWSRC*);
 static bool open_newsrc(NEWSRC*);
 static void init_ngnode(LIST*,LISTNODE*);
 static void parse_rcline(NGDATA*);
-static NGDATA *add_newsgroup(NEWSRC*,char*,char_int);
+static NGDATA *add_newsgroup(NEWSRC*,char*,int);
 static int rcline_cmp(const void *, size_t, HASHDATUM);

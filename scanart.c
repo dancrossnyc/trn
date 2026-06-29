@@ -26,15 +26,15 @@
 SA_ENTRYDATA* sa_ents = (SA_ENTRYDATA*)0;
 int sa_num_ents = 0;
 int sa_ents_alloc = 0;
-bool sa_initialized = FALSE;
-bool sa_never_initialized = TRUE;
-bool sa_in = FALSE;
-bool sa_go = FALSE;
-bool sa_go_explicit = FALSE;
-bool sa_context_init = FALSE;
+bool sa_initialized = false;
+bool sa_never_initialized = true;
+bool sa_in = false;
+bool sa_go = false;
+bool sa_go_explicit = false;
+bool sa_context_init = false;
 ART_NUM sa_art = 0;
-bool sa_do_selthreads = FALSE;
-bool sa_mode_read_elig = FALSE;
+bool sa_do_selthreads = false;
+bool sa_mode_read_elig = false;
 
 #ifdef SCORE
 int sa_mode_order = 2;
@@ -42,21 +42,21 @@ int sa_mode_order = 2;
 int sa_mode_order = 1;
 #endif
 
-bool sa_mark_stay = FALSE;
-bool sa_unzoomrefold = FALSE;
-bool sa_mode_fold = FALSE;
-bool sa_follow = TRUE;
-bool sa_mode_desc_artnum = FALSE;
-bool sa_mode_desc_author = TRUE;
+bool sa_mark_stay = false;
+bool sa_unzoomrefold = false;
+bool sa_mode_fold = false;
+bool sa_follow = true;
+bool sa_mode_desc_artnum = false;
+bool sa_mode_desc_author = true;
 #ifdef SCORE
-bool sa_mode_desc_score = TRUE;
+bool sa_mode_desc_score = true;
 #else
-bool sa_mode_desc_score = FALSE;
+bool sa_mode_desc_score = false;
 #endif
-bool sa_mode_desc_threadcount = FALSE;
-bool sa_mode_desc_subject = TRUE;
-bool sa_mode_desc_summary = FALSE;
-bool sa_mode_desc_keyw = FALSE;
+bool sa_mode_desc_threadcount = false;
+bool sa_mode_desc_subject = true;
+bool sa_mode_desc_summary = false;
+bool sa_mode_desc_keyw = false;
 
 int
 sa_main (void)
@@ -64,9 +64,9 @@ sa_main (void)
     char sa_oldmode;	/* keep mode of caller */
     int i;
 
-    sa_in = TRUE;
-    sa_go = FALSE;	/* ...do not collect $200... */
-    s_follow_temp = FALSE;
+    sa_in = true;
+    sa_go = false;	/* ...do not collect $200... */
+    s_follow_temp = false;
 
     if (lastart < absfirst) {
 	s_beep();
@@ -76,7 +76,7 @@ sa_main (void)
 	sa_init();
 	if (!sa_initialized)		/* still not working... */
 	    return SA_ERR;		/* we don't belong here */
-	sa_never_initialized = FALSE;	/* we have entered at least once */
+	sa_never_initialized = false;	/* we have entered at least once */
     } else
 	s_change_context(sa_scan_context);
 
@@ -86,23 +86,23 @@ sa_main (void)
 	a = sa_readmarked_elig();
 	if (a) {	/* there was an article */
 	    art = sa_ents[a].artnum;
-	    reread = TRUE;
+	    reread = true;
 	    sa_clearmark(a);
 	    /* trn 3.x won't read an unselected article if selected_only */
-	    selected_only = FALSE;
+	    selected_only = false;
 	    s_save_context();
 	    return SA_NORM;
 	}
     }
-    sa_go_explicit = FALSE;
+    sa_go_explicit = false;
 
     /* If called from the trn thread-selector and articles/threads were
      * selected there, "select" the articles and enter the zoom mode.
      */
     if (sa_do_selthreads) {
 	sa_selthreads();
-	sa_do_selthreads = FALSE;
-	sa_mode_zoom = TRUE;		/* zoom in by default */
+	sa_do_selthreads = false;
+	sa_mode_zoom = true;		/* zoom in by default */
 	s_top_ent = -1;		/* go to top of arts... */
     }
 
@@ -114,9 +114,9 @@ sa_main (void)
     if (i == SA_NORM || i == SA_FAKE) {
 	art = sa_art;
 	/* trn 3.x won't read an unselected article if selected_only */
-	selected_only = FALSE;
+	selected_only = false;
 	if (sa_mode_read_elig)
-	    reread = TRUE;
+	    reread = true;
     }
     if (sa_scan_context >= 0)
 	s_save_context();
@@ -143,5 +143,5 @@ sa_cleanup (void)
 
     sa_cleanmain();
     clear();		/* should something else clear the screen? */
-    sa_initialized = FALSE;		/* goodbye... */
+    sa_initialized = false;		/* goodbye... */
 }

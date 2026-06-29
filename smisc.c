@@ -22,11 +22,11 @@
 #endif
 #include "smisc.h"
 
-/* TRUE if the last command (run through setdef()) was the default */
-bool s_default_cmd = FALSE;
+/* true if the last command (run through setdef()) was the default */
+bool s_default_cmd = false;
 
 /* explicitly follow until end of thread */
-bool s_follow_temp = FALSE;
+bool s_follow_temp = false;
 
 bool
 s_eligible (long ent)
@@ -38,7 +38,7 @@ s_eligible (long ent)
 #endif
       default:
 	printf("s_eligible: current type is bad!\n");
-	return FALSE;
+	return false;
     }
 }
 
@@ -65,7 +65,7 @@ s_get_statchars (long ent, int line)
 }
 
 char *
-s_get_desc (long ent, int line, bool_int trunc)
+s_get_desc (long ent, int line, bool trunc)
 {
     switch (s_cur_type) {
 #ifdef SCAN_ART

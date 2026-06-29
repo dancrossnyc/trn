@@ -92,11 +92,11 @@ valid_article (ARTICLE *article)
 	    data.dat_ptr = (char*)article;
 	    hashstorelast(data);
 	    fake_had_subj = NULL;
-	    return TRUE;
+	    return true;
 	}
 	if (fake_ap == article) {
 	    fake_had_subj = NULL;
-	    return TRUE;
+	    return true;
 	}
 
 	/* Whenever we replace a fake art with a real one, it's a lot of work
@@ -158,12 +158,12 @@ valid_article (ARTICLE *article)
 	    safefree((char *)fake_ap);
 	    data.dat_ptr = (char*)article;
 	    hashstorelast(data);
-	    return TRUE;
+	    return true;
 	}
     }
     /* Forget about the duplicate message-id or bogus article. */
-    uncache_article(article,TRUE);
-    return FALSE;
+    uncache_article(article,true);
+    return false;
 }
 
 /* Take a message-id and see if we already know about it.  If so, return

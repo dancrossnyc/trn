@@ -24,6 +24,6 @@ extern char* charsubst;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-int putsubstchar (int,int,bool_int);
+int putsubstchar (int,int,bool);
 char* current_charsubst (void);
-int strcharsubst (char*,char*,int,char_int);
+int strcharsubst (char*,char*,int,int);

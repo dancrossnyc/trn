@@ -2,7 +2,7 @@
 /* smisc.h
  */
 
-/* TRUE if the last command (run through setdef()) was the default */
+/* true if the last command (run through setdef()) was the default */
 extern bool s_default_cmd;
 
 /* explicitly follow until end of thread */
@@ -13,5 +13,5 @@ extern bool s_follow_temp;
 bool s_eligible (long);
 void s_beep (void);
 char* s_get_statchars (long,int);
-char* s_get_desc (long,int,bool_int);
+char* s_get_desc (long,int,bool);
 int s_ent_lines (long);

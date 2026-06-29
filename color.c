@@ -154,7 +154,7 @@ color_rc_attribute (char *object, char *value)
     }
 
     /* We have both colors and attributes, so turn colors on. */
-    use_colors = TRUE;
+    use_colors = true;
 
     /* Parse the foreground color. */
     if (*s == '-')
@@ -203,7 +203,7 @@ color_rc_attribute (char *object, char *value)
 
 /* Turn on color attribute for an object. */
 void
-color_object (int object, bool_int push)
+color_object (int object, bool push)
 {
     COLOR_OBJ merged;
 

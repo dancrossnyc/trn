@@ -6,7 +6,7 @@
 
 static char* mime_ParseEntryArg (char**);
 static int mime_getc (FILE*);
-static char* tag_action (char*,char*,bool_int);
+static char* tag_action (char*,char*,bool);
 static char* output_prep (char*);
 static char* do_newline (char*,int);
 static int do_indent (char*);

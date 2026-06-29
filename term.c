@@ -51,7 +51,7 @@ unsigned char lastchar;
 struct termios _tty, _oldtty;
 
 int _tty_ch = 2;
-bool bizarre = FALSE;	/* do we need to restore terminal? */
+bool bizarre = false;	/* do we need to restore terminal? */
 
 int tc_GT;		/* hardware tabs */
 char* tc_BC = NULL;	/* backspace character */
@@ -75,8 +75,8 @@ char* tc_US = NULL;	/* start underline mode */
 char* tc_UE = NULL;	/* end underline mode */
 char* tc_UC = NULL;	/* underline a character, if that's how it's done */
 int tc_UG = 0;		/* blanks left by US and UE */
-bool tc_AM = FALSE;	/* does terminal have automatic margins? */
-bool tc_XN = FALSE;	/* does it eat 1st newline after automatic wrap? */
+bool tc_AM = false;	/* does terminal have automatic margins? */
+bool tc_XN = false;	/* does it eat 1st newline after automatic wrap? */
 char tc_PC = 0;		/* pad character for use by tputs() */
 
 speed_t outspeed = 0;	/* terminal output speed, */
@@ -90,14 +90,14 @@ int just_a_sec = 960;	/* 1 sec at current baud rate */
 			/* (number of nulls) */
 
 int page_line = 1;	/* line number for paging in print_line (origin 1) */
-bool error_occurred = FALSE;
+bool error_occurred = false;
 
 char* mousebar_btns;
 int mousebar_cnt = 0;
 int mousebar_start = 0;
 int mousebar_width = 0;
-bool xmouse_is_on = FALSE;
-bool mouse_is_down = FALSE;
+bool xmouse_is_on = false;
+bool mouse_is_down = false;
 
 #undef	USETITE		/* use terminal init/exit seqences (not recommended) */
 #undef	USEKSKE		/* use keypad start/end sequences */
@@ -110,7 +110,7 @@ static const char* lines_export = "LINES";
 static const char* cols_export = "COLUMNS";
 
 static int leftcost, upcost;
-static bool got_a_char = FALSE;	/* TRUE if we got a char since eating */
+static bool got_a_char = false;	/* true if we got a char since eating */
 
 /* guarantee capability pointer != NULL */
 /* (I believe terminfo will ignore the &tmpaddr argument.) */
@@ -282,9 +282,9 @@ term_set (
     if (!*tc_UP)			/* no UP string? */
 	marking = 0;			/* disable any marking */
     if (*tc_CM || *tc_HO)
-	can_home = TRUE;
+	can_home = true;
     if (!*tc_CD || !can_home)		/* can we CE, CD, and home? */
-	erase_each_line = FALSE;	/*  no, so disable use of clear eol */
+	erase_each_line = false;	/*  no, so disable use of clear eol */
     if (muck_up_clear)			/* this is for weird HPs */
 	tc_CL = NULL;
     leftcost = strlen(tc_BC);
@@ -544,7 +544,7 @@ show_keymap (KEYMAP *curmap, char *prefix)
 }
 
 void
-set_mode (char_int new_gmode, char_int new_mode)
+set_mode (int new_gmode, int new_mode)
 {
     if (gmode != new_gmode || mode != new_mode) {
 	gmode = new_gmode;
@@ -556,7 +556,7 @@ set_mode (char_int new_gmode, char_int new_mode)
 /* routine to pass to tputs */
 
 int
-putchr (char_int ch)
+putchr (int ch)
 {
     putchar(ch);
     return 0;
@@ -572,7 +572,7 @@ hide_pending (void)
 }
 
 bool
-finput_pending (bool_int check_term)
+finput_pending (bool check_term)
 {
     while (nextout != nextin) {
 	if (circlebuf[nextout] != '\200')
@@ -609,7 +609,7 @@ finput_pending (bool_int check_term)
 }
 
 /* input the 2nd and succeeding characters of a multi-character command */
-/* returns TRUE if command finished, FALSE if they rubbed out first character */
+/* returns true if command finished, false if they rubbed out first character */
 
 int buflimit = LBUFLEN;
 
@@ -621,7 +621,7 @@ finish_command (int donewline)
 
     s = buf;
     if (s[1] != FINISHCMD)		/* someone faking up a command? */
-	return TRUE;
+	return true;
     set_mode('i',mode);
     if (not_echoing)
 	not_echoing = 2;
@@ -630,7 +630,7 @@ finish_command (int donewline)
 	if (s == buf) {			/* entire string gone? */
 	    fflush(stdout);		/* return to single char command mode */
 	    set_mode(gmode_save,mode);
-	    return FALSE;
+	    return false;
 	}
 	if (s - buf == buflimit)
 	    break;
@@ -640,7 +640,7 @@ finish_command (int donewline)
 	    *s = Ctl('r');		/* force rewrite on CONT */
 	}
     } while (*s != '\r' && *s != '\n'); /* until CR or NL (not echoed) */
-    mouse_is_down = FALSE;
+    mouse_is_down = false;
 
     while (s[-1] == ' ') s--;
     *s = '\0';				/* terminate the string nicely */
@@ -649,11 +649,11 @@ finish_command (int donewline)
 	newline();
 
     set_mode(gmode_save,mode);
-    return TRUE;			/* retrn success */
+    return true;			/* retrn success */
 }
 
 static int
-echo_char (char_int ch)
+echo_char (int ch)
 {
     if (((Uchar)ch & 0x7F) < ' ') {
 	putchar('^');
@@ -676,9 +676,9 @@ static bool screen_is_dirty; /*$$ remove this? */
 char *
 edit_buf (char *s, char *cmd)
 {
-    static bool quoteone = FALSE;
+    static bool quoteone = false;
     if (quoteone) {
-	quoteone = FALSE;
+	quoteone = false;
 	if (s != buf)
 	    goto echo_it;
     }
@@ -763,7 +763,7 @@ edit_buf (char *s, char *cmd)
 	getcmd(s);
     }
     else if (*s == '\\')
-	quoteone = TRUE;
+	quoteone = true;
 
 echo_it:
     if (!not_echoing)
@@ -778,7 +778,7 @@ finish_dblchar (void)
     int buflimit_save = buflimit;
     int not_echoing_save = not_echoing;
     buflimit = 2;
-    ret = finish_command(FALSE);
+    ret = finish_command(false);
     buflimit = buflimit_save;
     not_echoing = not_echoing_save;
     return ret;
@@ -798,7 +798,7 @@ eat_typeahead (void)
     /* Don't eat twice before getting a character */
     if (!got_a_char)
 	return;
-    got_a_char = FALSE;
+    got_a_char = false;
 
     /* cancel only keyboard stuff */
     if (!allow_typeahead && !mouse_is_down && !macro_pending()
@@ -877,13 +877,13 @@ settle_down (void)
     eat_typeahead();
 }
 
-bool ignore_EINTR = FALSE;
+bool ignore_EINTR = false;
 
 void
 alarm_catcher (int signo)
 {
     /*printf("\n*** In alarm catcher **\n"); $$*/
-    ignore_EINTR = TRUE;
+    ignore_EINTR = true;
     check_datasrcs();
     sigset(SIGALRM,alarm_catcher);
     (void) alarm(DATASRC_ALARM_SECS);
@@ -920,7 +920,7 @@ read_tty (char *addr, int size)
 #ifdef RAWONLY
     *addr &= 0177;
 #endif
-    got_a_char = TRUE;
+    got_a_char = true;
     return size;
 }
 
@@ -946,7 +946,7 @@ circfill (void)
 #endif /* PENDING */
 
 void
-pushchar (char_int c)
+pushchar (int c)
 {
     nextout--;
     if (nextout < 0)
@@ -1045,7 +1045,7 @@ tryagain:
     for (;;) {
 	int_count = 0;
 	errno = 0;
-	ignore_EINTR = FALSE;
+	ignore_EINTR = false;
 	if (read_tty(whatbuf,1) < 0) {
 	    if (!errno)
 	        errno = EINTR;
@@ -1085,7 +1085,7 @@ tryagain:
 		termdown(2);
 		settle_down();
 	    }
-	    no_macros = FALSE;
+	    no_macros = false;
 	    goto tryagain;
 	}
     }
@@ -1103,7 +1103,7 @@ got_canonical:
 }
 
 void
-pushstring (char *str, char_int bits)
+pushstring (char *str, int bits)
 {
     int i;
     char tmpbuf[PUSHSIZE];
@@ -1209,7 +1209,7 @@ pause_getcmd (void)
 }
 
 void
-in_char (char *prompt, char_int newmode, char *dflt)
+in_char (char *prompt, int newmode, char *dflt)
 {
     char mode_save = mode;
     char gmode_save = gmode;
@@ -1238,7 +1238,7 @@ reask_in_char:
 }
 
 void
-in_answer (char *prompt, char_int newmode)
+in_answer (char *prompt, int newmode)
 {
     char mode_save = mode;
     char gmode_save = gmode;
@@ -1258,7 +1258,7 @@ reinp_in_answer:
     if (*buf == ERASECH)
 	goto reinp_in_answer;
     if (*buf != '\n' && *buf != ' ') {
-	if (!finish_command(FALSE))
+	if (!finish_command(false))
 	    goto reinp_in_answer;
     }
     else
@@ -1267,10 +1267,10 @@ reinp_in_answer:
     set_mode(gmode_save,mode_save);
 }
 
-/* If this takes more than one line, return FALSE */
+/* If this takes more than one line, return false */
 
 bool
-in_choice (char *prompt, char *value, char *choices, char_int newmode)
+in_choice (char *prompt, char *value, char *choices, int newmode)
 {
     char mode_save = mode;
     char gmode_save = gmode;
@@ -1284,7 +1284,7 @@ in_choice (char *prompt, char *value, char *choices, char_int newmode)
     unflush_output();			/* disable any ^O in effect */
     eat_typeahead();
     set_mode('c',newmode);
-    screen_is_dirty = FALSE;
+    screen_is_dirty = false;
 
     cp = choices;
     if (*cp == '[') {
@@ -1394,7 +1394,7 @@ reask_in_choice:
 
 reinp_in_choice:
     if ((s-buf) + len >= tc_COLS)
-	screen_is_dirty = TRUE;
+	screen_is_dirty = true;
     fflush(stdout);
     getcmd(s);
     if (errno || *s == '\f')		/* if return from stop signal */
@@ -1474,7 +1474,7 @@ print_lines (char *what_to_print, int hilite)
 	}
 	for (i = 0; *s && i < tc_COLS; ) {
 	    if (AT_NORM_CHAR(s)) {
-		i += put_char_adv(&s, TRUE);
+		i += put_char_adv(&s, true);
 	    }
 	    else if (*s == '\t') {
 		putchar(*s);
@@ -1540,7 +1540,7 @@ errormsg (char *str)
     if (gmode == 's') {
 	if (str != msg)
 	    strcpy(msg,str);
-	error_occurred = TRUE;
+	error_occurred = true;
     }
     else if (*str) {
 	printf("\n%s\n", str);
@@ -1607,11 +1607,11 @@ reprint (void)
     termdown(1);
     for (s = buf; *s; s++)
 	echo_char(*s);
-    screen_is_dirty = TRUE;
+    screen_is_dirty = true;
 }
 
 void
-erase_line (bool_int to_eos)
+erase_line (bool to_eos)
 {
     carriage_return();
     if (to_eos)
@@ -1859,7 +1859,7 @@ static struct fd_set wait_fdset;
 static int wait_tbl_size;
 #endif
 
-/* returns TRUE if input received */
+/* returns true if input received */
 bool
 wait_key_pause (
     int ticks		/* tenths of seconds to wait */
@@ -1869,7 +1869,7 @@ wait_key_pause (
     ticks = 50;		/* debugging: wait 5 seconds */
 #endif
     if (input_pending())
-	return TRUE;
+	return true;
 #ifdef DEBUG_NICEBG
     printf("entry: wait_key_pause\n"); /* */
 #endif
@@ -1884,7 +1884,7 @@ wait_key_pause (
 	 * it might be nice to have some flag which means "we are running
 	 * in the background".
 	 */
-	wait_fd_opened = TRUE;
+	wait_fd_opened = true;
     }
     if (wait_ttyfd < 0) {
 	/* tty open failed.  Don't wait around */
@@ -1901,10 +1901,10 @@ wait_key_pause (
 	printf("wait_key_pause: using termio(s)\n");
 #endif
 	if (!wait_initialized)
-	    wait_initialized = TRUE;
+	    wait_initialized = true;
 	if (ioctl(wait_ttyfd,TCGETA,&save_tty) == -1) {
 	    printf("wait_key_pause (term.c): ioctl TCGETA error\n");
-	    assert(FALSE);
+	    assert(false);
 	}
 	wait_tty = save_tty;
 	wait_tty.c_lflag &= ~ICANON;
@@ -1913,7 +1913,7 @@ wait_key_pause (
 	wait_tty.c_cc[VTIME] = ticks;
 	if (ioctl(wait_ttyfd,TCSETAF,&wait_tty) == -1) {
 	    printf("wait_key_pause (term.c): ioctl TCSETAF error\n");
-	    assert(FALSE);
+	    assert(false);
 	}
 	nrd = read(wait_ttyfd,&lbuf,1);
 	ioctl(wait_ttyfd,TCSETAF,&save_tty);	/* put back the old info */
@@ -1935,7 +1935,7 @@ wait_key_pause (
 #endif
 	if (!wait_initialized) {
 	    wait_tbl_size = wait_ttyfd + 1;
-	    wait_initialized = TRUE;
+	    wait_initialized = true;
 	}
 	FD_ZERO(&wait_fdset);
 	FD_SET(wait_ttyfd,&wait_fdset);
@@ -1961,7 +1961,7 @@ wait_key_pause (
 #endif
 	if (!wait_initialized) {	/* not initialized yet? */
 /* Portable? (probably not) */
-	    wait_initialized = TRUE;
+	    wait_initialized = true;
 	    sigset(SIGALRM,waitkey_sig_handler);
 	    sigset(SIGIO,waitkey_sig_handler);
 	    /* enable SIGIO (some systems need it).  ifdef it? */
@@ -1996,9 +1996,9 @@ wait_key_pause (
     /* really kind of an error, but a reasonable way to handle it */
     /* Act as if no input was present */
 #ifdef DEBUG_NICEBG
-    printf("wait_key_pause: no handler style, returning FALSE.\n");
+    printf("wait_key_pause: no handler style, returning false.\n");
 #endif
-    return FALSE;	/* don't worry if not reached */
+    return false;	/* don't worry if not reached */
 #endif
 #endif
 #endif
@@ -2031,12 +2031,12 @@ xmouse_check (void)
 	bool turn_it_on;
 	char mmode = mode;
 	if (gmode == 'p') {
-	    turn_it_on = TRUE;
+	    turn_it_on = true;
 	    mmode = '\0';
 	}
 	else if (gmode == 'i' || gmode == 'p'
 	      || (muck_up_clear && gmode != 's'))
-	    turn_it_on = FALSE;
+	    turn_it_on = false;
 	else {
 	    interp(msg, sizeof msg, MouseModes);
 	    turn_it_on = (index(msg, mode) != NULL);
@@ -2096,7 +2096,7 @@ xmouse_check (void)
 	}
 	else
 	    xmouse_off();
-	mouse_is_down = FALSE;
+	mouse_is_down = false;
     }
 }
 
@@ -2107,7 +2107,7 @@ xmouse_on (void)
 	/* save old highlight mouse tracking and enable mouse tracking */
 	fputs("\033[?1001s\033[?1000h",stdout);
 	fflush(stdout);
-	xmouse_is_on = TRUE;
+	xmouse_is_on = true;
     }
 }
 
@@ -2118,12 +2118,12 @@ xmouse_off (void)
 	/* disable mouse tracking and restore old highlight mouse tracking */
 	fputs("\033[?1000l\033[?1001r",stdout);
 	fflush(stdout);
-	xmouse_is_on = FALSE;
+	xmouse_is_on = false;
     }
 }
 
 void
-draw_mousebar (int limit, bool_int restore_cursor)
+draw_mousebar (int limit, bool restore_cursor)
 {
     int i;
     char* s;
@@ -2210,12 +2210,12 @@ mouse_input (char *cp)
 	last_btn = (btn & 3);
 	last_x = x;
 	last_y = y;
-	mouse_is_down = TRUE;
+	mouse_is_down = true;
     }
     else {
 	if (!mouse_is_down)
 	    return;
-	mouse_is_down = FALSE;
+	mouse_is_down = false;
     }
 
     if (gmode == 's')
@@ -2286,9 +2286,9 @@ check_mousebar (int btn, int x, int y, int btn_clk, int x_clk, int y_clk)
 	    col += i;
 	    s += strlen(s) + 1;
 	}
-	return TRUE;
+	return true;
     }
-    return FALSE;
+    return false;
 }
 
 static int tc_string_cnt = 0;

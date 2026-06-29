@@ -15,7 +15,7 @@
 #define	MAX_SIGNATURE	4
 
 int	debug = 0;
-int	new_connection = FALSE;
+int	new_connection = false;
 char*	server_name;
 char*	nntp_auth_file;
 char	nullstr[1];
@@ -154,18 +154,18 @@ main(int argc, char *argv[])
 		    if (nntplink.wr_fp)
 			nntplink.flags |= NNTP_NEW_CMD_OK;
 		    else
-			nntp_close(FALSE);
+			nntp_close(false);
 		}
 	    }
 	}
 	if (!nntplink.wr_fp) {
 	    if (init_nntp() < 0 || !nntp_connect(server_name,0))
 		exit(1);
-	    new_connection = TRUE;
+	    new_connection = true;
 	}
 	if (nntp_command("POST") <= 0 || nntp_check() <= 0) {
 	    if (new_connection)
-		nntp_close(TRUE);
+		nntp_close(true);
 	    fprintf(stderr,"Sorry, you can't post from this machine.\n");
 	    exit(1);
 	}
@@ -236,12 +236,12 @@ main(int argc, char *argv[])
 	else
 	    fprintf(stderr, "Remote error: %s\n", ser_line);
 	if (new_connection)
-	    nntp_close(TRUE);
+	    nntp_close(true);
 	exit(1);
     }
 
     if (new_connection)
-	nntp_close(TRUE);
+	nntp_close(true);
     cleanup_nntp();
 
     return 0;
@@ -315,22 +315,22 @@ int
 nntp_handle_timeout (void)
 {
     if (!new_connection) {
-	static bool handling_timeout = FALSE;
+	static bool handling_timeout = false;
 	char last_command_save[NNTP_STRLEN];
 
 	if (strcaseEQ(last_command,"quit"))
 	    return 0;
 	if (handling_timeout)
 	    return -1;
-	handling_timeout = TRUE;
+	handling_timeout = true;
 	strcpy(last_command_save, last_command);
-	nntp_close(FALSE);
+	nntp_close(false);
 	if (init_nntp() < 0 || nntp_connect(server_name,0) <= 0)
 	    exit(1);
 	if (nntp_command(last_command_save) <= 0)
 	    return -1;
-	handling_timeout = FALSE;
-	new_connection = TRUE;
+	handling_timeout = false;
+	new_connection = true;
 	return 1;
     }
     fputs("\n503 Server timed out.\n",stderr);

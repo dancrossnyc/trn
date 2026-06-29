@@ -38,8 +38,8 @@ main (int argc, char *argv[])
     FILE* fp;
     FILE* fp_active = NULL;
     FILE* fp_ng = NULL;
-    bool check_active = FALSE;
-    bool check_ng = FALSE;
+    bool check_active = false;
+    bool check_ng = false;
     char buff[LBUFLEN];
     char* cp;
     char* cp2;
@@ -172,11 +172,11 @@ Warning: posting exceeds %d columns.  Line %d is the first long one:\n%s\n",
 	if (stat(argv[3], &st) != -1)
 	    check_ng = st.st_size > 0 && (fp_ng = fopen(argv[3], "r")) != NULL;
 	else if (server_name && server_connection())
-	    check_ng = TRUE;
+	    check_ng = true;
 	if (stat(argv[4], &st) != -1)
 	    check_active = st.st_size > 0 && (fp_active = fopen(argv[4], "r")) != NULL;
 	else if (server_name && server_connection())
-	    check_active = TRUE;
+	    check_active = true;
     }
     if (ngcnt && (check_ng || check_active)) {
 	/* Print a note about each newsgroup */
@@ -218,7 +218,7 @@ Warning: posting exceeds %d columns.  Line %d is the first long one:\n%s\n",
 			}
 		    }
 		    else if (*ser_line == NNTP_CLASS_FATAL) {
-			listactive_works = FALSE;
+			listactive_works = false;
 			i--;
 		    }
 		}
@@ -291,7 +291,7 @@ Warning: posting exceeds %d columns.  Line %d is the first long one:\n%s\n",
 	}
     }
 
-    nntp_close(TRUE);
+    nntp_close(true);
     if (server_name)
 	cleanup_nntp();
 

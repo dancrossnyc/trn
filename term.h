@@ -109,8 +109,8 @@ extern int just_a_sec;		/* 1 sec at current baud rate */
 ..."Don't know how to define the term macros!"
 #endif /* !HAS_TERMLIB */
 
-#define input_pending() finput_pending(TRUE)
-#define macro_pending() finput_pending(FALSE)
+#define input_pending() finput_pending(true)
+#define macro_pending() finput_pending(false)
 
 extern int page_line;	/* line number for paging in
 				 print_line (origin 1) */
@@ -131,10 +131,10 @@ void set_macro (char*,char*);
 void arrow_macros (char*);
 void mac_line (char*,char*,int);
 void show_macros (void);
-void set_mode (char_int,char_int);
-int putchr (char_int);
+void set_mode (int,int);
+int putchr (int);
 void hide_pending (void);
-bool finput_pending (bool_int);
+bool finput_pending (bool);
 bool finish_command (int);
 char* edit_buf (char*,char*);
 bool finish_dblchar (void);
@@ -146,19 +146,19 @@ int read_tty (char*,int);
 #if !defined(FIONREAD) && !defined(HAS_RDCHK) && !defined(MSDOS)
 int circfill (void);
 #endif
-void pushchar (char_int);
+void pushchar (int);
 void underprint (char*);
 #ifdef NOFIREWORKS
 void no_sofire (void);
 void no_ulfire (void);
 #endif
 void getcmd (char*);
-void pushstring (char*,char_int);
+void pushstring (char*,int);
 int get_anything (void);
 int pause_getcmd (void);
-void in_char (char*,char_int,char*);
-void in_answer (char*,char_int);
-bool in_choice (char*,char*,char*,char_int);
+void in_char (char*,int,char*);
+void in_answer (char*,int);
+bool in_choice (char*,char*,char*,int);
 int print_lines (char*,int);
 int check_page_line (void);
 void page_start (void);
@@ -170,7 +170,7 @@ void printcmd (void);
 #endif
 void rubout (void);
 void reprint (void);
-void erase_line (bool_int);
+void erase_line (bool);
 void clear (void);
 void home_cursor (void);
 void goto_xy (int,int);
@@ -187,7 +187,7 @@ void xmouse_init (char*);
 void xmouse_check (void);
 void xmouse_on (void);
 void xmouse_off (void);
-void draw_mousebar (int,bool_int);
+void draw_mousebar (int,bool);
 bool check_mousebar (int,int,int,int,int,int);
 void add_tc_string (char*,char*);
 char* tc_color_capability (char*);

@@ -136,7 +136,7 @@ main (int argc, char *argv[])
 #ifdef HAS_SIGHOLD
 	sigrelse(SIGINT);
 #endif
-	nntp_close(TRUE);
+	nntp_close(true);
 	cleanup_nntp();
     }
     else {

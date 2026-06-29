@@ -26,6 +26,6 @@ struct keymap {
 static void mac_init (char*);
 static KEYMAP* newkeymap (void);
 static void show_keymap (KEYMAP*,char*);
-static int echo_char (char_int);
+static int echo_char (int);
 static void line_col_calcs (void);
 static void mouse_input (char*);

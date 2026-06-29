@@ -26,7 +26,7 @@ extern char hide_everything;	/* if set, do not write page now, */
 
 void art_init (void);
 int do_article (void);
-int maybe_set_color (char*,bool_int);
+int maybe_set_color (char*,bool);
 int page_switch (void);
 bool innermore (void);
 void pager_mouse (int,int,int,int,int,int);

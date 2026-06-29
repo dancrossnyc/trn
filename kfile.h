@@ -63,4 +63,4 @@ int edit_kfile (void);
 #ifdef KILLFILES
 void open_kfile (int);
 #endif
-void kf_append (char*,bool_int);
+void kf_append (char*,bool);

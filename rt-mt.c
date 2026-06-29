@@ -49,15 +49,15 @@ mt_init (void)
 {
     int i;
     long size;
-    bool success = TRUE;
+    bool success = true;
 
     datasrc->flags &= ~DF_TRY_THREAD;
 
-    word_same = long_same = TRUE;
+    word_same = long_same = true;
 #ifdef SUPPORT_XTHREAD
     if (!datasrc->thread_dir) {
 	if (nntp_command("XTHREAD DBINIT") <= 0)
-	    return FALSE;
+	    return false;
 	size = nntp_readcheck();
 	if (size >= 0)
 	    size = nntp_read((char*)&mt_bmap, (long)sizeof (BMAP));
@@ -73,19 +73,19 @@ mt_init (void)
     if (size >= (long)(sizeof (BMAP)) - 1) {
 	if (mt_bmap.version != DB_VERSION) {
 	    printf("\nMthreads database is the wrong version -- ignoring it.\n");
-	    return FALSE;
+	    return false;
 	}
 	mybytemap(&my_bmap);
 	for (i = 0; i < sizeof (LONG); i++) {
 	    if (i < sizeof (WORD)) {
 		if (my_bmap.w[i] != mt_bmap.w[i])
-		    word_same = FALSE;
+		    word_same = false;
 	    }
 	    if (my_bmap.l[i] != mt_bmap.l[i])
-		long_same = FALSE;
+		long_same = false;
 	}
     } else
-	success = FALSE;
+	success = false;
 #ifdef SUPPORT_XTHREAD
     if (!datasrc->thread_dir) {
 	while (nntp_read(ser_line, (long)sizeof ser_line))
@@ -101,7 +101,7 @@ mt_init (void)
     return success;
 }
 
-/* Open and process the data in the group's thread file.  Returns TRUE unless
+/* Open and process the data in the group's thread file.  Returns true unless
 ** we discovered a bogus thread file, destroyed the cache, and re-built it.
 */
 int
@@ -157,7 +157,7 @@ mt_data (void)
 	tweak_data();
 	first_cached = absfirst;
 	last_cached = (total.last < absfirst ? absfirst-1: total.last);
-	cached_all_in_range = TRUE;
+	cached_all_in_range = true;
 	goto exit;
     }
     /* Something failed.  Safefree takes care of checking if some items
@@ -379,7 +379,7 @@ the_subject (int num)
 	return NULL;
     if (num < 0 || num >= total.subject) {
 	/*printf("Invalid subject in thread file: %d [%ld]\n", num, art_num);*/
-	invalid_data = TRUE;
+	invalid_data = true;
 	return NULL;
     }
     return subject_array[num];
@@ -393,7 +393,7 @@ the_author (int num)
 	return NULL;
     if (num < 0 || num >= total.author) {
 	/*error("invalid author in thread file: %d [%ld]\n", num, art_num);*/
-	invalid_data = TRUE;
+	invalid_data = true;
 	return NULL;
     }
     return estrdup(author_array[num]);
@@ -413,7 +413,7 @@ the_article (int relative_offset, int num)
     num += relative_offset;
     if (num < 0 || num >= total.article) {
 	/*error("invalid article offset in thread file.\n");*/
-	invalid_data = TRUE;
+	invalid_data = true;
 	return NULL;
     }
     uni.num = num+1;
@@ -433,7 +433,7 @@ read_articles (void)
     article_array = (ARTICLE**)safemalloc(total.article * sizeof (ARTICLE*));
     art_ptr = article_array;
 
-    invalid_data = FALSE;
+    invalid_data = false;
     for (count = 0; count < total.article; count++) {
 #ifdef SUPPORT_XTHREAD
 	if (!datasrc->thread_dir)

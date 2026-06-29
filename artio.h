@@ -38,4 +38,4 @@ ART_POS tellart (void);
 char* readart (char*,int);
 void clear_artbuf (void);
 int seekartbuf (ART_POS);
-char* readartbuf (bool_int);
+char* readartbuf (bool);

@@ -10,7 +10,7 @@
 #include "nntpclient.h"
 
 NNTPLINK nntplink;		/* the current server's file handles */
-bool nntp_allow_timeout = FALSE;
+bool nntp_allow_timeout = false;
 
 char ser_line[NNTP_STRLEN];
 
@@ -31,7 +31,7 @@ int nntp_handle_auth_err (void);
 #endif
 
 int
-nntp_connect (char *machine, bool_int verbose)
+nntp_connect (char *machine, bool verbose)
 {
     int response;
 
@@ -300,7 +300,7 @@ nntp_gets (char *bp, int len)
 }
 
 void
-nntp_close (bool_int send_quit)
+nntp_close (bool send_quit)
 {
     if (send_quit && nntplink.wr_fp != NULL && nntplink.rd_fp != NULL) {
 	if (nntp_command("QUIT") > 0)

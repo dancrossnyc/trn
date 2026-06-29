@@ -50,7 +50,7 @@ sa_get_subj_thread (
     char* p;
 
     old_untrim = untrim_cache;
-    untrim_cache = TRUE;
+    untrim_cache = true;
     s = sa_desc_subject(e);
     untrim_cache = old_untrim;
 

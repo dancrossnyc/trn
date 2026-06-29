@@ -23,7 +23,7 @@
 #include "term.h"
 #include "spage.h"
 
-/* returns TRUE if sucessful */
+/* returns true if sucessful */
 bool
 s_fillpage_backward (
     long end		/* entry number to be last on page */
@@ -51,13 +51,13 @@ s_fillpage_backward (
     if (end < 1)		/* start from end */
 	end = s_last();
     if (end == 0)		/* no entries */
-	return FALSE;
+	return false;
     if (s_eligible(end))
 	a = end;
     else
 	a = s_prev_elig(end);
     if (!a)	/* no eligible entries */
-	return FALSE;
+	return false;
     /* at this point we *know* that there is at least one eligible */
 
 /* what if the "first" one for the page has a description too long? */
@@ -101,7 +101,7 @@ s_fillpage_backward (
 	s_ptr_page_line = s_bot_ent;
 #ifdef SCAN_ART
     if (s_cur_type != S_ART)
-	return TRUE;
+	return true;
     /* temporary fix.  Under some conditions ineligible entries will
      * not be found until they are in the page.  In this case just
      * refill the page.
@@ -113,11 +113,11 @@ s_fillpage_backward (
 	return s_fillpage_backward(end);
 /* next time the unavail won't be chosen */
 #endif
-    return TRUE;	/* we have a page... */
+    return true;	/* we have a page... */
 }
 
 /* fills the page array */
-/* returns TRUE on success */
+/* returns true on success */
 bool
 s_fillpage_forward (
     long start			/* entry to start filling with */
@@ -143,14 +143,14 @@ s_fillpage_forward (
     if (start < 0)	/* fill from top */
 	start = s_first();
     if (start == 0)	/* no entries */
-	return FALSE;
+	return false;
 
     if (s_eligible(start))
 	a = start;
     else
 	a = s_next_elig(start);
     if (!a)	/* no eligible entries */
-	return FALSE;
+	return false;
     /* at this point we *know* that there is at least one eligible */
 
 /* what if the first entry for the page has a description too long? */
@@ -180,7 +180,7 @@ s_fillpage_forward (
 	s_ptr_page_line = s_bot_ent;
 #ifdef SCAN_ART
     if (s_cur_type != S_ART)
-	return TRUE;
+	return true;
     /* temporary fix.  Under some conditions ineligible entries will
      * not be found until they are in the page.  In this case just
      * refill the page.
@@ -192,7 +192,7 @@ s_fillpage_forward (
 	return s_fillpage_forward(start);
     /* next time the unavail won't be chosen */
 #endif
-    return TRUE;	/* we have a page... */
+    return true;	/* we have a page... */
 }
 
 /* Given possible changes to which entries should be on the page,
@@ -200,7 +200,7 @@ s_fillpage_forward (
  * (the last entry on the page will be refreshed whether it needs it
  *  or not.)
  */
-/* returns TRUE on success */
+/* returns true on success */
 bool
 s_refillpage (void)
 {
@@ -276,7 +276,7 @@ s_refillpage (void)
 	s_ptr_page_line = s_bot_ent;
 #ifdef SCAN_ART
     if (s_cur_type != S_ART)
-	return TRUE;
+	return true;
     /* temporary fix.  Under some conditions ineligible entries will
      * not be found until they are in the page.  In this case just
      * refill the page.
@@ -287,7 +287,7 @@ s_refillpage (void)
     if (i <= s_bot_ent)
 	return s_refillpage();	/* next time the unavail won't be chosen */
 #endif
-    return TRUE;	/* we have a page... */
+    return true;	/* we have a page... */
 }
 
 /* fills a page from current position.
@@ -302,7 +302,7 @@ s_fillpage (void)
 {
     int i;
 
-    s_refill = FALSE;	/* we don't need one now */
+    s_refill = false;	/* we don't need one now */
     if (s_top_ent < 1)	/* set top to first entry */
 	s_top_ent = s_first();
     if (s_top_ent == 0)	/* no entries */
@@ -314,10 +314,10 @@ s_fillpage (void)
 #ifdef SCAN_ART
 	      case S_ART:		/* article context */
 		if (sa_mode_zoom) {		/* we were zoomed in */
-		    s_ref_top = TRUE;	/* for "FOLD" display */
-		    sa_mode_zoom = FALSE;	/* zoom out */
+		    s_ref_top = true;	/* for "FOLD" display */
+		    sa_mode_zoom = false;	/* zoom out */
 		    if (sa_unzoomrefold)
-			sa_mode_fold = TRUE;
+			sa_mode_fold = true;
 		    (void)s_go_top_ents();	/* go to top (ents and page) */
 		    return s_fillpage();
 		}
@@ -380,9 +380,9 @@ s_go_top_ents (void)
 	else
 	    s_top_ent = 1;	/* not very nice coding */
     }
-    s_refill = TRUE;
+    s_refill = true;
     s_go_top_page();
-    return TRUE;	/* successful */
+    return true;	/* successful */
 }
 
 bool
@@ -392,9 +392,9 @@ s_go_bot_ents (void)
 
     flag = s_fillpage_backward(s_last());	/* fill backwards */
     if (!flag)
-	return FALSE;
+	return false;
     s_go_bot_page();
-    return TRUE;
+    return true;
 }
 
 void

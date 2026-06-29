@@ -30,5 +30,5 @@ extern ADDGROUP* sel_next_gp;
 
 void addng_init (void);
 bool find_new_groups (void);
-bool scanactive (bool_int);
+bool scanactive (bool);
 void sort_addgroups (void);

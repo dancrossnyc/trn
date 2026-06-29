@@ -67,7 +67,7 @@ bad_filename (char *filename)
     int len = strlen(filename);
     if (len <= 2) {
 	if (*filename == '.' && (*filename == '\0' || *filename == '.'))
-	    return TRUE;
+	    return true;
     }
     return 0;
 }
@@ -87,7 +87,7 @@ decode_subject (ART_NUM artnum, int *partp, int *totalp)
     *partp = part;
     *totalp = total;
     safefree(subject);
-    subject = fetchsubj(artnum,TRUE);
+    subject = fetchsubj(artnum,true);
     if (!*subject)
 	return NULL;
 

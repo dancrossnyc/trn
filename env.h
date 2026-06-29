@@ -17,7 +17,7 @@ extern char* localhost;		/* local host name */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-bool env_init (char*,bool_int);
+bool env_init (char*,bool);
 bool setusername (char*);
 bool setphostname (char*);
 char* getval (char*,char*);

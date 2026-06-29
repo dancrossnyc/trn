@@ -121,4 +121,4 @@ char* fetchlines (ART_NUM,int);
 #ifdef SCAN
 char* mp_fetchlines (ART_NUM,int,int);
 #endif
-char* prefetchlines (ART_NUM,int,bool_int);
+char* prefetchlines (ART_NUM,int,bool);

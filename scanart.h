@@ -51,7 +51,7 @@ extern ART_NUM sa_art;
 /* select threads from TRN thread selector */
 extern bool sa_do_selthreads;
 
-/* TRUE if read articles are eligible */
+/* true if read articles are eligible */
 /* in scanart.h for world-visibilty */
 extern bool sa_mode_read_elig;
 
@@ -63,14 +63,14 @@ extern bool sa_mode_read_elig;
  */
 extern int sa_mode_order;
 
-/* if TRUE, don't move the cursor after marking or selecting articles */
+/* if true, don't move the cursor after marking or selecting articles */
 extern bool sa_mark_stay;
 
-/* if TRUE, re-"fold" after an un-zoom operation. */
+/* if true, re-"fold" after an un-zoom operation. */
 /* This flag is useful for very slow terminals */
 extern bool sa_unzoomrefold;
 
-/* TRUE if in "fold" mode */
+/* true if in "fold" mode */
 extern bool sa_mode_fold;
 
 /* Follow threads by default? */

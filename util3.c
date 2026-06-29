@@ -14,7 +14,7 @@
 #include "util3.h"
 
 char* sh = NULL;
-bool export_nntp_fds = FALSE;
+bool export_nntp_fds = false;
 
 char* nntp_password;
 
@@ -27,7 +27,7 @@ doshell (char *sh, char *cmd)
 void
 finalize (int num)
 {
-    nntp_close(TRUE);
+    nntp_close(true);
     exit(num);
 }
 

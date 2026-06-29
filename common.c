@@ -70,43 +70,43 @@ char* NewsSelBtns = NULL;
 char* OptionSelBtns = NULL;
 char* ArtPagerBtns = NULL;
 
-bool dont_filter_control = FALSE;		/* -j */
+bool dont_filter_control = false;		/* -j */
 int  join_subject_len = 0;			/* -J */
-bool kill_thru_kludge = TRUE;			/* -k */
-bool keep_the_group_static = FALSE;		/* -K */
-bool mbox_always = FALSE;			/* -M */
-bool norm_always = FALSE;			/* -N */
-bool thread_always = FALSE;			/* -a */
+bool kill_thru_kludge = true;			/* -k */
+bool keep_the_group_static = false;		/* -K */
+bool mbox_always = false;			/* -M */
+bool norm_always = false;			/* -N */
+bool thread_always = false;			/* -a */
 int auto_arrow_macros = 2;			/* -A */
-bool breadth_first = FALSE;			/* -b */
-bool bkgnd_spinner = FALSE;			/* -B */
-bool novice_delays = TRUE;			/* +f */
-int olden_days = FALSE;				/* -o */
+bool breadth_first = false;			/* -b */
+bool bkgnd_spinner = false;			/* -B */
+bool novice_delays = true;			/* +f */
+int olden_days = false;				/* -o */
 char auto_select_postings = 0;			/* -p */
-bool checkflag = FALSE;				/* -c */
+bool checkflag = false;				/* -c */
 char* savedir = NULL;				/* -d */
-bool suppress_cn = FALSE;			/* -s */
+bool suppress_cn = false;			/* -s */
 int countdown = 5;	/* how many lines to list before invoking -s */
-bool muck_up_clear = FALSE;			/* -loco */
-bool erase_screen = FALSE;			/* -e */
-bool can_home = FALSE;
-bool erase_each_line = FALSE;			/* fancy -e */
+bool muck_up_clear = false;			/* -loco */
+bool erase_screen = false;			/* -e */
+bool can_home = false;
+bool erase_each_line = false;			/* fancy -e */
 int findlast = 0;				/* -r */
-bool allow_typeahead = FALSE;			/* -T */
+bool allow_typeahead = false;			/* -T */
 #ifdef EDIT_DISTANCE
-bool fuzzyGet = FALSE;				/* -G */
+bool fuzzyGet = false;				/* -G */
 #endif
 #ifdef VERBOSE
 #   ifdef TERSE
-bool verbose = TRUE;				/* +t */
+bool verbose = true;				/* +t */
 #   endif
 #endif
-bool unbroken_subjects = FALSE;			/* -u */
-bool unsafe_rc_saves = FALSE;			/* -U */
+bool unbroken_subjects = false;			/* -u */
+bool unsafe_rc_saves = false;			/* -U */
 #ifdef VERIFY
-bool verify = FALSE;				/* -v */
+bool verify = false;				/* -v */
 #endif
-bool quickstart = FALSE;			/* -q */
+bool quickstart = false;			/* -q */
 
 #define DEFAULT_REFETCH_SECS  4L*60*60	/* 4 hours */
 time_t defRefetchSecs = DEFAULT_REFETCH_SECS;	/* -z */
@@ -124,21 +124,21 @@ bool append_unsub					/* -I */
      = 0;
 #endif
 
-bool UseUnivSelector = FALSE;
-bool UseNewsrcSelector = FALSE;
-bool UseAddSelector = TRUE;
-bool UseNewsgroupSelector = TRUE;
+bool UseUnivSelector = false;
+bool UseNewsrcSelector = false;
+bool UseAddSelector = true;
+bool UseNewsgroupSelector = true;
 int UseNewsSelector = SELECT_INIT-1;
-bool UseMouse = FALSE;
+bool UseMouse = false;
 char MouseModes[32] = "acjlptwvK";
-bool use_colors = FALSE;
-bool UseTk = FALSE;
-bool UseTcl = FALSE;
-bool UseSelNum = FALSE;
-bool SelNumGoto = FALSE;
+bool use_colors = false;
+bool UseTk = false;
+bool UseTcl = false;
+bool UseSelNum = false;
+bool SelNumGoto = false;
 /* miscellania */
 
-bool in_ng = FALSE;		/* TRUE if in a newsgroup */
+bool in_ng = false;		/* true if in a newsgroup */
 char mode = 'i';		/* current state of trn */
 char gmode = 'I';		/* general mode of trn */
 

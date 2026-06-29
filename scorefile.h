@@ -42,15 +42,15 @@ extern int sf_score_verbose;
 
 extern bool sf_verbose;  /* if true print more stuff while loading */
 
-/* if TRUE, only header types that are cached are scored... */
+/* if true, only header types that are cached are scored... */
 extern bool cached_rescore;
 
-/* if TRUE, newauthor is active */
+/* if true, newauthor is active */
 extern bool newauthor_active;
 /* bonus score given to a new (unscored) author */
 extern int newauthor;
 
-/* if TRUE, reply_score is active */
+/* if true, reply_score is active */
 extern bool reply_active;
 /* score amount added to an article reply */
 extern int reply_score;
@@ -69,9 +69,9 @@ char* sf_get_extra_header (ART_NUM,int);
 bool is_text_zero (char*);
 char* sf_get_filename (int);
 char* sf_cmd_fname (char*);
-bool sf_do_command (char*,bool_int);
+bool sf_do_command (char*,bool);
 char* sf_freeform (char*,char*);
-bool sf_do_line (char*,bool_int);
+bool sf_do_line (char*,bool);
 void sf_do_file (char*);
 int score_match (char*,int);
 int sf_score (ART_NUM);

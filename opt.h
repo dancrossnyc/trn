@@ -141,11 +141,11 @@ extern int sel_next_op;
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
 void opt_init (int,char**,char**);
-void opt_file (char*,char**,bool_int);
+void opt_file (char*,char**,bool);
 void set_options (char**);
 void set_option (int,char*);
 void save_options (char*);
 char* option_value (int);
-void set_header (char*,int,bool_int);
+void set_header (char*,int,bool);
 char* quote_string (char*);
 void cwd_check (void);

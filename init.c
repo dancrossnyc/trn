@@ -68,7 +68,7 @@ bool
 initialize (int argc, char *argv[])
 {
     char* tcbuf;
-    bool foundany = FALSE;
+    bool foundany = false;
 #ifdef NOLINEBUF
     static char std_out_buf[BUFSIZ];	/* must be static or malloced */
 
@@ -187,7 +187,7 @@ initialize (int argc, char *argv[])
 
 #ifdef FINDNEWNG
     if (maxngtodo)			/* patterns on command line? */
-	foundany |= scanactive(TRUE);
+	foundany |= scanactive(true);
 #endif
 
     return foundany;

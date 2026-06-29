@@ -41,9 +41,9 @@ void ng_init (void);
 int do_newsgroup (char*);
 int art_switch (void);
 #ifdef MAILCALL
-void setmail (bool_int);
+void setmail (bool);
 #endif
 void setdfltcmd (void);
 char ask_catchup (void);
 bool output_subject (char*,int);
-char ask_memorize (char_int);
+char ask_memorize (int);

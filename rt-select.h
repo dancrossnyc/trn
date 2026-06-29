@@ -70,7 +70,7 @@ extern bool art_sel_ilock;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
-char article_selector (char_int);
+char article_selector (int);
 char multirc_selector (void);
 char newsgroup_selector (void);
 char addgroup_selector (int);

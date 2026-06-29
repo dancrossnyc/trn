@@ -943,7 +943,7 @@ reask_unsub:
 /* add a newsgroup to the newsrc file (eventually) */
 
 static NGDATA *
-add_newsgroup (NEWSRC *rp, char *ngn, char_int c)
+add_newsgroup (NEWSRC *rp, char *ngn, int c)
 {
     NGDATA* np;
 

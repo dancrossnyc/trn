@@ -384,7 +384,7 @@ char* argv[];
 	    if (ap->flags & AF_EXISTS) {
 		num = article_num(ap);
 		if (num>0) {
-		    artscore = sc_score_art(num,TRUE);
+		    artscore = sc_score_art(num,true);
 		    sprintf(interp->result,"%d",artscore);
 		    return TCL_OK;
 		}
@@ -406,7 +406,7 @@ char* argv[];
 		num = article_num(ap);
 		if (num>0) {
 		    if (SCORED(num)) {
-			artscore = sc_score_art(num,TRUE);
+			artscore = sc_score_art(num,true);
 		    } else {
 			artscore = 0;
 		    }

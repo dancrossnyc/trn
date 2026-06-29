@@ -281,16 +281,16 @@ open_datasrc (DATASRC *dp)
     bool success;
 
     if (dp->flags & DF_UNAVAILABLE)
-	return FALSE;
+	return false;
     set_datasrc(dp);
     if (dp->flags & DF_OPEN)
-	return TRUE;
+	return true;
     if (dp->flags & DF_REMOTE) {
 	if (nntp_connect(dp->newsid,1) <= 0) {
 	    dp->flags |= DF_UNAVAILABLE;
-	    return FALSE;
+	    return false;
 	}
-	nntp_allow_timeout = FALSE;
+	nntp_allow_timeout = false;
 	dp->nntplink = nntplink;
 	if (dp->act_sf.refetch_secs) {
 	    switch (nntp_list("active", "control", 7)) {
@@ -324,7 +324,7 @@ open_datasrc (DATASRC *dp)
 	    case -2:
 		printf("Failed to open news server %s:\n%s\n", dp->newsid, ser_line);
 		termdown(2);
-		success = FALSE;
+		success = false;
 		break;
 	    default:
 		success = actfile_hash(dp);
@@ -345,7 +345,7 @@ open_datasrc (DATASRC *dp)
     else
 	dp->flags |= DF_UNAVAILABLE;
     if (dp->flags & DF_REMOTE)
-	nntp_allow_timeout = TRUE;
+	nntp_allow_timeout = true;
     return success;
 }
 
@@ -374,7 +374,7 @@ check_datasrcs (void)
 		    DATASRC* save_datasrc = datasrc;
 		    /*printf("\n*** Closing %s ***\n", dp->name); $$*/
 		    set_datasrc(dp);
-		    nntp_close(TRUE);
+		    nntp_close(true);
 		    dp->nntplink = nntplink;
 		    set_datasrc(save_datasrc);
 		}
@@ -405,7 +405,7 @@ close_datasrc (DATASRC *dp)
     if (dp->flags & DF_REMOTE) {
 	DATASRC* save_datasrc = datasrc;
 	set_datasrc(dp);
-	nntp_close(TRUE);
+	nntp_close(true);
 	dp->nntplink = nntplink;
 	set_datasrc(save_datasrc);
     }

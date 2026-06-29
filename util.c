@@ -183,7 +183,7 @@ doshell (char *shell, char *s)
     }
     sigignore(SIGINT);
     sigignore(SIGQUIT);
-    waiting = TRUE;
+    waiting = true;
     while ((w = wait(&status)) != pid)
 	if (w == -1 && errno != EINTR)
 	    break;
@@ -193,7 +193,7 @@ doshell (char *shell, char *s)
 	ret = WEXITSTATUS(status);
     termlib_init();
     xmouse_check();
-    waiting = FALSE;
+    waiting = false;
     sigset(SIGINT,int_catcher);
     sigset(SIGQUIT,SIG_DFL);
     sigset(SIGTSTP,stop_catcher);
@@ -367,18 +367,18 @@ void
 setdef (char *buffer, char *dflt)
 {
 #ifdef SCAN
-    s_default_cmd = FALSE;
+    s_default_cmd = false;
 #endif
-    univ_default_cmd = FALSE;
+    univ_default_cmd = false;
     if (*buffer == ' '
 #ifndef STRICTCR
      || *buffer == '\n' || *buffer == '\r'
 #endif
     ) {
 #ifdef SCAN
-	s_default_cmd = TRUE;
+	s_default_cmd = true;
 #endif
-	univ_default_cmd = TRUE;
+	univ_default_cmd = true;
 	if (*dflt == '^' && isupper(dflt[1]))
 	    pushchar(Ctl(dflt[1]));
 	else
@@ -678,7 +678,7 @@ parse_string (char **to, char **from)
     *to = t;
     *from = f;
 
-    return inquote;	/* return TRUE if the string ended with a newline */
+    return inquote;	/* return true if the string ended with a newline */
 }
 
 char *
@@ -768,14 +768,14 @@ check_ini_cond (char *cond)
     if (upordown) {
 	num = atoi(cond) - atoi(buf);
 	if (!((equal && !num) || (upordown * num < 0)) ^ not)
-	    return FALSE;
+	    return false;
     }
     else if (equal) {
 	COMPEX condcompex;
 	init_compex(&condcompex);
-	if ((s = compile(&condcompex,cond,TRUE,TRUE)) != NULL) {
+	if ((s = compile(&condcompex,cond,true,true)) != NULL) {
 	    /*warning(s)*/;
-	    equal = FALSE;
+	    equal = false;
 	}
 	else
 	    equal = execute(&condcompex,buf) != NULL;
@@ -783,8 +783,8 @@ check_ini_cond (char *cond)
 	return equal;
     }
     else
-	return FALSE;
-    return TRUE;
+	return false;
+    return true;
 }
 
 /* $$ might get replaced soonish... */

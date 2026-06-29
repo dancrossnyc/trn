@@ -35,13 +35,13 @@
 #include "only.h"
 #include "ngstuff.h"
 
-bool one_command = FALSE;	/* no ':' processing in perform() */
+bool one_command = false;	/* no ':' processing in perform() */
 
 /* CAA: given the new and complex universal/help possibilities,
  *      the following interlock variable may save some trouble.
- *      (if TRUE, we are currently processing options)
+ *      (if true, we are currently processing options)
  */
-bool option_sel_ilock = FALSE;
+bool option_sel_ilock = false;
 
 void
 ngstuff_init (void)
@@ -97,7 +97,7 @@ escapade (void)
 int
 switcheroo (void)
 {
-    if (!finish_command(TRUE)) /* get rest of command */
+    if (!finish_command(true)) /* get rest of command */
 	return -1;	/* if rubbed out, try something else */
     if (!buf[1]) {
 	char* prior_savedir = savedir;
@@ -105,10 +105,10 @@ switcheroo (void)
 	    buf[1] = '\0';
 	    return 0;
 	}
-	option_sel_ilock = TRUE;
+	option_sel_ilock = true;
 	if (gmode != 's' || sel_mode != SM_OPTIONS)/*$$*/
 	    option_selector();
-	option_sel_ilock = FALSE;
+	option_sel_ilock = false;
 	if (savedir != prior_savedir)
 	    cwd_check();
 	buf[1] = '\0';
@@ -127,7 +127,7 @@ switcheroo (void)
 	}
     }
     else {
-	bool docd = (in_str(buf,"-d", TRUE) != NULL);
+	bool docd = (in_str(buf,"-d", true) != NULL);
  	char whereami[1024];
 	char tmpbuf[LBUFLEN+16];
 
@@ -166,9 +166,9 @@ numnum (void)
     ART_NUM oldart = art;
     char tmpbuf[LBUFLEN];
     bool output_level = (!use_threads && gmode != 's');
-    bool justone = TRUE;		/* assume only one article */
+    bool justone = true;		/* assume only one article */
 
-    if (!finish_command(TRUE))	/* get rest of command */
+    if (!finish_command(true))	/* get rest of command */
 	return NN_INP;
     if (lastart < 1) {
 	errormsg("No articles");
@@ -183,10 +183,10 @@ numnum (void)
 
     for (s=buf; *s && (isdigit(*s) || index(" ,-.$",*s)); s++)
 	if (!isdigit(*s))
-	    justone = FALSE;
+	    justone = false;
     if (*s) {
 	cmdlst = estrdup(s);
-	justone = FALSE;
+	justone = false;
     }
     else if (!justone)
 	cmdlst = estrdup("m");
@@ -272,9 +272,9 @@ thread_perform (void)
     int len;
     int bits;
     bool output_level = (!use_threads && gmode != 's');
-    bool one_thread = FALSE;
+    bool one_thread = false;
 
-    if (!finish_command(TRUE))	/* get rest of command */
+    if (!finish_command(true))	/* get rest of command */
 	return 0;
     if (!buf[1])
 	return -1;
@@ -288,7 +288,7 @@ thread_perform (void)
     if (buf[len] == '.') {
 	if (!artp)
 	    return -1;
-	one_thread = TRUE;
+	one_thread = true;
 	len++;
     }
     cmdstr = estrdup(buf+len);
@@ -306,7 +306,7 @@ thread_perform (void)
      || (len == 2
       && (((*cmdstr == '+' || *cmdstr == '-') && cmdstr[0] == cmdstr[1])
        || *cmdstr == 'T' || *cmdstr == 'A'))) {
-        performed_article_loop = FALSE;
+        performed_article_loop = false;
 	if (one_thread)
 	    sp = (sel_mode==SM_THREAD? artp->subj->thread->subj : artp->subj);
 	else
@@ -335,7 +335,7 @@ thread_perform (void)
 	ART_NUM oldart = art;
 	art = lastart+1;
 	followup();
-	forcegrow = TRUE;
+	forcegrow = true;
 	art = oldart;
 	page_line++; /*$$*/
     } else {
@@ -546,7 +546,7 @@ perform (char *cmdlst, int output_level)
 	    }
 	    else {
 		if (output_level != 1) {
-		    erase_line(FALSE);
+		    erase_line(false);
 		    printf("%-6ld ",art);
 		}
 		if (ch == 'a')
@@ -586,9 +586,9 @@ ngsel_perform (void)
     char* cmdstr;
     int len;
     int bits;
-    bool one_group = FALSE;
+    bool one_group = false;
 
-    if (!finish_command(TRUE))	/* get rest of command */
+    if (!finish_command(true))	/* get rest of command */
 	return 0;
     if (!buf[1])
 	return -1;
@@ -602,7 +602,7 @@ ngsel_perform (void)
     if (buf[len] == '.') {
 	if (!ngptr)
 	    return -1;
-	one_group = TRUE;
+	one_group = true;
 	len++;
     }
     cmdstr = estrdup(buf+len);
@@ -709,9 +709,9 @@ addgrp_sel_perform (void)
     char* cmdstr;
     int len;
     int bits;
-    bool one_group = FALSE;
+    bool one_group = false;
 
-    if (!finish_command(TRUE))	/* get rest of command */
+    if (!finish_command(true))	/* get rest of command */
 	return 0;
     if (!buf[1])
 	return -1;
@@ -725,7 +725,7 @@ addgrp_sel_perform (void)
     if (buf[len] == '.') {
 	if (first_addgroup) /*$$*/
 	    return -1;
-	one_group = TRUE;
+	one_group = true;
 	len++;
     }
     cmdstr = estrdup(buf+len);

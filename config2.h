@@ -10,15 +10,6 @@
 #include <unistd.h>
 #include <pwd.h>
 
-#define bool_int int
-#define char_int int
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FALSE
-#define FALSE 0
-#endif
-
 #define Ctl(ch) (ch & 037)
 
 #define strNE(s1,s2) (strcmp(s1,s2))

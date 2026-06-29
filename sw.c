@@ -121,7 +121,7 @@ decode_switch (char *s)
 	    ng_min_toread = 0;
     }
     else {				/* normal switch */
-	bool upordown = *s == '-' ? TRUE : FALSE;
+	bool upordown = *s == '-' ? true : false;
 	char tmpbuf[LBUFLEN];
 	char *name, *value;
 
@@ -357,7 +357,7 @@ decode_switch (char *s)
 	    if (mode == 'i') {
 		tc_LINES = 1000;
 		tc_COLS = 1000;
-		erase_screen = FALSE;
+		erase_screen = false;
 	    }
 	    trn_version();
 	    newline();

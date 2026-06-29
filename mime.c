@@ -53,7 +53,7 @@ MIME_SECT* mime_section = &mime_article;
 short mime_state;
 char* multipart_separator = "-=-=-=-=-=-";
 
-bool auto_view_inline = FALSE;
+bool auto_view_inline = false;
 char* mime_getc_line = NULL;
 
 static char text_plain[] = "text/plain";
@@ -304,10 +304,10 @@ mime_PopSection (void)
 	safefree((char *)mime_section);
 	mime_section = mp;
 	mime_state = mp->type;
-	return TRUE;
+	return true;
     }
     mime_state = mime_article.type;
-    return FALSE;
+    return false;
 }
 
 /* Free up this mime structure's resources */
@@ -334,7 +334,7 @@ mime_SetArticle (void)
 
     mime_InitSections();
     /*$$ Check mime version #? */
-    multimedia_mime = FALSE;
+    multimedia_mime = false;
     is_mime = (htype[MIMEVER_LINE].flags & HT_MAGIC)
 	    && htype[MIMEVER_LINE].minpos >= 0;
 
@@ -354,7 +354,7 @@ mime_SetArticle (void)
 	mime_state = mime_section->type;
 	if (mime_state == NOT_MIME
 	 || (mime_state == TEXT_MIME && mime_section->encoding == MENCODE_NONE))
-	    is_mime = FALSE;
+	    is_mime = false;
 	else if (!mime_section->type_name)
 	    mime_section->type_name = estrdup(text_plain);
     }
@@ -724,7 +724,7 @@ mime_SkipWhitespace (char *s)
 }
 
 void
-mime_DecodeArticle (bool_int view)
+mime_DecodeArticle (bool view)
 {
     MIMECAP_ENTRY* mcp = NULL;
 
@@ -828,7 +828,7 @@ static Uchar index_hex[256] = {
 };
 
 int
-qp_decodestring (char *t, char *f, bool_int in_header)
+qp_decodestring (char *t, char *f, bool in_header)
 {
     char* save_t = t;
     while (*f) {
@@ -1346,7 +1346,7 @@ static char roman_letters[] = { 'M', 'D', 'C', 'L', 'X', 'V', 'I'};
 static int  roman_values[]  = {1000, 500, 100,  50, 10,   5,   1 };
 
 static char *
-tag_action (char *t, char *word, bool_int opening_tag)
+tag_action (char *t, char *word, bool opening_tag)
 {
     char* cp;
     int i, j, tnum, len, itype, ch, cnt, num;
