@@ -6,7 +6,6 @@
 #include <sys/wait.h>
 #include <time.h>
 
-#include "EXTERN.h"
 #include "common.h"
 #include "final.h"
 #include "term.h"
@@ -27,7 +26,6 @@
 #include "smisc.h"	/* s_default_cmd */
 #endif
 #include "univ.h"
-#include "INTERN.h"
 #include "util.h"
 
 bool waiting = false;  	/* waiting for subprocess (in doshell)? */
@@ -565,7 +563,7 @@ prep_ini_data (char *cp, char *filename)
 
 #ifdef DEBUG
     if (debug & DEB_RCFILES)
-	printf("Read %d bytes from %s\n",strlen(cp),filename);
+	printf("Read %zu bytes from %s\n",strlen(cp),filename);
 #endif
 
     while (*cp) {

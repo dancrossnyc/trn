@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "hash.h"
 #include "init.h"
@@ -38,9 +37,18 @@
 #include "scorefile.h"
 #endif
 #include "color.h"
-#include "INTERN.h"
 #include "opt.h"
 #include "opt.ih"
+
+char* ini_file;
+char* yesorno[2] = {"no", "yes"};
+
+char** option_def_vals;
+char** option_saved_vals;
+char* option_flags;
+
+int sel_page_op;
+int sel_next_op;
 
 COMPEX optcompex;
 

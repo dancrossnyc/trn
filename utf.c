@@ -7,11 +7,9 @@
 
 #include <stdio.h>
 
-#include "EXTERN.h"
 #include "common.h"
 #include "util.h"
 #include "utf.h"
-#include "INTERN.h"
 
 /* OK - valid second and subsequent bytes in UTF-8 */
 #define OK(s) ((*(s) & 0xC0) == 0x80)

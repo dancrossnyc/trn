@@ -2,8 +2,7 @@
  */
 /* This software is copyrighted as detailed in the LICENSE file. */
 
-
-EXT char* decode_filename INIT(NULL);
+extern char* decode_filename;
 
 #define DECODE_DONE	 0
 #define DECODE_START	 1

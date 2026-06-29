@@ -14,36 +14,36 @@
 #define SFLAG_SCORED 16
 #define SCORED(a) (article_ptr(a)->scoreflags & SFLAG_SCORED)
 
-EXT bool kill_thresh_active INIT(FALSE);
-EXT int kill_thresh INIT(LOWSCORE);   /* KILL articles at or below this score */
+extern  bool kill_thresh_active;
+extern  int kill_thresh;   /* KILL articles at or below this score */
 
-EXT ART_NUM sc_fill_max;	   /* maximum art# scored by fill-routine */
-EXT bool sc_fill_read INIT(FALSE); /* TRUE if also scoring read arts... */
+extern  ART_NUM sc_fill_max;	   /* maximum art# scored by fill-routine */
+extern  bool sc_fill_read; /* TRUE if also scoring read arts... */
 
 /* has score been initialized (are we "in" scoring?) */
-EXT bool sc_initialized INIT(FALSE);
+extern  bool sc_initialized;
 
 /* are we currently scoring an article (prevents loops) */
-EXT bool sc_scoring INIT(FALSE);
+extern  bool sc_scoring;
 
 /* changes order of sorting (artnum comparison) when scores are equal */
-EXT bool score_newfirst INIT(FALSE);
+extern  bool score_newfirst;
 
 /* if nice background available, use it */
-EXT bool sc_mode_nicebg INIT(TRUE);
+extern  bool sc_mode_nicebg;
 
 /* If true, save the scores for this group on exit. */
-EXT bool sc_savescores INIT(FALSE);
+extern  bool sc_savescores;
 
 /* If true, delay initialization of scoring until explicitly required */
-EXT bool sc_delay INIT(FALSE);
+extern  bool sc_delay;
 
-EXT bool sc_rescoring INIT(FALSE);	/* are we rescoring now? */
+extern  bool sc_rescoring;	/* are we rescoring now? */
 
-EXT bool sc_do_spin INIT(FALSE);	/* actually do the score spinner */
+extern  bool sc_do_spin;	/* actually do the score spinner */
 
-EXT bool sc_sf_delay INIT(FALSE);	/* if TRUE, delay loading rule files */
-EXT bool sc_sf_force_init INIT(FALSE);	/* If true, always sf_init() */
+extern  bool sc_sf_delay;	/* if TRUE, delay loading rule files */
+extern  bool sc_sf_force_init;	/* If true, always sf_init() */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

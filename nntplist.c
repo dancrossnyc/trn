@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "env.h"
 #include "util2.h"
@@ -18,11 +17,11 @@ char* server_name;
 char* nntp_auth_file;
 
 int debug = 0;			/* make nntpclient.c happy */
-char* homedir;
-char* dotdir;
+extern char* homedir;
+extern char* dotdir;
 
 #ifdef USE_GENAUTH
-char* loginName;
+extern char* loginName;
 #endif
 
 int

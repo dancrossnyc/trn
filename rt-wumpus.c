@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "hash.h"
@@ -22,7 +21,6 @@
 #include "rt-select.h"
 #include "charsubst.h"
 #include "color.h"
-#include "INTERN.h"
 #include "rt-wumpus.h"
 #include "rt-wumpus.ih"
 

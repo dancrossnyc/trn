@@ -7,12 +7,10 @@
 #include "config.h"
 #include "config2.h"
 #include "typedef.h"
-#include "EXTERN.h"
 #include "config.h"
 #include "config2.h"
 #include "nntpclient.h"
 #include "util2.h"
-#include "INTERN.h"
 #include "util3.h"
 
 char* sh = NULL;

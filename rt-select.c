@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "trn.h"
@@ -40,9 +39,39 @@
 #include "tkstuff.h"
 #include "tktree.h"
 #endif
-#include "INTERN.h"
 #include "rt-select.h"
 #include "rt-select.ih"
+
+bool sel_rereading = 0;
+char sel_disp_char[] = " +-*";
+
+int sel_mode;
+int sel_defaultmode = SM_THREAD;
+int sel_threadmode = SM_THREAD;
+
+char* sel_mode_string;
+int sel_sort;
+int sel_artsort = SS_GROUPS;
+int sel_threadsort = SS_DATE;
+int sel_newsgroupsort = SS_NATURAL;
+int sel_addgroupsort = SS_NATURAL;
+int sel_univsort = SS_NATURAL;
+
+char* sel_sort_string;
+int sel_direction = 1;
+bool sel_exclusive = FALSE;
+int sel_mask = 1;
+
+bool selected_only = FALSE;
+ART_UNREAD selected_count = 0;
+int selected_subj_cnt = 0;
+int added_articles = 0;
+
+char* sel_chars;
+int sel_item_index;
+int sel_last_line;
+bool sel_at_end;
+bool art_sel_ilock = FALSE;
 
 static char sel_ret;
 static char page_char, end_char;

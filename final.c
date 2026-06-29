@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "env.h"
@@ -35,8 +34,17 @@
 #ifdef USE_FILTER
 #include "filter.h"
 #endif
-#include "INTERN.h"
 #include "final.h"
+
+bool panic = false;		/* we got hung up or something-- */
+				/*  so leave tty alone */
+bool doing_ng = false;		/* do we need to reconstitute */
+				/* current rc line? */
+
+char int_count = 0;		/* how many interrupts we've had */
+
+bool bos_on_stop = false;	/* set when handling the stop signal */
+				/* would leave the screen a mess */
 
 #ifndef sigmask
 #define sigmask(m)	(1 << ((m)-1))

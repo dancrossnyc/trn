@@ -18,8 +18,8 @@ struct sf_entry {
 };
 /* note that negative header #s are used to indicate special entries... */
 
-EXT int sf_num_entries INIT(0);	/* # of entries */
-EXT SF_ENTRY* sf_entries;	/* array of entries */
+extern int sf_num_entries;	/* # of entries */
+extern SF_ENTRY* sf_entries;	/* array of entries */
 
 #ifdef SCOREFILE_CACHE
 /* for cached score rules */
@@ -31,32 +31,32 @@ struct sf_file {
     char** lines;
 };
 
-EXT SF_FILE *sf_files INIT((SF_FILE*)NULL);
-EXT int sf_num_files INIT(0);
+extern SF_FILE *sf_files;
+extern int sf_num_files;
 #endif
 
-EXT char **sf_abbr;		/* abbreviations */
+extern char **sf_abbr;		/* abbreviations */
 
 /* when true, the scoring routine prints lots of info... */
-EXT int sf_score_verbose INIT(FALSE);
+extern int sf_score_verbose;
 
-EXT bool sf_verbose INIT(TRUE);  /* if true print more stuff while loading */
+extern bool sf_verbose;  /* if true print more stuff while loading */
 
 /* if TRUE, only header types that are cached are scored... */
-EXT bool cached_rescore INIT(FALSE);
+extern bool cached_rescore;
 
 /* if TRUE, newauthor is active */
-EXT bool newauthor_active INIT(FALSE);
+extern bool newauthor_active;
 /* bonus score given to a new (unscored) author */
-EXT int newauthor INIT(0);
+extern int newauthor;
 
 /* if TRUE, reply_score is active */
-EXT bool reply_active INIT(FALSE);
+extern bool reply_active;
 /* score amount added to an article reply */
-EXT int reply_score INIT(0);
+extern int reply_score;
 
 /* should we match by pattern? */
-EXT int sf_pattern_status INIT(FALSE);
+extern int sf_pattern_status;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

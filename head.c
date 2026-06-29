@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "artio.h"
@@ -25,9 +24,54 @@
 #ifdef SCAN
 #include "mempool.h"
 #endif
-#include "INTERN.h"
 #include "head.h"
 
+struct headtype htype[HEAD_LAST] = {
+ /* name             minpos   maxpos  length   flag */
+    {nullstr,/*BODY*/	0,	0,	0,	0		},
+    {nullstr,/*SHOWN*/	0,	0,	0,	0		},
+    {nullstr,/*HIDDEN*/	0,	0,	0,	HIDDEN		},
+    {nullstr,/*CUSTOM*/	0,	0,	0,	0		},
+    {"unrecognized",	0,	0,	12,	HIDDEN		},
+    {"author",		0,	0,	6,	0		},
+    {"bytes",		0,	0,	5,	HIDDEN|HT_CACHED},
+    {"content-name",	0,	0,	12,	HIDDEN		},
+    {"content-disposition",
+			0,	0,	19,	HIDDEN		},
+    {"content-length",	0,	0,	14,	HIDDEN		},
+    {"content-transfer-encoding",
+			0,	0,	25,	HIDDEN		},
+    {"content-type",	0,	0,	12,	HIDDEN		},
+    {"distribution",	0,	0,	12,	0		},
+    {"date",		0,	0,	4,	MAGIC_ON	},
+    {"expires",		0,	0,	7,	HIDDEN|MAGIC_ON	},
+    {"followup-to",	0,	0,	11,	0		},
+    {"from",		0,	0,	4,	MAGIC_OFF|HT_CACHED},
+    {"in-reply-to",	0,	0,	11,	HIDDEN		},
+    {"keywords",	0,	0,	8,	0		},
+    {"lines",		0,	0,	5,	HT_CACHED	},
+    {"mime-version",	0,	0,	12,	MAGIC_ON|HIDDEN	},
+    {"message-id",	0,	0,	10,	HIDDEN|HT_CACHED},
+    {"newsgroups",	0,	0,	10,	MAGIC_ON|HIDDEN|NGS_CACHED},
+    {"path",		0,	0,	4,	HIDDEN		},
+    {"relay-version",	0,	0,	13,	HIDDEN		},
+    {"reply-to",	0,	0,	8,	0		},
+    {"references",	0,	0,	10,	HIDDEN|FILT_CACHED},
+    {"summary",		0,	0,	7,	0		},
+    {"subject",		0,	0,	7,	MAGIC_ON|HT_CACHED},
+    {"xref",		0,	0,	4,	HIDDEN|XREF_CACHED},
+};
+
+struct user_headtype* user_htype = NULL;
+short user_htypeix[26];
+int user_htype_cnt = 0;
+int user_htype_max = 0;
+
+ART_NUM parsed_art = 0;		/* the article number we've parsed */
+ARTICLE* parsed_artp = NULL;	/* the article ptr we've parsed */
+int in_header = 0;		/* are we decoding the header? */
+char* headbuf;
+long headbuf_size;
 bool first_one;		/* is this the 1st occurance of this header line? */
 bool reading_nntp_header;
 

@@ -2,7 +2,6 @@
  */
 /* This software is copyrighted as detailed in the LICENSE file. */
 
-#include "EXTERN.h"
 #include "common.h"
 #include "respond.h"
 #include "artio.h"
@@ -10,7 +9,6 @@
 #include "term.h"
 #include "util2.h"
 #include "decode.h"
-#include "INTERN.h"
 #include "uudecode.h"
 #include "uudecode.ih"
 

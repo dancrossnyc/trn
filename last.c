@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "trn.h"
 #include "list.h"
@@ -11,8 +10,13 @@
 #include "util2.h"
 #include "intrp.h"
 #include "init.h"
-#include "INTERN.h"
 #include "last.h"
+
+char* lastngname = NULL;	/* last newsgroup read */
+long lasttime = 0;		/* time last we ran */
+long lastactsiz = 0;		/* last known size of active file */
+long lastnewtime = 0;		/* time of last newgroup request */
+long lastextranum = 0;
 
 static char* lastfile = NULL;	/* path name of .rnlast file */
 static long starttime;

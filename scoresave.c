@@ -4,7 +4,6 @@
  * Saving/restoring scores from a file.
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCORE
 #include "list.h"

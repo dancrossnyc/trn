@@ -3,7 +3,6 @@
  *
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCAN_ART
 #include "list.h"
@@ -19,7 +18,6 @@
 #include "samisc.h"
 #include "sorder.h"
 #include "util.h"
-#include "INTERN.h"
 #include "sathread.h"
 
 static long sa_num_threads = 0;

@@ -7,10 +7,8 @@
 /*#define EXCELAN	*//* Excelan EXOS 205 support */
 /*#define NONETD	*//* Define if you're missing netdb.h */
 
-#include "EXTERN.h"
 #include "common.h"
 #include "nntpclient.h"
-#include "INTERN.h"
 #include "nntpinit.h"
 #include "nntpinit.ih"
 

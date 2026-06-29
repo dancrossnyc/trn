@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "search.h"
 #include "list.h"
@@ -13,7 +12,6 @@
 #include "util.h"
 #include "util2.h"
 #include "final.h"
-#include "INTERN.h"
 #include "autosub.h"
 
 /* Consider the newsgroup specified, and return:	*/

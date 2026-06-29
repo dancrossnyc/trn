@@ -3,10 +3,10 @@
  */
 
 /* TRUE if the last command (run through setdef()) was the default */
-EXT bool s_default_cmd INIT(FALSE);
+extern bool s_default_cmd;
 
 /* explicitly follow until end of thread */
-EXT bool s_follow_temp INIT(FALSE);
+extern bool s_follow_temp;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

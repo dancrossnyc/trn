@@ -6,15 +6,45 @@
 
 /* CLEANUP: make a scontext file for the scan context stuff. */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCAN
 #include "final.h"		/* for assert statements */
 #include "util.h"		/* allocation */
-#include "INTERN.h"
 #include "scan.h"
-#include "EXTERN.h"
+#include "score.h"
 #include "sorder.h"
+
+
+bool kill_thresh_active = false;
+int kill_thresh = LOWSCORE;   /* KILL articles at or below this score */
+
+ART_NUM sc_fill_max;          /* maximum art# scored by fill-routine */
+bool sc_fill_read = false;    /* true if also scoring read arts... */
+
+/* has score been initialized (are we "in" scoring?) */
+bool sc_initialized = false;
+
+/* are we currently scoring an article (prevents loops) */
+bool sc_scoring = false;
+
+/* changes order of sorting (artnum comparison) when scores are equal */
+bool score_newfirst = false;
+
+/* if nice background available, use it */
+bool sc_mode_nicebg = true;
+
+/* If true, save the scores for this group on exit. */
+bool sc_savescores = false;
+
+/* If true, delay initialization of scoring until explicitly required */
+bool sc_delay = false;
+
+bool sc_rescoring = false;     /* are we rescoring now? */
+
+bool sc_do_spin = false;       /* actually do the score spinner */
+
+bool sc_sf_delay = false;      /* if true, delay loading rule files */
+bool sc_sf_force_init = false; /* If true, always sf_init() */
 
 void
 s_init_context (int cnum, int type)
@@ -37,10 +67,10 @@ s_init_context (int cnum, int type)
     p->page_size = MAX_PAGE_SIZE;
     p->top_ent = -1;
     p->bot_ent = -1;
-    p->refill = TRUE;
-    p->ref_all = TRUE;
-    p->ref_top = TRUE;
-    p->ref_bot = TRUE;
+    p->refill = true;
+    p->ref_all = true;
+    p->ref_top = true;
+    p->ref_bot = true;
     p->ref_status = -1;
     p->ref_desc = -1;
     /* next ones should be reset later */
@@ -186,7 +216,7 @@ s_delete_context (
 {
     if (cnum < 0 || cnum >= s_num_contexts) {
 	printf("s_delete_context: illegal context number %d!\n",cnum);
-	assert(FALSE);
+	assert(false);
     }
     s_order_clean();
     /* mark the context as empty */

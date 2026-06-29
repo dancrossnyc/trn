@@ -3,11 +3,11 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-EXT char spin_char INIT(' ');	/* char to put back when we're done spinning */
-EXT long spin_estimate;		/* best guess of how much work there is */
-EXT long spin_todo;		/* the max word to do (might decrease) */
-EXT int  spin_count;		/* counter for when to spin */
-EXT int  spin_marks INIT(25);	/* how many bargraph marks we want */
+extern char spin_char;		/* char to put back when we're done spinning */
+extern long spin_estimate;	/* best guess of how much work there is */
+extern long spin_todo;		/* the max word to do (might decrease) */
+extern int  spin_count;		/* counter for when to spin */
+extern int  spin_marks;		/* how many bargraph marks we want */
 
 #define SPIN_OFF	0
 #define SPIN_POP	1
@@ -15,7 +15,7 @@ EXT int  spin_marks INIT(25);	/* how many bargraph marks we want */
 #define SPIN_BACKGROUND 3
 #define SPIN_BARGRAPH	4
 
-EXT bool performed_article_loop;
+extern bool performed_article_loop;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

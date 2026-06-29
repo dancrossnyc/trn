@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "env.h"
@@ -30,10 +29,19 @@
 #include "rthread.h"
 #include "rt-select.h"
 #include "rt-util.h"
-#include "INTERN.h"
 #include "intrp.h"
 #include "intrp.ih"
 #include <netdb.h>
+
+char* origdir = NULL;		/* cwd when rn invoked */
+char* hostname = NULL;		/* host name to match local postings */
+char* headname = NULL;
+int perform_cnt;
+
+#ifdef NEWS_ADMIN
+char newsadmin[] = NEWS_ADMIN;	/* news administrator */
+int newsuid = 0;
+#endif
 
 static char* regexp_specials = "^$.*[\\/?%";
 

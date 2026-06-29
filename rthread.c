@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "intrp.h"
@@ -35,9 +34,14 @@
 #include "rt-select.h"
 #include "rt-util.h"
 #include "rt-wumpus.h"
-#include "INTERN.h"
 #include "rthread.h"
 #include "rthread.ih"
+
+ART_NUM obj_count = 0;
+int subject_count = 0;
+bool output_chase_phrase;
+
+HASHTABLE* msgid_hash = NULL;
 
 void
 thread_init (void)

@@ -3,7 +3,6 @@
  *
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCORE
 /* if SCORE is undefined, no code should be compiled */
@@ -32,16 +31,58 @@
 #include "samisc.h"
 #endif
 #endif
-#include "INTERN.h"
 #include "score.h"
-#include "EXTERN.h"
 #include "scorefile.h"
 #include "scoresave.h"
 #include "score-easy.h"		/* interactive menus and such */
 #ifdef USE_FILTER
 #include "filter.h"
 #endif
-#include "INTERN.h"		/* not currently needed, but safer */
+
+long* s_ent_sort;		/* sorted list of entries in the context */
+long s_ent_sort_max;		/* maximum index of sorted array */
+long s_ent_sorted_max;		/* maximum index *that is sorted* */
+long* s_ent_index;		/* indexes into ent_sorted */
+long s_ent_index_max;		/* maximum entry number added */
+
+int s_page_size;		/* number of entries allocated for page */
+				/* (usually fixed, > max screen lines) */
+PAGE_ENT* page_ents;		/* array of entries on page */
+/* -1 means not initialized for top and bottom entry */
+long s_top_ent;		/* top entry on page */
+long s_bot_ent;		/* bottom entry (note change) */
+bool s_refill;			/* does the page need refilling? */
+/* refresh entries */
+bool s_ref_all;		/* refresh all on page */
+bool s_ref_top;		/* top status bar */
+bool s_ref_bot;		/* bottom status bar */
+/* -1 for the next two entries means don't refresh */
+short s_ref_status;		/* line to start refreshing status from */
+short s_ref_desc;		/* line to start refreshing descript. from */
+/* screen sizes */
+short s_top_lines;		/* lines for top status bar */
+short s_bot_lines;		/* lines for bottom status bar */
+short s_status_cols;		/* characters for status column */
+short s_cursor_cols;		/* characters for cursor column */
+short s_itemnum_cols;		/* characters for item number column */
+short s_desc_cols;		/* characters for description column */
+/* pointer info */
+short s_ptr_page_line;		/* page_ent index */
+long  s_flags;			/* misc. flags */
+
+int s_num_contexts = 0;
+/* array of context structures */
+SCONTEXT* s_contexts = NULL;
+
+/* current context number */
+int s_cur_context = 0;
+/* current context type (for fast switching) */
+int s_cur_type;
+
+/* options */
+/* show item numbers by default */
+int s_itemnum = TRUE;
+int s_mode_vi = 0;
 
 #if defined(USE_FILTER) && defined(FILTER_DEBUG)
 FILE* filter_error_file;

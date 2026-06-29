@@ -2,12 +2,10 @@
  * mempool.c
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #include "final.h"
 #include "util.h"
 #include "util2.h"
-#include "INTERN.h"
 #include "mempool.h"
 #include "mempool.ih"
 

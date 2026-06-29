@@ -22,11 +22,9 @@
  *	Correct spurious matching, eg. /: re: .*\bfoo/ matched ": re: bar".
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #include "util.h"
 #include "util2.h"
-#include "INTERN.h"
 #include "search.h"
 
 #ifndef BITSPERBYTE

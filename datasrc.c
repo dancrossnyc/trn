@@ -4,7 +4,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "trn.h"
@@ -25,11 +24,17 @@
 #include "rt-mt.h"
 #include "rt-ov.h"
 #include "rt-util.h"
-#include "INTERN.h"
 #include "datasrc.h"
 #include "datasrc.ih"
-#include "EXTERN.h"
 #include "nntp.h"
+
+LIST* datasrc_list;		/* a list of all DATASRCs */
+DATASRC* datasrc;		/* the current datasrc */
+int datasrc_cnt = 0;
+
+char* trnaccess_mem = NULL;
+
+char* nntp_auth_file;
 
 void
 datasrc_init (void)

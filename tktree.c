@@ -5,7 +5,6 @@
  * Perhaps later allow much of it to be accessed from pure tcl.
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef USE_TK
 #include <tcl.h>
@@ -22,7 +21,6 @@
 #include "ngdata.h"			/* absfirst */
 #include "score.h"
 #endif
-#include "INTERN.h"
 #include "tktree.h"
 #include "tktree.ih"
 

@@ -6,24 +6,24 @@
 #define PRESERVE_PAGE     0
 #define FILL_LAST_PAGE    1
 
-EXT int sel_total_obj_cnt;
-EXT int sel_prior_obj_cnt;
-EXT int sel_page_obj_cnt;
-EXT int sel_page_item_cnt;
-EXT int sel_max_per_page;
-EXT int sel_max_line_cnt;
+extern int sel_total_obj_cnt;
+extern int sel_prior_obj_cnt;
+extern int sel_page_obj_cnt;
+extern int sel_page_item_cnt;
+extern int sel_max_per_page;
+extern int sel_max_line_cnt;
 
-EXT ARTICLE** sel_page_app;
-EXT ARTICLE** sel_next_app;
-EXT ARTICLE* sel_last_ap;
-EXT SUBJECT* sel_page_sp;
-EXT SUBJECT* sel_next_sp;
-EXT SUBJECT* sel_last_sp;
+extern ARTICLE** sel_page_app;
+extern ARTICLE** sel_next_app;
+extern ARTICLE* sel_last_ap;
+extern SUBJECT* sel_page_sp;
+extern SUBJECT* sel_next_sp;
+extern SUBJECT* sel_last_sp;
 
-EXT char* sel_grp_dmode INIT("*slm");
-EXT char* sel_art_dmode INIT("*lmds");
+extern char* sel_grp_dmode;
+extern char* sel_art_dmode;
 
-EXT bool group_init_done INIT(TRUE);
+extern bool group_init_done;
 
 union sel_union {
     ARTICLE* ap;
@@ -42,7 +42,7 @@ struct sel_item {
 };
 
 #define MAX_SEL 99
-EXT SEL_ITEM sel_items[MAX_SEL];
+extern SEL_ITEM sel_items[MAX_SEL];
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

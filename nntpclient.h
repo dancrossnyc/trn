@@ -20,8 +20,8 @@ struct nntplink {
 #define NNTP_FORCE_AUTH_NEEDED	0x0002
 #define NNTP_FORCE_AUTH_NOW	0x0004
 
-EXT NNTPLINK nntplink;		/* the current server's file handles */
-EXT bool nntp_allow_timeout INIT(FALSE);
+extern NNTPLINK nntplink;		/* the current server's file handles */
+extern bool nntp_allow_timeout;
 
 #define nntp_get_a_line(buf,len,realloc) get_a_line(buf,len,realloc,nntplink.rd_fp)
 
@@ -54,9 +54,9 @@ EXT bool nntp_allow_timeout INIT(FALSE);
 
 #define	NNTP_STRLEN	512
 
-EXT char ser_line[NNTP_STRLEN];
+extern char ser_line[NNTP_STRLEN];
 
-EXT char last_command[NNTP_STRLEN];
+extern char last_command[NNTP_STRLEN];
 
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */

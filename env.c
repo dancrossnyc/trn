@@ -5,13 +5,11 @@
 
 #include <unistd.h>
 
-#include "EXTERN.h"
 #include "common.h"
 #include "init.h"
 #include "final.h"
 #include "util.h"
 #include "util2.h"
-#include "INTERN.h"
 #include "env.h"
 #include "env.ih"
 

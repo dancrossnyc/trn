@@ -2,19 +2,19 @@
  */
 
 #ifdef USE_TK
-EXT char* ttk_keys;
+extern char* ttk_keys;
 
-EXT int ttk_idle_flag;
+extern int ttk_idle_flag;
 
 /* if true, we are really running Tk */
-EXT int ttk_running INIT(0);
+extern int ttk_running;
 
 /* if true, allow update via ttk_do_waiting_events() */
-EXT int ttk_do_waiting_flag INIT(1);
+extern int ttk_do_waiting_flag;
 #endif
 
 /* if true, we are really running TCL */
-EXT int ttcl_running INIT(0);
+extern int ttcl_running;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

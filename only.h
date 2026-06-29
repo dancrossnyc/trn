@@ -7,13 +7,13 @@
 #include "search.h"
 #endif
 
-EXT char* ngtodo[MAXNGTODO];		/* restrictions in effect */
-EXT COMPEX* compextodo[MAXNGTODO];	/* restrictions in compiled form */
+extern char* ngtodo[MAXNGTODO];		/* restrictions in effect */
+extern COMPEX* compextodo[MAXNGTODO];	/* restrictions in compiled form */
 
-EXT int maxngtodo INIT(0);		/*  0 => no restrictions */
+extern int maxngtodo;		/*  0 => no restrictions */
 					/* >0 => # of entries in ngtodo */
 
-EXT char empty_only_char INIT('o');
+extern char empty_only_char;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

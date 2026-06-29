@@ -4,7 +4,6 @@
  * scan ordering
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCAN
 #include "util.h"
@@ -14,8 +13,9 @@
 #include "scanart.h"
 #include "samisc.h"
 #endif
-#include "INTERN.h"
 #include "sorder.h"
+
+bool s_order_changed = false;
 
 #ifdef UNDEF
 int

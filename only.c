@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "search.h"
 #include "util.h"
@@ -13,8 +12,15 @@
 #include "term.h"
 #include "ngdata.h"
 #include "ngsrch.h"
-#include "INTERN.h"
 #include "only.h"
+
+char* ngtodo[MAXNGTODO];	/* restrictions in effect */
+COMPEX* compextodo[MAXNGTODO];	/* restrictions in compiled form */
+
+int maxngtodo = 0;		/*  0 => no restrictions */
+				/* >0 => # of entries in ngtodo */
+
+char empty_only_char = 'o';
 
 static int save_maxngtodo = 0;
 

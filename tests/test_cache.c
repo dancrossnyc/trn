@@ -7,7 +7,6 @@
 
 #include "minunit.h"
 
-#include "EXTERN.h"
 #include "common.h"
 #include "intrp.h"
 #include "hash.h"
@@ -17,7 +16,6 @@
 #include "cache.h"
 #include "util.h"
 #include "utf.h"
-#include "INTERN.h"
 
 int tests_run = 0;
 

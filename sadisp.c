@@ -4,7 +4,6 @@
  * display stuff
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCAN_ART
 #include "hash.h"
@@ -28,7 +27,6 @@
 #include "scan.h"
 #include "sdisp.h"
 #include "color.h"
-#include "INTERN.h"
 #include "sadisp.h"
 
 void

@@ -65,10 +65,6 @@ struct user_headtype {
 
 /* This array must stay in the same order as the list above */
 
-#ifndef DOINIT
-EXT struct headtype htype[HEAD_LAST];
-#else
-
 #define HIDDEN    (HT_HIDE|HT_DEFHIDE)
 #define MAGIC_ON  (HT_MAGICOK|HT_MAGIC|HT_DEFMAGIC)
 #define MAGIC_OFF (HT_MAGICOK)
@@ -86,60 +82,17 @@ EXT struct headtype htype[HEAD_LAST];
 #define FILT_CACHED 0
 #endif
 
-struct headtype htype[HEAD_LAST] = {
- /* name             minpos   maxpos  length   flag */
-    {nullstr,/*BODY*/	0,	0,	0,	0		},
-    {nullstr,/*SHOWN*/	0,	0,	0,	0		},
-    {nullstr,/*HIDDEN*/	0,	0,	0,	HIDDEN		},
-    {nullstr,/*CUSTOM*/	0,	0,	0,	0		},
-    {"unrecognized",	0,	0,	12,	HIDDEN		},
-    {"author",		0,	0,	6,	0		},
-    {"bytes",		0,	0,	5,	HIDDEN|HT_CACHED},
-    {"content-name",	0,	0,	12,	HIDDEN		},
-    {"content-disposition",
-			0,	0,	19,	HIDDEN		},
-    {"content-length",	0,	0,	14,	HIDDEN		},
-    {"content-transfer-encoding",
-			0,	0,	25,	HIDDEN		},
-    {"content-type",	0,	0,	12,	HIDDEN		},
-    {"distribution",	0,	0,	12,	0		},
-    {"date",		0,	0,	4,	MAGIC_ON	},
-    {"expires",		0,	0,	7,	HIDDEN|MAGIC_ON	},
-    {"followup-to",	0,	0,	11,	0		},
-    {"from",		0,	0,	4,	MAGIC_OFF|HT_CACHED},
-    {"in-reply-to",	0,	0,	11,	HIDDEN		},
-    {"keywords",	0,	0,	8,	0		},
-    {"lines",		0,	0,	5,	HT_CACHED	},
-    {"mime-version",	0,	0,	12,	MAGIC_ON|HIDDEN	},
-    {"message-id",	0,	0,	10,	HIDDEN|HT_CACHED},
-    {"newsgroups",	0,	0,	10,	MAGIC_ON|HIDDEN|NGS_CACHED},
-    {"path",		0,	0,	4,	HIDDEN		},
-    {"relay-version",	0,	0,	13,	HIDDEN		},
-    {"reply-to",	0,	0,	8,	0		},
-    {"references",	0,	0,	10,	HIDDEN|FILT_CACHED},
-    {"summary",		0,	0,	7,	0		},
-    {"subject",		0,	0,	7,	MAGIC_ON|HT_CACHED},
-    {"xref",		0,	0,	4,	HIDDEN|XREF_CACHED},
-};
+extern struct headtype htype[HEAD_LAST];
+extern struct user_headtype* user_htype;
+extern short user_htypeix[26];
+extern int user_htype_cnt;
+extern int user_htype_max;
 
-#undef HIDDEN
-#undef MAGIC_ON
-#undef MAGIC_OFF
-#undef NGS_CACHED
-#undef XREF_CACHED
-
-#endif
-
-EXT struct user_headtype* user_htype INIT(NULL);
-EXT short user_htypeix[26];
-EXT int user_htype_cnt INIT(0);
-EXT int user_htype_max INIT(0);
-
-EXT ART_NUM parsed_art INIT(0);		/* the article number we've parsed */
-EXT ARTICLE* parsed_artp INIT(NULL);	/* the article ptr we've parsed */
-EXT int in_header INIT(0);		/* are we decoding the header? */
-EXT char* headbuf;
-EXT long headbuf_size;
+extern ART_NUM parsed_art;	/* the article number we've parsed */
+extern ARTICLE* parsed_artp;	/* the article ptr we've parsed */
+extern int in_header;		/* are we decoding the header? */
+extern char* headbuf;
+extern long headbuf_size;
 
 #define PREFETCH_SIZE 5
 

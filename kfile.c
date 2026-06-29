@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "term.h"
@@ -29,9 +28,18 @@
 #include "rt-select.h"
 #include "rt-util.h"
 #include "color.h"
-#include "INTERN.h"
 #include "kfile.h"
 #include "kfile.ih"
+
+FILE* globkfp = NULL;		/* global article killer file */
+FILE* localkfp = NULL;		/* local (for this newsgroup) file */
+int kf_state;			/* the state of our kill files */
+int kfs_local_change_clear;	/* bits to clear local changes */
+int kfs_thread_change_set;	/* bits to set for thread changes */
+int kf_thread_cnt;		/* # entries in the thread kfile */
+int kf_changethd_cnt;		/* # entries changed from old to new */
+long kf_daynum;			/* day number for thread killfile */
+ART_NUM killfirst;		/* used as firstart when killing */
 
 #ifdef KILLFILES
 

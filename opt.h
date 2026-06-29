@@ -3,13 +3,8 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-EXT char* ini_file;
-EXT char* yesorno[2]
-#ifdef DOINIT
- = {"no", "yes"};
-#else
- ;
-#endif
+extern char* ini_file;
+extern char* yesorno[2];
 
 #define YESorNO(v) yesorno[(int)(v)]
 
@@ -133,15 +128,15 @@ EXT char* yesorno[2]
 #endif
 
 extern INI_WORDS options_ini[];
-EXT char** option_def_vals;
-EXT char** option_saved_vals;
-EXT char* option_flags;
+extern char** option_def_vals;
+extern char** option_saved_vals;
+extern char* option_flags;
 
 #define OF_SEL		0x0001
 #define OF_INCLUDED	0x0010
 
-EXT int sel_page_op;
-EXT int sel_next_op;
+extern int sel_page_op;
+extern int sel_next_op;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

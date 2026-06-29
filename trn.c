@@ -40,23 +40,19 @@
  */
 
 #include "patchlevel.h"
-#include "INTERN.h"
 #include "common.h"
-#include "EXTERN.h"
 #include "list.h"
 #include "hash.h"
 #include "ngdata.h"
 #include "nntpclient.h"
 #include "datasrc.h"
 #include "nntp.h"
-#include "INTERN.h"
 #include "utf.h"
 #ifdef USE_UTF_HACK
 #undef PATCHLEVEL
 #include "patchlevel2.h"
 #endif
 #include "trn.h"
-#include "EXTERN.h"
 #include "term.h"
 #include "final.h"
 #include "search.h"
@@ -83,6 +79,23 @@
 #include "scan.h"
 #endif /* SCAN */
 #include "univ.h"
+
+char* ngname = NULL;	/* name of current newsgroup */
+int ngnlen = 0;		/* current malloced size of ngname */
+int ngname_len;		/* length of current ngname */
+char* ngdir = NULL;	/* same thing in directory name form */
+int ngdlen = 0;		/* current malloced size of ngdir */
+
+int ing_state;
+
+bool  write_less = FALSE;	/* write .newsrc less often */
+
+char* auto_start_cmd = NULL;	/* command to auto-start with */
+bool  auto_started = FALSE;	/* have we auto-started? */
+
+bool  is_strn = FALSE;		/* Is this "strn", or trn/rn? */
+
+char patchlevel[] = PATCHLEVEL;
 
 void
 trn_init (void)

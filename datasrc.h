@@ -62,9 +62,9 @@ struct datasrc {
 
 #define DATASRC_NNTP_FLAGS(dp) (((dp) == datasrc? nntplink.flags : (dp)->nntplink.flags))
 
-EXT LIST* datasrc_list;		/* a list of all DATASRCs */
-EXT DATASRC* datasrc;		/* the current datasrc */
-EXT int datasrc_cnt INIT(0);
+extern LIST* datasrc_list;		/* a list of all DATASRCs */
+extern DATASRC* datasrc;		/* the current datasrc */
+extern int datasrc_cnt;
 
 #define datasrc_ptr(n)  ((DATASRC*)listnum2listitem(datasrc_list,(long)(n)))
 #define datasrc_first() ((DATASRC*)listnum2listitem(datasrc_list,0L))
@@ -76,9 +76,9 @@ EXT int datasrc_cnt INIT(0);
 
 #define DATASRC_ALARM_SECS   (5 * 60)
 
-EXT char* trnaccess_mem INIT(NULL);
+extern char* trnaccess_mem;
 
-EXT char* nntp_auth_file;
+extern char* nntp_auth_file;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

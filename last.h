@@ -3,11 +3,11 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-EXT char* lastngname INIT(NULL);	/* last newsgroup read */
-EXT long lasttime INIT(0);		/* time last we ran */
-EXT long lastactsiz INIT(0);		/* last known size of active file */
-EXT long lastnewtime INIT(0);		/* time of last newgroup request */
-EXT long lastextranum INIT(0);
+extern char* lastngname;	/* last newsgroup read */
+extern long lasttime;		/* time last we ran */
+extern long lastactsiz;		/* last known size of active file */
+extern long lastnewtime;	/* time of last newgroup request */
+extern long lastextranum;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

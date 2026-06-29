@@ -4,7 +4,6 @@
  * main command loop
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCAN_ART
 #include "list.h"
@@ -41,7 +40,6 @@
 #endif
 #include "util.h"
 #include "util2.h"
-#include "INTERN.h"
 #include "sacmd.h"
 
 bool sa_extract_start();

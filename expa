@@ -1,1 +1,3 @@
-(echo '#include "EXTERN.h"'; grep '^EXT ' "$@") | cpp | sed 's/[ 	]*$//;/^#/d;s/^ //;/^[ 	]*$/d;s/[ 	]*;$/;/'
+#!/bin/sh
+#(echo '#include "EXTERN.h"'; grep '^EXT ' "$@") | cpp | sed 's/[ 	]*$//;/^#/d;s/^ //;/^[ 	]*$/d;s/[ 	]*;$/;/'
+exec sed '/^EXT.*INIT\(.*\);/s/ INIT(\(.*\));/;/;s/^EXT /extern /' "$@"

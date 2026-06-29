@@ -4,7 +4,6 @@
  * display stuff
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCAN
 #include "final.h"	/* assert() */
@@ -20,8 +19,15 @@
 #include "samain.h"
 #include "sadisp.h"
 #endif
-#include "INTERN.h"
 #include "sdisp.h"
+
+/* height of screen in characters */
+int scr_height = 0;
+/* width of screen in characters */
+int scr_width = 0;
+
+/* has the window been resized? */
+bool s_resized = FALSE;
 
 void
 s_goxy(int x, int y)

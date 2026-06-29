@@ -1,7 +1,6 @@
 /* tkstuff.c
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef USE_TCL
 #include "term.h"
@@ -12,9 +11,21 @@
 #include <tk.h>
 #include "tktree.h"
 #endif
-#include "INTERN.h"
 #include "tkstuff.h"
 #include "tkstuff.ih"
+
+char* ttk_keys;
+
+int ttk_idle_flag;
+
+/* if true, we are really running Tk */
+int ttk_running = 0;
+
+/* if true, allow update via ttk_do_waiting_events() */
+int ttk_do_waiting_flag = 1;
+
+/* if true, we are really running TCL */
+int ttcl_running = 0;
 
 Tcl_Interp* ttcl_interp;	/* Interpreter for this application. */
 

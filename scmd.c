@@ -5,7 +5,6 @@
  * Does some simple commands, and passes the rest to context-specific routines.
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCAN
 #include "hash.h"
@@ -31,7 +30,6 @@
 #include "score.h"
 #endif
 #include "univ.h"
-#include "INTERN.h"
 #include "scmd.h"
 
 void s_search();
@@ -302,7 +300,7 @@ s_docmd (void)
 
 static char search_text[LBUFLEN];
 
-static char search_init INIT(FALSE);
+static char search_init = false;
 
 bool
 s_match_description (long ent)

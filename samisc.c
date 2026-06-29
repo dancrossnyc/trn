@@ -4,7 +4,6 @@
  * lower-level routines
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCAN_ART
 #include "list.h"
@@ -29,7 +28,6 @@
 #ifdef SCORE
 #include "score.h"
 #endif
-#include "INTERN.h"
 #include "samisc.h"
 
 #ifdef UNDEF	/* use function for breakpoint debugging */

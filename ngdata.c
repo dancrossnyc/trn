@@ -5,7 +5,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "trn.h"
@@ -30,15 +29,44 @@
 #include "scan.h"
 #include "scanart.h"
 #endif
-#include "INTERN.h"
 #include "ngdata.h"
 #include "ngdata.ih"
-#include "EXTERN.h"
 #include "nntpclient.h"
 #include "datasrc.h"
 #include "nntp.h"
 #include "rcstuff.h"
 #include "rcln.h"
+
+LIST* ngdata_list = NULL; /* a list of NGDATA */
+int ngdata_cnt = 0;
+NG_NUM newsgroup_cnt = 0; /* all newsgroups in our current newsrc(s */
+NG_NUM newsgroup_toread = 0;
+ART_UNREAD ng_min_toread = 1; /* == TR_ONE or TR_NONE */
+
+NGDATA* first_ng = NULL;
+NGDATA* last_ng = NULL;
+NGDATA* ngptr = NULL;	/* current newsgroup data ptr */
+
+NGDATA* current_ng = NULL;/* stable current newsgroup so we can ditz with ngptr */
+NGDATA* recent_ng = NULL; /* the prior newsgroup we visited */
+NGDATA* starthere = NULL; /* set to the first newsgroup with unread news on startup */
+
+NGDATA* sel_page_np;
+NGDATA* sel_next_np;
+
+ART_NUM absfirst = 0;	/* 1st real article in current newsgroup */
+ART_NUM firstart = 0;	/* minimum unread article number in newsgroup */
+ART_NUM lastart = 0;	/* maximum article number in newsgroup */
+ART_UNREAD missing_count;	/* for reports on missing articles */
+
+char* moderated;
+char* redirected;
+bool ThreadedGroup;
+
+/* CAA goto-newsgroup extensions */
+NGDATA* ng_go_ngptr = NULL;
+ART_NUM ng_go_artnum = 0;
+char* ng_go_msgid = NULL;
 
 void
 ngdata_init (void)

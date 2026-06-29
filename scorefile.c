@@ -5,7 +5,6 @@
  * (yeah, right. :)
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCORE
 /* if SCORE is undefined, no code should be compiled */
@@ -29,9 +28,37 @@
 #include "samain.h"		/* for sa_authscored macro */
 #endif
 #include "url.h"
-#include "INTERN.h"
 #include "scorefile.h"
 #include "scorefile.ih"
+
+int sf_num_entries = 0;	/* # of entries */
+SF_ENTRY* sf_entries;	/* array of entries */
+
+SF_FILE *sf_files = NULL;
+int sf_num_files = 0;
+
+char **sf_abbr;		/* abbreviations */
+
+/* when true, the scoring routine prints lots of info... */
+int sf_score_verbose = false;
+
+bool sf_verbose = true;  /* if true print more stuff while loading */
+
+/* if true, only header types that are cached are scored... */
+bool cached_rescore = false;
+
+/* if true, newauthor is active */
+bool newauthor_active = false;
+/* bonus score given to a new (unscored) author */
+int newauthor = 0;
+
+/* if true, reply_score is active */
+bool reply_active = false;
+/* score amount added to an article reply */
+int reply_score = 0;
+
+/* should we match by pattern? */
+int sf_pattern_status = false;
 
 /* list of score array markers (in htype field of score entry) */
     /* entry is a file marker.  Score is the file level */
@@ -42,7 +69,7 @@
 #define SF_NEWAUTHOR (-4)
 #define SF_REPLY (-5)
 
-static int sf_file_level INIT(0);	/* how deep are we? */
+static int sf_file_level = 0;	/* how deep are we? */
 
 static char sf_buf[LBUFLEN];
 
@@ -535,7 +562,7 @@ sf_do_command (
     return FALSE;
 }
 
-COMPEX* sf_compex INIT(NULL);
+COMPEX* sf_compex = NULL;
 
 char *
 sf_freeform (

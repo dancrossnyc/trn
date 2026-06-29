@@ -5,7 +5,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-#include "EXTERN.h"
 #include "common.h"
 #include "hash.h"
 #include "cache.h"

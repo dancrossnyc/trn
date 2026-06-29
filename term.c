@@ -5,7 +5,6 @@
 
 #include <stdint.h>
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "env.h"
@@ -105,7 +104,7 @@ bool mouse_is_down = FALSE;
 
 char tcarea[TCSIZE];	/* area for "compiled" termcap strings */
 
-static KEYMAP*	topmap INIT(NULL);
+static KEYMAP*	topmap = NULL;
 
 static const char* lines_export = "LINES";
 static const char* cols_export = "COLUMNS";
@@ -1850,9 +1849,9 @@ waitkey_sig_handler (int dummy)
 
 /* /dev/tty file descriptor */
 /* note: for now we let the system close it on exit... */
-static int wait_ttyfd INIT(-1);
-static bool wait_initialized INIT(FALSE);
-static bool wait_fd_opened INIT(FALSE);
+static int wait_ttyfd = -1;
+static bool wait_initialized = false;
+static bool wait_fd_opened = false;
 
 #ifdef NBG_SELECT
 static struct timeval wait_time;

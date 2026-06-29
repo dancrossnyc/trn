@@ -28,16 +28,16 @@
 #define sa_authscored(a) (sa_ents[a].sa_flags & 8)
 
 /* misc. buffer */
-EXT char sa_buf[LBUFLEN];
+extern char sa_buf[LBUFLEN];
 
 /* TRUE if in "zoom" (display only selected) mode */
-EXT bool sa_mode_zoom INIT(FALSE);
+extern bool sa_mode_zoom;
 
 /* if TRUE, the already-read articles have been added to the order arrays */
-EXT bool sa_order_read INIT(FALSE);
+extern bool sa_order_read;
 
 /* contains the scan-context number for the current article scan */
-EXT int sa_scan_context INIT(-1);
+extern int sa_scan_context;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

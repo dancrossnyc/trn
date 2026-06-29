@@ -3,7 +3,6 @@
  *
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCAN
 #include "list.h"
@@ -22,7 +21,6 @@
 #include "sathread.h"	/* sa_mode_fold */
 #endif
 #include "term.h"
-#include "INTERN.h"
 #include "spage.h"
 
 /* returns TRUE if sucessful */

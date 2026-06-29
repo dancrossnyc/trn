@@ -3,8 +3,8 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-EXT bool sel_rereading INIT(0);
-EXT char sel_disp_char[] INIT(" +-*");
+extern bool sel_rereading;
+extern char sel_disp_char[];
 
 #define SM_THREAD	1
 #define SM_SUBJECT	2
@@ -15,9 +15,9 @@ EXT char sel_disp_char[] INIT(" +-*");
 #define SM_OPTIONS	7
 #define SM_UNIVERSAL	8
 
-EXT int sel_mode;
-EXT int sel_defaultmode INIT(SM_THREAD);
-EXT int sel_threadmode INIT(SM_THREAD);
+extern int sel_mode;
+extern int sel_defaultmode;
+extern int sel_threadmode;
 
 #define SS_DATE		1
 #define SS_STRING	2
@@ -30,29 +30,29 @@ EXT int sel_threadmode INIT(SM_THREAD);
 /*       (The real order is then something like natural or date.) */
 #define SS_SCORE	8
 
-EXT char* sel_mode_string;
-EXT int sel_sort;
-EXT int sel_artsort INIT(SS_GROUPS);
-EXT int sel_threadsort INIT(SS_DATE);
-EXT int sel_newsgroupsort INIT(SS_NATURAL);
-EXT int sel_addgroupsort INIT(SS_NATURAL);
-EXT int sel_univsort INIT(SS_NATURAL);
+extern char* sel_mode_string;
+extern int sel_sort;
+extern int sel_artsort;
+extern int sel_threadsort;
+extern int sel_newsgroupsort;
+extern int sel_addgroupsort;
+extern int sel_univsort;
 
-EXT char* sel_sort_string;
-EXT int sel_direction INIT(1);
-EXT bool sel_exclusive INIT(FALSE);
-EXT int sel_mask INIT(1);
+extern char* sel_sort_string;
+extern int sel_direction;
+extern bool sel_exclusive;
+extern int sel_mask;
 
-EXT bool selected_only INIT(FALSE);
-EXT ART_UNREAD selected_count INIT(0);
-EXT int selected_subj_cnt INIT(0);
-EXT int added_articles INIT(0);
+extern bool selected_only;
+extern ART_UNREAD selected_count;
+extern int selected_subj_cnt;
+extern int added_articles;
 
-EXT char* sel_chars;
-EXT int sel_item_index;
-EXT int sel_last_line;
-EXT bool sel_at_end;
-EXT bool art_sel_ilock INIT(FALSE);
+extern char* sel_chars;
+extern int sel_item_index;
+extern int sel_last_line;
+extern bool sel_at_end;
+extern bool art_sel_ilock;
 
 #define DS_ASK  	1
 #define DS_UPDATE	2

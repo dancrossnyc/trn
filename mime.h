@@ -85,40 +85,16 @@ struct html_tags {
     int flags;
 };
 
-#ifndef DOINIT
-EXT HTML_TAGS tagattr[LAST_TAG];
-#else
+extern HTML_TAGS tagattr[LAST_TAG];
 
-HTML_TAGS tagattr[LAST_TAG] = {
- /* name               length   flags */
-    {"blockquote",	10,	TF_BLOCK | TF_P | TF_NL			},
-    {"br",		 2,	TF_NL | TF_BR				},
-    {"div",		 3,	TF_BLOCK | TF_NL			},
-    {"hr",		 2,	TF_NL					},
-    {"img",		 3,	0					},
-    {"li",		 2,	TF_NL					},
-    {"ol",		 2,	TF_BLOCK | TF_P | TF_NL | TF_LIST	},
-    {"p",		 1,	TF_HAS_CLOSE | TF_P | TF_NL		},
-    {"pre",		 3,	TF_BLOCK | TF_P | TF_NL			},
-    {"script",		 6,	TF_BLOCK | TF_HIDE			},
-    {"style",		 5,	TF_BLOCK | TF_HIDE			},
-    {"td",		 2,	TF_TAB					},
-    {"th",		 2,	TF_TAB					},
-    {"tr",		 2,	TF_NL					},
-    {"title",		 5,	TF_BLOCK | TF_HIDE			},
-    {"ul",		 2,	TF_BLOCK | TF_P | TF_NL | TF_LIST	},
-    {"xml",		 3,	TF_BLOCK | TF_HIDE			}, /* non-standard but seen in the wild */
-};
-#endif
-
-EXT LIST* mimecap_list;
+extern LIST* mimecap_list;
 
 #define mimecap_ptr(n) ((MIMECAP_ENTRY*)listnum2listitem(mimecap_list,(long)(n)))
 
-EXT MIME_SECT mime_article;
-EXT MIME_SECT* mime_section INIT(&mime_article);
-EXT short mime_state;
-EXT char* multipart_separator INIT("-=-=-=-=-=-");
+extern MIME_SECT mime_article;
+extern MIME_SECT* mime_section;
+extern short mime_state;
+extern char* multipart_separator;
 
 #define NOT_MIME	0
 #define TEXT_MIME	1
@@ -153,8 +129,8 @@ struct mimecap_entry {
 #define MCF_NEEDSTERMINAL	0x0001
 #define MCF_COPIOUSOUTPUT	0x0002
 
-EXT bool auto_view_inline INIT(FALSE);
-EXT char* mime_getc_line INIT(NULL);
+extern bool auto_view_inline;
+extern char* mime_getc_line;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

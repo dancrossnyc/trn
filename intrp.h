@@ -3,14 +3,14 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-EXT char* origdir INIT(NULL);		/* cwd when rn invoked */
-EXT char* hostname INIT(NULL);		/* host name to match local postings */
-EXT char* headname INIT(NULL);
-EXT int perform_cnt;
+extern char* origdir;		/* cwd when rn invoked */
+extern char* hostname;		/* host name to match local postings */
+extern char* headname;
+extern int perform_cnt;
 
 #ifdef NEWS_ADMIN
-    EXT char newsadmin[] INIT(NEWS_ADMIN);/* news administrator */
-    EXT int newsuid INIT(0);
+extern char newsadmin[];	/* news administrator */
+extern int newsuid;
 #endif
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */

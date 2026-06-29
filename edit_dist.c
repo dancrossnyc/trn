@@ -5,10 +5,8 @@
  * is at the user's own risk.
  */
 
-#include "EXTERN.h"
 #include "common.h"		/* Declare size_t */
 #include "util.h"		/* Declare safemalloc() */
-#include "INTERN.h"
 #include "edit_dist.h"
 
 #ifdef EDIT_DISTANCE

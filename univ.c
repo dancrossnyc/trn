@@ -5,7 +5,6 @@
  *
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #include "env.h"
 #include "hash.h"
@@ -412,9 +411,9 @@ univ_add_virtgroup (char *grpname)
     hashstorelast(data);
 }
 
-static bool univ_begin_found INIT(FALSE);
+static bool univ_begin_found = FALSE;
 /* label to start working with */
-static char* univ_begin_label INIT(NULL);
+static char* univ_begin_label = NULL;
 
 /* type: 0=newsgroup, 1=virtual (more in future?) */
 void

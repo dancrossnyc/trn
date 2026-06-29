@@ -4,7 +4,6 @@
  * main working routines  (may change later)
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCAN_ART
 #include "list.h"
@@ -29,9 +28,19 @@
 #include "sadesc.h"
 #include "sadisp.h"
 #include "sathread.h"
-#include "INTERN.h"
 #include "samain.h"
 
+/* misc. buffer */
+char sa_buf[LBUFLEN];
+
+/* TRUE if in "zoom" (display only selected) mode */
+bool sa_mode_zoom = FALSE;
+
+/* if TRUE, the already-read articles have been added to the order arrays */
+bool sa_order_read = FALSE;
+
+/* contains the scan-context number for the current article scan */
+int sa_scan_context = -1;
 
 void
 sa_init (void)

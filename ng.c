@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "trn.h"
@@ -56,12 +55,31 @@
 #include "univ.h"
 #include "artstate.h"
 #include "color.h"
-#include "INTERN.h"
 #include "ng.h"
 #include "ng.ih"
 #ifdef USE_FILTER
 #include "filter.h"
 #endif
+
+ART_NUM art = 0;	/* current or prospective article # */
+
+ART_NUM recent_art;	/* previous article # for '-' command */
+ART_NUM curr_art;	/* current article # */
+ARTICLE* recent_artp = 0;/* article_ptr equivilents */
+ARTICLE* curr_artp = 0;
+ARTICLE* artp = 0;	/* the article ptr we use when art is 0 */
+
+int checkcount = 0;	/* how many articles have we read */
+			/*   in the current newsgroup since */
+			/*   the last checkpoint? */
+int docheckwhen = 20;	/* how often to do checkpoint */
+
+char* subjline = NULL;	/* what format to use for '=' */
+int mailcount = 0;	/* check for mail when 0 mod 10 */
+char* mailcall = nullstr;
+bool forcelast = FALSE;	/* ought we show "End of newsgroup"? */
+bool forcegrow = FALSE;	/* do we want to recalculate size */
+			/*   of newsgroup, e.g. after posting? */
 
 /* art_switch() return values */
 

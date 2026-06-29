@@ -64,50 +64,50 @@ struct scontext {
 
 /* the current values */
 
-EXT long* s_ent_sort;		/* sorted list of entries in the context */
-EXT long s_ent_sort_max;		/* maximum index of sorted array */
-EXT long s_ent_sorted_max;		/* maximum index *that is sorted* */
-EXT long* s_ent_index;		/* indexes into ent_sorted */
-EXT long s_ent_index_max;		/* maximum entry number added */
+extern long* s_ent_sort;		/* sorted list of entries in the context */
+extern long s_ent_sort_max;		/* maximum index of sorted array */
+extern long s_ent_sorted_max;		/* maximum index *that is sorted* */
+extern long* s_ent_index;		/* indexes into ent_sorted */
+extern long s_ent_index_max;		/* maximum entry number added */
 
-EXT int s_page_size;		/* number of entries allocated for page */
+extern int s_page_size;		/* number of entries allocated for page */
 				/* (usually fixed, > max screen lines) */
-EXT PAGE_ENT* page_ents;		/* array of entries on page */
+extern PAGE_ENT* page_ents;		/* array of entries on page */
 /* -1 means not initialized for top and bottom entry */
-EXT long s_top_ent;		/* top entry on page */
-EXT long s_bot_ent;		/* bottom entry (note change) */
-EXT bool s_refill;			/* does the page need refilling? */
+extern long s_top_ent;		/* top entry on page */
+extern long s_bot_ent;		/* bottom entry (note change) */
+extern bool s_refill;		/* does the page need refilling? */
 /* refresh entries */
-EXT bool s_ref_all;		/* refresh all on page */
-EXT bool s_ref_top;		/* top status bar */
-EXT bool s_ref_bot;		/* bottom status bar */
+extern bool s_ref_all;		/* refresh all on page */
+extern bool s_ref_top;		/* top status bar */
+extern bool s_ref_bot;		/* bottom status bar */
 /* -1 for the next two entries means don't refresh */
-EXT short s_ref_status;		/* line to start refreshing status from */
-EXT short s_ref_desc;		/* line to start refreshing descript. from */
+extern short s_ref_status;	/* line to start refreshing status from */
+extern short s_ref_desc;	/* line to start refreshing descript. from */
 /* screen sizes */
-EXT short s_top_lines;		/* lines for top status bar */
-EXT short s_bot_lines;		/* lines for bottom status bar */
-EXT short s_status_cols;		/* characters for status column */
-EXT short s_cursor_cols;		/* characters for cursor column */
-EXT short s_itemnum_cols;		/* characters for item number column */
-EXT short s_desc_cols;		/* characters for description column */
+extern short s_top_lines;	/* lines for top status bar */
+extern short s_bot_lines;	/* lines for bottom status bar */
+extern short s_status_cols;	/* characters for status column */
+extern short s_cursor_cols;	/* characters for cursor column */
+extern short s_itemnum_cols;	/* characters for item number column */
+extern short s_desc_cols;	/* characters for description column */
 /* pointer info */
-EXT short s_ptr_page_line;		/* page_ent index */
-EXT long  s_flags;			/* misc. flags */
+extern short s_ptr_page_line;	/* page_ent index */
+extern long  s_flags;		/* misc. flags */
 
-EXT int s_num_contexts INIT(0);
+extern int s_num_contexts;
 /* array of context structures */
-EXT SCONTEXT* s_contexts INIT((SCONTEXT*)NULL);
+extern SCONTEXT* s_contexts;
 
 /* current context number */
-EXT int s_cur_context INIT(0);
+extern int s_cur_context;
 /* current context type (for fast switching) */
-EXT int s_cur_type;
+extern int s_cur_type;
 
 /* options */
 /* show item numbers by default */
-EXT int s_itemnum INIT(TRUE);
-EXT int s_mode_vi INIT(0);
+extern int s_itemnum;
+extern int s_mode_vi;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

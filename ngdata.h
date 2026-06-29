@@ -18,39 +18,39 @@ struct ngdata {
     char flags;  	/* flags for each group */
 };
 
-EXT LIST* ngdata_list INIT(NULL); /* a list of NGDATA */
-EXT int ngdata_cnt INIT(0);
-EXT NG_NUM newsgroup_cnt INIT(0); /* all newsgroups in our current newsrc(s) */
-EXT NG_NUM newsgroup_toread INIT(0);
-EXT ART_UNREAD ng_min_toread INIT(1); /* == TR_ONE or TR_NONE */
+extern LIST* ngdata_list; /* a list of NGDATA */
+extern int ngdata_cnt;
+extern NG_NUM newsgroup_cnt; /* all newsgroups in our current newsrc(s) */
+extern NG_NUM newsgroup_toread;
+extern ART_UNREAD ng_min_toread; /* == TR_ONE or TR_NONE */
 
-EXT NGDATA* first_ng INIT(NULL);
-EXT NGDATA* last_ng INIT(NULL);
-EXT NGDATA* ngptr INIT(NULL);	/* current newsgroup data ptr */
+extern NGDATA* first_ng;
+extern NGDATA* last_ng;
+extern NGDATA* ngptr;	/* current newsgroup data ptr */
 
-EXT NGDATA* current_ng INIT(NULL);/* stable current newsgroup so we can ditz with ngptr */
-EXT NGDATA* recent_ng INIT(NULL); /* the prior newsgroup we visited */
-EXT NGDATA* starthere INIT(NULL); /* set to the first newsgroup with unread news on startup */
+extern NGDATA* current_ng;/* stable current newsgroup so we can ditz with ngptr */
+extern NGDATA* recent_ng; /* the prior newsgroup we visited */
+extern NGDATA* starthere; /* set to the first newsgroup with unread news on startup */
 
 #define ngdata_ptr(ngnum) ((NGDATA*)listnum2listitem(ngdata_list,(long)(ngnum)))
 /*#define ngdata_num(ngptr) listitem2listnum(ngdata_list,(char*)ngptr)*/
 
-EXT NGDATA* sel_page_np;
-EXT NGDATA* sel_next_np;
+extern NGDATA* sel_page_np;
+extern NGDATA* sel_next_np;
 
-EXT ART_NUM absfirst INIT(0);	/* 1st real article in current newsgroup */
-EXT ART_NUM firstart INIT(0);	/* minimum unread article number in newsgroup */
-EXT ART_NUM lastart INIT(0);	/* maximum article number in newsgroup */
-EXT ART_UNREAD missing_count;	/* for reports on missing articles */
+extern ART_NUM absfirst;	/* 1st real article in current newsgroup */
+extern ART_NUM firstart;	/* minimum unread article number in newsgroup */
+extern ART_NUM lastart;	/* maximum article number in newsgroup */
+extern ART_UNREAD missing_count;	/* for reports on missing articles */
 
-EXT char* moderated;
-EXT char* redirected;
-EXT bool ThreadedGroup;
+extern char* moderated;
+extern char* redirected;
+extern bool ThreadedGroup;
 
 /* CAA goto-newsgroup extensions */
-EXT NGDATA* ng_go_ngptr INIT(NULL);
-EXT ART_NUM ng_go_artnum INIT(0);
-EXT char* ng_go_msgid INIT(NULL);
+extern NGDATA* ng_go_ngptr;
+extern ART_NUM ng_go_artnum;
+extern char* ng_go_msgid;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

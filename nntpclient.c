@@ -3,13 +3,18 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 
 
 #include "nntpinit.h"
-#include "INTERN.h"
 #include "nntpclient.h"
+
+NNTPLINK nntplink;		/* the current server's file handles */
+bool nntp_allow_timeout = FALSE;
+
+char ser_line[NNTP_STRLEN];
+
+char last_command[NNTP_STRLEN];
 
 time_t last_command_diff;
 

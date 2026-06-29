@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "util.h"
@@ -27,10 +26,16 @@
 #include "autosub.h"
 #include "rt-select.h"
 #include "rt-page.h"
-#include "INTERN.h"
 #include "rcstuff.h"
 #include "rcstuff.ih"
 
+HASHTABLE* newsrc_hash = NULL;
+MULTIRC* sel_page_mp;
+MULTIRC* sel_next_mp;
+LIST* multirc_list;		/* a list of all MULTIRCs */
+MULTIRC* multirc;		/* the current MULTIRC */
+bool paranoid = false;		/* did we detect some inconsistency in .newsrc? */
+int addnewbydefault = 0;
 static bool foundany;
 
 bool

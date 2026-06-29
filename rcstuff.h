@@ -24,7 +24,7 @@
 #define GNG_RELOC	0x0001
 #define GNG_FUZZY	0x0002
 
-EXT HASHTABLE* newsrc_hash INIT(NULL);
+extern HASHTABLE* newsrc_hash;
 
 struct newsrc {
     NEWSRC*	next;
@@ -52,8 +52,8 @@ struct multirc {
 #define MF_SEL		0x0001
 #define MF_INCLUDED	0x0010
 
-EXT MULTIRC* sel_page_mp;
-EXT MULTIRC* sel_next_mp;
+extern MULTIRC* sel_page_mp;
+extern MULTIRC* sel_next_mp;
 
 #define multirc_ptr(n)  ((MULTIRC*)listnum2listitem(multirc_list,(long)(n)))
 #define multirc_low()   ((MULTIRC*)listnum2listitem(multirc_list,existing_listnum(multirc_list,0L,1)))
@@ -61,11 +61,11 @@ EXT MULTIRC* sel_next_mp;
 #define multirc_next(p) ((MULTIRC*)next_listitem(multirc_list,(char*)(p)))
 #define multirc_prev(p) ((MULTIRC*)prev_listitem(multirc_list,(char*)(p)))
 
-EXT LIST* multirc_list;	/* a list of all MULTIRCs */
-EXT MULTIRC* multirc;		/* the current MULTIRC */
+extern LIST* multirc_list;	/* a list of all MULTIRCs */
+extern MULTIRC* multirc;	/* the current MULTIRC */
 
-EXT bool paranoid INIT(FALSE);	/* did we detect some inconsistency in .newsrc? */
-EXT int addnewbydefault INIT(0);
+extern bool paranoid;		/* did we detect some inconsistency in .newsrc? */
+extern int addnewbydefault;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

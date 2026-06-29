@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "intrp.h"
@@ -29,9 +28,13 @@
 #include "decode.h"
 #include "uudecode.h"
 #include "charsubst.h"
-#include "INTERN.h"
 #include "respond.h"
 #include "respond.ih"
+
+char* savedest = NULL;		/* value of %b */
+char* extractdest = NULL;	/* value of %E */
+char* extractprog = NULL;	/* value of %e */
+ART_POS savefrom = 0;		/* value of %B */
 
 static char nullart[] = "\nEmpty article.\n";
 

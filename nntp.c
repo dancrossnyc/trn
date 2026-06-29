@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "util.h"
@@ -14,10 +13,8 @@
 #include "ngdata.h"
 #include "nntpclient.h"
 #include "datasrc.h"
-#include "INTERN.h"
 #include "nntp.h"
 #include "nntp.ih"
-#include "EXTERN.h"
 #include "rcln.h"
 #include "cache.h"
 #include "bits.h"

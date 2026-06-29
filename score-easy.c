@@ -4,7 +4,6 @@
  * Simple interactive menus for scorefile tasks.
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCORE
 #include "search.h"
@@ -12,7 +11,6 @@
 #include "util.h"
 #include "score.h"
 #include "scorefile.h"
-#include "INTERN.h"
 #include "score-easy.h"
 
 /* new line to return to the caller. */

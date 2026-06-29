@@ -4,7 +4,7 @@
 
 
 /* if TRUE, silence is golden (universal scan mode) */
-EXT bool toread_quiet INIT(FALSE);
+extern bool toread_quiet;
 
 #define ST_STRICT	0
 #define ST_LAX		1

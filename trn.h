@@ -3,11 +3,11 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-EXT char* ngname INIT(NULL);	/* name of current newsgroup */
-EXT int ngnlen INIT(0);		/* current malloced size of ngname */
-EXT int ngname_len;		/* length of current ngname */
-EXT char* ngdir INIT(NULL);	/* same thing in directory name form */
-EXT int ngdlen INIT(0);		/* current malloced size of ngdir */
+extern char* ngname;	/* name of current newsgroup */
+extern int ngnlen;	/* current malloced size of ngname */
+extern int ngname_len;	/* length of current ngname */
+extern char* ngdir;	/* same thing in directory name form */
+extern int ngdlen;	/* current malloced size of ngdir */
 
 #define ING_NORM	0
 #define ING_ASK		1
@@ -22,19 +22,19 @@ EXT int ngdlen INIT(0);		/* current malloced size of ngdir */
 #define ING_DISPLAY	10
 #define ING_MESSAGE	11
 
-EXT int ing_state;
+extern int ing_state;
 
 #define INGS_CLEAN	0
 #define INGS_DIRTY	1
 
-EXT bool  write_less INIT(FALSE);	/* write .newsrc less often */
+extern bool  write_less;	/* write .newsrc less often */
 
-EXT char* auto_start_cmd INIT(NULL);	/* command to auto-start with */
-EXT bool  auto_started INIT(FALSE);	/* have we auto-started? */
+extern char* auto_start_cmd;	/* command to auto-start with */
+extern bool  auto_started;	/* have we auto-started? */
 
-EXT bool  is_strn INIT(FALSE);		/* Is this "strn", or trn/rn? */
+extern bool  is_strn;		/* Is this "strn", or trn/rn? */
 
-EXT char patchlevel[] INIT(PATCHLEVEL);
+extern char patchlevel[];
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

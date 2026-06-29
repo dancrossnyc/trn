@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "term.h"
@@ -34,8 +33,15 @@
 #include "addng.h"
 #include "opt.h"
 #include "only.h"
-#include "INTERN.h"
 #include "ngstuff.h"
+
+bool one_command = FALSE;	/* no ':' processing in perform() */
+
+/* CAA: given the new and complex universal/help possibilities,
+ *      the following interlock variable may save some trouble.
+ *      (if TRUE, we are currently processing options)
+ */
+bool option_sel_ilock = FALSE;
 
 void
 ngstuff_init (void)

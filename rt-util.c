@@ -4,7 +4,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "hash.h"
@@ -26,9 +25,16 @@
 #ifdef USE_TK
 #include "tkstuff.h"
 #endif
-#include "INTERN.h"
 #include "rt-util.h"
 #include "rt-util.ih"
+
+char spin_char = ' ';	/* char to put back when we're done spinning */
+long spin_estimate;	/* best guess of how much work there is */
+long spin_todo;		/* the max word to do (might decrease) */
+int  spin_count;	/* counter for when to spin */
+int  spin_marks = 25;	/* how many bargraph marks we want */
+
+bool performed_article_loop;
 
 /* Name-munging routines written by Ross Ridge.
 ** Enhanced by Wayne Davison.
@@ -610,7 +616,7 @@ compress_subj (ARTICLE *ap, int max)
 /* Modified version of a spinner originally found in Clifford Adams' strn. */
 
 static char *spinchars;
-static int spin_level INIT(0);	/* used to allow non-interfering nested spins */
+static int spin_level = 0;	/* used to allow non-interfering nested spins */
 static int spin_mode;
 static int spin_place;		/* represents place in spinchars array */
 static int spin_pos;		/* the last spinbar position we drew */

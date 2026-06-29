@@ -5,12 +5,12 @@
  */
 
 	/* height of screen in characters */
-EXT int scr_height INIT(0);
+extern int scr_height;
 	/* width of screen in characters */
-EXT int scr_width INIT(0);
+extern int scr_width;
 
 /* has the window been resized? */
-EXT bool s_resized INIT(FALSE);
+extern bool s_resized;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

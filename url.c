@@ -4,13 +4,11 @@
  * Routines for handling WWW URL references.
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef USEURL
 #include "term.h"
 #include "util.h"
 #include "util2.h"
-#include "INTERN.h"
 #include "url.h"
 #include "url.ih"
 

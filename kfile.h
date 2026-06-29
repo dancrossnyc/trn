@@ -38,15 +38,15 @@
 #define KF_MAXDAYS	30
 
 #ifdef KILLFILES
-EXT FILE* globkfp INIT(NULL);		/* global article killer file */
-EXT FILE* localkfp INIT(NULL);		/* local (for this newsgroup) file */
-EXT int kf_state;			/* the state of our kill files */
-EXT int kfs_local_change_clear;		/* bits to clear local changes */
-EXT int kfs_thread_change_set;		/* bits to set for thread changes */
-EXT int kf_thread_cnt;			/* # entries in the thread kfile */
-EXT int kf_changethd_cnt;		/* # entries changed from old to new */
-EXT long kf_daynum;			/* day number for thread killfile */
-EXT ART_NUM killfirst;			/* used as firstart when killing */
+extern FILE* globkfp;			/* global article killer file */
+extern FILE* localkfp;			/* local (for this newsgroup) file */
+extern int kf_state;			/* the state of our kill files */
+extern int kfs_local_change_clear;	/* bits to clear local changes */
+extern int kfs_thread_change_set;	/* bits to set for thread changes */
+extern int kf_thread_cnt;		/* # entries in the thread kfile */
+extern int kf_changethd_cnt;		/* # entries changed from old to new */
+extern long kf_daynum;			/* day number for thread killfile */
+extern ART_NUM killfirst;		/* used as firstart when killing */
 #endif
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */

@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 
 #ifdef USE_FILTER
@@ -19,7 +18,6 @@
 #include "rt-ov.h"
 #include "nntpclient.h"
 #include "datasrc.h"
-#include "INTERN.h"
 #include "filter.h"
 #include "filter.ih"
 

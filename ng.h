@@ -3,26 +3,26 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-EXT ART_NUM art INIT(0);	/* current or prospective article # */
+extern ART_NUM art;		/* current or prospective article # */
 
-EXT ART_NUM recent_art;		/* previous article # for '-' command */
-EXT ART_NUM curr_art;		/* current article # */
-EXT ARTICLE* recent_artp INIT(0);/* article_ptr equivilents */
-EXT ARTICLE* curr_artp INIT(0);
-EXT ARTICLE* artp INIT(0);	/* the article ptr we use when art is 0 */
+extern ART_NUM recent_art;	/* previous article # for '-' command */
+extern ART_NUM curr_art;	/* current article # */
+extern ARTICLE* recent_artp;	/* article_ptr equivilents */
+extern ARTICLE* curr_artp;
+extern ARTICLE* artp	;	/* the article ptr we use when art is 0 */
 
-EXT int checkcount INIT(0);	/* how many articles have we read */
+extern int checkcount;		/* how many articles have we read */
 				/*   in the current newsgroup since */
 				/*   the last checkpoint? */
-EXT int docheckwhen INIT(20);	/* how often to do checkpoint */
+extern int docheckwhen;		/* how often to do checkpoint */
 
-EXT char* subjline INIT(NULL);	/* what format to use for '=' */
+extern char* subjline;		/* what format to use for '=' */
 #ifdef MAILCALL
-EXT int mailcount INIT(0);	/* check for mail when 0 mod 10 */
+extern int mailcount;		/* check for mail when 0 mod 10 */
 #endif
-EXT char* mailcall INIT(nullstr);
-EXT bool forcelast INIT(FALSE);	/* ought we show "End of newsgroup"? */
-EXT bool forcegrow INIT(FALSE);	/* do we want to recalculate size */
+extern char* mailcall;
+extern bool forcelast;		/* ought we show "End of newsgroup"? */
+extern bool forcegrow;		/* do we want to recalculate size */
 				/*   of newsgroup, e.g. after posting? */
 
 #define NG_ERROR -1

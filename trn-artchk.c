@@ -9,7 +9,6 @@
 ** Usage: trn-artchk <article> <maxLineLen> <newsgroupsFile> <activeFile>
 */
 
-#include "EXTERN.h"
 #include "common.h"
 #include "util.h"
 #include "util2.h"
@@ -27,8 +26,8 @@ char* nntp_auth_file;
 
 int debug = 0;
 
-char* homedir;
-char* dotdir;
+extern char* homedir;
+extern char* dotdir;
 
 char nullstr[1] = "";
 char ess[2] = "s";

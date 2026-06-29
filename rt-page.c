@@ -4,7 +4,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "hash.h"
@@ -29,9 +28,29 @@
 #include "rt-util.h"
 #include "univ.h"
 #include "color.h"
-#include "INTERN.h"
 #include "rt-page.h"
 #include "rt-page.ih"
+
+int sel_total_obj_cnt;
+int sel_prior_obj_cnt;
+int sel_page_obj_cnt;
+int sel_page_item_cnt;
+int sel_max_per_page;
+int sel_max_line_cnt;
+
+ARTICLE** sel_page_app;
+ARTICLE** sel_next_app;
+ARTICLE* sel_last_ap;
+SUBJECT* sel_page_sp;
+SUBJECT* sel_next_sp;
+SUBJECT* sel_last_sp;
+
+char* sel_grp_dmode = "*slm";
+char* sel_art_dmode = "*lmds";
+
+bool group_init_done = true;
+
+SEL_ITEM sel_items[MAX_SEL];
 
 bool
 set_sel_mode (char_int ch)

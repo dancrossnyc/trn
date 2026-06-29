@@ -5,11 +5,8 @@
 #include <stdio.h>
 
 #include "minunit.h"
-
-#include "EXTERN.h"
 #include "common.h"
 #include "utf.h"
-#include "INTERN.h"
 
 int tests_run = 0;
 

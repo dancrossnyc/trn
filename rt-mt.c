@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "intrp.h"
@@ -22,7 +21,6 @@
 #include "util2.h"
 #include "rthread.h"
 #include "rt-process.h"
-#include "INTERN.h"
 #include "rt-mt.h"
 #include "rt-mt.ih"
 

@@ -2,7 +2,6 @@
  * vi: set sw=4 ts=8 ai sm noet:
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "hash.h"
@@ -23,9 +22,39 @@
 #include "utf.h"
 #include "backpage.h"
 #include "charsubst.h"
-#include "INTERN.h"
 #include "mime.h"
 #include "mime.ih"
+
+HTML_TAGS tagattr[LAST_TAG] = {
+ /* name               length   flags */
+    {"blockquote",	10,	TF_BLOCK | TF_P | TF_NL			},
+    {"br",		 2,	TF_NL | TF_BR				},
+    {"div",		 3,	TF_BLOCK | TF_NL			},
+    {"hr",		 2,	TF_NL					},
+    {"img",		 3,	0					},
+    {"li",		 2,	TF_NL					},
+    {"ol",		 2,	TF_BLOCK | TF_P | TF_NL | TF_LIST	},
+    {"p",		 1,	TF_HAS_CLOSE | TF_P | TF_NL		},
+    {"pre",		 3,	TF_BLOCK | TF_P | TF_NL			},
+    {"script",		 6,	TF_BLOCK | TF_HIDE			},
+    {"style",		 5,	TF_BLOCK | TF_HIDE			},
+    {"td",		 2,	TF_TAB					},
+    {"th",		 2,	TF_TAB					},
+    {"tr",		 2,	TF_NL					},
+    {"title",		 5,	TF_BLOCK | TF_HIDE			},
+    {"ul",		 2,	TF_BLOCK | TF_P | TF_NL | TF_LIST	},
+    {"xml",		 3,	TF_BLOCK | TF_HIDE			}, /* non-standard but seen in the wild */
+};
+
+LIST* mimecap_list;
+
+MIME_SECT mime_article;
+MIME_SECT* mime_section = &mime_article;
+short mime_state;
+char* multipart_separator = "-=-=-=-=-=-";
+
+bool auto_view_inline = FALSE;
+char* mime_getc_line = NULL;
 
 static char text_plain[] = "text/plain";
 

@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "env.h"
@@ -54,10 +53,15 @@
 #include "tkstuff.h"
 #endif
 #include "univ.h"
-#include "INTERN.h"
 #include "init.h"
 #ifdef USE_FILTER
 #include "filter.h"
+#endif
+
+long our_pid;
+/* default string for group entry */
+#if 0
+char *group_default = nullstr;
 #endif
 
 bool

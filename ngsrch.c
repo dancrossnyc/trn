@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "list.h"
 #include "ngdata.h"
@@ -24,8 +23,9 @@
 #include "cache.h"
 #include "rt-select.h"
 #include "rt-util.h"
-#include "INTERN.h"
 #include "ngsrch.h"
+
+bool ng_doempty = false;	/* search empty newsgroups? */
 
 #ifdef NGSEARCH
 COMPEX ngcompex;
@@ -42,8 +42,8 @@ ngsrch_init (void)
 #ifdef NGSEARCH
 int
 ng_search (
-    char *patbuf,				/* if patbuf != buf, get_cmd must */
-    int get_cmd				/*   be set to FALSE!!! */
+    char *patbuf,		/* if patbuf != buf, get_cmd must */
+    int get_cmd			/*   be set to FALSE!!! */
 )
 {
     char cmdchr = *patbuf;	/* what kind of search? */

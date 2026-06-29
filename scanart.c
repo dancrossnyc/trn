@@ -6,7 +6,6 @@
  * Interface routines to the rest of trn
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #include "hash.h"
 #include "cache.h"
@@ -20,9 +19,7 @@
 #include "scan.h"
 #include "smisc.h"
 #include "spage.h"
-#include "INTERN.h"
 #include "scanart.h"		/* ordering dependency */
-#include "EXTERN.h"
 #include "samain.h"
 #include "samisc.h"
 

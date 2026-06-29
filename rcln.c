@@ -3,7 +3,6 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#include "EXTERN.h"
 #include "common.h"
 #include "util.h"
 #include "util2.h"
@@ -15,8 +14,10 @@
 #include "nntp.h"
 #include "rcstuff.h"
 #include "term.h"
-#include "INTERN.h"
 #include "rcln.h"
+
+/* if TRUE, silence is golden (universal scan mode) */
+bool toread_quiet = false;
 
 #define MAX_DIGITS 7
 

@@ -4,7 +4,6 @@
  * Lots of misc. stuff.
  */
 
-#include "EXTERN.h"
 #include "common.h"
 #ifdef SCAN
 #include "hash.h"
@@ -21,8 +20,13 @@
 #include "samisc.h"
 #include "sadesc.h"
 #endif
-#include "INTERN.h"
 #include "smisc.h"
+
+/* TRUE if the last command (run through setdef()) was the default */
+bool s_default_cmd = FALSE;
+
+/* explicitly follow until end of thread */
+bool s_follow_temp = FALSE;
 
 bool
 s_eligible (long ent)
