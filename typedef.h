@@ -3,13 +3,13 @@
 
 /* some important types */
 
-typedef int		NG_NUM;		/* newsgroup number */
-typedef long		ART_NUM;	/* article number */
-typedef long		ART_UNREAD;	/* could be short to save space */
-typedef long		ART_POS;	/* char position in article file */
-typedef int		ART_LINE;	/* line position in article file */
-typedef long		ACT_POS;	/* char position in active file */
-typedef unsigned char	Uchar;		/* more space-efficient */
+typedef int             NG_NUM;         /* newsgroup number */
+typedef long            ART_NUM;        /* article number */
+typedef long            ART_UNREAD;     /* could be short to save space */
+typedef long            ART_POS;        /* char position in article file */
+typedef int             ART_LINE;       /* line position in article file */
+typedef long            ACT_POS;        /* char position in active file */
+typedef unsigned char   Uchar;          /* more space-efficient */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

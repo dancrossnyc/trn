@@ -9,7 +9,7 @@
 
 #include "utf.h"
 
-extern bool waiting;  	/* waiting for subprocess (in doshell)? */
+extern bool waiting;    /* waiting for subprocess (in doshell)? */
 extern bool nowait_fork;
 extern bool export_nntp_fds;
 
@@ -29,7 +29,7 @@ AT_NORM_CHAR(const char *s) {
 }
 
 /* is the string for makedir a directory name or a filename? */
-#define MD_DIR 	0
+#define MD_DIR  0
 #define MD_FILE 1
 
 /* a template for parsing an ini file */

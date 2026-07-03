@@ -11,7 +11,7 @@
 #define NGS_ERROR 4
 #define NGS_DONE 5
 
-extern bool ng_doempty;		/* search empty newsgroups? */
+extern bool ng_doempty;         /* search empty newsgroups? */
 #endif
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */

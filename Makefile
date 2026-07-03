@@ -1,7 +1,7 @@
 # Makefile.SH
 #
 # This software is copyrighted as detailed in the LICENSE file.
-# 
+#
 # optional defines you can add to the CFLAGS
 #    -DDEBUG                      compile in support for the -D option
 #    -DNO_LISTGROUP               avoids attempting to use LISTGROUP
@@ -20,7 +20,7 @@ lintflags = --analyze
 CFLAGS = -g -pthread -I/usr/local/include 
 TKINC = 
 LDFLAGS =  -pthread -L/usr/local/lib -L/opt/local/lib -lc++abi -lm -lutil -lexecinfo -lcompiler_rt
-TKLDFLAGS = 
+TKLDFLAGS =
 
 o = o
 
@@ -36,7 +36,7 @@ installfilexp = /usr/local/lib/trn/filexp
 
 libs = trn-rs/target/debug/libtrn.a -lcurses  -lm -lintl
 tklibs = 
-public_backup = trn$(exe) trn-artchk$(exe) $(nntpexe) $(msdosexe)
+public_backup = trn trn-artchk $(nntpexe) $(msdosexe)
 public_diff = Pnews Rnmail
 public = $(public_backup) $(public_diff)
 private_preserve = access.def
@@ -45,8 +45,8 @@ private_blast = norm.saver mbox.saver makedir filexp
 private = $(private_preserve) $(private_diff) $(private_blast)
 util = makedepend mkpro mktd HelpFiles/config/environment
 manpages = trn.1 Pnews.1 Rnmail.1
-inewsexe=inews$(exe)
-nntpexe=nntplist$(exe)
+inewsexe=inews
+nntpexe=nntplist
 nntpsrc=nntpinit.c nntpclient.c nntpauth.c nntp.c
 nntpobj1=nntpinit.$(o) nntpclient.$(o) nntpauth.$(o)
 nntpobj2=nntp.$(o)
@@ -113,26 +113,26 @@ SHELL = /bin/sh
 all: Makefile $(public) $(inewsexe) $(private) $(util) Policy.sh
 	$(TOUCH) all
 
-trn$(exe): $(obj)
-	$(CC) $(LDFLAGS) $(TKLDFLAGS) $(obj) $(tklibs) $(libs) -o trn$(exe)
+trn: $(obj)
+	$(CC) $(LDFLAGS) $(TKLDFLAGS) $(obj) $(tklibs) $(libs) -o trn
 
 nntpinit.$(o): nntpinit.c
 	$(CC) -c $(CFLAGS) $(NNTPFLAGS) $<
 
 nntplistobjs = nntplist.$(o) $(nntpobj1) util2.$(o) util3.$(o)
 
-nntplist$(exe): $(nntplistobjs)
-	$(CC) $(LDFLAGS) $(nntplistobjs) -o nntplist$(exe) $(libs)
+nntplist: $(nntplistobjs)
+	$(CC) $(LDFLAGS) $(nntplistobjs) -o nntplist $(libs)
 
 inewsobjs = inews.$(o) $(nntpobj1) env.$(o) util2.$(o) util3.$(o)
 
-inews$(exe): $(inewsobjs)
-	$(CC) $(LDFLAGS) $(inewsobjs) -o inews$(exe) $(libs)
+inews: $(inewsobjs)
+	$(CC) $(LDFLAGS) $(inewsobjs) -o inews $(libs)
 
 trnchkobjs = trn-artchk.$(o) $(nntpobj1) util2.$(o) util3.$(o)
 
-trn-artchk$(exe): $(trnchkobjs)
-	$(CC) $(LDFLAGS) $(trnchkobjs) -o trn-artchk$(exe) $(libs)
+trn-artchk: $(trnchkobjs)
+	$(CC) $(LDFLAGS) $(trnchkobjs) -o trn-artchk $(libs)
 
 tkstuff.o: tkstuff.c
 	$(CC) -c $(CFLAGS) $(TKINC) $<
@@ -145,8 +145,8 @@ parsedate.c: parsedate.y
 	$(YACC) $(srcdir)/parsedate.y
 	mv -f y.tab.c parsedate.c
 
-unipatch$(exe): support/unipatch.$(o)
-	$(CC) $(LDFLAGS) support/unipatch.$(o) -o unipatch$(exe)
+unipatch: support/unipatch.$(o)
+	$(CC) $(LDFLAGS) support/unipatch.$(o) -o unipatch
 
 Pnews.header: Pnews
 
@@ -164,7 +164,7 @@ install: $(public) $(inewsexe) $(private) $(manpages) myinstall
  ./myinstall -xf Rnfilexp `./filexp $(rnbin)` ./filexp; fi
 	- ./makedir `./filexp $(rnlib)`
 	- chmod o+r `./filexp $(rnlib)`
-	./myinstall -sox `./filexp $(inewsbin)` inews$(exe)
+	./myinstall -sox `./filexp $(inewsbin)` inews
 	./myinstall -x   `./filexp $(rnlib)`    $(private_blast)
 	- if test "X$(mansrc)" != X -a "X`pwd`" != X`./filexp $(mansrc)`; then\
   ./makedir `./filexp $(mansrc)`;\
@@ -193,7 +193,7 @@ installclean:
 	- (cd `./filexp $(rnlib)` ; for file in INIT $(private_preserve) ; do\
   rm -f $${file}.new;\
  done)
-	- (cd `./filexp $(inewsbin)` ; rm -f inews$(exe).old)
+	- (cd `./filexp $(inewsbin)` ; rm -f inews.old)
 
 clean:
 	@echo 'Use "make realclean" to also remove the Makefile.'

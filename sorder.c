@@ -21,16 +21,16 @@ bool s_order_changed = false;
 int
 s_compare (
     long *a,
-    long *b		/* pointers to the two entries to be compared */
+    long *b             /* pointers to the two entries to be compared */
 )
  {
     switch(s_cur_type) {
 #ifdef SCAN_ART
       case S_ART:
-	return sa_compare(*a,*b);
+        return sa_compare(*a,*b);
 #endif
       default:
-	return *a - *b;
+        return *a - *b;
     }
 }
 #endif
@@ -38,16 +38,16 @@ s_compare (
 int
 s_compare (
     long a,
-    long b		/* the two entry numbers to be compared */
+    long b              /* the two entry numbers to be compared */
 )
 {
     switch(s_cur_type) {
 #ifdef SCAN_ART
       case S_ART:
-	return sa_compare(a,b);
+        return sa_compare(a,b);
 #endif
       default:
-	return a - b;
+        return a - b;
     }
 }
 
@@ -66,46 +66,46 @@ s_sort_basic (void)
 
     n = s_ent_sort_max + 1;
     if (n < 1)
-	return;		/* nothing to sort */
+        return;         /* nothing to sort */
 
     for (i = n/2; i >= 1; i--) {
-	/* begin heap readjust */
-	t1 = s_ent_sort[SOFF(i)];
-	j = 2*i;
-	while (j <= n) {
-	    if (j < n
-	     &&	s_compare(s_ent_sort[SOFF(j)],s_ent_sort[SOFF(j+1)]) < 0)
-		j++;
-	    if (s_compare(t1,s_ent_sort[SOFF(j)]) > 0)
-		break;		/* out of while loop */
-	    else {
-		s_ent_sort[SOFF(j/2)] = s_ent_sort[SOFF(j)];
-		j = j*2;
-	    }
-	} /* while */
-	s_ent_sort[SOFF(j/2)] = t1;
-	/* end heap readjust */
+        /* begin heap readjust */
+        t1 = s_ent_sort[SOFF(i)];
+        j = 2*i;
+        while (j <= n) {
+            if (j < n
+             && s_compare(s_ent_sort[SOFF(j)],s_ent_sort[SOFF(j+1)]) < 0)
+                j++;
+            if (s_compare(t1,s_ent_sort[SOFF(j)]) > 0)
+                break;          /* out of while loop */
+            else {
+                s_ent_sort[SOFF(j/2)] = s_ent_sort[SOFF(j)];
+                j = j*2;
+            }
+        } /* while */
+        s_ent_sort[SOFF(j/2)] = t1;
+        /* end heap readjust */
     } /* for */
 
     for (i = n-1; i >= 1; i--) {
-	t1 = s_ent_sort[SOFF(i+1)];
-	s_ent_sort[SOFF(i+1)] = s_ent_sort[SOFF(1)];
-	s_ent_sort[SOFF(1)] = t1;
-	/* begin heap readjust */
-	j = 2;
-	while (j <= i) {
-	    if (j < i
-	     && s_compare(s_ent_sort[SOFF(j)],s_ent_sort[SOFF(j+1)]) < 0)
-		j++;
-	    if (s_compare(t1,s_ent_sort[SOFF(j)]) > 0)
-		break;	/* out of while */
-	    else {
-		s_ent_sort[SOFF(j/2)] = s_ent_sort[SOFF(j)];
-		j = j*2;
-	    }
-	} /* while */
-	s_ent_sort[SOFF(j/2)] = t1;
-	/* end heap readjust */
+        t1 = s_ent_sort[SOFF(i+1)];
+        s_ent_sort[SOFF(i+1)] = s_ent_sort[SOFF(1)];
+        s_ent_sort[SOFF(1)] = t1;
+        /* begin heap readjust */
+        j = 2;
+        while (j <= i) {
+            if (j < i
+             && s_compare(s_ent_sort[SOFF(j)],s_ent_sort[SOFF(j+1)]) < 0)
+                j++;
+            if (s_compare(t1,s_ent_sort[SOFF(j)]) > 0)
+                break;  /* out of while */
+            else {
+                s_ent_sort[SOFF(j/2)] = s_ent_sort[SOFF(j)];
+                j = j*2;
+            }
+        } /* while */
+        s_ent_sort[SOFF(j/2)] = t1;
+        /* end heap readjust */
     } /* for */
     /* end of heapsort */
 }
@@ -123,16 +123,16 @@ s_sort (void)
     s_order_changed = false;
     /* rebuild the indexes */
     for (i = 0; i <= s_ent_sort_max; i++)
-	s_ent_index[s_ent_sort[i]] = i;
+        s_ent_index[s_ent_sort[i]] = i;
 }
 
 void
 s_order_clean (void)
 {
     if (s_ent_sort)
-	safefree(s_ent_sort);
+        safefree(s_ent_sort);
     if (s_ent_index)
-	safefree(s_ent_index);
+        safefree(s_ent_index);
 
     s_ent_sort = NULL;
     s_contexts[s_cur_context].ent_sort = s_ent_sort;
@@ -152,32 +152,32 @@ s_order_add (long ent)
     long size;
 
     if (ent < s_ent_index_max && s_ent_index[ent] >= 0)
-	return;		/* entry is already in the list */
+        return;         /* entry is already in the list */
 
     /* add entry to end of sorted list */
     s_ent_sort_max += 1;
-    if (s_ent_sort_max % 100 == 0) {	/* be nice to realloc */
-	size = (s_ent_sort_max+100) * sizeof (long);
-	s_ent_sort = (long*)saferealloc((char*)s_ent_sort,size);
-	/* change the context too */
-	s_contexts[s_cur_context].ent_sort = s_ent_sort;
+    if (s_ent_sort_max % 100 == 0) {    /* be nice to realloc */
+        size = (s_ent_sort_max+100) * sizeof (long);
+        s_ent_sort = (long*)saferealloc((char*)s_ent_sort,size);
+        /* change the context too */
+        s_contexts[s_cur_context].ent_sort = s_ent_sort;
     }
     s_ent_sort[s_ent_sort_max] = ent;
 
     /* grow index list if needed */
     if (ent > s_ent_index_max) {
-	long old,i;
-	old = s_ent_index_max;
-	if (s_ent_index_max == -1)
-	    s_ent_index_max += 1;
-	s_ent_index_max = (ent/100+1) * 100;	/* round up */
-	size = (s_ent_index_max + 1) * sizeof (long);
-	s_ent_index = (long*)saferealloc((char*)s_ent_index,size);
-	/* change the context too */
-	s_contexts[s_cur_context].ent_index = s_ent_index;
-	/* initialize new indexes */
-	for (i = old+1; i < s_ent_index_max; i++)
-	    s_ent_index[i] = -1;	/* -1 == not a legal entry */
+        long old,i;
+        old = s_ent_index_max;
+        if (s_ent_index_max == -1)
+            s_ent_index_max += 1;
+        s_ent_index_max = (ent/100+1) * 100;    /* round up */
+        size = (s_ent_index_max + 1) * sizeof (long);
+        s_ent_index = (long*)saferealloc((char*)s_ent_index,size);
+        /* change the context too */
+        s_contexts[s_cur_context].ent_index = s_ent_index;
+        /* initialize new indexes */
+        for (i = old+1; i < s_ent_index_max; i++)
+            s_ent_index[i] = -1;        /* -1 == not a legal entry */
     }
     s_ent_index[ent] = s_ent_sort_max;
     s_order_changed = true;
@@ -189,12 +189,12 @@ s_prev (long ent)
     long tmp;
 
     if (ent < 0 || ent > s_ent_index_max || s_ent_sorted_max < 0)
-	return 0;
+        return 0;
     if (s_order_changed)
-	s_sort();
+        s_sort();
     tmp = s_ent_index[ent];
     if (tmp <= 0)
-	return 0;
+        return 0;
     return s_ent_sort[tmp-1];
 }
 
@@ -204,12 +204,12 @@ s_next (long ent)
     long tmp;
 
     if (ent < 0 || ent > s_ent_index_max || s_ent_sorted_max < 0)
-	return 0;
+        return 0;
     if (s_order_changed)
-	s_sort();
+        s_sort();
     tmp = s_ent_index[ent];
     if (tmp < 0 || tmp == s_ent_sorted_max)
-	return 0;
+        return 0;
     return s_ent_sort[tmp+1];
 }
 
@@ -219,8 +219,8 @@ long
 s_prev_elig (long a)
 {
     while ((a = s_prev(a)) != 0)
-	if (s_eligible(a))
-	    return a;
+        if (s_eligible(a))
+            return a;
     return 0L;
 }
 
@@ -230,8 +230,8 @@ long
 s_next_elig (long a)
 {
     while ((a = s_next(a)) != 0)
-	if (s_eligible(a))
-	    return a;
+        if (s_eligible(a))
+            return a;
     return 0L;
 }
 
@@ -239,9 +239,9 @@ long
 s_first (void)
 {
     if (s_order_changed)
-	s_sort();
+        s_sort();
     if (s_ent_sorted_max < 0)
-	return 0;
+        return 0;
     return s_ent_sort[0];
 }
 
@@ -249,9 +249,9 @@ long
 s_last (void)
 {
     if (s_order_changed)
-	s_sort();
+        s_sort();
     if (s_ent_sorted_max < 0)
-	return 0;
+        return 0;
     return s_ent_sort[s_ent_sorted_max];
 }
 #endif /* SCAN */

@@ -31,10 +31,10 @@
 #include "respond.h"
 #include "respond.ih"
 
-char* savedest = NULL;		/* value of %b */
-char* extractdest = NULL;	/* value of %E */
-char* extractprog = NULL;	/* value of %e */
-ART_POS savefrom = 0;		/* value of %B */
+char* savedest = NULL;          /* value of %b */
+char* extractdest = NULL;       /* value of %E */
+char* extractprog = NULL;       /* value of %e */
+ART_POS savefrom = 0;           /* value of %B */
 
 static char nullart[] = "\nEmpty article.\n";
 
@@ -54,384 +54,384 @@ save_article (void)
     bool interactive = (buf[1] == FINISHCMD);
     char cmd = *buf;
 
-    if (!finish_command(interactive))	/* get rest of command */
-	return SAVE_ABORT;
+    if (!finish_command(interactive))   /* get rest of command */
+        return SAVE_ABORT;
     if ((use_pref = isupper(cmd)) != 0)
-	cmd = tolower(cmd);
+        cmd = tolower(cmd);
     parseheader(art);
     mime_SetArticle();
     clear_artbuf();
     savefrom = (cmd == 'w' || cmd == 'e')? htype[PAST_HEADER].minpos : 0;
     if (artopen(art,savefrom) == NULL) {
 #ifdef VERBOSE
-	IF(verbose)
-	    fputs("\nCan't save an empty article.\n",stdout);
-	ELSE
+        IF(verbose)
+            fputs("\nCan't save an empty article.\n",stdout);
+        ELSE
 #endif
 #ifdef TERSE
-	    fputs(nullart,stdout);
+            fputs(nullart,stdout);
 #endif
-	termdown(2);
-	return SAVE_DONE;
+        termdown(2);
+        return SAVE_DONE;
     }
     if (chdir(cwd)) {
-	printf(nocd,cwd);
-	sig_catcher(0);
+        printf(nocd,cwd);
+        sig_catcher(0);
     }
-    if (cmd == 'e') {		/* is this an extract command? */
-	static bool custom_extract = false;
-	char* cmdstr;
-	int partOpt = 0, totalOpt = 0;
+    if (cmd == 'e') {           /* is this an extract command? */
+        static bool custom_extract = false;
+        char* cmdstr;
+        int partOpt = 0, totalOpt = 0;
 
-	s = buf+1;		/* skip e */
-	while (*s == ' ') s++;	/* skip leading spaces */
-	if (*s == '-' && isdigit(s[1])) {
-	    partOpt = atoi(s+1);
-	    do s++; while (isdigit(*s));
-	    if (*s == '/') {
-		totalOpt = atoi(s+1);
-		do s++; while (isdigit(*s));
-		while (*s == ' ') s++;
-	    }
-	    else
-		totalOpt = partOpt;
-	}
-	safecpy(altbuf,filexp(s),sizeof altbuf);
-	s = altbuf;
-	if (*s) {
-	    cmdstr = cpytill(buf,s,'|');	/* check for | */
-	    s = buf + strlen(buf)-1;
-	    while (*s == ' ') s--;		/* trim trailing spaces */
-	    *++s = '\0';
-	    if (*cmdstr) {
-		s = cmdstr+1;			/* skip | */
-		while (*s == ' ') s++;
-		if (*s)	{			/* if new command, use it */
-		    safefree(extractprog);
-		    extractprog = estrdup(s);	/* put extracter in %e */
-		}
-		else
-		    cmdstr = extractprog;
-	    }
-	    else
-		cmdstr = NULL;
-	    s = buf;
-	}
-	else {
-	    if (extractdest)
-		strcpy(s, extractdest);
-	    if (custom_extract)
-		cmdstr = extractprog;
-	    else
-		cmdstr = NULL;
-	}
-	custom_extract = (cmdstr != 0);
+        s = buf+1;              /* skip e */
+        while (*s == ' ') s++;  /* skip leading spaces */
+        if (*s == '-' && isdigit(s[1])) {
+            partOpt = atoi(s+1);
+            do s++; while (isdigit(*s));
+            if (*s == '/') {
+                totalOpt = atoi(s+1);
+                do s++; while (isdigit(*s));
+                while (*s == ' ') s++;
+            }
+            else
+                totalOpt = partOpt;
+        }
+        safecpy(altbuf,filexp(s),sizeof altbuf);
+        s = altbuf;
+        if (*s) {
+            cmdstr = cpytill(buf,s,'|');        /* check for | */
+            s = buf + strlen(buf)-1;
+            while (*s == ' ') s--;              /* trim trailing spaces */
+            *++s = '\0';
+            if (*cmdstr) {
+                s = cmdstr+1;                   /* skip | */
+                while (*s == ' ') s++;
+                if (*s) {                       /* if new command, use it */
+                    safefree(extractprog);
+                    extractprog = estrdup(s);   /* put extracter in %e */
+                }
+                else
+                    cmdstr = extractprog;
+            }
+            else
+                cmdstr = NULL;
+            s = buf;
+        }
+        else {
+            if (extractdest)
+                strcpy(s, extractdest);
+            if (custom_extract)
+                cmdstr = extractprog;
+            else
+                cmdstr = NULL;
+        }
+        custom_extract = (cmdstr != 0);
 
-	if (FILE_REF(s) != '/') {	/* relative path? */
-	    c = (s==buf ? altbuf : buf);
-	    interp(c, (sizeof buf), getval("SAVEDIR",SAVEDIR));
-	    if (makedir(c,MD_DIR))	/* ensure directory exists */
-		strcpy(c,cwd);
-	    if (*s) {
-		while (*c) c++;
-		*c++ = '/';
-		strcpy(c,s);		/* add filename */
-	    }
-	    s = (s==buf ? altbuf : buf);
-	}
-	if (FILE_REF(s) != '/') {	/* path still relative? */
-	    c = (s==buf ? altbuf : buf);
-	    sprintf(c, "%s/%s", cwd, s);
-	    s = c;			/* absolutize it */
-	}
-	safefree(extractdest);
-	s = extractdest = estrdup(s); /* make it handy for %E */
-	if (makedir(s, MD_DIR)) {	/* ensure directory exists */
-	    int_count++;
-	    return SAVE_DONE;
-	}
-	if (chdir(s)) {
-	    printf(nocd,s);
-	    sig_catcher(0);
-	}
-	c = trn_getwd(buf, sizeof(buf));	/* simplify path for output */
-	if (custom_extract) {
-	    printf("Extracting article into %s using %s\n",c,extractprog);
-	    termdown(1);
-	    interp(cmd_buf, sizeof cmd_buf, getval("CUSTOMSAVER",CUSTOMSAVER));
-	    invoke(cmd_buf, (char*)NULL);
-	}
-	else if (is_mime) {
-	    printf("Extracting MIME article into %s:\n", c);
-	    termdown(1);
-	    mime_DecodeArticle(false);
-	}
-	else {
-	    char* filename;
-	    int part, total;
-	    int decode_type = 0;
-	    int cnt = 0;
+        if (FILE_REF(s) != '/') {       /* relative path? */
+            c = (s==buf ? altbuf : buf);
+            interp(c, (sizeof buf), getval("SAVEDIR",SAVEDIR));
+            if (makedir(c,MD_DIR))      /* ensure directory exists */
+                strcpy(c,cwd);
+            if (*s) {
+                while (*c) c++;
+                *c++ = '/';
+                strcpy(c,s);            /* add filename */
+            }
+            s = (s==buf ? altbuf : buf);
+        }
+        if (FILE_REF(s) != '/') {       /* path still relative? */
+            c = (s==buf ? altbuf : buf);
+            sprintf(c, "%s/%s", cwd, s);
+            s = c;                      /* absolutize it */
+        }
+        safefree(extractdest);
+        s = extractdest = estrdup(s); /* make it handy for %E */
+        if (makedir(s, MD_DIR)) {       /* ensure directory exists */
+            int_count++;
+            return SAVE_DONE;
+        }
+        if (chdir(s)) {
+            printf(nocd,s);
+            sig_catcher(0);
+        }
+        c = trn_getwd(buf, sizeof(buf));        /* simplify path for output */
+        if (custom_extract) {
+            printf("Extracting article into %s using %s\n",c,extractprog);
+            termdown(1);
+            interp(cmd_buf, sizeof cmd_buf, getval("CUSTOMSAVER",CUSTOMSAVER));
+            invoke(cmd_buf, (char*)NULL);
+        }
+        else if (is_mime) {
+            printf("Extracting MIME article into %s:\n", c);
+            termdown(1);
+            mime_DecodeArticle(false);
+        }
+        else {
+            char* filename;
+            int part, total;
+            int decode_type = 0;
+            int cnt = 0;
 
-	    /* Scan subject for filename and part number information */
-	    filename = decode_subject(art, &part, &total);
-	    if (partOpt)
-		part = partOpt;
-	    if (totalOpt)
-		total = totalOpt;
-	    for (artpos = savefrom;
-		 readart(art_line,sizeof art_line) != NULL;
-		 artpos = tellart())
-	    {
-		if (*art_line <= ' ')
-		    continue;	/* Ignore empty or initially-whitespace lines */
-		if (((*art_line == '#' || *art_line == ':')
-		  && (strnEQ(art_line+1, "! /bin/sh", 9)
-		   || strnEQ(art_line+1, "!/bin/sh", 8)
-		   || strnEQ(art_line+2, "This is ", 8)))
+            /* Scan subject for filename and part number information */
+            filename = decode_subject(art, &part, &total);
+            if (partOpt)
+                part = partOpt;
+            if (totalOpt)
+                total = totalOpt;
+            for (artpos = savefrom;
+                 readart(art_line,sizeof art_line) != NULL;
+                 artpos = tellart())
+            {
+                if (*art_line <= ' ')
+                    continue;   /* Ignore empty or initially-whitespace lines */
+                if (((*art_line == '#' || *art_line == ':')
+                  && (strnEQ(art_line+1, "! /bin/sh", 9)
+                   || strnEQ(art_line+1, "!/bin/sh", 8)
+                   || strnEQ(art_line+2, "This is ", 8)))
 #if 0
-		 || strnEQ(art_line, "sed ", 4)
-		 || strnEQ(art_line, "cat ", 4)
-		 || strnEQ(art_line, "echo ", 5)
+                 || strnEQ(art_line, "sed ", 4)
+                 || strnEQ(art_line, "cat ", 4)
+                 || strnEQ(art_line, "echo ", 5)
 #endif
-		) {
-		    savefrom = artpos;
-		    decode_type = 1;
-		    break;
-		}
-		else if (uue_prescan(art_line,&filename,&part,&total)) {
-		    savefrom = artpos;
-		    seekart(savefrom);
-		    decode_type = 2;
-		    break;
-		}
-		else if (++cnt == 300)
-		    break;
-	    }/* for */
-	    switch (decode_type) {
-	      case 1:
-		printf("Extracting shar into %s:\n", c);
-		termdown(1);
-		interp(cmd_buf,(sizeof cmd_buf),getval("SHARSAVER",SHARSAVER));
-		invoke(cmd_buf, (char*)NULL);
-		break;
-	      case 2:
-		printf("Extracting uuencoded file into %s:\n", c);
-		termdown(1);
-		mime_section->type = IMAGE_MIME;
-		safefree(mime_section->filename);
-		mime_section->filename = filename? estrdup(filename) : NULL;
-		mime_section->encoding = MENCODE_UUE;
-		mime_section->part = part;
-		mime_section->total = total;
-		if (!decode_piece((MIMECAP_ENTRY*)NULL,(char*)NULL) && *msg) {
-		    newline();
-		    fputs(msg,stdout);
-		}
-		newline();
-		break;
-	      default:
-		printf("Unable to determine type of file.\n");
-		termdown(1);
-		break;
-	    }
-	}/* if */
+                ) {
+                    savefrom = artpos;
+                    decode_type = 1;
+                    break;
+                }
+                else if (uue_prescan(art_line,&filename,&part,&total)) {
+                    savefrom = artpos;
+                    seekart(savefrom);
+                    decode_type = 2;
+                    break;
+                }
+                else if (++cnt == 300)
+                    break;
+            }/* for */
+            switch (decode_type) {
+              case 1:
+                printf("Extracting shar into %s:\n", c);
+                termdown(1);
+                interp(cmd_buf,(sizeof cmd_buf),getval("SHARSAVER",SHARSAVER));
+                invoke(cmd_buf, (char*)NULL);
+                break;
+              case 2:
+                printf("Extracting uuencoded file into %s:\n", c);
+                termdown(1);
+                mime_section->type = IMAGE_MIME;
+                safefree(mime_section->filename);
+                mime_section->filename = filename? estrdup(filename) : NULL;
+                mime_section->encoding = MENCODE_UUE;
+                mime_section->part = part;
+                mime_section->total = total;
+                if (!decode_piece((MIMECAP_ENTRY*)NULL,(char*)NULL) && *msg) {
+                    newline();
+                    fputs(msg,stdout);
+                }
+                newline();
+                break;
+              default:
+                printf("Unable to determine type of file.\n");
+                termdown(1);
+                break;
+            }
+        }/* if */
     }
     else if ((s = index(buf,'|')) != NULL) { /* is it a pipe command? */
-	s++;			/* skip the | */
-	while (*s == ' ') s++;
-	safecpy(altbuf,filexp(s),sizeof altbuf);
-	safefree(savedest);
-	savedest = estrdup(altbuf);
-	if (datasrc->flags & DF_REMOTE)
-	    nntp_finishbody(FB_SILENT);
-	interp(cmd_buf, (sizeof cmd_buf), getval("PIPESAVER",PIPESAVER));
-				/* then set up for command */
-	termlib_reset();
-	resetty();		/* restore tty state */
-	if (use_pref)		/* use preferred shell? */
-	    doshell((char*)NULL,cmd_buf);
-				/* do command with it */
-	else
-	    doshell(sh,cmd_buf);	/* do command with sh */
-	noecho();		/* and stop echoing */
-	crmode();		/* and start cbreaking */
-	termlib_init();
+        s++;                    /* skip the | */
+        while (*s == ' ') s++;
+        safecpy(altbuf,filexp(s),sizeof altbuf);
+        safefree(savedest);
+        savedest = estrdup(altbuf);
+        if (datasrc->flags & DF_REMOTE)
+            nntp_finishbody(FB_SILENT);
+        interp(cmd_buf, (sizeof cmd_buf), getval("PIPESAVER",PIPESAVER));
+                                /* then set up for command */
+        termlib_reset();
+        resetty();              /* restore tty state */
+        if (use_pref)           /* use preferred shell? */
+            doshell((char*)NULL,cmd_buf);
+                                /* do command with it */
+        else
+            doshell(sh,cmd_buf);        /* do command with sh */
+        noecho();               /* and stop echoing */
+        crmode();               /* and start cbreaking */
+        termlib_init();
     }
-    else {			/* normal save */
-	bool there, mailbox;
-	char* savename = getval("SAVENAME",SAVENAME);
+    else {                      /* normal save */
+        bool there, mailbox;
+        char* savename = getval("SAVENAME",SAVENAME);
 
-	s = buf+1;		/* skip s or S */
-	if (*s == '-') {	/* if they are confused, skip - also */
+        s = buf+1;              /* skip s or S */
+        if (*s == '-') {        /* if they are confused, skip - also */
 #ifdef VERBOSE
-	    IF(verbose)
-		fputs("Warning: '-' ignored.  This isn't readnews.\n",stdout)
-		 ;
-	    ELSE
+            IF(verbose)
+                fputs("Warning: '-' ignored.  This isn't readnews.\n",stdout)
+                 ;
+            ELSE
 #endif
 #ifdef TERSE
-		fputs("'-' ignored.\n",stdout);
+                fputs("'-' ignored.\n",stdout);
 #endif
-	    termdown(1);
-	    s++;
-	}
-	for (; *s == ' '; s++);	/* skip spaces */
-	safecpy(altbuf,filexp(s),sizeof altbuf);
-	s = altbuf;
-	if (!FILE_REF(s)) {
-	    interp(buf, (sizeof buf), getval("SAVEDIR",SAVEDIR));
-	    if (makedir(buf,MD_DIR))	/* ensure directory exists */
-		strcpy(buf,cwd);
-	    if (*s) {
-		for (c = buf; *c; c++) ;
-		*c++ = '/';
-		strcpy(c,s);		/* add filename */
-	    }
-	    s = buf;
-	}
-	for (i = 0;
-	    (there = stat(s,&filestat) >= 0) && S_ISDIR(filestat.st_mode);
-	    i++) {			/* is it a directory? */
+            termdown(1);
+            s++;
+        }
+        for (; *s == ' '; s++); /* skip spaces */
+        safecpy(altbuf,filexp(s),sizeof altbuf);
+        s = altbuf;
+        if (!FILE_REF(s)) {
+            interp(buf, (sizeof buf), getval("SAVEDIR",SAVEDIR));
+            if (makedir(buf,MD_DIR))    /* ensure directory exists */
+                strcpy(buf,cwd);
+            if (*s) {
+                for (c = buf; *c; c++) ;
+                *c++ = '/';
+                strcpy(c,s);            /* add filename */
+            }
+            s = buf;
+        }
+        for (i = 0;
+            (there = stat(s,&filestat) >= 0) && S_ISDIR(filestat.st_mode);
+            i++) {                      /* is it a directory? */
 
-	    c = (s+strlen(s));
-	    *c++ = '/';			/* put a slash before filename */
-	    interp(c, s==buf?(sizeof buf):(sizeof altbuf),
-		i ? "News" : savename );
-				/* generate a default name somehow or other */
-	}
-	makedir(s,MD_FILE);
-	if (FILE_REF(s) != '/') {	/* relative path? */
-	    c = (s==buf ? altbuf : buf);
-	    sprintf(c, "%s/%s", cwd, s);
-	    s = c;			/* absolutize it */
-	}
-	safefree(savedest);
-	s = savedest = estrdup(s);	/* doesn't move any more */
-					/* make it handy for %b */
-	tmpfp = NULL;
-	if (!there) {
-	    if (mbox_always)
-		mailbox = true;
-	    else if (norm_always)
-		mailbox = false;
-	    else {
-		char* dflt = (in_str(savename,"%a", true) ? "nyq" : "ynq");
+            c = (s+strlen(s));
+            *c++ = '/';                 /* put a slash before filename */
+            interp(c, s==buf?(sizeof buf):(sizeof altbuf),
+                i ? "News" : savename );
+                                /* generate a default name somehow or other */
+        }
+        makedir(s,MD_FILE);
+        if (FILE_REF(s) != '/') {       /* relative path? */
+            c = (s==buf ? altbuf : buf);
+            sprintf(c, "%s/%s", cwd, s);
+            s = c;                      /* absolutize it */
+        }
+        safefree(savedest);
+        s = savedest = estrdup(s);      /* doesn't move any more */
+                                        /* make it handy for %b */
+        tmpfp = NULL;
+        if (!there) {
+            if (mbox_always)
+                mailbox = true;
+            else if (norm_always)
+                mailbox = false;
+            else {
+                char* dflt = (in_str(savename,"%a", true) ? "nyq" : "ynq");
 
-		sprintf(cmd_buf,
-		"\nFile %s doesn't exist--\n	use mailbox format?",s);
-	      reask_save:
-		in_char(cmd_buf, 'M', dflt);
-		newline();
+                sprintf(cmd_buf,
+                "\nFile %s doesn't exist--\n    use mailbox format?",s);
+              reask_save:
+                in_char(cmd_buf, 'M', dflt);
+                newline();
 #ifdef VERIFY
-		printcmd();
+                printcmd();
 #endif
-		if (*buf == 'h') {
+                if (*buf == 'h') {
 #ifdef VERBOSE
-		    IF(verbose)
-			printf("\n\
+                    IF(verbose)
+                        printf("\n\
 Type y to create %s as a mailbox.\n\
 Type n to create it as a normal file.\n\
 Type q to abort the save.\n\
 ",s);
-		    ELSE
+                    ELSE
 #endif
 #ifdef TERSE
-			fputs("\n\
+                        fputs("\n\
 y to create mailbox.\n\
 n to create normal file.\n\
 q to abort.\n\
 ",stdout);
 #endif
-		    termdown(4);
-		    goto reask_save;
-		}
-		else if (*buf == 'n') {
-		    mailbox = false;
-		}
-		else if (*buf == 'y') {
-		    mailbox = true;
-		}
-		else if (*buf == 'q') {
-		    goto s_bomb;
-		}
-		else {
-		    fputs(hforhelp,stdout);
-		    termdown(1);
-		    settle_down();
-		    goto reask_save;
-		}
-	    }
-	}
-	else if (S_ISCHR(filestat.st_mode))
-	    mailbox = false;
-	else {
-	    tmpfp = fopen(s,"r+");
-	    if (!tmpfp)
-		mailbox = false;
-	    else {
-		if (fread(buf,1,LBUFLEN,tmpfp)) {
-		    c = buf;
-		    if (!isspace(MBOXCHAR))   /* if non-zero, */
-			while (isspace(*c))   /* check the first character */
-			    c++;
-		    mailbox = (*c == MBOXCHAR);
-		} else
-		    mailbox = mbox_always;    /* if zero length, recheck -M */
-	    }
-	}
+                    termdown(4);
+                    goto reask_save;
+                }
+                else if (*buf == 'n') {
+                    mailbox = false;
+                }
+                else if (*buf == 'y') {
+                    mailbox = true;
+                }
+                else if (*buf == 'q') {
+                    goto s_bomb;
+                }
+                else {
+                    fputs(hforhelp,stdout);
+                    termdown(1);
+                    settle_down();
+                    goto reask_save;
+                }
+            }
+        }
+        else if (S_ISCHR(filestat.st_mode))
+            mailbox = false;
+        else {
+            tmpfp = fopen(s,"r+");
+            if (!tmpfp)
+                mailbox = false;
+            else {
+                if (fread(buf,1,LBUFLEN,tmpfp)) {
+                    c = buf;
+                    if (!isspace(MBOXCHAR))   /* if non-zero, */
+                        while (isspace(*c))   /* check the first character */
+                            c++;
+                    mailbox = (*c == MBOXCHAR);
+                } else
+                    mailbox = mbox_always;    /* if zero length, recheck -M */
+            }
+        }
 
-	s = getenv(mailbox ? "MBOXSAVER" : "NORMSAVER");
-	if (s) {
-	    if (tmpfp)
-		fclose(tmpfp);
-	    safecpy(cmd_buf, filexp(s), sizeof cmd_buf);
-	    if (datasrc->flags & DF_REMOTE)
-		nntp_finishbody(FB_SILENT);
-	    termlib_reset();
-	    resetty();		/* make terminal behave */
-	    i = doshell(use_pref?(char*)NULL:SH,cmd_buf);
-	    termlib_init();
-	    noecho();		/* make terminal do what we want */
-	    crmode();
-	}
-	else if (tmpfp != NULL || (tmpfp = fopen(savedest, "a")) != NULL) {
-	    bool quote_From = false;
-	    fseek(tmpfp,0,2);
-	    if (mailbox) {
+        s = getenv(mailbox ? "MBOXSAVER" : "NORMSAVER");
+        if (s) {
+            if (tmpfp)
+                fclose(tmpfp);
+            safecpy(cmd_buf, filexp(s), sizeof cmd_buf);
+            if (datasrc->flags & DF_REMOTE)
+                nntp_finishbody(FB_SILENT);
+            termlib_reset();
+            resetty();          /* make terminal behave */
+            i = doshell(use_pref?(char*)NULL:SH,cmd_buf);
+            termlib_init();
+            noecho();           /* make terminal do what we want */
+            crmode();
+        }
+        else if (tmpfp != NULL || (tmpfp = fopen(savedest, "a")) != NULL) {
+            bool quote_From = false;
+            fseek(tmpfp,0,2);
+            if (mailbox) {
 #if MBOXCHAR == '\001'
-		fprintf(tmpfp,"\001\001\001\001\n");
+                fprintf(tmpfp,"\001\001\001\001\n");
 #else
-		interp(cmd_buf, sizeof cmd_buf, "From %t %`LANG= date`\n");
-		fputs(cmd_buf, tmpfp);
-		quote_From = true;
+                interp(cmd_buf, sizeof cmd_buf, "From %t %`LANG= date`\n");
+                fputs(cmd_buf, tmpfp);
+                quote_From = true;
 #endif
-	    }
-	    if (savefrom == 0 && art != 0)
-		fprintf(tmpfp,"Article: %ld of %s\n", (long)art, ngname);
-	    seekart(savefrom);
-	    while (readart(buf,LBUFLEN) != NULL) {
-		if (quote_From && strncaseEQ(buf,"from ",5))
-		    putc('>', tmpfp);
-		fputs(buf, tmpfp);
-	    }
-	    fputs("\n\n", tmpfp);
+            }
+            if (savefrom == 0 && art != 0)
+                fprintf(tmpfp,"Article: %ld of %s\n", (long)art, ngname);
+            seekart(savefrom);
+            while (readart(buf,LBUFLEN) != NULL) {
+                if (quote_From && strncaseEQ(buf,"from ",5))
+                    putc('>', tmpfp);
+                fputs(buf, tmpfp);
+            }
+            fputs("\n\n", tmpfp);
 #if MBOXCHAR == '\001'
-	    if (mailbox)
-		fprintf(tmpfp,"\001\001\001\001\n");
+            if (mailbox)
+                fprintf(tmpfp,"\001\001\001\001\n");
 #endif
-	    fclose(tmpfp);
-	    i = 0; /*$$ set non-zero on write error */
-	}
-	else
-	    i = 1;
-	if (i)
-	    fputs("Not saved",stdout);
-	else {
-	    printf("%s to %s %s", there? "Appended" : "Saved",
-		   mailbox? "mailbox" : "file", savedest);
-	}
-	if (interactive)
-	    newline();
+            fclose(tmpfp);
+            i = 0; /*$$ set non-zero on write error */
+        }
+        else
+            i = 1;
+        if (i)
+            fputs("Not saved",stdout);
+        else {
+            printf("%s to %s %s", there? "Appended" : "Saved",
+                   mailbox? "mailbox" : "file", savedest);
+        }
+        if (interactive)
+            newline();
     }
 s_bomb:
     chdir_newsdir();
@@ -447,57 +447,57 @@ view_article (void)
     savefrom = htype[PAST_HEADER].minpos;
     if (artopen(art,savefrom) == NULL) {
 #ifdef VERBOSE
-	IF(verbose)
-	    fputs("\nNo attatchments on an empty article.\n",stdout);
-	ELSE
+        IF(verbose)
+            fputs("\nNo attatchments on an empty article.\n",stdout);
+        ELSE
 #endif
 #ifdef TERSE
-	    fputs(nullart,stdout);
+            fputs(nullart,stdout);
 #endif
-	termdown(2);
-	return SAVE_DONE;
+        termdown(2);
+        return SAVE_DONE;
     }
     printf("Processing attachments...\n");
     termdown(1);
     if (is_mime)
-	mime_DecodeArticle(true);
+        mime_DecodeArticle(true);
     else {
-	char* filename;
-	int part, total;
-	int cnt = 0;
+        char* filename;
+        int part, total;
+        int cnt = 0;
 
-	/* Scan subject for filename and part number information */
-	filename = decode_subject(art, &part, &total);
-	for (artpos = savefrom;
-	     readart(art_line,sizeof art_line) != NULL;
-	     artpos = tellart())
-	{
-	    if (*art_line <= ' ')
-		continue;	/* Ignore empty or initially-whitespace lines */
-	    if (uue_prescan(art_line, &filename, &part, &total)) {
-		MIMECAP_ENTRY* mc = mime_FindMimecapEntry("image/jpeg",0); /*$$ refine this */
-		savefrom = artpos;
-		seekart(savefrom);
-		mime_section->type = UNHANDLED_MIME;
-		safefree(mime_section->filename);
-		mime_section->filename = filename? estrdup(filename) : NULL;
-		mime_section->encoding = MENCODE_UUE;
-		mime_section->part = part;
-		mime_section->total = total;
-		if (mc && !decode_piece(mc,(char*)NULL) && *msg) {
-		    newline();
-		    fputs(msg,stdout);
-		}
-		newline();
-		cnt = 0;
-	    }
-	    else if (++cnt == 300)
-		break;
-	}/* for */
-	if (cnt) {
-	    printf("Unable to determine type of file.\n");
-	    termdown(1);
-	}
+        /* Scan subject for filename and part number information */
+        filename = decode_subject(art, &part, &total);
+        for (artpos = savefrom;
+             readart(art_line,sizeof art_line) != NULL;
+             artpos = tellart())
+        {
+            if (*art_line <= ' ')
+                continue;       /* Ignore empty or initially-whitespace lines */
+            if (uue_prescan(art_line, &filename, &part, &total)) {
+                MIMECAP_ENTRY* mc = mime_FindMimecapEntry("image/jpeg",0); /*$$ refine this */
+                savefrom = artpos;
+                seekart(savefrom);
+                mime_section->type = UNHANDLED_MIME;
+                safefree(mime_section->filename);
+                mime_section->filename = filename? estrdup(filename) : NULL;
+                mime_section->encoding = MENCODE_UUE;
+                mime_section->part = part;
+                mime_section->total = total;
+                if (mc && !decode_piece(mc,(char*)NULL) && *msg) {
+                    newline();
+                    fputs(msg,stdout);
+                }
+                newline();
+                cnt = 0;
+            }
+            else if (++cnt == 300)
+                break;
+        }/* for */
+        if (cnt) {
+            printf("Unable to determine type of file.\n");
+            termdown(1);
+        }
     }
     chdir_newsdir();
     return SAVE_DONE;
@@ -515,15 +515,15 @@ cancel_article (void)
 
     if (artopen(art,(ART_POS)0) == NULL) {
 #ifdef VERBOSE
-	IF(verbose)
-	    fputs("\nCan't cancel an empty article.\n",stdout);
-	ELSE
+        IF(verbose)
+            fputs("\nCan't cancel an empty article.\n",stdout);
+        ELSE
 #endif
 #ifdef TERSE
-	    fputs(nullart,stdout);
+            fputs(nullart,stdout);
 #endif
-	termdown(2);
-	return r;
+        termdown(2);
+        return r;
     }
     reply_buf = fetchlines(art,REPLY_LINE);
     from_buf = fetchlines(art,FROM_LINE);
@@ -537,37 +537,37 @@ cancel_article (void)
 #endif
        && myuid != ROOTID))) {
 #ifdef DEBUG
-	if (debug) {
-	    printf("\n%s@%s != %s\n",loginName,hostname,from_buf);
-	    printf("%s != %s\n",getval("FROM",""),from_buf);
-	    termdown(3);
-	}
+        if (debug) {
+            printf("\n%s@%s != %s\n",loginName,hostname,from_buf);
+            printf("%s != %s\n",getval("FROM",""),from_buf);
+            termdown(3);
+        }
 #endif
 #ifdef VERBOSE
-	IF(verbose)
-	    fputs("\nYou can't cancel someone else's article\n",stdout);
-	ELSE
+        IF(verbose)
+            fputs("\nYou can't cancel someone else's article\n",stdout);
+        ELSE
 #endif
 #ifdef TERSE
-	    fputs("\nNot your article\n",stdout);
+            fputs("\nNot your article\n",stdout);
 #endif
-	termdown(2);
+        termdown(2);
     }
     else {
-	tmpfp = fopen(headname,"w");	/* open header file */
-	if (tmpfp == NULL) {
-	    printf(cantcreate,headname);
-	    termdown(1);
-	    goto done;
-	}
-	interp(hbuf, sizeof hbuf, getval("CANCELHEADER",CANCELHEADER));
-	fputs(hbuf,tmpfp);
-	fclose(tmpfp);
-	fputs("\nCanceling...\n",stdout);
-	termdown(2);
-	export_nntp_fds = true;
-	r = doshell(sh,filexp(getval("CANCEL",CALL_INEWS)));
-	export_nntp_fds = false;
+        tmpfp = fopen(headname,"w");    /* open header file */
+        if (tmpfp == NULL) {
+            printf(cantcreate,headname);
+            termdown(1);
+            goto done;
+        }
+        interp(hbuf, sizeof hbuf, getval("CANCELHEADER",CANCELHEADER));
+        fputs(hbuf,tmpfp);
+        fclose(tmpfp);
+        fputs("\nCanceling...\n",stdout);
+        termdown(2);
+        export_nntp_fds = true;
+        r = doshell(sh,filexp(getval("CANCEL",CALL_INEWS)));
+        export_nntp_fds = false;
     }
 done:
     safefree(ngs_buf);
@@ -577,7 +577,7 @@ done:
 }
 
 int
-supersede_article (void)		/* Supersedes: */
+supersede_article (void)                /* Supersedes: */
 {
     char hbuf[5*LBUFLEN];
     char* ngs_buf;
@@ -589,15 +589,15 @@ supersede_article (void)		/* Supersedes: */
 
     if (artopen(art,(ART_POS)0) == NULL) {
 #ifdef VERBOSE
-	IF(verbose)
-	    fputs("\nCan't supersede an empty article.\n",stdout);
-	ELSE
+        IF(verbose)
+            fputs("\nCan't supersede an empty article.\n",stdout);
+        ELSE
 #endif
 #ifdef TERSE
-	    fputs(nullart,stdout);
+            fputs(nullart,stdout);
 #endif
-	termdown(2);
-	return r;
+        termdown(2);
+        return r;
     }
     reply_buf = fetchlines(art,REPLY_LINE);
     from_buf = fetchlines(art,FROM_LINE);
@@ -611,40 +611,40 @@ supersede_article (void)		/* Supersedes: */
 #endif
        && myuid != ROOTID))) {
 #ifdef DEBUG
-	if (debug) {
-	    printf("\n%s@%s != %s\n",loginName,hostname,from_buf);
-	    printf("%s != %s\n",getval("FROM",""),from_buf);
-	    termdown(3);
-	}
+        if (debug) {
+            printf("\n%s@%s != %s\n",loginName,hostname,from_buf);
+            printf("%s != %s\n",getval("FROM",""),from_buf);
+            termdown(3);
+        }
 #endif
 #ifdef VERBOSE
-	IF(verbose)
-	    fputs("\nYou can't supersede someone else's article\n",stdout);
-	ELSE
+        IF(verbose)
+            fputs("\nYou can't supersede someone else's article\n",stdout);
+        ELSE
 #endif
 #ifdef TERSE
-	    fputs("\nNot your article\n",stdout);
+            fputs("\nNot your article\n",stdout);
 #endif
-	termdown(2);
+        termdown(2);
     }
     else {
-	tmpfp = fopen(headname,"w");	/* open header file */
-	if (tmpfp == NULL) {
-	    printf(cantcreate,headname);
-	    termdown(1);
-	    goto done;
-	}
-	interp(hbuf, sizeof hbuf, getval("SUPERSEDEHEADER",SUPERSEDEHEADER));
-	fputs(hbuf,tmpfp);
-	if (incl_body && artfp != NULL) {
-	    parseheader(art);
-	    seekart(htype[PAST_HEADER].minpos);
-	    while (readart(buf,LBUFLEN) != NULL)
-		fputs(buf,tmpfp);
-	}
-	fclose(tmpfp);
-	follow_it_up();
-	r = 0;
+        tmpfp = fopen(headname,"w");    /* open header file */
+        if (tmpfp == NULL) {
+            printf(cantcreate,headname);
+            termdown(1);
+            goto done;
+        }
+        interp(hbuf, sizeof hbuf, getval("SUPERSEDEHEADER",SUPERSEDEHEADER));
+        fputs(hbuf,tmpfp);
+        if (incl_body && artfp != NULL) {
+            parseheader(art);
+            seekart(htype[PAST_HEADER].minpos);
+            while (readart(buf,LBUFLEN) != NULL)
+                fputs(buf,tmpfp);
+        }
+        fclose(tmpfp);
+        follow_it_up();
+        r = 0;
     }
 done:
     safefree(ngs_buf);
@@ -658,36 +658,36 @@ follow_it_up (void)
 {
     safecpy(cmd_buf,filexp(getval("NEWSPOSTER",NEWSPOSTER)), sizeof cmd_buf);
     if (invoke(cmd_buf,origdir) == 42) {
-	int ret;
-	if ((datasrc->flags & DF_REMOTE)
-	 && (nntp_command("DATE") <= 0
-	  || (nntp_check() < 0 && atoi(ser_line) != NNTP_BAD_COMMAND_VAL)))
-	    ret = 1;
-	else
-	{
-	    export_nntp_fds = true;
-	    ret = invoke(filexp(CALL_INEWS),origdir);
-	    export_nntp_fds = false;
-	}
-	if (ret) {
-	    int appended = 0;
-	    char* deadart = filexp("%./dead.article");
-	    FILE* fp_in;
-	    FILE* fp_out;
-	    if ((fp_out = fopen(deadart, "a")) != NULL) {
-		if ((fp_in = fopen(headname, "r")) != NULL) {
-		    while (fgets(cmd_buf, sizeof cmd_buf, fp_in))
-			fputs(cmd_buf, fp_out);
-		    fclose(fp_in);
-		    appended = 1;
-		}
-		fclose(fp_out);
-	    }
-	    if (appended)
-		printf("Article appended to %s\n", deadart);
-	    else
-		printf("Unable to append article to %s\n", deadart);
-	}
+        int ret;
+        if ((datasrc->flags & DF_REMOTE)
+         && (nntp_command("DATE") <= 0
+          || (nntp_check() < 0 && atoi(ser_line) != NNTP_BAD_COMMAND_VAL)))
+            ret = 1;
+        else
+        {
+            export_nntp_fds = true;
+            ret = invoke(filexp(CALL_INEWS),origdir);
+            export_nntp_fds = false;
+        }
+        if (ret) {
+            int appended = 0;
+            char* deadart = filexp("%./dead.article");
+            FILE* fp_in;
+            FILE* fp_out;
+            if ((fp_out = fopen(deadart, "a")) != NULL) {
+                if ((fp_in = fopen(headname, "r")) != NULL) {
+                    while (fgets(cmd_buf, sizeof cmd_buf, fp_in))
+                        fputs(cmd_buf, fp_out);
+                    fclose(fp_in);
+                    appended = 1;
+                }
+                fclose(fp_out);
+            }
+            if (appended)
+                printf("Article appended to %s\n", deadart);
+            else
+                printf("Unable to append article to %s\n", deadart);
+        }
     }
 }
 
@@ -699,50 +699,50 @@ reply (void)
     char* maildoer = estrdup(getval("MAILPOSTER",MAILPOSTER));
 
     artopen(art,(ART_POS)0);
-    tmpfp = fopen(headname,"w");	/* open header file */
+    tmpfp = fopen(headname,"w");        /* open header file */
     if (tmpfp == NULL) {
-	printf(cantcreate,headname);
-	termdown(1);
-	goto done;
+        printf(cantcreate,headname);
+        termdown(1);
+        goto done;
     }
     interp(hbuf, sizeof hbuf, getval("MAILHEADER",MAILHEADER));
     fputs(hbuf,tmpfp);
     if (!in_str(maildoer,"%h",true)) {
 #ifdef VERBOSE
-	IF(verbose)
-	    printf("\n%s\n(Above lines saved in file %s)\n",buf,headname)
-	     ;
-	ELSE
+        IF(verbose)
+            printf("\n%s\n(Above lines saved in file %s)\n",buf,headname)
+             ;
+        ELSE
 #endif
 #ifdef TERSE
-	    printf("\n%s\n(Header in %s)\n",buf,headname);
+            printf("\n%s\n(Header in %s)\n",buf,headname);
 #endif
-	termdown(3);
+        termdown(3);
     }
     if (incl_body && artfp != NULL) {
-	char* s;
-	char* t;
-	interp(buf, (sizeof buf), getval("YOUSAID",YOUSAID));
-	fprintf(tmpfp,"%s\n",buf);
-	parseheader(art);
-	mime_SetArticle();
-	clear_artbuf();
-	seekart(htype[PAST_HEADER].minpos);
-	wrapped_nl = '\n';
-	while ((s = readartbuf(false)) != NULL) {
-	    if ((t = index(s, '\n')) != NULL)
-		*t = '\0';
+        char* s;
+        char* t;
+        interp(buf, (sizeof buf), getval("YOUSAID",YOUSAID));
+        fprintf(tmpfp,"%s\n",buf);
+        parseheader(art);
+        mime_SetArticle();
+        clear_artbuf();
+        seekart(htype[PAST_HEADER].minpos);
+        wrapped_nl = '\n';
+        while ((s = readartbuf(false)) != NULL) {
+            if ((t = index(s, '\n')) != NULL)
+                *t = '\0';
 #ifdef CHARSUBST
-	    strcharsubst(hbuf,s,sizeof hbuf,*charsubst);
-	    fprintf(tmpfp,"%s%s\n",indstr,hbuf);
+            strcharsubst(hbuf,s,sizeof hbuf,*charsubst);
+            fprintf(tmpfp,"%s%s\n",indstr,hbuf);
 #else
-	    fprintf(tmpfp,"%s%s\n",indstr,s);
+            fprintf(tmpfp,"%s%s\n",indstr,s);
 #endif
-	    if (t)
-		*t = '\0';
-	}
-	fprintf(tmpfp,"\n");
-	wrapped_nl = WRAPPED_NL;
+            if (t)
+                *t = '\0';
+        }
+        fprintf(tmpfp,"\n");
+        wrapped_nl = WRAPPED_NL;
     }
     fclose(tmpfp);
     safecpy(cmd_buf,filexp(maildoer),sizeof cmd_buf);
@@ -768,87 +768,87 @@ forward (void)
     init_compex(&mime_compex);
 #endif
     artopen(art,(ART_POS)0);
-    tmpfp = fopen(headname,"w");	/* open header file */
+    tmpfp = fopen(headname,"w");        /* open header file */
     if (tmpfp == NULL) {
-	printf(cantcreate,headname);
-	termdown(1);
-	goto done;
+        printf(cantcreate,headname);
+        termdown(1);
+        goto done;
     }
     interp(hbuf, sizeof hbuf, getval("FORWARDHEADER",FORWARDHEADER));
     fputs(hbuf,tmpfp);
 #ifdef REGEX_WORKS_RIGHT
     if (!compile(&mime_compex,"Content-Type: multipart/.*; *boundary=\"\\([^\"]*\\)\"",true,true)
      && execute(&mime_compex,hbuf) != NULL)
-	mime_boundary = getbracket(&mime_compex,1);
+        mime_boundary = getbracket(&mime_compex,1);
     else
-	mime_boundary = NULL;
+        mime_boundary = NULL;
 #else
     mime_boundary = NULL;
     for (s = hbuf; s; s = eol) {
-	eol = index(s, '\n');
-	if (eol)
-	    eol++;
-	if (*s == 'C' && strncaseEQ(s, "Content-Type: multipart/", 24)) {
-	    s += 24;
-	    for (;;) {
-		for ( ; *s && *s != ';'; s++) {
-		    if (*s == '\n' && !isspace(s[1]))
-			break;
-		}
-		if (*s != ';')
-		    break;
-		while (*++s == ' ') ;
-		if (*s == 'b' && strncaseEQ(s, "boundary=\"", 10)) {
-		    mime_boundary = s+10;
-		    if ((s = index(mime_boundary, '"')) != NULL)
-			*s = '\0';
-		    mime_boundary = estrdup(mime_boundary);
-		    if (s)
-			*s = '"';
-		    break;
-		}
-	    }
-	}
+        eol = index(s, '\n');
+        if (eol)
+            eol++;
+        if (*s == 'C' && strncaseEQ(s, "Content-Type: multipart/", 24)) {
+            s += 24;
+            for (;;) {
+                for ( ; *s && *s != ';'; s++) {
+                    if (*s == '\n' && !isspace(s[1]))
+                        break;
+                }
+                if (*s != ';')
+                    break;
+                while (*++s == ' ') ;
+                if (*s == 'b' && strncaseEQ(s, "boundary=\"", 10)) {
+                    mime_boundary = s+10;
+                    if ((s = index(mime_boundary, '"')) != NULL)
+                        *s = '\0';
+                    mime_boundary = estrdup(mime_boundary);
+                    if (s)
+                        *s = '"';
+                    break;
+                }
+            }
+        }
     }
 #endif
     if (!in_str(maildoer,"%h",true)) {
 #ifdef VERBOSE
-	IF(verbose)
-	    printf("\n%s\n(Above lines saved in file %s)\n",hbuf,headname)
-	     ;
-	ELSE
+        IF(verbose)
+            printf("\n%s\n(Above lines saved in file %s)\n",hbuf,headname)
+             ;
+        ELSE
 #endif
 #ifdef TERSE
-	    printf("\n%s\n(Header in %s)\n",hbuf,headname);
+            printf("\n%s\n(Header in %s)\n",hbuf,headname);
 #endif
-	termdown(3);
+        termdown(3);
     }
     if (artfp != NULL) {
-	interp(buf, sizeof buf, getval("FORWARDMSG",FORWARDMSG));
-	if (mime_boundary) {
-	    if (*buf && strncaseNE(buf, "Content-", 8))
-		strcpy(buf, "Content-Type: text/plain\n");
-	    fprintf(tmpfp,"--%s\n%s\n[Replace this with your comments.]\n\n--%s\nContent-Type: message/rfc822\n\n",
-		    mime_boundary,buf,mime_boundary);
-	}
-	else if (*buf)
-	    fprintf(tmpfp,"%s\n",buf);
-	parseheader(art);
-	seekart((ART_POS)0);
-	while (readart(buf,sizeof buf) != NULL) {
-	    if (!mime_boundary && *buf == '-') {
-		putchar('-');
-		putchar(' ');
-	    }
-	    fprintf(tmpfp,"%s",buf);
-	}
-	if (mime_boundary)
-	    fprintf(tmpfp,"\n--%s--\n",mime_boundary);
-	else {
-	    interp(buf, (sizeof buf), getval("FORWARDMSGEND",FORWARDMSGEND));
-	    if (*buf)
-		fprintf(tmpfp,"%s\n",buf);
-	}
+        interp(buf, sizeof buf, getval("FORWARDMSG",FORWARDMSG));
+        if (mime_boundary) {
+            if (*buf && strncaseNE(buf, "Content-", 8))
+                strcpy(buf, "Content-Type: text/plain\n");
+            fprintf(tmpfp,"--%s\n%s\n[Replace this with your comments.]\n\n--%s\nContent-Type: message/rfc822\n\n",
+                    mime_boundary,buf,mime_boundary);
+        }
+        else if (*buf)
+            fprintf(tmpfp,"%s\n",buf);
+        parseheader(art);
+        seekart((ART_POS)0);
+        while (readart(buf,sizeof buf) != NULL) {
+            if (!mime_boundary && *buf == '-') {
+                putchar('-');
+                putchar(' ');
+            }
+            fprintf(tmpfp,"%s",buf);
+        }
+        if (mime_boundary)
+            fprintf(tmpfp,"\n--%s--\n",mime_boundary);
+        else {
+            interp(buf, (sizeof buf), getval("FORWARDMSGEND",FORWARDMSGEND));
+            if (*buf)
+                fprintf(tmpfp,"%s\n",buf);
+        }
     }
     fclose(tmpfp);
     safecpy(cmd_buf,filexp(maildoer),sizeof cmd_buf);
@@ -870,55 +870,55 @@ followup (void)
     ART_NUM oldart = art;
 
     if (!incl_body && art <= lastart) {
-	termdown(2);
-	in_answer("\n\nAre you starting an unrelated topic? [ynq] ", 'F');
-	setdef(buf,"y");
-	if (*buf == 'q')  /*TODO: need to add 'h' also */
-	    return;
-	if (*buf != 'n')
-	    art = lastart + 1;
+        termdown(2);
+        in_answer("\n\nAre you starting an unrelated topic? [ynq] ", 'F');
+        setdef(buf,"y");
+        if (*buf == 'q')  /*TODO: need to add 'h' also */
+            return;
+        if (*buf != 'n')
+            art = lastart + 1;
     }
     artopen(art,(ART_POS)0);
     tmpfp = fopen(headname,"w");
     if (tmpfp == NULL) {
-	printf(cantcreate,headname);
-	termdown(1);
-	art = oldart;
-	return;
+        printf(cantcreate,headname);
+        termdown(1);
+        art = oldart;
+        return;
     }
     interp(hbuf, sizeof hbuf, getval("NEWSHEADER",NEWSHEADER));
     fputs(hbuf,tmpfp);
     if (incl_body && artfp != NULL) {
-	char* s;
-	char* t;
+        char* s;
+        char* t;
 #ifdef VERBOSE
-	if (verbose)
-	    fputs("\n\
+        if (verbose)
+            fputs("\n\
 (Be sure to double-check the attribution against the signature, and\n\
 trim the quoted article down as much as possible.)\n\
 ",stdout);
 #endif
-	interp(buf, (sizeof buf), getval("ATTRIBUTION",ATTRIBUTION));
-	fprintf(tmpfp,"%s\n",buf);
-	parseheader(art);
-	mime_SetArticle();
-	clear_artbuf();
-	seekart(htype[PAST_HEADER].minpos);
-	wrapped_nl = '\n';
-	while ((s = readartbuf(false)) != NULL) {
-	    if ((t = index(s, '\n')) != NULL)
-		*t = '\0';
+        interp(buf, (sizeof buf), getval("ATTRIBUTION",ATTRIBUTION));
+        fprintf(tmpfp,"%s\n",buf);
+        parseheader(art);
+        mime_SetArticle();
+        clear_artbuf();
+        seekart(htype[PAST_HEADER].minpos);
+        wrapped_nl = '\n';
+        while ((s = readartbuf(false)) != NULL) {
+            if ((t = strchr(s, '\n')) != NULL)
+                *t = '\0';
 #ifdef CHARSUBST
-	    strcharsubst(hbuf,s,sizeof hbuf,*charsubst);
-	    fprintf(tmpfp,"%s%s\n",indstr,hbuf);
+            strcharsubst(hbuf,s,sizeof hbuf,*charsubst);
+            fprintf(tmpfp,"%s%s\n",indstr,hbuf);
 #else
-	    fprintf(tmpfp,"%s%s\n",indstr,s);
+            fprintf(tmpfp,"%s%s\n",indstr,s);
 #endif
-	    if (t)
-		*t = '\0';
-	}
-	fprintf(tmpfp,"\n");
-	wrapped_nl = WRAPPED_NL;
+            if (t)
+                *t = '\0';
+        }
+        fprintf(tmpfp,"\n");
+        wrapped_nl = WRAPPED_NL;
     }
     fclose(tmpfp);
     follow_it_up();
@@ -932,27 +932,27 @@ invoke (char *cmd, char *dir)
     int ret = -1;
 
     if (datasrc->flags & DF_REMOTE)
-	nntp_finishbody(FB_SILENT);
+        nntp_finishbody(FB_SILENT);
 #ifdef DEBUG
     if (debug)
-	printf("\nInvoking command: %s\n",cmd);
+        printf("\nInvoking command: %s\n",cmd);
 #endif
     if (dir) {
-	if (chdir(dir)) {
-	    printf(nocd,dir);
-	    return ret;
-	}
+        if (chdir(dir)) {
+            printf(nocd,dir);
+            return ret;
+        }
     }
     set_mode(gmode,'x');
     termlib_reset();
-    resetty();			/* make terminal well-behaved */
-    ret = doshell(sh,cmd);	/* do the command */
-    noecho();			/* set no echo */
-    crmode();			/* and cbreak mode */
+    resetty();                  /* make terminal well-behaved */
+    ret = doshell(sh,cmd);      /* do the command */
+    noecho();                   /* set no echo */
+    crmode();                   /* and cbreak mode */
     termlib_init();
     set_mode(gmode,oldmode);
     if (dir)
-	chdir_newsdir();
+        chdir_newsdir();
     return ret;
 }
 
@@ -982,76 +982,76 @@ cut_line (char *str)
     ** assume it isn't a cut line.  If we succeed, return true.
     */
     for (cp = str, dash_cnt = equal_cnt = other_cnt = 0; *cp; cp++) {
-	switch (*cp) {
-	case '-':
-	    dash_cnt++;
-	    break;
-	case '=':
-	    equal_cnt++;
-	    break;
-	case '/':
-	    if (*(cp+1) != '*')
-		break;
-	case '"':
-	case '\'':
-	case '(':
-	case ')':
-	case '[':
-	case ']':
-	case '{':
-	case '}':
-	    return false;
-	default:
-	    other_cnt++;
-	    break;
-	}
+        switch (*cp) {
+        case '-':
+            dash_cnt++;
+            break;
+        case '=':
+            equal_cnt++;
+            break;
+        case '/':
+            if (*(cp+1) != '*')
+                break;
+        case '"':
+        case '\'':
+        case '(':
+        case ')':
+        case '[':
+        case ']':
+        case '{':
+        case '}':
+            return false;
+        default:
+            other_cnt++;
+            break;
+        }
     }
     if (dash_cnt < 4 && equal_cnt < 6)
-	return false;
+        return false;
 
     got_flag = 0;
 
     for (*(cp = word) = '\0'; *str; str++) {
-	if (islower(*str))
-	    *cp++ = *str;
-	else if (isupper(*str))
-	    *cp++ = tolower(*str);
-	else {
-	    if (*word) {
-		*cp = '\0';
-		switch (got_flag) {
-		case 2:
-		    if (strEQ(word, "line")
-		     || strEQ(word, "here"))
-			if ((other_cnt -= 4) <= 20)
-			    return true;
-		    break;
-		case 1:
-		    if (strEQ(word, "this")) {
-			got_flag = 2;
-			other_cnt -= 4;
-		    }
-		    else if (strEQ(word, "here")) {
-			other_cnt -= 4;
-			if ((dash_cnt >= 6 || equal_cnt >= 6)
-			 && other_cnt <= 20)
-			    return true;
-			dash_cnt = 6;
-			got_flag = 0;
-		    }
-		    break;
-		case 0:
-		    if (strEQ(word, "cut")
-		     || strEQ(word, "snip")
-		     || strEQ(word, "tear")) {
-			got_flag = 1;
-			other_cnt -= strlen(word);
-		    }
-		    break;
-		}
-		*(cp = word) = '\0';
-	    }
-	}
+        if (islower(*str))
+            *cp++ = *str;
+        else if (isupper(*str))
+            *cp++ = tolower(*str);
+        else {
+            if (*word) {
+                *cp = '\0';
+                switch (got_flag) {
+                case 2:
+                    if (strEQ(word, "line")
+                     || strEQ(word, "here"))
+                        if ((other_cnt -= 4) <= 20)
+                            return true;
+                    break;
+                case 1:
+                    if (strEQ(word, "this")) {
+                        got_flag = 2;
+                        other_cnt -= 4;
+                    }
+                    else if (strEQ(word, "here")) {
+                        other_cnt -= 4;
+                        if ((dash_cnt >= 6 || equal_cnt >= 6)
+                         && other_cnt <= 20)
+                            return true;
+                        dash_cnt = 6;
+                        got_flag = 0;
+                    }
+                    break;
+                case 0:
+                    if (strEQ(word, "cut")
+                     || strEQ(word, "snip")
+                     || strEQ(word, "tear")) {
+                        got_flag = 1;
+                        other_cnt -= strlen(word);
+                    }
+                    break;
+                }
+                *(cp = word) = '\0';
+            }
+        }
     } /* for *str */
 
     return false;

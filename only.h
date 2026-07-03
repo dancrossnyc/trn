@@ -7,11 +7,11 @@
 #include "search.h"
 #endif
 
-extern char* ngtodo[MAXNGTODO];		/* restrictions in effect */
-extern COMPEX* compextodo[MAXNGTODO];	/* restrictions in compiled form */
+extern char* ngtodo[MAXNGTODO];         /* restrictions in effect */
+extern COMPEX* compextodo[MAXNGTODO];   /* restrictions in compiled form */
 
-extern int maxngtodo;		/*  0 => no restrictions */
-					/* >0 => # of entries in ngtodo */
+extern int maxngtodo;           /*  0 => no restrictions */
+                                        /* >0 => # of entries in ngtodo */
 
 extern char empty_only_char;
 

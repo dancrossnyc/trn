@@ -161,10 +161,6 @@ d_havetlib=''
 termlib=''
 d_ignoreorg=''
 d_internet=''
-d_memcmp=''
-d_memcpy=''
-d_memset=''
-d_mkdir=''
 d_newsadm=''
 newsadmin=''
 d_genauth=''
@@ -456,10 +452,10 @@ esac
 
 case "$sh" in
 '')	cat <<EOM >&2
-$me:  Fatal Error:  I can't find a Bourne Shell anywhere.  
+$me:  Fatal Error:  I can't find a Bourne Shell anywhere.
 
 Usually it's in /bin/sh.  How did you even get this far?
-Please contact me (Trn Workers) at trn-workers@lists.sourceforge.net and 
+Please contact me (Trn Workers) at trn-workers@lists.sourceforge.net and
 we'll try to straighten this all out.
 EOM
 	exit 1
@@ -1535,16 +1531,16 @@ EOM
 		domainos) osname=apollo
 			osvers="$3"
 			;;
-		dgux) osname=dgux 
+		dgux) osname=dgux
 			osvers="$3"
 			;;
 		dynixptx*) osname=dynixptx
 			osvers="$3"
 			;;
-		freebsd) osname=freebsd 
+		freebsd) osname=freebsd
 			osvers="$3" ;;
 		genix) osname=genix ;;
-		hp*) osname=hpux 
+		hp*) osname=hpux
 			osvers=`echo "$3" | $sed 's,.*\.\([0-9]*\.[0-9]*\),\1,'`
 			;;
 		irix*) osname=irix
@@ -1613,7 +1609,7 @@ EOM
 			mips)	osname=mips_osf1 ;;
 			esac
 			;;
-		uts) osname=uts 
+		uts) osname=uts
 			osvers="$3"
 			;;
 		qnx) osname=qnx
@@ -1624,7 +1620,7 @@ EOM
 			*freebsd*) ;;
 			svr*)
 				: svr4.x or possibly later
-				case "svr$3" in	
+				case "svr$3" in
 				${osname}*)
 					osname=svr$3
 					osvers=$4
@@ -1687,7 +1683,7 @@ EOM
 			osvers="$5"
 		fi
 	fi
-	
+
 	: Now look for a hint file osname_osvers, unless one has been
 	: specified already.
 	case "$hintfile" in
@@ -1988,7 +1984,7 @@ case "$d_portable" in
 *)	dflt=n;;
 esac
 $cat <<'EOH'
- 
+
 I can set things up so that your shell scripts and binaries are more portable,
 at what may be a noticable cost in performance.  In particular, if you
 ask to be portable, the following happens:
@@ -2687,14 +2683,14 @@ installbin="$ans"
 
 : get the local distributions
 $cat <<'EOH'
- 
+
 Distribution groups are the things you use on the Distribution line to limit
 where an article will go to.  You are likely to be a member of several
 distribution groups, such as organization, city, state, province, country,
 continent, etc.  For example, Los Angeles has the distribution code "la",
 New Jersey has the code "nj", and Europe has the code "eunet".
 
-The categories you will be asked are: 
+The categories you will be asked are:
 
 local organization	(Could be just one machine or a cluster or an office)
 organization		att, dec, kgb, ...
@@ -2770,7 +2766,7 @@ rp="What is the distribution code for your continent?"
 . ./myread
 contdist="$ans"
 $cat <<'EOM'
-  
+
 If you have any other distribution groups you will need to edit Pnews
 to add them.
 EOM
@@ -2870,7 +2866,7 @@ $rm -f foo
 : determine where manual pages are on this system
 echo " "
 case "$sysman" in
-'') 
+'')
 	syspath='/usr/man/man1 /usr/man/mann /usr/man/manl /usr/man/local/man1'
 	syspath="$syspath /usr/man/u_man/man1 /usr/share/man/man1"
 	syspath="$syspath /usr/catman/u_man/man1 /usr/man/l_man/man1"
@@ -3308,7 +3304,7 @@ none)	dflt=none
 	*/vspell*)
 	    dflt=$vspell
 	    dflt_options=''
-	    ;;   
+	    ;;
 	*)
 	    dflt=none
 	    dflt_options=''
@@ -3397,7 +3393,7 @@ case "$orgname" in
 *)  dflt="$orgname";;
 esac
 $cat << 'EOH'
- 
+
 Please type the name of your organization as you want it to appear on the
 Organization line of outgoing articles.  (It's nice if this also specifies
 your location.  Your city name is probably sufficient if well known.)
@@ -3700,7 +3696,7 @@ case "$libswanted" in
 '') libswanted='c_s';;
 esac
 for thislib in $libswanted; do
-	
+
 	if xxx=`./loc lib$thislib.$so.[0-9]'*' X $libpth`; $test -f "$xxx"; then
 		echo "Found -l$thislib (shared)."
 		case " $dflt " in
@@ -3753,7 +3749,7 @@ case "$dflt" in
 esac
 
 $cat <<EOM
- 
+
 Some versions of Unix support shared libraries, which make executables smaller
 but make load time slightly longer.
 
@@ -3950,7 +3946,7 @@ esac
 for thislibdir in $libpth; do
 	case " $loclibpth " in
 	*" $thislibdir "*)
-		case "$dflt " in 
+		case "$dflt " in
 		*"-L$thislibdir "*) ;;
 		*)  dflt="$dflt -L$thislibdir" ;;
 		esac
@@ -4207,7 +4203,7 @@ case "$usenm" in
 		;;
 	esac
 	case "$dflt" in
-	'') 
+	'')
 		if $test "$osname" = aix -a ! -f /lib/syscalls.exp; then
 			echo " "
 			echo "Whoops!  This is an AIX system without /lib/syscalls.exp!" >&4
@@ -4632,96 +4628,7 @@ esac'
 : see if gettimeofday and ftime exists
 set gettimeofday d_gettimeod
 eval $inlibc
-set ftime d_ftime 
-eval $inlibc
-
-: see if getwd and getcwd exist
-set getwd d_getwd; eval $inlibc
-set getcwd d_getcwd; eval $inlibc
-
-: see how we will look up the hostname, if needed
-echo " "
-if $test "X$phostcmd" = "X"; then
-	: host name is static
-	d_gethname="$undef"
-	d_uname="$undef"
-elif set gethostname val -f d_gethname; eval $csym; $val; then
-	echo 'gethostname() found.' >&4
-	d_gethname="$define"
-	d_uname="$undef"
-	ans=gethostname
-elif set uname val -f d_uname; eval $csym; $val; then
-	d_gethname="$undef"
-	if ./xenix; then
-		$cat <<'EOM'
-uname() was found, but you're running xenix, and older versions of xenix
-have a broken uname(). If you don't really know whether your xenix is old
-enough to have a broken system call, use the default answer.
-
-EOM
-		dflt=y
-		case "$d_uname" in
-		"$define") dflt=n;;
-		esac
-		rp='Is your uname() broken?'
-		. ./myread
-		case "$ans" in
-		n*) d_uname="$define" ;;
-		*) d_uname="$undef" ;;
-		esac
-	else
-		echo 'uname() found.' >&4
-		d_uname="$define"
-	fi
-else
-	d_gethname="$undef"
-	d_uname="$undef"
-fi
-case "$phostcmd" in
-'') aphostcmd='';;
-*) case "$aphostcmd" in
-	/*) ;;
-	*) set X $phostcmd
-		shift
-		file=$1
-		shift
-		file=`loc $file $file $pth`
-		aphostcmd=`echo $file $*`
-		;;
-	esac
-	;;
-esac
-case "$aphostcmd" in
-'') d_phostcmd="$undef";;
-*) d_phostcmd="$define";;
-esac
-
-: see how we will look up the domain, if needed
-echo " "
-case "$phost" in
-.|/*|~*)
-	if set res_init val -f d_resinit; eval $csym; $val; then
-		echo 'res_init() found.' >&4
-		d_resinit="$define"
-		d_getdname="$undef"
-	elif set getdomainname val -f d_getdname; eval $csym; $val; then
-		echo 'getdomainname() found.' >&4
-		d_getdname="$define"
-		d_resinit="$undef"
-	else
-		echo 'Neither res_init() nor getdomainname() found.' >&4
-		d_getdname="$undef"
-		d_resinit="$undef"
-	fi
-	;;
-*)
-	d_resinit="$undef"
-	d_getdname="$undef"
-	;;
-esac
-
-: see if getpwent exists
-set getpwent d_getpwent
+set ftime d_ftime
 eval $inlibc
 
 : where do we get termlib routines from
@@ -4897,7 +4804,7 @@ case "$d_internet" in
 "$undef") dflt=n;;
 esac
 cat <<EOM
- 
+
 Most mailers can deliver mail to addresses of the INTERNET persuasion,
 such as user@host.edu.  Some older mailers, however, require the complete
 path to the destination to be specified in the address.
@@ -4972,22 +4879,6 @@ esac
 EOF
 chmod +x findhdr
 
-: see if memcmp exists
-set memcmp d_memcmp
-eval $inlibc
-
-: see if memcpy exists
-set memcpy d_memcpy
-eval $inlibc
-
-: see if memset exists
-set memset d_memset
-eval $inlibc
-
-: see if mkdir exists
-set mkdir d_mkdir
-eval $inlibc
-
 : get news administrator name
 case "$newsadmin" in
 '')
@@ -5006,7 +4897,7 @@ case "$newsadmin" in
 	;;
 esac
 $cat <<'EOM'
- 
+
 Many systems keep their news in a private directory, or have a non-superuser
 in charge of administering news.  (If you don't have such a user, take the
 default answer.)  I need the login name (not directory) which is used for
@@ -5288,7 +5179,7 @@ val=''
 set vfork val
 eval $inlibc
 
-: Ok, but do we want to use it. vfork is reportedly unreliable in 
+: Ok, but do we want to use it. vfork is reportedly unreliable in
 : perl on Solaris 2.x, and probably elsewhere.
 case "$val" in
 $define)
@@ -5447,7 +5338,7 @@ case "$mboxchar" in
 *)  dflt="$mboxchar";;
 esac
 $cat <<EOM
- 
+
 In saving articles, $package wants to differentiate between saving to
 mailbox format files and normal files.  It does this by examining the
 first character of the file in question.  On most systems the first line
@@ -6054,9 +5945,6 @@ d_ignoreorg='$d_ignoreorg'
 d_inews='$d_inews'
 d_internet='$d_internet'
 d_local='$d_local'
-d_memcmp='$d_memcmp'
-d_memcpy='$d_memcpy'
-d_memset='$d_memset'
 d_mkdir='$d_mkdir'
 d_msdos='$d_msdos'
 d_newsadm='$d_newsadm'

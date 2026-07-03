@@ -59,79 +59,79 @@ thread_open (void)
     ARTICLE* ap;
 
     if (!msgid_hash)
-	msgid_hash = hashcreate(1999, msgid_cmp); /*TODO: pick a better size */
+        msgid_hash = hashcreate(1999, msgid_cmp); /*TODO: pick a better size */
     if (ThreadedGroup) {
-	/* Parse input and use msgid_hash for quick article lookups. */
-	/* If cached but not threaded articles exist, set up to thread them. */
-	if (first_subject) {
-	    first_cached = firstart;
-	    last_cached = firstart - 1;
-	    parsed_art = 0;
-	}
+        /* Parse input and use msgid_hash for quick article lookups. */
+        /* If cached but not threaded articles exist, set up to thread them. */
+        if (first_subject) {
+            first_cached = firstart;
+            last_cached = firstart - 1;
+            parsed_art = 0;
+        }
     }
 
     if (sel_mode == SM_ARTICLE)
-	set_selector(sel_mode, sel_artsort);
+        set_selector(sel_mode, sel_artsort);
     else
-	set_selector(sel_threadmode, sel_threadsort);
+        set_selector(sel_threadmode, sel_threadsort);
 
     if ((datasrc->flags & DF_TRY_THREAD) && !first_subject) {
-	if (mt_data() < 0)
-	    return;
+        if (mt_data() < 0)
+            return;
     }
     if ((datasrc->flags & DF_TRY_OVERVIEW) && !cached_all_in_range) {
-	if (thread_always) {
-	    spin_todo = spin_estimate = lastart - absfirst + 1;
-	    (void) ov_data(absfirst, lastart, false);
-	    if (datasrc->ov_opened && find_existing && datasrc->over_dir == NULL) {
-		mark_missing_articles();
-		rc_to_bits();
-		find_existing = false;
-	    }
-	}
-	else {
-	    spin_todo = lastart - firstart + 1;
-	    spin_estimate = ngptr->toread;
-	    if (firstart > lastart) {
-		/* If no unread articles, see if ov. exists as fast as possible */
-		(void) ov_data(absfirst, absfirst, false);
-		cached_all_in_range = false;
-	    } else
-		(void) ov_data(firstart, lastart, false);
-	}
+        if (thread_always) {
+            spin_todo = spin_estimate = lastart - absfirst + 1;
+            (void) ov_data(absfirst, lastart, false);
+            if (datasrc->ov_opened && find_existing && datasrc->over_dir == NULL) {
+                mark_missing_articles();
+                rc_to_bits();
+                find_existing = false;
+            }
+        }
+        else {
+            spin_todo = lastart - firstart + 1;
+            spin_estimate = ngptr->toread;
+            if (firstart > lastart) {
+                /* If no unread articles, see if ov. exists as fast as possible */
+                (void) ov_data(absfirst, absfirst, false);
+                cached_all_in_range = false;
+            } else
+                (void) ov_data(firstart, lastart, false);
+        }
     }
     if (find_existing) {
-	find_existing_articles();
-	mark_missing_articles();
-	rc_to_bits();
+        find_existing_articles();
+        mark_missing_articles();
+        rc_to_bits();
     }
 
     for (ap = article_ptr(article_first(firstart));
-	 ap && article_num(ap) <= last_cached;
-	 ap = article_nextp(ap))
+         ap && article_num(ap) <= last_cached;
+         ap = article_nextp(ap))
     {
-	if ((ap->flags & (AF_EXISTS|AF_CACHED)) == AF_EXISTS)
-	    (void) parseheader(article_num(ap));
+        if ((ap->flags & (AF_EXISTS|AF_CACHED)) == AF_EXISTS)
+            (void) parseheader(article_num(ap));
     }
 
     if (last_cached > lastart) {
-	ngptr->toread += (ART_UNREAD)(last_cached-lastart);
-	/* ensure getngsize() knows the new maximum */
-	ngptr->ngmax = lastart = last_cached;
+        ngptr->toread += (ART_UNREAD)(last_cached-lastart);
+        /* ensure getngsize() knows the new maximum */
+        ngptr->ngmax = lastart = last_cached;
     }
     article_list->high = lastart;
 
     for (ap = article_ptr(article_first(absfirst));
-	 ap && article_num(ap) <= lastart;
-	 ap = article_nextp(ap))
+         ap && article_num(ap) <= lastart;
+         ap = article_nextp(ap))
     {
-	if (ap->flags & AF_CACHED)
-	    check_poster(ap);
+        if (ap->flags & AF_CACHED)
+            check_poster(ap);
     }
 
     save_ov_opened = datasrc->ov_opened;
     datasrc->ov_opened = 0; /* avoid trying to call ov_data twice for high arts */
-    thread_grow();	    /* thread any new articles not yet in the database */
+    thread_grow();          /* thread any new articles not yet in the database */
     datasrc->ov_opened = save_ov_opened;
     added_articles = 0;
     sel_page_sp = 0;
@@ -145,23 +145,23 @@ thread_grow (void)
 {
     added_articles += lastart - last_cached;
     if (added_articles && thread_always)
-	cache_range(last_cached + 1, lastart);
+        cache_range(last_cached + 1, lastart);
     count_subjects(CS_NORM);
     if (artptr_list)
-	sort_articles();
+        sort_articles();
     else
-	sort_subjects();
+        sort_subjects();
 }
 
 void
 thread_close (void)
 {
     curr_artp = artp = NULL;
-    init_tree();			/* free any tree lines */
+    init_tree();                        /* free any tree lines */
 
     update_thread_kfile();
     if (msgid_hash)
-	hashwalk(msgid_hash, cleanup_msgid_hash, 0);
+        hashwalk(msgid_hash, cleanup_msgid_hash, 0);
     sel_page_sp = 0;
     sel_page_app = 0;
     sel_last_ap = 0;
@@ -178,18 +178,18 @@ cleanup_msgid_hash (int keylen, HASHDATUM *data, int extra)
     int ret = -1;
 
     if (ap) {
-	if (data->dat_len)
-	    return 0;
-	if ((kf_state & KFS_GLOBAL_THREADFILE) && ap->autofl) {
-	    data->dat_ptr = ap->msgid;
-	    data->dat_len = ap->autofl;
-	    ret = 0;
-	    ap->msgid = NULL;
-	}
-	if (ap->flags & AF_TMPMEM) {
-	    clear_article(ap);
-	    safefree((char *)ap);
-	}
+        if (data->dat_len)
+            return 0;
+        if ((kf_state & KFS_GLOBAL_THREADFILE) && ap->autofl) {
+            data->dat_ptr = ap->msgid;
+            data->dat_len = ap->autofl;
+            ret = 0;
+            ap->msgid = NULL;
+        }
+        if (ap->flags & AF_TMPMEM) {
+            clear_article(ap);
+            safefree((char *)ap);
+        }
     }
     return ret;
 }
@@ -201,7 +201,7 @@ top_article (void)
     artp = NULL;
     inc_art(selected_only, false);
     if (art > lastart && last_cached < lastart)
-	art = firstart;
+        art = firstart;
 }
 
 ARTICLE *
@@ -209,8 +209,8 @@ first_art (SUBJECT *sp)
 {
     ARTICLE* ap = (ThreadedGroup? sp->thread : sp->articles);
     if (ap && !(ap->flags & AF_EXISTS)) {
-	oneless(ap);
-	ap = next_art(ap);
+        oneless(ap);
+        ap = next_art(ap);
     }
     return ap;
 }
@@ -221,26 +221,26 @@ last_art (SUBJECT *sp)
     ARTICLE* ap;
 
     if (!ThreadedGroup) {
-	ap = sp->articles;
-	while (ap->subj_next)
-	    ap = ap->subj_next;
-	return ap;
+        ap = sp->articles;
+        while (ap->subj_next)
+            ap = ap->subj_next;
+        return ap;
     }
 
     ap = sp->thread;
     if (ap) {
-	for (;;) {
-	    if (ap->sibling)
-		ap = ap->sibling;
-	    else if (ap->child1)
-		ap = ap->child1;
-	    else
-		break;
-	}
-	if (!(ap->flags & AF_EXISTS)) {
-	    oneless(ap);
-	    ap = prev_art(ap);
-	}
+        for (;;) {
+            if (ap->sibling)
+                ap = ap->sibling;
+            else if (ap->child1)
+                ap = ap->child1;
+            else
+                break;
+        }
+        if (!(ap->flags & AF_EXISTS)) {
+            oneless(ap);
+            ap = prev_art(ap);
+        }
     }
     return ap;
 }
@@ -257,67 +257,67 @@ inc_art (bool sel_flag, bool rereading)
 
     /* Use the explicit article-order if it exists */
     if (artptr_list) {
-	ARTICLE** limit = artptr_list + artptr_list_size;
-	if (!ap)
-	    artptr = artptr_list-1;
-	else if (!artptr || *artptr != ap) {
-	    for (artptr = artptr_list; artptr < limit; artptr++) {
-		if (*artptr == ap)
-		    break;
-	    }
-	}
-	do {
-	    if (++artptr >= limit)
-		break;
-	    ap = *artptr;
-	} while ((!rereading && !(ap->flags & AF_UNREAD))
-	      || (sel_flag && !(ap->flags & AF_SEL)));
-	if (artptr < limit) {
-	    artp = *artptr;
-	    art = article_num(artp);
-	} else {
-	    artp = NULL;
-	    art = lastart+1;
-	    artptr = artptr_list;
-	}
-	return;
+        ARTICLE** limit = artptr_list + artptr_list_size;
+        if (!ap)
+            artptr = artptr_list-1;
+        else if (!artptr || *artptr != ap) {
+            for (artptr = artptr_list; artptr < limit; artptr++) {
+                if (*artptr == ap)
+                    break;
+            }
+        }
+        do {
+            if (++artptr >= limit)
+                break;
+            ap = *artptr;
+        } while ((!rereading && !(ap->flags & AF_UNREAD))
+              || (sel_flag && !(ap->flags & AF_SEL)));
+        if (artptr < limit) {
+            artp = *artptr;
+            art = article_num(artp);
+        } else {
+            artp = NULL;
+            art = lastart+1;
+            artptr = artptr_list;
+        }
+        return;
     }
 
     /* Use subject- or thread-order when possible */
     if (ThreadedGroup || srchahead) {
-	SUBJECT* sp;
-	if (ap)
-	    sp = ap->subj;
-	else
-	    sp = next_subj((SUBJECT*)NULL, subj_mask);
-	if (!sp)
-	    goto num_inc;
-	do {
-	    if (ap)
-		ap = next_art(ap);
-	    else
-		ap = first_art(sp);
-	    while (!ap) {
-		sp = next_subj(sp, subj_mask);
-		if (!sp)
-		    break;
-		ap = first_art(sp);
-	    }
-	} while (ap && ((!rereading && !(ap->flags & AF_UNREAD))
-		     || (sel_flag && !(ap->flags & AF_SEL))));
-	if ((artp = ap) != NULL)
-	    art = article_num(ap);
-	else {
-	    if (art <= last_cached)
-		art = last_cached+1;
-	    else
-		art++;
-	    if (art <= lastart)
-		artp = article_ptr(art);
-	    else
-		art = lastart+1;
-	}
-	return;
+        SUBJECT* sp;
+        if (ap)
+            sp = ap->subj;
+        else
+            sp = next_subj((SUBJECT*)NULL, subj_mask);
+        if (!sp)
+            goto num_inc;
+        do {
+            if (ap)
+                ap = next_art(ap);
+            else
+                ap = first_art(sp);
+            while (!ap) {
+                sp = next_subj(sp, subj_mask);
+                if (!sp)
+                    break;
+                ap = first_art(sp);
+            }
+        } while (ap && ((!rereading && !(ap->flags & AF_UNREAD))
+                     || (sel_flag && !(ap->flags & AF_SEL))));
+        if ((artp = ap) != NULL)
+            art = article_num(ap);
+        else {
+            if (art <= last_cached)
+                art = last_cached+1;
+            else
+                art++;
+            if (art <= lastart)
+                artp = article_ptr(art);
+            else
+                art = lastart+1;
+        }
+        return;
     }
 
     /* Otherwise, just increment through the art numbers */
@@ -325,18 +325,18 @@ inc_art (bool sel_flag, bool rereading)
     if (!ap)
       art = firstart-1;
     for (;;) {
-	art = article_next(art);
-	if (art > lastart) {
-	    art = lastart+1;
-	    ap = NULL;
-	    break;
-	}
-	ap = article_ptr(art);
-	if (!(ap->flags & AF_EXISTS))
-	    oneless(ap);
-	else if ((rereading || (ap->flags & AF_UNREAD))
-	      && (!sel_flag || (ap->flags & AF_SEL)))
-	    break;
+        art = article_next(art);
+        if (art > lastart) {
+            art = lastart+1;
+            ap = NULL;
+            break;
+        }
+        ap = article_ptr(art);
+        if (!(ap->flags & AF_EXISTS))
+            oneless(ap);
+        else if ((rereading || (ap->flags & AF_UNREAD))
+              && (!sel_flag || (ap->flags & AF_SEL)))
+            break;
     }
     artp = ap;
 }
@@ -353,70 +353,70 @@ dec_art (bool sel_flag, bool rereading)
 
     /* Use the explicit article-order if it exists */
     if (artptr_list) {
-	ARTICLE** limit = artptr_list + artptr_list_size;
-	if (!ap)
-	    artptr = limit;
-	else if (!artptr || *artptr != ap) {
-	    for (artptr = artptr_list; artptr < limit; artptr++) {
-		if (*artptr == ap)
-		    break;
-	    }
-	}
-	do {
-	    if (artptr == artptr_list)
-		break;
-	    ap = *--artptr;
-	} while ((!rereading && !(ap->flags & AF_UNREAD))
-	      || (sel_flag && !(ap->flags & AF_SEL)));
-	artp = *artptr;
-	art = article_num(artp);
-	return;
+        ARTICLE** limit = artptr_list + artptr_list_size;
+        if (!ap)
+            artptr = limit;
+        else if (!artptr || *artptr != ap) {
+            for (artptr = artptr_list; artptr < limit; artptr++) {
+                if (*artptr == ap)
+                    break;
+            }
+        }
+        do {
+            if (artptr == artptr_list)
+                break;
+            ap = *--artptr;
+        } while ((!rereading && !(ap->flags & AF_UNREAD))
+              || (sel_flag && !(ap->flags & AF_SEL)));
+        artp = *artptr;
+        art = article_num(artp);
+        return;
     }
 
     /* Use subject- or thread-order when possible */
     if (ThreadedGroup || srchahead) {
-	SUBJECT* sp;
-	if (ap)
-	    sp = ap->subj;
-	else
-	    sp = prev_subj((SUBJECT*)NULL, subj_mask);
-	if (!sp)
-	    goto num_dec;
-	do {
-	    if (ap)
-		ap = prev_art(ap);
-	    else
-		ap = last_art(sp);
-	    while (!ap) {
-		sp = prev_subj(sp, subj_mask);
-		if (!sp)
-		    break;
-		ap = last_art(sp);
-	    }
-	} while (ap && ((!rereading && !(ap->flags & AF_UNREAD))
-		     || (sel_flag && !(ap->flags & AF_SEL))));
-	if ((artp = ap) != NULL)
-	    art = article_num(ap);
-	else
-	    art = absfirst-1;
-	return;
+        SUBJECT* sp;
+        if (ap)
+            sp = ap->subj;
+        else
+            sp = prev_subj((SUBJECT*)NULL, subj_mask);
+        if (!sp)
+            goto num_dec;
+        do {
+            if (ap)
+                ap = prev_art(ap);
+            else
+                ap = last_art(sp);
+            while (!ap) {
+                sp = prev_subj(sp, subj_mask);
+                if (!sp)
+                    break;
+                ap = last_art(sp);
+            }
+        } while (ap && ((!rereading && !(ap->flags & AF_UNREAD))
+                     || (sel_flag && !(ap->flags & AF_SEL))));
+        if ((artp = ap) != NULL)
+            art = article_num(ap);
+        else
+            art = absfirst-1;
+        return;
     }
 
     /* Otherwise, just decrement through the art numbers */
   num_dec:
     for (;;) {
-	art = article_prev(art);
-	if (art < absfirst) {
-	    art = absfirst-1;
-	    ap = NULL;
-	    break;
-	}
-	ap = article_ptr(art);
-	if (!(ap->flags & AF_EXISTS))
-	    oneless(ap);
-	else if ((rereading || (ap->flags & AF_UNREAD))
-	      && (!sel_flag || (ap->flags & AF_SEL)))
-	    break;
+        art = article_prev(art);
+        if (art < absfirst) {
+            art = absfirst-1;
+            ap = NULL;
+            break;
+        }
+        ap = article_ptr(art);
+        if (!(ap->flags & AF_EXISTS))
+            oneless(ap);
+        else if ((rereading || (ap->flags & AF_UNREAD))
+              && (!sel_flag || (ap->flags & AF_SEL)))
+            break;
     }
     artp = ap;
 }
@@ -427,10 +427,10 @@ ARTICLE *
 bump_art (ARTICLE *ap)
 {
     if (ap->child1)
-	return ap->child1;
+        return ap->child1;
     while (!ap->sibling) {
-	if (!(ap = ap->parent))
-	    return NULL;
+        if (!(ap = ap->parent))
+            return NULL;
     }
     return ap->sibling;
 }
@@ -443,34 +443,34 @@ next_art (ARTICLE *ap)
 {
 try_again:
     if (!ThreadedGroup) {
-	ap = ap->subj_next;
-	goto done;
+        ap = ap->subj_next;
+        goto done;
     }
     if (breadth_first) {
-	if (ap->sibling) {
-	    ap = ap->sibling;
-	    goto done;
-	}
-	if (ap->parent)
-	    ap = ap->parent->child1;
-	else
-	    ap = ap->subj->thread;
+        if (ap->sibling) {
+            ap = ap->sibling;
+            goto done;
+        }
+        if (ap->parent)
+            ap = ap->parent->child1;
+        else
+            ap = ap->subj->thread;
     }
     do {
-	if (ap->child1) {
-	    ap = ap->child1;
-	    goto done;
-	}
-	while (!ap->sibling) {
-	    if (!(ap = ap->parent))
-		return NULL;
-	}
-	ap = ap->sibling;
+        if (ap->child1) {
+            ap = ap->child1;
+            goto done;
+        }
+        while (!ap->sibling) {
+            if (!(ap = ap->parent))
+                return NULL;
+        }
+        ap = ap->sibling;
     } while (breadth_first);
 done:
     if (ap && !(ap->flags & AF_EXISTS)) {
-	oneless(ap);
-	goto try_again;
+        oneless(ap);
+        goto try_again;
     }
     return ap;
 }
@@ -486,29 +486,29 @@ prev_art (ARTICLE *ap)
 try_again:
     initial_ap = ap;
     if (!ThreadedGroup) {
-	if ((ap = ap->subj->articles) == initial_ap)
-	    ap = NULL;
-	else
-	    while (ap->subj_next != initial_ap)
-		ap = ap->subj_next;
-	goto done;
+        if ((ap = ap->subj->articles) == initial_ap)
+            ap = NULL;
+        else
+            while (ap->subj_next != initial_ap)
+                ap = ap->subj_next;
+        goto done;
     }
     ap = (ap->parent ? ap->parent->child1 : ap->subj->thread);
     if (ap == initial_ap) {
-	ap = ap->parent;
-	goto done;
+        ap = ap->parent;
+        goto done;
     }
     while (ap->sibling != initial_ap)
-	ap = ap->sibling;
+        ap = ap->sibling;
     while (ap->child1) {
-	ap = ap->child1;
-	while (ap->sibling)
-	    ap = ap->sibling;
+        ap = ap->child1;
+        while (ap->sibling)
+            ap = ap->sibling;
     }
 done:
     if (ap && !(ap->flags & AF_EXISTS)) {
-	oneless(ap);
-	goto try_again;
+        oneless(ap);
+        goto try_again;
     }
     return ap;
 }
@@ -522,17 +522,17 @@ next_art_with_subj (void)
     ARTICLE* ap = artp;
 
     if (!ap)
-	return false;
+        return false;
 
     do {
-	ap = ap->subj_next;
-	if (!ap) {
-	    if (!art)
-		art = firstart;
-	    return false;
-	}
+        ap = ap->subj_next;
+        if (!ap) {
+            if (!art)
+                art = firstart;
+            return false;
+        }
     } while (!ALLBITS(ap->flags, AF_EXISTS | AF_UNREAD)
-	  || (selected_only && !(ap->flags & AF_SEL)));
+          || (selected_only && !(ap->flags & AF_SEL)));
     artp = ap;
     art = article_num(ap);
 #ifdef ARTSEARCH
@@ -551,24 +551,24 @@ prev_art_with_subj (void)
     ARTICLE* ap2;
 
     if (!ap)
-	return false;
+        return false;
 
     do {
-	ap2 = ap->subj->articles;
-	if (ap2 == ap)
-	    ap = NULL;
-	else {
-	    while (ap2 && ap2->subj_next != ap)
-		ap2 = ap2->subj_next;
-	    ap = ap2;
-	}
-	if (!ap) {
-	    if (!art)
-		art = lastart;
-	    return false;
-	}
+        ap2 = ap->subj->articles;
+        if (ap2 == ap)
+            ap = NULL;
+        else {
+            while (ap2 && ap2->subj_next != ap)
+                ap2 = ap2->subj_next;
+            ap = ap2;
+        }
+        if (!ap) {
+            if (!art)
+                art = lastart;
+            return false;
+        }
     } while (!(ap->flags & AF_EXISTS)
-	  || (selected_only && !(ap->flags & AF_SEL)));
+          || (selected_only && !(ap->flags & AF_SEL)));
     artp = ap;
     art = article_num(ap);
     return true;
@@ -578,18 +578,18 @@ SUBJECT *
 next_subj (SUBJECT *sp, int subj_mask)
 {
     if (!sp)
-	sp = first_subject;
+        sp = first_subject;
     else if (sel_mode == SM_THREAD) {
-	ARTICLE* ap = sp->thread;
-	do {
-	    sp = sp->next;
-	} while (sp && sp->thread == ap);
+        ARTICLE* ap = sp->thread;
+        do {
+            sp = sp->next;
+        } while (sp && sp->thread == ap);
     }
     else
-	sp = sp->next;
+        sp = sp->next;
 
     while (sp && (sp->flags & subj_mask) != subj_mask) {
-	sp = sp->next;
+        sp = sp->next;
     }
     return sp;
 }
@@ -598,18 +598,18 @@ SUBJECT *
 prev_subj (SUBJECT *sp, int subj_mask)
 {
     if (!sp)
-	sp = last_subject;
+        sp = last_subject;
     else if (sel_mode == SM_THREAD) {
-	ARTICLE* ap = sp->thread;
-	do {
-	    sp = sp->prev;
-	} while (sp && sp->thread == ap);
+        ARTICLE* ap = sp->thread;
+        do {
+            sp = sp->prev;
+        } while (sp && sp->thread == ap);
     }
     else
-	sp = sp->prev;
+        sp = sp->prev;
 
     while (sp && (sp->flags & subj_mask) != subj_mask) {
-	sp = sp->prev;
+        sp = sp->prev;
     }
     return sp;
 }
@@ -625,21 +625,21 @@ select_article (ARTICLE *ap, int auto_flags)
 #endif
     auto_flags &= AUTO_SELS;
     if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == desired_flags) {
-	if (!(ap->flags & sel_mask)) {
-	    selected_count++;
+        if (!(ap->flags & sel_mask)) {
+            selected_count++;
 #ifdef VERBOSE
-	    IF(verbose && echo && gmode != 's')
-		fputs("\tSelected",stdout);
+            IF(verbose && echo && gmode != 's')
+                fputs("\tSelected",stdout);
 #endif
-	}
-	ap->flags = (ap->flags & ~AF_DEL) | sel_mask;
+        }
+        ap->flags = (ap->flags & ~AF_DEL) | sel_mask;
     }
     if (auto_flags)
-	change_auto_flags(ap, auto_flags);
+        change_auto_flags(ap, auto_flags);
     if (ap->subj) {
-	if (!(ap->subj->flags & sel_mask))
-	    selected_subj_cnt++;
-	ap->subj->flags = (ap->subj->flags&~SF_DEL) | sel_mask | SF_VISIT;
+        if (!(ap->subj->flags & sel_mask))
+            selected_subj_cnt++;
+        ap->subj->flags = (ap->subj->flags&~SF_DEL) | sel_mask | SF_VISIT;
     }
     selected_only = (selected_only || selected_count != 0);
 }
@@ -650,9 +650,9 @@ void
 select_arts_subject (ARTICLE *ap, int auto_flags)
 {
     if (ap->subj && ap->subj->articles)
-	select_subject(ap->subj, auto_flags);
+        select_subject(ap->subj, auto_flags);
     else
-	select_article(ap, auto_flags);
+        select_article(ap, auto_flags);
 }
 
 /* Select all the articles in a subject.
@@ -666,21 +666,21 @@ select_subject (SUBJECT *subj, int auto_flags)
 
     auto_flags &= AUTO_SELS;
     for (ap = subj->articles; ap; ap = ap->subj_next) {
-	if ((ap->flags & (AF_EXISTS|AF_UNREAD|sel_mask)) == desired_flags) {
-	    ap->flags |= sel_mask;
-	    selected_count++;
-	}
-	if (auto_flags)
-	    change_auto_flags(ap, auto_flags);
+        if ((ap->flags & (AF_EXISTS|AF_UNREAD|sel_mask)) == desired_flags) {
+            ap->flags |= sel_mask;
+            selected_count++;
+        }
+        if (auto_flags)
+            change_auto_flags(ap, auto_flags);
     }
     if (selected_count > old_count) {
-	if (!(subj->flags & sel_mask))
-	    selected_subj_cnt++;
-	subj->flags = (subj->flags & ~SF_DEL)
-		    | sel_mask | SF_VISIT | SF_WASSELECTED;
-	selected_only = true;
+        if (!(subj->flags & sel_mask))
+            selected_subj_cnt++;
+        subj->flags = (subj->flags & ~SF_DEL)
+                    | sel_mask | SF_VISIT | SF_WASSELECTED;
+        selected_only = true;
     } else
-	subj->flags |= SF_WASSELECTED;
+        subj->flags |= SF_WASSELECTED;
 }
 
 /* Select this article's thread.
@@ -689,9 +689,9 @@ void
 select_arts_thread (ARTICLE *ap, int auto_flags)
 {
     if (ap->subj && ap->subj->thread)
-	select_thread(ap->subj->thread, auto_flags);
+        select_thread(ap->subj->thread, auto_flags);
     else
-	select_arts_subject(ap, auto_flags);
+        select_arts_subject(ap, auto_flags);
 }
 
 /* Select all the articles in a thread.
@@ -703,8 +703,8 @@ select_thread (ARTICLE *thread, int auto_flags)
 
     sp = thread->subj;
     do {
-	select_subject(sp, auto_flags);
-	sp = sp->thread_link;
+        select_subject(sp, auto_flags);
+        sp = sp->thread_link;
     } while (sp != thread->subj);
 }
 
@@ -719,29 +719,29 @@ select_subthread (ARTICLE *ap, int auto_flags)
     int old_count = selected_count;
 
     if (!ap)
-	return;
+        return;
     subj = ap->subj;
     for (limit = ap; limit; limit = limit->parent) {
-	if (limit->sibling) {
-	    limit = limit->sibling;
-	    break;
-	}
+        if (limit->sibling) {
+            limit = limit->sibling;
+            break;
+        }
     }
 
     auto_flags &= AUTO_SELS;
     for (; ap != limit; ap = bump_art(ap)) {
-	if ((ap->flags & (AF_EXISTS|AF_UNREAD|sel_mask)) == desired_flags) {
-	    ap->flags |= sel_mask;
-	    selected_count++;
-	}
-	if (auto_flags)
-	    change_auto_flags(ap, auto_flags);
+        if ((ap->flags & (AF_EXISTS|AF_UNREAD|sel_mask)) == desired_flags) {
+            ap->flags |= sel_mask;
+            selected_count++;
+        }
+        if (auto_flags)
+            change_auto_flags(ap, auto_flags);
     }
     if (subj && selected_count > old_count) {
-	if (!(subj->flags & sel_mask))
-	    selected_subj_cnt++;
-	subj->flags = (subj->flags & ~SF_DEL) | sel_mask | SF_VISIT;
-	selected_only = true;
+        if (!(subj->flags & sel_mask))
+            selected_subj_cnt++;
+        subj->flags = (subj->flags & ~SF_DEL) | sel_mask | SF_VISIT;
+        selected_only = true;
     }
 }
 
@@ -755,16 +755,16 @@ deselect_article (ARTICLE *ap, int auto_flags)
 #endif
     auto_flags &= AUTO_SELS;
     if (ap->flags & sel_mask) {
-	ap->flags &= ~sel_mask;
-	if (!selected_count--)
-	    selected_count = 0;
+        ap->flags &= ~sel_mask;
+        if (!selected_count--)
+            selected_count = 0;
 #ifdef VERBOSE
-	IF(verbose && echo && gmode != 's')
-	    fputs("\tDeselected",stdout);
+        IF(verbose && echo && gmode != 's')
+            fputs("\tDeselected",stdout);
 #endif
     }
     if (sel_rereading && sel_mode == SM_ARTICLE)
-	ap->flags |= AF_DEL;
+        ap->flags |= AF_DEL;
 }
 
 /* Deselect this article's subject.
@@ -773,9 +773,9 @@ void
 deselect_arts_subject (ARTICLE *ap)
 {
     if (ap->subj && ap->subj->articles)
-	deselect_subject(ap->subj);
+        deselect_subject(ap->subj);
     else
-	deselect_article(ap, 0);
+        deselect_article(ap, 0);
 }
 
 /* Deselect all the articles in a subject.
@@ -786,21 +786,21 @@ deselect_subject (SUBJECT *subj)
     ARTICLE* ap;
 
     for (ap = subj->articles; ap; ap = ap->subj_next) {
-	if (ap->flags & sel_mask) {
-	    ap->flags &= ~sel_mask;
-	    if (!selected_count--)
-		selected_count = 0;
-	}
+        if (ap->flags & sel_mask) {
+            ap->flags &= ~sel_mask;
+            if (!selected_count--)
+                selected_count = 0;
+        }
     }
     if (subj->flags & sel_mask) {
-	subj->flags &= ~sel_mask;
-	selected_subj_cnt--;
+        subj->flags &= ~sel_mask;
+        selected_subj_cnt--;
     }
     subj->flags &= ~(SF_VISIT | SF_WASSELECTED);
     if (sel_rereading)
-	subj->flags |= SF_DEL;
+        subj->flags |= SF_DEL;
     else
-	subj->flags &= ~SF_DEL;
+        subj->flags &= ~SF_DEL;
 }
 
 /* Deselect this article's thread.
@@ -809,9 +809,9 @@ void
 deselect_arts_thread (ARTICLE *ap)
 {
     if (ap->subj && ap->subj->thread)
-	deselect_thread(ap->subj->thread);
+        deselect_thread(ap->subj->thread);
     else
-	deselect_arts_subject(ap);
+        deselect_arts_subject(ap);
 }
 
 /* Deselect all the articles in a thread.
@@ -823,8 +823,8 @@ deselect_thread (ARTICLE *thread)
 
     sp = thread->subj;
     do {
-	deselect_subject(sp);
-	sp = sp->thread_link;
+        deselect_subject(sp);
+        sp = sp->thread_link;
     } while (sp != thread->subj);
 }
 
@@ -836,7 +836,7 @@ deselect_all (void)
     SUBJECT* sp;
 
     for (sp = first_subject; sp; sp = sp->next)
-	deselect_subject(sp);
+        deselect_subject(sp);
     selected_count = selected_subj_cnt = 0;
     sel_page_sp = 0;
     sel_page_app = 0;
@@ -851,14 +851,14 @@ void
 kill_arts_subject (ARTICLE *ap, int auto_flags)
 {
     if (ap->subj && ap->subj->articles)
-	kill_subject(ap->subj, auto_flags);
+        kill_subject(ap->subj, auto_flags);
     else {
-	if (auto_flags & SET_TORETURN)
-	    delay_unmark(ap);
-	set_read(ap);
-	auto_flags &= AUTO_KILLS;
-	if (auto_flags)
-	    change_auto_flags(ap, auto_flags);
+        if (auto_flags & SET_TORETURN)
+            delay_unmark(ap);
+        set_read(ap);
+        auto_flags &= AUTO_KILLS;
+        if (auto_flags)
+            change_auto_flags(ap, auto_flags);
     }
 }
 
@@ -873,12 +873,12 @@ kill_subject (SUBJECT *subj, int auto_flags)
 
     auto_flags &= AUTO_KILLS;
     for (ap = subj->articles; ap; ap = ap->subj_next) {
-	if (toreturn)
-	    delay_unmark(ap);
-	if ((ap->flags & (AF_UNREAD|killmask)) == AF_UNREAD)
-	    set_read(ap);
-	if (auto_flags)
-	    change_auto_flags(ap, auto_flags);
+        if (toreturn)
+            delay_unmark(ap);
+        if ((ap->flags & (AF_UNREAD|killmask)) == AF_UNREAD)
+            set_read(ap);
+        if (auto_flags)
+            change_auto_flags(ap, auto_flags);
     }
     subj->flags &= ~(SF_VISIT | SF_WASSELECTED);
 }
@@ -889,9 +889,9 @@ void
 kill_arts_thread (ARTICLE *ap, int auto_flags)
 {
     if (ap->subj && ap->subj->thread)
-	kill_thread(ap->subj->thread, auto_flags);
+        kill_thread(ap->subj->thread, auto_flags);
     else
-	kill_arts_subject(ap, auto_flags);
+        kill_arts_subject(ap, auto_flags);
 }
 
 /* Kill all unread articles attached to the given thread.
@@ -903,8 +903,8 @@ kill_thread (ARTICLE *thread, int auto_flags)
 
     sp = thread->subj;
     do {
-	kill_subject(sp, auto_flags);
-	sp = sp->thread_link;
+        kill_subject(sp, auto_flags);
+        sp = sp->thread_link;
     } while (sp != thread->subj);
 }
 
@@ -917,22 +917,22 @@ kill_subthread (ARTICLE *ap, int auto_flags)
     char toreturn = (auto_flags & SET_TORETURN) != 0;
 
     if (!ap)
-	return;
+        return;
     for (limit = ap; limit; limit = limit->parent) {
-	if (limit->sibling) {
-	    limit = limit->sibling;
-	    break;
-	}
+        if (limit->sibling) {
+            limit = limit->sibling;
+            break;
+        }
     }
 
     auto_flags &= AUTO_KILLS;
     for (; ap != limit; ap = bump_art(ap)) {
-	if (toreturn)
-	    delay_unmark(ap);
-	if (ALLBITS(ap->flags, AF_EXISTS | AF_UNREAD))
-	    set_read(ap);
-	if (auto_flags)
-	    change_auto_flags(ap, auto_flags);
+        if (toreturn)
+            delay_unmark(ap);
+        if (ALLBITS(ap->flags, AF_EXISTS | AF_UNREAD))
+            set_read(ap);
+        if (auto_flags)
+            change_auto_flags(ap, auto_flags);
     }
 }
 
@@ -945,28 +945,28 @@ unkill_subject (SUBJECT *subj)
     int save_sel_count = selected_count;
 
     for (ap = subj->articles; ap; ap = ap->subj_next) {
-	if (sel_rereading) {
-	    if (ALLBITS(ap->flags, AF_DELSEL | AF_EXISTS)) {
-		if (!(ap->flags & AF_UNREAD))
-		    ngptr->toread++;
-		if (selected_only && !(ap->flags & AF_SEL))
-		    selected_count++;
-		ap->flags = (ap->flags & ~AF_DELSEL) | AF_SEL|AF_UNREAD;
-	    } else
-		ap->flags &= ~(AF_DEL|AF_DELSEL);
-	} else {
-	    if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == AF_EXISTS)
-		onemore(ap);
-	    if (selected_only && (ap->flags & (AF_SEL|AF_UNREAD)) == AF_UNREAD) {
-		ap->flags = (ap->flags & ~AF_DEL) | AF_SEL;
-		selected_count++;
-	    }
-	}
+        if (sel_rereading) {
+            if (ALLBITS(ap->flags, AF_DELSEL | AF_EXISTS)) {
+                if (!(ap->flags & AF_UNREAD))
+                    ngptr->toread++;
+                if (selected_only && !(ap->flags & AF_SEL))
+                    selected_count++;
+                ap->flags = (ap->flags & ~AF_DELSEL) | AF_SEL|AF_UNREAD;
+            } else
+                ap->flags &= ~(AF_DEL|AF_DELSEL);
+        } else {
+            if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == AF_EXISTS)
+                onemore(ap);
+            if (selected_only && (ap->flags & (AF_SEL|AF_UNREAD)) == AF_UNREAD) {
+                ap->flags = (ap->flags & ~AF_DEL) | AF_SEL;
+                selected_count++;
+            }
+        }
     }
     if (selected_count != save_sel_count
      && selected_only && !(subj->flags & SF_SEL)) {
-	subj->flags |= SF_SEL | SF_VISIT | SF_WASSELECTED;
-	selected_subj_cnt++;
+        subj->flags |= SF_SEL | SF_VISIT | SF_WASSELECTED;
+        selected_subj_cnt++;
     }
     subj->flags &= ~(SF_DEL|SF_DELSEL);
 }
@@ -980,8 +980,8 @@ unkill_thread (ARTICLE *thread)
 
     sp = thread->subj;
     do {
-	unkill_subject(sp);
-	sp = sp->thread_link;
+        unkill_subject(sp);
+        sp = sp->thread_link;
     } while (sp != thread->subj);
 }
 
@@ -994,25 +994,25 @@ unkill_subthread (ARTICLE *ap)
     SUBJECT* sp;
 
     if (!ap)
-	return;
+        return;
     for (limit = ap; limit; limit = limit->parent) {
-	if (limit->sibling) {
-	    limit = limit->sibling;
-	    break;
-	}
+        if (limit->sibling) {
+            limit = limit->sibling;
+            break;
+        }
     }
 
     sp = ap->subj;
     for (; ap != limit; ap = bump_art(ap)) {
-	if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == AF_EXISTS)
-	    onemore(ap);
-	if (selected_only && !(ap->flags & AF_SEL)) {
-	    ap->flags |= AF_SEL;
-	    selected_count++;
-	}
+        if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == AF_EXISTS)
+            onemore(ap);
+        if (selected_only && !(ap->flags & AF_SEL)) {
+            ap->flags |= AF_SEL;
+            selected_count++;
+        }
     }
     if (!(sp->flags & sel_mask))
-	selected_subj_cnt++;
+        selected_subj_cnt++;
     sp->flags = (sp->flags & ~SF_DEL) | SF_SEL | SF_VISIT;
     selected_only = (selected_only || selected_count != 0);
 }
@@ -1025,7 +1025,7 @@ clear_subject (SUBJECT *subj)
     ARTICLE* ap;
 
     for (ap = subj->articles; ap; ap = ap->subj_next)
-	clear_auto_flags(ap);
+        clear_auto_flags(ap);
 }
 
 /* Clear the auto flags in all unread articles attached to the given thread.
@@ -1037,8 +1037,8 @@ clear_thread (ARTICLE *thread)
 
     sp = thread->subj;
     do {
-	clear_subject(sp);
-	sp = sp->thread_link;
+        clear_subject(sp);
+        sp = sp->thread_link;
     } while (sp != thread->subj);
 }
 
@@ -1050,16 +1050,16 @@ clear_subthread (ARTICLE *ap)
     ARTICLE* limit;
 
     if (!ap)
-	return;
+        return;
     for (limit = ap; limit; limit = limit->parent) {
-	if (limit->sibling) {
-	    limit = limit->sibling;
-	    break;
-	}
+        if (limit->sibling) {
+            limit = limit->sibling;
+            break;
+        }
     }
 
     for (; ap != limit; ap = bump_art(ap))
-	clear_auto_flags(ap);
+        clear_auto_flags(ap);
 }
 
 ARTICLE *
@@ -1072,16 +1072,16 @@ subj_art (SUBJECT *sp)
     ThreadedGroup = (sel_mode == SM_THREAD);
     ap = first_art(sp);
     while (ap && (ap->flags & art_mask) != art_mask)
-	ap = next_art(ap);
+        ap = next_art(ap);
     if (!ap) {
-	reread = true;
-	ap = first_art(sp);
-	if (selected_only) {
-	    while (ap && !(ap->flags & AF_SEL))
-		ap = next_art(ap);
-	    if (!ap)
-		ap = first_art(sp);
-	}
+        reread = true;
+        ap = first_art(sp);
+        if (selected_only) {
+            while (ap && !(ap->flags & AF_SEL))
+                ap = next_art(ap);
+            if (!ap)
+                ap = first_art(sp);
+        }
     }
     ThreadedGroup = TG_save;
     return ap;
@@ -1098,12 +1098,12 @@ visit_next_thread (void)
 
     sp = (ap? ap->subj : NULL);
     while ((sp = next_subj(sp, SF_VISIT)) != NULL) {
-	if ((ap = subj_art(sp)) != NULL) {
-	    art = article_num(ap);
-	    artp = ap;
-	    return;
-	}
-	reread = false;
+        if ((ap = subj_art(sp)) != NULL) {
+            art = article_num(ap);
+            artp = ap;
+            return;
+        }
+        reread = false;
     }
     artp = NULL;
     art = lastart+1;
@@ -1121,12 +1121,12 @@ visit_prev_thread (void)
 
     sp = (ap? ap->subj : NULL);
     while ((sp = prev_subj(sp, SF_VISIT)) != NULL) {
-	if ((ap = subj_art(sp)) != NULL) {
-	    art = article_num(ap);
-	    artp = ap;
-	    return;
-	}
-	reread = false;
+        if ((ap = subj_art(sp)) != NULL) {
+            art = article_num(ap);
+            artp = ap;
+            return;
+        }
+        reread = false;
     }
     artp = NULL;
     art = lastart+1;
@@ -1142,10 +1142,10 @@ find_parent (bool keep_going)
     ARTICLE* ap = artp;
 
     if (!ap->parent)
-	return false;
+        return false;
 
     do {
-	ap = ap->parent;
+        ap = ap->parent;
     } while (keep_going && ap->parent);
 
     artp = ap;
@@ -1162,10 +1162,10 @@ find_leaf (bool keep_going)
     ARTICLE* ap = artp;
 
     if (!ap->child1)
-	return false;
+        return false;
 
     do {
-	ap = ap->child1;
+        ap = ap->child1;
     } while (keep_going && ap->child1);
 
     artp = ap;
@@ -1187,17 +1187,17 @@ find_next_sib (void)
     ascent = 0;
     ta = artp;
     for (;;) {
-	while (ta->sibling) {
-	    ta = ta->sibling;
-	    if ((tb = first_sib(ta, ascent)) != NULL) {
-		artp = tb;
-		art = article_num(tb);
-		return true;
-	    }
-	}
-	if (!(ta = ta->parent))
-	    break;
-	ascent++;
+        while (ta->sibling) {
+            ta = ta->sibling;
+            if ((tb = first_sib(ta, ascent)) != NULL) {
+                artp = tb;
+                art = article_num(tb);
+                return true;
+            }
+        }
+        if (!(ta = ta->parent))
+            break;
+        ascent++;
     }
     return false;
 }
@@ -1211,16 +1211,16 @@ first_sib (ARTICLE *ta, int depth)
     ARTICLE* tb;
 
     if (!depth)
-	return ta;
+        return ta;
 
     for (;;) {
-	if (ta->child1 && (tb = first_sib(ta->child1, depth-1)))
-	    return tb;
+        if (ta->child1 && (tb = first_sib(ta->child1, depth-1)))
+            return tb;
 
-	if (!ta->sibling)
-	    return NULL;
+        if (!ta->sibling)
+            return NULL;
 
-	ta = ta->sibling;
+        ta = ta->sibling;
     }
 }
 
@@ -1238,19 +1238,19 @@ find_prev_sib (void)
     ascent = 0;
     ta = artp;
     for (;;) {
-	tb = ta;
-	if (ta->parent)
-	    ta = ta->parent->child1;
-	else
-	    ta = ta->subj->thread;
-	if ((tb = last_sib(ta, ascent, tb)) != NULL) {
-	    artp = tb;
-	    art = article_num(tb);
-	    return true;
-	}
-	if (!(ta = ta->parent))
-	    break;
-	ascent++;
+        tb = ta;
+        if (ta->parent)
+            ta = ta->parent->child1;
+        else
+            ta = ta->subj->thread;
+        if ((tb = last_sib(ta, ascent, tb)) != NULL) {
+            artp = tb;
+            art = article_num(tb);
+            return true;
+        }
+        if (!(ta = ta->parent))
+            break;
+        ascent++;
     }
     return false;
 }
@@ -1265,17 +1265,17 @@ last_sib (ARTICLE *ta, int depth, ARTICLE *limit)
     ARTICLE* tc;
 
     if (ta == limit)
-	return NULL;
+        return NULL;
 
     if (ta->sibling) {
-	tc = ta->sibling;
-	if (tc != limit && (tb = last_sib(tc,depth,limit)))
-	    return tb;
+        tc = ta->sibling;
+        if (tc != limit && (tb = last_sib(tc,depth,limit)))
+            return tb;
     }
     if (!depth)
-	return ta;
+        return ta;
     if (ta->child1)
-	return last_sib(ta->child1, depth-1, limit);
+        return last_sib(ta->child1, depth-1, limit);
     return NULL;
 }
 
@@ -1297,80 +1297,80 @@ count_subjects (int cmode)
 
     obj_count = selected_count = selected_subj_cnt = 0;
     if (last_cached >= lastart)
-	firstart = lastart+1;
+        firstart = lastart+1;
 
     switch (cmode) {
     case CS_RETAIN:
-	break;
+        break;
     case CS_UNSEL_STORE:
-	for (sp = first_subject; sp; sp = sp->next) {
-	    if (sp->flags & SF_VISIT)
-		sp->flags = (sp->flags & ~SF_VISIT) | SF_OLDVISIT;
-	    else
-		sp->flags &= ~SF_OLDVISIT;
-	}
-	break;
+        for (sp = first_subject; sp; sp = sp->next) {
+            if (sp->flags & SF_VISIT)
+                sp->flags = (sp->flags & ~SF_VISIT) | SF_OLDVISIT;
+            else
+                sp->flags &= ~SF_OLDVISIT;
+        }
+        break;
     case CS_RESELECT:
-	for (sp = first_subject; sp; sp = sp->next) {
-	    if (sp->flags & SF_OLDVISIT)
-		sp->flags |= SF_VISIT;
-	    else
-		sp->flags &= ~SF_VISIT;
-	}
-	break;
+        for (sp = first_subject; sp; sp = sp->next) {
+            if (sp->flags & SF_OLDVISIT)
+                sp->flags |= SF_VISIT;
+            else
+                sp->flags &= ~SF_VISIT;
+        }
+        break;
     default:
-	for (sp = first_subject; sp; sp = sp->next)
-	    sp->flags &= ~SF_VISIT;
+        for (sp = first_subject; sp; sp = sp->next)
+            sp->flags &= ~SF_VISIT;
     }
 
     for (sp = first_subject; sp; sp = sp->next) {
-	subjdate = 0;
-	count = sel_count = 0;
-	for (ap = sp->articles; ap; ap = ap->subj_next) {
-	    if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == desired_flags) {
-		count++;
-		if (ap->flags & sel_mask)
-		    sel_count++;
-		if (!subjdate)
-		    subjdate = ap->date;
-		if (article_num(ap) < firstart)
-		    firstart = article_num(ap);
-	    }
-	}
-	sp->misc = count;
-	if (subjdate)
-	    sp->date = subjdate;
-	else if (!sp->date && sp->articles)
-	    sp->date = sp->articles->date;
-	obj_count += count;
-	if (cmode == CS_RESELECT) {
-	    if (sp->flags & SF_VISIT) {
-		sp->flags = (sp->flags & ~(SF_SEL|SF_DEL)) | sel_mask;
-		selected_count += sel_count;
-		selected_subj_cnt++;
-	    } else
-		sp->flags &= ~sel_mask;
-	} else {
-	    if (sel_count
-	     && (cmode >= CS_UNSEL_STORE || (sp->flags & sel_mask))) {
-		sp->flags = (sp->flags & ~(SF_SEL|SF_DEL)) | sel_mask;
-		selected_count += sel_count;
-		selected_subj_cnt++;
-	    } else if (cmode >= CS_UNSELECT)
-		sp->flags &= ~sel_mask;
-	    else if (sp->flags & sel_mask) {
-		sp->flags &= ~SF_DEL;
-		selected_subj_cnt++;
-	    }
-	    if (count && (!selected_only || (sp->flags & sel_mask))) {
-		sp->flags |= SF_VISIT;
-	    }
-	}
+        subjdate = 0;
+        count = sel_count = 0;
+        for (ap = sp->articles; ap; ap = ap->subj_next) {
+            if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == desired_flags) {
+                count++;
+                if (ap->flags & sel_mask)
+                    sel_count++;
+                if (!subjdate)
+                    subjdate = ap->date;
+                if (article_num(ap) < firstart)
+                    firstart = article_num(ap);
+            }
+        }
+        sp->misc = count;
+        if (subjdate)
+            sp->date = subjdate;
+        else if (!sp->date && sp->articles)
+            sp->date = sp->articles->date;
+        obj_count += count;
+        if (cmode == CS_RESELECT) {
+            if (sp->flags & SF_VISIT) {
+                sp->flags = (sp->flags & ~(SF_SEL|SF_DEL)) | sel_mask;
+                selected_count += sel_count;
+                selected_subj_cnt++;
+            } else
+                sp->flags &= ~sel_mask;
+        } else {
+            if (sel_count
+             && (cmode >= CS_UNSEL_STORE || (sp->flags & sel_mask))) {
+                sp->flags = (sp->flags & ~(SF_SEL|SF_DEL)) | sel_mask;
+                selected_count += sel_count;
+                selected_subj_cnt++;
+            } else if (cmode >= CS_UNSELECT)
+                sp->flags &= ~sel_mask;
+            else if (sp->flags & sel_mask) {
+                sp->flags &= ~SF_DEL;
+                selected_subj_cnt++;
+            }
+            if (count && (!selected_only || (sp->flags & sel_mask))) {
+                sp->flags |= SF_VISIT;
+            }
+        }
     }
     if (cmode != CS_RETAIN && cmode != CS_RESELECT
      && !obj_count && !selected_only) {
-	for (sp = first_subject; sp; sp = sp->next)
-	    sp->flags |= SF_VISIT;
+        for (sp = first_subject; sp; sp = sp->next)
+            sp->flags |= SF_VISIT;
     }
 }
 
@@ -1418,13 +1418,13 @@ subject_score_high (SUBJECT *sp)
 
     /* find highest score of desired articles */
     for (ap = sp->articles; ap; ap = ap->subj_next) {
-	if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == desired_flags) {
-	    sc = sc_score_art(article_num(ap),false);
-	    if ((!hiscore_found) || (sc>hiscore)) {
-		hiscore_found = 1;
-		hiscore = sc;
-	    }
-	}
+        if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == desired_flags) {
+            sc = sc_score_art(article_num(ap),false);
+            if ((!hiscore_found) || (sc>hiscore)) {
+                hiscore_found = 1;
+                hiscore = sc;
+            }
+        }
     }
     return hiscore;
 }
@@ -1438,7 +1438,7 @@ subjorder_score (SUBJECT **spp1, SUBJECT **spp2)
     sc2 = subject_score_high(*spp2);
 
     if (sc1 != sc2)
-	return (sc2 - sc1) * sel_direction;
+        return (sc2 - sc1) * sel_direction;
     return subjorder_date(spp1, spp2);
 }
 #endif
@@ -1449,7 +1449,7 @@ threadorder_subject (SUBJECT **spp1, SUBJECT **spp2)
     ARTICLE* t1 = (*spp1)->thread;
     ARTICLE* t2 = (*spp2)->thread;
     if (t1 != t2 && t1 && t2)
-	return strcaseCMP(t1->subj->str+4, t2->subj->str+4) * sel_direction;
+        return strcaseCMP(t1->subj->str+4, t2->subj->str+4) * sel_direction;
     return subjorder_date(spp1, spp2);
 }
 
@@ -1459,20 +1459,20 @@ threadorder_date (SUBJECT **spp1, SUBJECT **spp2)
     ARTICLE* t1 = (*spp1)->thread;
     ARTICLE* t2 = (*spp2)->thread;
     if (t1 != t2 && t1 && t2) {
-	SUBJECT* sp1;
-	SUBJECT* sp2;
-	long eq;
-	if (!(sp1 = t1->subj)->misc)
-	    for (sp1=sp1->thread_link; sp1 != t1->subj; sp1=sp1->thread_link)
-		if (sp1->misc)
-		    break;
-	if (!(sp2 = t2->subj)->misc)
-	    for (sp2=sp2->thread_link; sp2 != t2->subj; sp2=sp2->thread_link)
-		if (sp2->misc)
-		    break;
-	if (!(eq = sp1->date - sp2->date))
-	    return strcaseCMP(sp1->str+4, sp2->str+4);
-	return eq > 0? sel_direction : -sel_direction;
+        SUBJECT* sp1;
+        SUBJECT* sp2;
+        long eq;
+        if (!(sp1 = t1->subj)->misc)
+            for (sp1=sp1->thread_link; sp1 != t1->subj; sp1=sp1->thread_link)
+                if (sp1->misc)
+                    break;
+        if (!(sp2 = t2->subj)->misc)
+            for (sp2=sp2->thread_link; sp2 != t2->subj; sp2=sp2->thread_link)
+                if (sp2->misc)
+                    break;
+        if (!(eq = sp1->date - sp2->date))
+            return strcaseCMP(sp1->str+4, sp2->str+4);
+        return eq > 0? sel_direction : -sel_direction;
     }
     return subjorder_date(spp1, spp2);
 }
@@ -1483,14 +1483,14 @@ threadorder_count (SUBJECT **spp1, SUBJECT **spp2)
     int size1 = (*spp1)->misc;
     int size2 = (*spp2)->misc;
     if ((*spp1)->thread != (*spp2)->thread) {
-	SUBJECT* sp;
-	for (sp = (*spp1)->thread_link; sp != *spp1; sp = sp->thread_link)
-	    size1 += sp->misc;
-	for (sp = (*spp2)->thread_link; sp != *spp2; sp = sp->thread_link)
-	    size2 += sp->misc;
+        SUBJECT* sp;
+        for (sp = (*spp1)->thread_link; sp != *spp1; sp = sp->thread_link)
+            size1 += sp->misc;
+        for (sp = (*spp2)->thread_link; sp != *spp2; sp = sp->thread_link)
+            size2 += sp->misc;
     }
     if (size1 != size2)
-	return (size1 - size2) * sel_direction;
+        return (size1 - size2) * sel_direction;
     return threadorder_date(spp1, spp2);
 }
 
@@ -1500,27 +1500,27 @@ threadorder_lines (SUBJECT **spp1, SUBJECT **spp2)
     ARTICLE* t1 = (*spp1)->thread;
     ARTICLE* t2 = (*spp2)->thread;
     if (t1 != t2 && t1 && t2) {
-	SUBJECT* sp1;
-	SUBJECT* sp2;
-	long eq, l1, l2;
-	if (!(sp1 = t1->subj)->misc) {
-	    for (sp1=sp1->thread_link; sp1 != t1->subj; sp1=sp1->thread_link) {
-		if (sp1->misc)
-		    break;
-	    }
-	}
-	if (!(sp2 = t2->subj)->misc) {
-	    for (sp2=sp2->thread_link; sp2 != t2->subj; sp2=sp2->thread_link) {
-		if (sp2->misc)
-		    break;
-	    }
-	}
-	l1 = sp1->articles? sp1->articles->lines : 0;
-	l2 = sp2->articles? sp2->articles->lines : 0;
-	if ((eq = l1 - l2) != 0)
-	    return eq > 0? sel_direction : -sel_direction;
-	eq = sp1->date - sp2->date;
-	return eq? eq > 0? sel_direction : -sel_direction : 0;
+        SUBJECT* sp1;
+        SUBJECT* sp2;
+        long eq, l1, l2;
+        if (!(sp1 = t1->subj)->misc) {
+            for (sp1=sp1->thread_link; sp1 != t1->subj; sp1=sp1->thread_link) {
+                if (sp1->misc)
+                    break;
+            }
+        }
+        if (!(sp2 = t2->subj)->misc) {
+            for (sp2=sp2->thread_link; sp2 != t2->subj; sp2=sp2->thread_link) {
+                if (sp2->misc)
+                    break;
+            }
+        }
+        l1 = sp1->articles? sp1->articles->lines : 0;
+        l2 = sp2->articles? sp2->articles->lines : 0;
+        if ((eq = l1 - l2) != 0)
+            return eq > 0? sel_direction : -sel_direction;
+        eq = sp1->date - sp2->date;
+        return eq? eq > 0? sel_direction : -sel_direction : 0;
     }
     return subjorder_date(spp1, spp2);
 }
@@ -1536,14 +1536,14 @@ thread_score_high (SUBJECT *tp)
     int sc;
 
     for (sp = tp->thread_link; ; sp = sp->thread_link) {
-	sc = subject_score_high(sp);
-	if ((!hiscore_found) || (sc>hiscore)) {
-	    hiscore_found = 1;
-	    hiscore = sc;
-	}
-	/* break *after* doing the last item */
-	if (tp == sp)
-	    break;
+        sc = subject_score_high(sp);
+        if ((!hiscore_found) || (sc>hiscore)) {
+            hiscore_found = 1;
+            hiscore = sc;
+        }
+        /* break *after* doing the last item */
+        if (tp == sp)
+            break;
     }
     return hiscore;
 }
@@ -1556,11 +1556,11 @@ threadorder_score (SUBJECT **spp1, SUBJECT **spp2)
     sc1 = sc2 = 0;
 
     if ((*spp1)->thread != (*spp2)->thread) {
-	sc1 = thread_score_high(*spp1);
-	sc2 = thread_score_high(*spp2);
+        sc1 = thread_score_high(*spp1);
+        sc2 = thread_score_high(*spp2);
     }
     if (sc1 != sc2)
-	return (sc2 - sc1) * sel_direction;
+        return (sc2 - sc1) * sel_direction;
     return threadorder_date(spp1, spp2);
 }
 #endif
@@ -1578,38 +1578,38 @@ sort_subjects (void)
 
     /* If we don't have at least two subjects, we're done! */
     if (!first_subject || !first_subject->next)
-	return;
+        return;
 
     switch (sel_sort) {
       case SS_DATE:
       default:
-	sort_procedure = (sel_mode == SM_THREAD?
-			  threadorder_date : subjorder_date);
-	break;
+        sort_procedure = (sel_mode == SM_THREAD?
+                          threadorder_date : subjorder_date);
+        break;
       case SS_STRING:
-	sort_procedure = (sel_mode == SM_THREAD?
-			  threadorder_subject : subjorder_subject);
-	break;
+        sort_procedure = (sel_mode == SM_THREAD?
+                          threadorder_subject : subjorder_subject);
+        break;
       case SS_COUNT:
-	sort_procedure = (sel_mode == SM_THREAD?
-			  threadorder_count : subjorder_count);
-	break;
+        sort_procedure = (sel_mode == SM_THREAD?
+                          threadorder_count : subjorder_count);
+        break;
       case SS_LINES:
-	sort_procedure = (sel_mode == SM_THREAD?
-			  threadorder_lines : subjorder_lines);
-	break;
+        sort_procedure = (sel_mode == SM_THREAD?
+                          threadorder_lines : subjorder_lines);
+        break;
 #ifdef SCORE
       /* if SCORE is undefined, use the default above */
       case SS_SCORE:
-	sort_procedure = (sel_mode == SM_THREAD?
-			  threadorder_score : subjorder_score);
-	break;
+        sort_procedure = (sel_mode == SM_THREAD?
+                          threadorder_score : subjorder_score);
+        break;
 #endif
     }
 
     subj_list = (SUBJECT**)safemalloc(subject_count * sizeof (SUBJECT*));
     for (lp = subj_list, sp = first_subject; sp; sp = sp->next)
-	*lp++ = sp;
+        *lp++ = sp;
     assert(lp - subj_list == subject_count);
 
     qsort(subj_list, subject_count, sizeof (SUBJECT*), sort_procedure);
@@ -1617,21 +1617,21 @@ sort_subjects (void)
     first_subject = sp = subj_list[0];
     sp->prev = NULL;
     for (i = subject_count, lp = subj_list; --i; lp++) {
-	lp[0]->next = lp[1];
-	lp[1]->prev = lp[0];
-	if (sel_mode == SM_THREAD) {
-	    if (lp[0]->thread && lp[0]->thread == lp[1]->thread)
-		lp[0]->thread_link = lp[1];
-	    else {
-		lp[0]->thread_link = sp;
-		sp = lp[1];
-	    }
-	}
+        lp[0]->next = lp[1];
+        lp[1]->prev = lp[0];
+        if (sel_mode == SM_THREAD) {
+            if (lp[0]->thread && lp[0]->thread == lp[1]->thread)
+                lp[0]->thread_link = lp[1];
+            else {
+                lp[0]->thread_link = sp;
+                sp = lp[1];
+            }
+        }
     }
     last_subject = lp[0];
     last_subject->next = NULL;
     if (sel_mode == SM_THREAD)
-	last_subject->thread_link = sp;
+        last_subject->thread_link = sp;
     safefree((char *)subj_list);
 }
 
@@ -1646,9 +1646,9 @@ static int
 artorder_subject (ARTICLE **art1, ARTICLE **art2)
 {
     if ((*art1)->subj == (*art2)->subj)
-	return artorder_date(art1, art2);
+        return artorder_date(art1, art2);
     return strcaseCMP((*art1)->subj->str + 4, (*art2)->subj->str + 4)
-	* sel_direction;
+        * sel_direction;
 }
 
 static int
@@ -1674,7 +1674,7 @@ artorder_groups (ARTICLE **art1, ARTICLE **art2)
     assert((*art2)->subj != NULL);
 #endif
     if ((*art1)->subj == (*art2)->subj)
-	return artorder_date(art1, art2);
+        return artorder_date(art1, art2);
     eq = (*art1)->subj->date - (*art2)->subj->date;
     return eq? eq > 0? sel_direction : -sel_direction : 0;
 }
@@ -1691,7 +1691,7 @@ static int
 artorder_score (ARTICLE **art1, ARTICLE **art2)
 {
     int eq = sc_score_art(article_num(*art2),false)
-	   - sc_score_art(article_num(*art1),false);
+           - sc_score_art(article_num(*art1),false);
     return eq? eq > 0? sel_direction : -sel_direction : 0;
 }
 #endif
@@ -1707,32 +1707,32 @@ sort_articles (void)
 
     /* If we don't have at least two articles, we're done! */
     if (artptr_list_size < 2)
-	return;
+        return;
 
     switch (sel_sort) {
       case SS_DATE:
       default:
-	sort_procedure = artorder_date;
-	break;
+        sort_procedure = artorder_date;
+        break;
       case SS_STRING:
-	sort_procedure = artorder_subject;
-	break;
+        sort_procedure = artorder_subject;
+        break;
       case SS_AUTHOR:
-	sort_procedure = artorder_author;
-	break;
+        sort_procedure = artorder_author;
+        break;
       case SS_NATURAL:
-	sort_procedure = artorder_number;
-	break;
+        sort_procedure = artorder_number;
+        break;
       case SS_GROUPS:
-	sort_procedure = artorder_groups;
-	break;
+        sort_procedure = artorder_groups;
+        break;
       case SS_LINES:
-	sort_procedure = artorder_lines;
-	break;
+        sort_procedure = artorder_lines;
+        break;
 #ifdef SCORE
       case SS_SCORE:
-	sort_procedure = artorder_score;
-	break;
+        sort_procedure = artorder_score;
+        break;
 #endif
     }
     sel_page_app = 0;
@@ -1749,16 +1749,16 @@ build_artptrs (void)
     int desired_flags = (sel_rereading? AF_EXISTS : (AF_EXISTS|AF_UNREAD));
 
     if (!artptr_list || artptr_list_size != count) {
-	artptr_list = (ARTICLE**)saferealloc((char*)artptr_list,
-		(size_t)count * sizeof (ARTICLE*));
-	artptr_list_size = count;
+        artptr_list = (ARTICLE**)saferealloc((char*)artptr_list,
+                (size_t)count * sizeof (ARTICLE*));
+        artptr_list_size = count;
     }
     app = artptr_list;
     for (an = article_first(absfirst); count; an = article_next(an)) {
-	ap = article_ptr(an);
-	if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == desired_flags) {
-	    *app++ = ap;
-	    count--;
-	}
+        ap = article_ptr(an);
+        if ((ap->flags & (AF_EXISTS|AF_UNREAD)) == desired_flags) {
+            *app++ = ap;
+            count--;
+        }
     }
 }

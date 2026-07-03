@@ -6,8 +6,8 @@
 /* if true, silence is golden (universal scan mode) */
 extern bool toread_quiet;
 
-#define ST_STRICT	0
-#define ST_LAX		1
+#define ST_STRICT       0
+#define ST_LAX          1
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

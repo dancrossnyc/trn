@@ -20,7 +20,7 @@ $cat >Makefile <<!GROK!THIS!
 # Makefile.SH
 #
 # This software is copyrighted as detailed in the LICENSE file.
-# 
+#
 # optional defines you can add to the CFLAGS
 #    -DDEBUG                      compile in support for the -D option
 #    -DNO_LISTGROUP               avoids attempting to use LISTGROUP
@@ -31,7 +31,6 @@ VPATH = $vpath
 extra_cleanup = $extra_cleanup
 
 CC = $cc
-#MSDOSLINK = tlink
 TOUCH = touch
 YACC = $yacc
 LINT = clang
@@ -40,12 +39,9 @@ lintflags = --analyze
 CFLAGS = $optimize $ccflags $vincludes
 TKINC = $tkinc
 LDFLAGS = $ldflags
-TKLDFLAGS = 
-#MSDOSLINKFLAGS = $linkflags
+TKLDFLAGS =
 
-#MSDOSexe = .exe
 o = o
-#MSDOSo = obj
 
 rnbin = $installbin
 rnlib = $installprivlib
@@ -61,7 +57,7 @@ libs = trn-rs/target/debug/libtrn.a $termlib $jobslib -lm $libs
 tklibs = $tklibs
 !GROK!THIS!
 $cat >>Makefile <<'!NO!SUBS!'
-public_backup = trn$(exe) trn-artchk$(exe) $(nntpexe) $(msdosexe)
+public_backup = trn trn-artchk $(nntpexe) $(msdosexe)
 public_diff = Pnews Rnmail
 public = $(public_backup) $(public_diff)
 private_preserve = access.def
@@ -70,14 +66,11 @@ private_blast = norm.saver mbox.saver makedir filexp
 private = $(private_preserve) $(private_diff) $(private_blast)
 util = makedepend mkpro mktd HelpFiles/config/environment
 manpages = trn.1 Pnews.1 Rnmail.1
-#INEWSinewsexe=inews$(exe)
-#NNTPnntpexe=nntplist$(exe)
+#INEWSinewsexe=inews
+#NNTPnntpexe=nntplist
 #NNTPnntpsrc=nntpinit.c nntpclient.c nntpauth.c nntp.c
 #NNTPnntpobj1=nntpinit.$(o) nntpclient.$(o) nntpauth.$(o)
 #NNTPnntpobj2=nntp.$(o)
-#MSDOSmsdosexe=winsock.dll
-#MSDOSmsdossrc=popen.c
-#MSDOSmsdosobj=popen.$(o)
 
 h1 = addng.h art.h artio.h artsrch.h autosub.h backpage.h bits.h cache.h
 h2 = charsubst.h datasrc.h common.h decode.h env.h final.h hash.h head.h
@@ -140,51 +133,27 @@ SHELL = /bin/sh
 
 all: Makefile $(public) $(inewsexe) $(private) $(util) Policy.sh
 	$(TOUCH) all
-#MSDOS
-#MSDOStrn: trn.exe
 
-trn$(exe): $(obj)
-#MSDOS	$(LINK) $(LINKFLAGS) @trn.lnk
-#MSDOS
-#MSDOSjunk1:
-	$(CC) $(LDFLAGS) $(TKLDFLAGS) $(obj) $(tklibs) $(libs) -o trn$(exe)
+trn: $(obj)
+	$(CC) $(LDFLAGS) $(TKLDFLAGS) $(obj) $(tklibs) $(libs) -o trn
 #NNTP
 #NNTPnntpinit.$(o): nntpinit.c
 #NNTP	$(CC) -c $(CFLAGS) $(NNTPFLAGS) $<
-#NNTP#MSDOS
-#NNTP#MSDOSnntplist: nntplist.exe
 #NNTP
 #NNTPnntplistobjs = nntplist.$(o) $(nntpobj1) util2.$(o) util3.$(o)
 #NNTP
-#NNTPnntplist$(exe): $(nntplistobjs)
-#NNTP#MSDOS	$(LINK) $(LINKFLAGS) @nntplist.lnk
-#NNTP#MSDOS
-#NNTP#MSDOSjunk2:
-#NNTP	$(CC) $(LDFLAGS) $(nntplistobjs) -o nntplist$(exe) $(libs)
-#INEWS#MSDOS
-#INEWS#MSDOSinews: inews.exe
+#NNTPnntplist: $(nntplistobjs)
+#NNTP	$(CC) $(LDFLAGS) $(nntplistobjs) -o nntplist $(libs)
 #INEWS
 #INEWSinewsobjs = inews.$(o) $(nntpobj1) env.$(o) util2.$(o) util3.$(o)
 #INEWS
-#INEWSinews$(exe): $(inewsobjs)
-#INEWS#MSDOS	$(LINK) $(LINKFLAGS) @inews.lnk
-#INEWS#MSDOS
-#INEWS#MSDOSjunk3:
-#INEWS	$(CC) $(LDFLAGS) $(inewsobjs) -o inews$(exe) $(libs)
+#INEWSinews: $(inewsobjs)
+#INEWS	$(CC) $(LDFLAGS) $(inewsobjs) -o inews $(libs)
 
-#MSDOStrn-artchk: trn-artchk.exe
-#MSDOS
 trnchkobjs = trn-artchk.$(o) $(nntpobj1) util2.$(o) util3.$(o)
 
-trn-artchk$(exe): $(trnchkobjs)
-#MSDOS	$(LINK) $(LINKFLAGS) @trn-artchk.lnk
-#MSDOS
-#MSDOSjunk4:
-	$(CC) $(LDFLAGS) $(trnchkobjs) -o trn-artchk$(exe) $(libs)
-#MSDOS
-#MSDOSwinsock.dll: winsock.c winsock.def
-#MSDOS	$(CC) -c -WXDE -ml -w-par winsock.c
-#MSDOS	$(LINK) /c -v -Twd -Lc:\bc4\lib @winsock.lnk
+trn-artchk: $(trnchkobjs)
+	$(CC) $(LDFLAGS) $(trnchkobjs) -o trn-artchk $(libs)
 
 tkstuff.o: tkstuff.c
 	$(CC) -c $(CFLAGS) $(TKINC) $<
@@ -196,20 +165,9 @@ parsedate.c: parsedate.y
 	@echo 'Expect 6 shift/reduce conflicts'
 	$(YACC) $(srcdir)/parsedate.y
 	mv -f y.tab.c parsedate.c
-#MSDOS
-#MSDOSparsedate.$(o): parsedate.c
-#MSDOS	$(CC) -c $(CFLAGS) -w- $<
-#STRFTIME
-#STRFTIME$(strftimeo): $(strftimec)
-#STRFTIME	$(CC) -c $(CFLAGS) $(strftimec)
 
-#MSDOSunipatch: unipatch.exe
-#MSDOS
-unipatch$(exe): support/unipatch.$(o)
-#MSDOS	$(CC) $(LDFLAGS) support/unipatch.$(o)
-#MSDOS
-#MSDOSjunk5:
-	$(CC) $(LDFLAGS) support/unipatch.$(o) -o unipatch$(exe)
+unipatch: support/unipatch.$(o)
+	$(CC) $(LDFLAGS) support/unipatch.$(o) -o unipatch
 
 Pnews.header: Pnews
 
@@ -227,7 +185,7 @@ install: $(public) $(inewsexe) $(private) $(manpages) myinstall
  ./myinstall -xf Rnfilexp `./filexp $(rnbin)` ./filexp; fi
 	- ./makedir `./filexp $(rnlib)`
 	- chmod o+r `./filexp $(rnlib)`
-#INEWS	./myinstall -sox `./filexp $(inewsbin)` inews$(exe)
+#INEWS	./myinstall -sox `./filexp $(inewsbin)` inews
 	./myinstall -x   `./filexp $(rnlib)`    $(private_blast)
 	- if test "X$(mansrc)" != X -a "X`pwd`" != X`./filexp $(mansrc)`; then\
   ./makedir `./filexp $(mansrc)`;\
@@ -256,7 +214,7 @@ installclean:
 	- (cd `./filexp $(rnlib)` ; for file in INIT $(private_preserve) ; do\
   rm -f $${file}.new;\
  done)
-#INEWS	- (cd `./filexp $(inewsbin)` ; rm -f inews$(exe).old)
+#INEWS	- (cd `./filexp $(inewsbin)` ; rm -f inews.old)
 
 clean:
 	@echo 'Use "make realclean" to also remove the Makefile.'
@@ -327,14 +285,6 @@ esac
 case "$d_inews" in
 define)	sedcmd="$sedcmd -e '/^#INEWS/s/^#INEWS//'" ;;
 *)	sedcmd="$sedcmd -e '/^#INEWS/d'" ;;
-esac
-case "$d_msdos" in
-define)	sedcmd="$sedcmd -e '/^#MSDOS/s/^#MSDOS//'" ;;
-*)	sedcmd="$sedcmd -e '/^#MSDOS/d'" ;;
-esac
-case "$strftimec" in
-''|' ')	sedcmd="$sedcmd -e '/^#STRFTIME/d'" ;;
-*)	sedcmd="$sedcmd -e '/^#STRFTIME/s/^#STRFTIME//'" ;;
 esac
 eval "sed <Makefile $sedcmd >Makefile.new"
 mv Makefile.new Makefile

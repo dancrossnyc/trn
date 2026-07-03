@@ -56,48 +56,48 @@ mt_init (void)
     word_same = long_same = true;
 #ifdef SUPPORT_XTHREAD
     if (!datasrc->thread_dir) {
-	if (nntp_command("XTHREAD DBINIT") <= 0)
-	    return false;
-	size = nntp_readcheck();
-	if (size >= 0)
-	    size = nntp_read((char*)&mt_bmap, (long)sizeof (BMAP));
+        if (nntp_command("XTHREAD DBINIT") <= 0)
+            return false;
+        size = nntp_readcheck();
+        if (size >= 0)
+            size = nntp_read((char*)&mt_bmap, (long)sizeof (BMAP));
     }
     else
 #endif
     {
-	if ((fp = fopen(filexp(DBINIT), FOPEN_RB)) != NULL)
-	    size = fread((char*)&mt_bmap, 1, sizeof (BMAP), fp);
-	else
-	    size = 0;
+        if ((fp = fopen(filexp(DBINIT), "rb")) != NULL)
+            size = fread((char*)&mt_bmap, 1, sizeof (BMAP), fp);
+        else
+            size = 0;
     }
     if (size >= (long)(sizeof (BMAP)) - 1) {
-	if (mt_bmap.version != DB_VERSION) {
-	    printf("\nMthreads database is the wrong version -- ignoring it.\n");
-	    return false;
-	}
-	mybytemap(&my_bmap);
-	for (i = 0; i < sizeof (LONG); i++) {
-	    if (i < sizeof (WORD)) {
-		if (my_bmap.w[i] != mt_bmap.w[i])
-		    word_same = false;
-	    }
-	    if (my_bmap.l[i] != mt_bmap.l[i])
-		long_same = false;
-	}
+        if (mt_bmap.version != DB_VERSION) {
+            printf("\nMthreads database is the wrong version -- ignoring it.\n");
+            return false;
+        }
+        mybytemap(&my_bmap);
+        for (i = 0; i < sizeof (LONG); i++) {
+            if (i < sizeof (WORD)) {
+                if (my_bmap.w[i] != mt_bmap.w[i])
+                    word_same = false;
+            }
+            if (my_bmap.l[i] != mt_bmap.l[i])
+                long_same = false;
+        }
     } else
-	success = false;
+        success = false;
 #ifdef SUPPORT_XTHREAD
     if (!datasrc->thread_dir) {
-	while (nntp_read(ser_line, (long)sizeof ser_line))
-	    ;		/* trash any extraneous bytes */
+        while (nntp_read(ser_line, (long)sizeof ser_line))
+            ;           /* trash any extraneous bytes */
     }
     else
 #endif
     if (fp != NULL)
-	fclose(fp);
+        fclose(fp);
 
     if (success)
-	datasrc->flags |= DF_TRY_THREAD;
+        datasrc->flags |= DF_TRY_THREAD;
     return success;
 }
 
@@ -108,45 +108,45 @@ int
 mt_data (void)
 {
     int ret = 1;
-#ifdef SUPPORT_XTHREAD		/* use remote thread file? */
+#ifdef SUPPORT_XTHREAD          /* use remote thread file? */
     long size;
 
     if (!datasrc->thread_dir) {
-	if (nntp_command("XTHREAD THREAD") <= 0)
-	    return 0;
-	size = nntp_readcheck();
-	if (size < 0)
-	    return 0;
+        if (nntp_command("XTHREAD THREAD") <= 0)
+            return 0;
+        size = nntp_readcheck();
+        if (size < 0)
+            return 0;
 
 #ifdef VERBOSE
-	IF(verbose)
-	    printf("\nGetting thread file."), fflush(stdout);
+        IF(verbose)
+            printf("\nGetting thread file."), fflush(stdout);
 #endif
-	if (nntp_read((char*)&total, (long)sizeof (TOTAL)) < sizeof (TOTAL))
-	    goto exit;
+        if (nntp_read((char*)&total, (long)sizeof (TOTAL)) < sizeof (TOTAL))
+            goto exit;
     }
     else
 #endif
     {
-	if ((fp = fopen(mt_name(ngname), FOPEN_RB)) == NULL)
-	    return 0;
+        if ((fp = fopen(mt_name(ngname), "rb")) == NULL)
+            return 0;
 #ifdef VERBOSE
-	IF(verbose)
-	    printf("\nReading thread file."), fflush(stdout);
+        IF(verbose)
+            printf("\nReading thread file."), fflush(stdout);
 #endif
 
-	if (fread((char*)&total, 1, sizeof (TOTAL), fp) < sizeof (TOTAL))
-	    goto exit;
+        if (fread((char*)&total, 1, sizeof (TOTAL), fp) < sizeof (TOTAL))
+            goto exit;
     }
 
     lp_bmap(&total.first, 4);
     wp_bmap(&total.root, 5);
     if (!total.root) {
-	tweak_data();
-	goto exit;
+        tweak_data();
+        goto exit;
     }
     if (!datasrc->thread_dir && total.last > lastart)
-	total.last = lastart;
+        total.last = lastart;
 
     if (read_authors()
      && read_subjects()
@@ -154,11 +154,11 @@ mt_data (void)
      && read_articles()
      && read_ids())
     {
-	tweak_data();
-	first_cached = absfirst;
-	last_cached = (total.last < absfirst ? absfirst-1: total.last);
-	cached_all_in_range = true;
-	goto exit;
+        tweak_data();
+        first_cached = absfirst;
+        last_cached = (total.last < absfirst ? absfirst-1: total.last);
+        cached_all_in_range = true;
+        goto exit;
     }
     /* Something failed.  Safefree takes care of checking if some items
     ** were already freed.  Any partially-allocated structures were freed
@@ -178,12 +178,12 @@ mt_data (void)
 exit:
 #ifdef SUPPORT_XTHREAD
     if (!datasrc->thread_dir) {
-	while (nntp_read(ser_line, (long)sizeof ser_line))
-	    ;		/* trash any extraneous bytes */
+        while (nntp_read(ser_line, (long)sizeof ser_line))
+            ;           /* trash any extraneous bytes */
     }
     else
 #endif
-	fclose(fp);
+        fclose(fp);
 
     return ret;
 }
@@ -204,12 +204,12 @@ mt_name (char *group)
     cp = strcpy(buf, datasrc->thread_dir) + strlen(datasrc->thread_dir);
     *cp++ = '/';
     strcpy(cp, group);
-    while ((cp = index(cp, '.')))
-	*cp = '/';
+    while ((cp = strchr(cp, '.')))
+        *cp = '/';
     if (datasrc->thread_dir == datasrc->spool_dir)
-	strcat(buf, MT_FILE_NAME);
+        strcat(buf, MT_FILE_NAME);
     else
-	strcat(buf, ".th");
+        strcat(buf, ".th");
 #endif
     return buf;
 }
@@ -229,17 +229,17 @@ read_authors (void)
     char** author_ptr;
 
     if (!read_item((char**)&author_cnts, (size_t)total.author*sizeof (WORD)))
-	return 0;
+        return 0;
     safefree0(author_cnts);   /* we don't need these */
 
     if (!read_item(&strings, (size_t)total.string1))
-	return 0;
+        return 0;
 
     string_ptr = strings;
     string_end = string_ptr + total.string1;
     if (string_end[-1] != '\0') {
-	/*error("first string table is invalid.\n");*/
-	return 0;
+        /*error("first string table is invalid.\n");*/
+        return 0;
     }
 
     /* We'll use this array to point each article at its proper author
@@ -249,16 +249,16 @@ read_authors (void)
     author_ptr = author_array;
 
     for (count = total.author; count; count--) {
-	if (string_ptr >= string_end)
-	    break;
-	*author_ptr++ = string_ptr;
-	string_ptr += strlen(string_ptr) + 1;
+        if (string_ptr >= string_end)
+            break;
+        *author_ptr++ = string_ptr;
+        string_ptr += strlen(string_ptr) + 1;
     }
     subject_strings = string_ptr;
 
     if (count) {
-	/*error("author unpacking failed.\n");*/
-	return 0;
+        /*error("author unpacking failed.\n");*/
+        return 0;
     }
     return 1;
 }
@@ -276,35 +276,35 @@ read_subjects (void)
     WORD* subject_cnts;
 
     if (!read_item((char**)&subject_cnts,
-		   (size_t)total.subject * sizeof (WORD))) {
-	/* (Error already logged.) */
-	return 0;
+                   (size_t)total.subject * sizeof (WORD))) {
+        /* (Error already logged.) */
+        return 0;
     }
-    safefree((char *)subject_cnts);		/* we don't need these */
+    safefree((char *)subject_cnts);             /* we don't need these */
 
     /* Use this array when unpacking the article's subject offset. */
     subject_array = (SUBJECT**)safemalloc(total.subject * sizeof (SUBJECT*));
     subj_ptr = subject_array;
 
-    string_ptr = subject_strings;	/* string_end is already set */
+    string_ptr = subject_strings;       /* string_end is already set */
 
     for (count = total.subject; count; count--) {
-	int len;
-	ARTICLE arty;
-	if (string_ptr >= string_end)
-	    break;
-	len = strlen(string_ptr);
-	arty.subj = 0;
-	set_subj_line(&arty, string_ptr, len);
-	if (len == 72)
-	    arty.subj->flags |= SF_SUBJTRUNCED;
-	arty.subj->thread_link = NULL;
-	string_ptr += len + 1;
-	*subj_ptr++ = arty.subj;
+        int len;
+        ARTICLE arty;
+        if (string_ptr >= string_end)
+            break;
+        len = strlen(string_ptr);
+        arty.subj = 0;
+        set_subj_line(&arty, string_ptr, len);
+        if (len == 72)
+            arty.subj->flags |= SF_SUBJTRUNCED;
+        arty.subj->thread_link = NULL;
+        string_ptr += len + 1;
+        *subj_ptr++ = arty.subj;
     }
     if (count || string_ptr != string_end) {
-	/*error("subject data is invalid.\n");*/
-	return 0;
+        /*error("subject data is invalid.\n");*/
+        return 0;
     }
     return 1;
 }
@@ -326,42 +326,42 @@ read_roots (void)
 
     for (count = total.root; count--; ) {
 #ifdef SUPPORT_XTHREAD
-	if (!datasrc->thread_dir)
-	    ret = nntp_read((char*)&p_root, (long)sizeof (PACKED_ROOT));
-	else
+        if (!datasrc->thread_dir)
+            ret = nntp_read((char*)&p_root, (long)sizeof (PACKED_ROOT));
+        else
 #endif
-	    ret = fread((char*)&p_root, 1, sizeof (PACKED_ROOT), fp);
+            ret = fread((char*)&p_root, 1, sizeof (PACKED_ROOT), fp);
 
-	if (ret != sizeof (PACKED_ROOT)) {
-	    /*error("failed root read -- %d bytes instead of %d.\n",
-		ret, sizeof (PACKED_ROOT));*/
-	    return 0;
-	}
-	wp_bmap(&p_root.articles, 3);	/* converts subject_cnt too */
-	if (p_root.articles < 0 || p_root.articles >= total.article) {
-	    /*error("root has invalid values.\n");*/
-	    return 0;
-	}
-	i = p_root.subject_cnt;
-	if (i <= 0 || (subj_ptr - subject_array) + i > total.subject) {
-	    /*error("root has invalid values.\n");*/
-	    return 0;
-	}
-	for (prev_sp = *subj_ptr; i--; prev_sp = sp, subj_ptr++) {
-	    sp = *subj_ptr;
-	    if (sp->thread_link == NULL) {
-		sp->thread_link = prev_sp->thread_link;
-		prev_sp->thread_link = sp;
-	    }
-	    else {
-		while (sp != prev_sp && sp->thread_link != *subj_ptr)
-		    sp = sp->thread_link;
-		if (sp == prev_sp)
-		    continue;
-		sp->thread_link = prev_sp->thread_link;
-		prev_sp->thread_link = *subj_ptr;
-	    }
-	}
+        if (ret != sizeof (PACKED_ROOT)) {
+            /*error("failed root read -- %d bytes instead of %d.\n",
+                ret, sizeof (PACKED_ROOT));*/
+            return 0;
+        }
+        wp_bmap(&p_root.articles, 3);   /* converts subject_cnt too */
+        if (p_root.articles < 0 || p_root.articles >= total.article) {
+            /*error("root has invalid values.\n");*/
+            return 0;
+        }
+        i = p_root.subject_cnt;
+        if (i <= 0 || (subj_ptr - subject_array) + i > total.subject) {
+            /*error("root has invalid values.\n");*/
+            return 0;
+        }
+        for (prev_sp = *subj_ptr; i--; prev_sp = sp, subj_ptr++) {
+            sp = *subj_ptr;
+            if (sp->thread_link == NULL) {
+                sp->thread_link = prev_sp->thread_link;
+                prev_sp->thread_link = sp;
+            }
+            else {
+                while (sp != prev_sp && sp->thread_link != *subj_ptr)
+                    sp = sp->thread_link;
+                if (sp == prev_sp)
+                    continue;
+                sp->thread_link = prev_sp->thread_link;
+                prev_sp->thread_link = *subj_ptr;
+            }
+        }
     }
     return 1;
 }
@@ -376,11 +376,11 @@ static SUBJECT *
 the_subject (int num)
 {
     if (num == -1)
-	return NULL;
+        return NULL;
     if (num < 0 || num >= total.subject) {
-	/*printf("Invalid subject in thread file: %d [%ld]\n", num, art_num);*/
-	invalid_data = true;
-	return NULL;
+        /*printf("Invalid subject in thread file: %d [%ld]\n", num, art_num);*/
+        invalid_data = true;
+        return NULL;
     }
     return subject_array[num];
 }
@@ -390,11 +390,11 @@ static char *
 the_author (int num)
 {
     if (num == -1)
-	return NULL;
+        return NULL;
     if (num < 0 || num >= total.author) {
-	/*error("invalid author in thread file: %d [%ld]\n", num, art_num);*/
-	invalid_data = true;
-	return NULL;
+        /*error("invalid author in thread file: %d [%ld]\n", num, art_num);*/
+        invalid_data = true;
+        return NULL;
     }
     return estrdup(author_array[num]);
 }
@@ -409,15 +409,15 @@ the_article (int relative_offset, int num)
     union { ARTICLE* ap; int num; } uni;
 
     if (!relative_offset)
-	return NULL;
+        return NULL;
     num += relative_offset;
     if (num < 0 || num >= total.article) {
-	/*error("invalid article offset in thread file.\n");*/
-	invalid_data = true;
-	return NULL;
+        /*error("invalid article offset in thread file.\n");*/
+        invalid_data = true;
+        return NULL;
     }
     uni.num = num+1;
-    return uni.ap;		/* slip them an offset in disguise */
+    return uni.ap;              /* slip them an offset in disguise */
 }
 
 /* Read the articles into their trees.  Point everything everywhere. */
@@ -436,54 +436,54 @@ read_articles (void)
     invalid_data = false;
     for (count = 0; count < total.article; count++) {
 #ifdef SUPPORT_XTHREAD
-	if (!datasrc->thread_dir)
-	    ret = nntp_read((char*)&p_article, (long)sizeof (PACKED_ARTICLE));
-	else
+        if (!datasrc->thread_dir)
+            ret = nntp_read((char*)&p_article, (long)sizeof (PACKED_ARTICLE));
+        else
 #endif
-	    ret = fread((char*)&p_article, 1, sizeof (PACKED_ARTICLE), fp);
+            ret = fread((char*)&p_article, 1, sizeof (PACKED_ARTICLE), fp);
 
-	if (ret != sizeof (PACKED_ARTICLE)) {
-	    /*error("failed article read -- %d bytes instead of %d.\n",
-		ret, sizeof (PACKED_ARTICLE));*/
-	    return 0;
-	}
-	lp_bmap(&p_article.num, 2);
-	wp_bmap(&p_article.subject, 8);
+        if (ret != sizeof (PACKED_ARTICLE)) {
+            /*error("failed article read -- %d bytes instead of %d.\n",
+                ret, sizeof (PACKED_ARTICLE));*/
+            return 0;
+        }
+        lp_bmap(&p_article.num, 2);
+        wp_bmap(&p_article.subject, 8);
 
-	article = *art_ptr++ = allocate_article(p_article.num > lastart?
-						0 : p_article.num);
-	article->date = p_article.date;
+        article = *art_ptr++ = allocate_article(p_article.num > lastart?
+                                                0 : p_article.num);
+        article->date = p_article.date;
 #ifndef DBM_XREFS
-	if (olden_days < 2 && !(p_article.flags & HAS_XREFS))
-	    article->xrefs = nullstr;
+        if (olden_days < 2 && !(p_article.flags & HAS_XREFS))
+            article->xrefs = nullstr;
 #endif
-	article->from = the_author(p_article.author);
-	article->parent = the_article(p_article.parent, count);
-	article->child1 = the_article((WORD)(p_article.child_cnt?1:0), count);
-	article->sibling = the_article(p_article.sibling, count);
-	article->subj = the_subject(p_article.subject);
-	if (invalid_data) {
-	    /* (Error already logged.) */
-	    return 0;
-	}
-	/* This is OK because parent articles precede their children */
-	if (article->parent) {
-	    union { ARTICLE* ap; int num; } uni;
-	    uni.ap = article->parent;
-	    article->parent = article_array[uni.num-1];
-	}
-	else
-	    article->sibling = NULL;
-	if (article->subj) {
-	    article->flags |= AF_FROMTRUNCED | AF_THREADED
-		    | ((p_article.flags & ROOT_ARTICLE)? 0 : AF_HAS_RE);
-	    /* Give this subject to any faked parent articles */
-	    while (article->parent && !article->parent->subj) {
-		article->parent->subj = article->subj;
-		article = article->parent;
-	    }
-	} else
-	    article->flags |= AF_FAKE;
+        article->from = the_author(p_article.author);
+        article->parent = the_article(p_article.parent, count);
+        article->child1 = the_article((WORD)(p_article.child_cnt?1:0), count);
+        article->sibling = the_article(p_article.sibling, count);
+        article->subj = the_subject(p_article.subject);
+        if (invalid_data) {
+            /* (Error already logged.) */
+            return 0;
+        }
+        /* This is OK because parent articles precede their children */
+        if (article->parent) {
+            union { ARTICLE* ap; int num; } uni;
+            uni.ap = article->parent;
+            article->parent = article_array[uni.num-1];
+        }
+        else
+            article->sibling = NULL;
+        if (article->subj) {
+            article->flags |= AF_FROMTRUNCED | AF_THREADED
+                    | ((p_article.flags & ROOT_ARTICLE)? 0 : AF_HAS_RE);
+            /* Give this subject to any faked parent articles */
+            while (article->parent && !article->parent->subj) {
+                article->parent->subj = article->subj;
+                article = article->parent;
+            }
+        } else
+            article->flags |= AF_FAKE;
     }
 
     /* We're done with most of the pointer arrays at this point. */
@@ -509,8 +509,8 @@ read_ids (void)
 
     if (!read_item(&strings, (size_t)total.string2)
      || !read_item((char**)&ids,
-		(size_t)(total.article+total.domain+1) * sizeof (WORD))) {
-	return 0;
+                (size_t)(total.article+total.domain+1) * sizeof (WORD))) {
+        return 0;
     }
     wp_bmap(ids, total.article + total.domain + 1);
 
@@ -518,65 +518,65 @@ read_ids (void)
     string_end = string_ptr + total.string2;
 
     if (string_end[-1] != '\0') {
-	/*error("second string table is invalid.\n");*/
-	return 0;
+        /*error("second string table is invalid.\n");*/
+        return 0;
     }
 
     for (i = 0, count = total.domain + 1; count--; i++) {
-	if (i) {
-	    if (string_ptr >= string_end) {
-		/*error("error unpacking domain strings.\n");*/
-		return 0;
-	    }
-	    sprintf(buf, "@%s", string_ptr);
-	    len = strlen(string_ptr) + 1;
-	    string_ptr += len;
-	} else {
-	    *buf = '\0';
-	    len = 0;
-	}
-	if (ids[i] != -1) {
-	    if (ids[i] < 0 || ids[i] >= total.article) {
-		/*error("error in id array.\n");*/
-		return 0;
-	    }
-	    article = article_array[ids[i]];
-	    for (;;) {
-		if (string_ptr >= string_end) {
-		    /*error("error unpacking domain strings.\n");*/
-		    return 0;
-		}
-		len2 = strlen(string_ptr);
-		article->msgid = safemalloc(len2 + len + 2 + 1);
-		sprintf(article->msgid, "<%s%s>", string_ptr, buf);
-		string_ptr += len2 + 1;
-		if (msgid_hash) {
-		    HASHDATUM data;
-		    data = hashfetch(msgid_hash, article->msgid, len2+len+2);
-		    if (data.dat_len) {
-			article->autofl = data.dat_len&(AUTO_SELS|AUTO_KILLS);
-			if ((data.dat_len & KF_AGE_MASK) == 0)
-			    article->autofl |= AUTO_OLD;
-			else
-			    kf_changethd_cnt++;
-			data.dat_len = 0;
-			safefree(data.dat_ptr);
-		    }
-		    data.dat_ptr = (char*)article;
-		    hashstorelast(data);
-		}
-		if (++i >= total.article + total.domain + !count) {
-		    /*error("overran id array unpacking domains.\n");*/
-		    return 0;
-		}
-		if (ids[i] != -1) {
-		    if (ids[i] < 0 || ids[i] >= total.article)
-			return 0;
-		    article = article_array[ids[i]];
-		} else
-		    break;
-	    }
-	}
+        if (i) {
+            if (string_ptr >= string_end) {
+                /*error("error unpacking domain strings.\n");*/
+                return 0;
+            }
+            sprintf(buf, "@%s", string_ptr);
+            len = strlen(string_ptr) + 1;
+            string_ptr += len;
+        } else {
+            *buf = '\0';
+            len = 0;
+        }
+        if (ids[i] != -1) {
+            if (ids[i] < 0 || ids[i] >= total.article) {
+                /*error("error in id array.\n");*/
+                return 0;
+            }
+            article = article_array[ids[i]];
+            for (;;) {
+                if (string_ptr >= string_end) {
+                    /*error("error unpacking domain strings.\n");*/
+                    return 0;
+                }
+                len2 = strlen(string_ptr);
+                article->msgid = safemalloc(len2 + len + 2 + 1);
+                sprintf(article->msgid, "<%s%s>", string_ptr, buf);
+                string_ptr += len2 + 1;
+                if (msgid_hash) {
+                    HASHDATUM data;
+                    data = hashfetch(msgid_hash, article->msgid, len2+len+2);
+                    if (data.dat_len) {
+                        article->autofl = data.dat_len&(AUTO_SELS|AUTO_KILLS);
+                        if ((data.dat_len & KF_AGE_MASK) == 0)
+                            article->autofl |= AUTO_OLD;
+                        else
+                            kf_changethd_cnt++;
+                        data.dat_len = 0;
+                        safefree(data.dat_ptr);
+                    }
+                    data.dat_ptr = (char*)article;
+                    hashstorelast(data);
+                }
+                if (++i >= total.article + total.domain + !count) {
+                    /*error("overran id array unpacking domains.\n");*/
+                    return 0;
+                }
+                if (ids[i] != -1) {
+                    if (ids[i] < 0 || ids[i] >= total.article)
+                        return 0;
+                    article = article_array[ids[i]];
+                } else
+                    break;
+            }
+        }
     }
     safefree0(ids);
     safefree0(strings);
@@ -598,33 +598,33 @@ tweak_data (void)
 
     art_ptr = article_array;
     for (count = total.article; count--; ) {
-	ap = *art_ptr++;
-	if (ap->child1) {
-	    uni.ap = ap->child1;
-	    ap->child1 = article_array[uni.num-1];
-	}
-	if (ap->sibling) {
-	    uni.ap = ap->sibling;
-	    ap->sibling = article_array[uni.num-1];
-	}
-	if (!ap->parent)
-	    link_child(ap);
+        ap = *art_ptr++;
+        if (ap->child1) {
+            uni.ap = ap->child1;
+            ap->child1 = article_array[uni.num-1];
+        }
+        if (ap->sibling) {
+            uni.ap = ap->sibling;
+            ap->sibling = article_array[uni.num-1];
+        }
+        if (!ap->parent)
+            link_child(ap);
     }
 
     art_ptr = article_array;
     for (count = total.article; count--; ) {
-	ap = *art_ptr++;
-	if (ap->subj && !(ap->flags & AF_FAKE))
-	    cache_article(ap);
-	else
-	    onemissing(ap);
+        ap = *art_ptr++;
+        if (ap->subj && !(ap->flags & AF_FAKE))
+            cache_article(ap);
+        else
+            onemissing(ap);
     }
 
     art_ptr = article_array;
     for (count = total.article; count--; ) {
-	ap = *art_ptr++;
-	if ((fl = ap->autofl) != 0)
-	    perform_auto_flags(ap, fl, fl, fl);
+        ap = *art_ptr++;
+        if ((fl = ap->autofl) != 0)
+            perform_auto_flags(ap, fl, fl, fl);
     }
 
     safefree0(article_array);
@@ -640,15 +640,15 @@ read_item (char **dest, size_t len)
     *dest = safemalloc(len);
 #ifdef SUPPORT_XTHREAD
     if (!datasrc->thread_dir)
-	ret = nntp_read(*dest, (long)len);
+        ret = nntp_read(*dest, (long)len);
     else
 #endif
-	ret = fread(*dest, 1, (int)len, fp);
+        ret = fread(*dest, 1, (int)len, fp);
 
     if (ret != len) {
-	safefree(*dest);
-	*dest = NULL;
-	return 0;
+        safefree(*dest);
+        *dest = NULL;
+        return 0;
     }
     putchar('.');
     fflush(stdout);
@@ -663,9 +663,9 @@ static void
 mybytemap (BMAP *map)
 {
     union {
-	BYTE b[sizeof (LONG)];
-	WORD w;
-	LONG l;
+        BYTE b[sizeof (LONG)];
+        WORD w;
+        LONG l;
     } u;
     BYTE *mp;
     int i, j;
@@ -673,36 +673,36 @@ mybytemap (BMAP *map)
     mp = &map->w[sizeof (WORD)];
     u.w = 1;
     for (i = sizeof (WORD); i > 0; i--) {
-	for (j = 0; j < sizeof (WORD); j++) {
-	    if (u.b[j] != 0)
-		break;
-	}
-	if (j == sizeof (WORD))
-	    goto bad_news;
-	*--mp = j;
-	while (u.b[j] != 0 && u.w)
-	    u.w <<= 1;
+        for (j = 0; j < sizeof (WORD); j++) {
+            if (u.b[j] != 0)
+                break;
+        }
+        if (j == sizeof (WORD))
+            goto bad_news;
+        *--mp = j;
+        while (u.b[j] != 0 && u.w)
+            u.w <<= 1;
     }
 
     mp = &map->l[sizeof (LONG)];
     u.l = 1;
     for (i = sizeof (LONG); i > 0; i--) {
-	for (j = 0; j < sizeof (LONG); j++) {
-	    if (u.b[j] != 0)
-		break;
-	}
-	if (j == sizeof (LONG)) {
-	  bad_news:
-	    /* trouble -- set both to *something* consistent */
-	    for (j = 0; j < sizeof (WORD); j++)
-		map->w[j] = j;
-	    for (j = 0; j < sizeof (LONG); j++)
-		map->l[j] = j;
-	    return;
-	}
-	*--mp = j;
-	while (u.b[j] != 0 && u.l)
-	    u.l <<= 1;
+        for (j = 0; j < sizeof (LONG); j++) {
+            if (u.b[j] != 0)
+                break;
+        }
+        if (j == sizeof (LONG)) {
+          bad_news:
+            /* trouble -- set both to *something* consistent */
+            for (j = 0; j < sizeof (WORD); j++)
+                map->w[j] = j;
+            for (j = 0; j < sizeof (LONG); j++)
+                map->l[j] = j;
+            return;
+        }
+        *--mp = j;
+        while (u.b[j] != 0 && u.l)
+            u.l <<= 1;
     }
 }
 
@@ -712,19 +712,19 @@ static void
 wp_bmap (WORD *buf, int len)
 {
     union {
-	BYTE b[sizeof (WORD)];
-	WORD w;
+        BYTE b[sizeof (WORD)];
+        WORD w;
     } in, out;
     int i;
 
     if (word_same)
-	return;
+        return;
 
     while (len--) {
-	in.w = *buf;
-	for (i = 0; i < sizeof (WORD); i++)
-	    out.b[my_bmap.w[i]] = in.b[mt_bmap.w[i]];
-	*buf++ = out.w;
+        in.w = *buf;
+        for (i = 0; i < sizeof (WORD); i++)
+            out.b[my_bmap.w[i]] = in.b[mt_bmap.w[i]];
+        *buf++ = out.w;
     }
 }
 
@@ -734,18 +734,18 @@ static void
 lp_bmap (LONG *buf, int len)
 {
     union {
-	BYTE b[sizeof (LONG)];
-	LONG l;
+        BYTE b[sizeof (LONG)];
+        LONG l;
     } in, out;
     int i;
 
     if (long_same)
-	return;
+        return;
 
     while (len--) {
-	in.l = *buf;
-	for (i = 0; i < sizeof (LONG); i++)
-	    out.b[my_bmap.l[i]] = in.b[mt_bmap.l[i]];
-	*buf++ = out.l;
+        in.l = *buf;
+        for (i = 0; i < sizeof (LONG); i++)
+            out.b[my_bmap.l[i]] = in.b[mt_bmap.l[i]];
+        *buf++ = out.l;
     }
 }

@@ -28,10 +28,10 @@ hashcreate(unsigned size, int (*cmpfunc)(const void *, size_t, HASHDATUM))
     ** number of malloc calls. */
     struct alignalloc {
         HASHTABLE ht;
-        HASHENT* hepa[1];	/* longer than it looks */
+        HASHENT* hepa[1];       /* longer than it looks */
     }* aap;
 
-    if (size < 1)		/* size < 1 is nonsense */
+    if (size < 1)               /* size < 1 is nonsense */
         size = 1;
     aap =  safemalloc(sizeof *aap + (size - 1)*sizeof(HASHENT*));
     memset(aap, 0, sizeof *aap + (size - 1)*sizeof(HASHENT*));
@@ -67,7 +67,7 @@ hashdestroy(HASHTABLE *tbl)
         }
         hepp[idx] = NULL;
     }
-    tbl->ht_magic = 0;			/* de-certify this table */
+    tbl->ht_magic = 0;                  /* de-certify this table */
     tbl->ht_addr = NULL;
     safefree(tbl);
 }
@@ -80,13 +80,13 @@ hashstore(HASHTABLE *tbl, char *key, int keylen, HASHDATUM data)
 
     nextp = hashfind(tbl, key, keylen);
     hp = *nextp;
-    if (hp == NULL) {			/* absent; allocate an entry */
+    if (hp == NULL) {                   /* absent; allocate an entry */
         hp = healloc();
         hp->he_next = NULL;
         hp->he_keylen = keylen;
-        *nextp = hp;			/* append to hash chain */
+        *nextp = hp;                    /* append to hash chain */
     }
-    hp->he_data = data;		/* supersede any old data for this key */
+    hp->he_data = data;         /* supersede any old data for this key */
 }
 
 void
@@ -97,9 +97,9 @@ hashdelete (HASHTABLE *tbl, char *key, int keylen)
 
     nextp = hashfind(tbl, key, keylen);
     hp = *nextp;
-    if (hp == NULL)			/* absent */
+    if (hp == NULL)                     /* absent */
         return;
-    *nextp = hp->he_next;		/* skip this entry */
+    *nextp = hp->he_next;               /* skip this entry */
     hp->he_next = NULL;
     hp->he_data.dat_ptr = NULL;
     hefree(hp);
@@ -119,7 +119,7 @@ hashfetch (HASHTABLE *tbl, char *key, int keylen)
     slast_nextp = nextp;
     slast_keylen = keylen;
     hp = *nextp;
-    if (hp == NULL)			/* absent */
+    if (hp == NULL)                     /* absent */
         return errdatum;
     return hp->he_data;
 }
@@ -130,13 +130,13 @@ hashstorelast (HASHDATUM data)
     HASHENT* hp;
 
     hp = *slast_nextp;
-    if (hp == NULL) {			/* absent; allocate an entry */
+    if (hp == NULL) {                   /* absent; allocate an entry */
         hp = healloc();
         hp->he_next = NULL;
         hp->he_keylen = slast_keylen;
-        *slast_nextp = hp;		/* append to hash chain */
+        *slast_nextp = hp;              /* append to hash chain */
     }
-    hp->he_data = data;		/* supersede any old data for this key */
+    hp->he_data = data;         /* supersede any old data for this key */
 }
 
 /* Visit each entry by calling nodefunc at each, with keylen, data,
@@ -225,7 +225,7 @@ default_cmp(const void *key, size_t keylen, HASHDATUM data)
 }
 
 static HASHENT *
-healloc (void)				/* allocate a hash entry */
+healloc (void)                          /* allocate a hash entry */
 {
     HASHENT* hp;
 
@@ -239,14 +239,14 @@ healloc (void)				/* allocate a hash entry */
             (hp+i)->he_next = hp + i + 1;
         /* The last block is the end of the list */
         (hp+i)->he_next = NULL;
-        hereuse = hp;		/* start of list is the first item */
+        hereuse = hp;           /* start of list is the first item */
         reusables += HEBLOCKSIZE;
     }
 
     /* pull the first reusable one off the pile */
     hp = hereuse;
     hereuse = hereuse->he_next;
-    hp->he_next = NULL;			/* prevent accidents */
+    hp->he_next = NULL;                 /* prevent accidents */
     reusables--;
     return hp;
 }
@@ -257,7 +257,7 @@ hefree(HASHENT *hp)
 {
     /* tunable parameters */
     const bool HASH_FREE_ENTRIES = false;
-    const size_t RETAIN = 1000;	  /* retain & recycle this many HASHENTs */
+    const size_t RETAIN = 1000;   /* retain & recycle this many HASHENTs */
 
     /* compost heap is full? */
     /* yup, just pitch this one */

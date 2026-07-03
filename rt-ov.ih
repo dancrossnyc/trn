@@ -3,18 +3,18 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 /* The usual order for the overview data fields. */
-#define OV_NUM  	0
-#define OV_SUBJ 	1
-#define OV_FROM 	2
-#define OV_DATE 	3
-#define OV_MSGID	4
-#define OV_REFS 	5
-#define OV_BYTES	6
-#define OV_LINES	7
-#define OV_XREF 	8
+#define OV_NUM          0
+#define OV_SUBJ         1
+#define OV_FROM         2
+#define OV_DATE         3
+#define OV_MSGID        4
+#define OV_REFS         5
+#define OV_BYTES        6
+#define OV_LINES        7
+#define OV_XREF         8
 
 /* How many overview lines to read with one NNTP call */
-#define OV_CHUNK_SIZE	40
+#define OV_CHUNK_SIZE   40
 
 static int hdrnum[] = {
     0, SUBJ_LINE, FROM_LINE, DATE_LINE, MSGID_LINE,

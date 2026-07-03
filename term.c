@@ -23,7 +23,7 @@
 #include "art.h"
 #include "rt-select.h"
 #ifdef SCORE
-#include "score.h"		/* for sc_lookahead */
+#include "score.h"              /* for sc_lookahead */
 #endif
 #ifdef SCAN
 #include "scan.h"
@@ -41,8 +41,8 @@
 #include "term.ih"
 #include "utf.h"
 
-char ERASECH;		/* rubout character */
-char KILLCH;		/* line delete character */
+char ERASECH;           /* rubout character */
+char KILLCH;            /* line delete character */
 char circlebuf[PUSHSIZE];
 int nextin = 0;
 int nextout = 0;
@@ -51,45 +51,45 @@ unsigned char lastchar;
 struct termios _tty, _oldtty;
 
 int _tty_ch = 2;
-bool bizarre = false;	/* do we need to restore terminal? */
+bool bizarre = false;   /* do we need to restore terminal? */
 
-int tc_GT;		/* hardware tabs */
-char* tc_BC = NULL;	/* backspace character */
-char* tc_UP = NULL;	/* move cursor up one line */
-char* tc_CR = NULL;	/* get to left margin, somehow */
-char* tc_VB = NULL;	/* visible bell */
-char* tc_CL = NULL;	/* home and clear screen */
-char* tc_CE = NULL;	/* clear to end of line */
-char* tc_TI = NULL;	/* initialize terminal */
-char* tc_TE = NULL;	/* reset terminal */
-char* tc_KS = NULL;	/* enter `keypad transmit' mode */
-char* tc_KE = NULL;	/* exit `keypad transmit' mode */
-char* tc_CM = NULL;	/* cursor motion */
-char* tc_HO = NULL;	/* home cursor */
-char* tc_IL = NULL;	/* insert line */
-char* tc_CD = NULL;	/* clear to end of display */
-char* tc_SO = NULL;	/* begin standout mode */
-char* tc_SE = NULL;	/* end standout mode */
-int tc_SG = 0;		/* blanks left by SO and SE */
-char* tc_US = NULL;	/* start underline mode */
-char* tc_UE = NULL;	/* end underline mode */
-char* tc_UC = NULL;	/* underline a character, if that's how it's done */
-int tc_UG = 0;		/* blanks left by US and UE */
-bool tc_AM = false;	/* does terminal have automatic margins? */
-bool tc_XN = false;	/* does it eat 1st newline after automatic wrap? */
-char tc_PC = 0;		/* pad character for use by tputs() */
+int tc_GT;              /* hardware tabs */
+char* tc_BC = NULL;     /* backspace character */
+char* tc_UP = NULL;     /* move cursor up one line */
+char* tc_CR = NULL;     /* get to left margin, somehow */
+char* tc_VB = NULL;     /* visible bell */
+char* tc_CL = NULL;     /* home and clear screen */
+char* tc_CE = NULL;     /* clear to end of line */
+char* tc_TI = NULL;     /* initialize terminal */
+char* tc_TE = NULL;     /* reset terminal */
+char* tc_KS = NULL;     /* enter `keypad transmit' mode */
+char* tc_KE = NULL;     /* exit `keypad transmit' mode */
+char* tc_CM = NULL;     /* cursor motion */
+char* tc_HO = NULL;     /* home cursor */
+char* tc_IL = NULL;     /* insert line */
+char* tc_CD = NULL;     /* clear to end of display */
+char* tc_SO = NULL;     /* begin standout mode */
+char* tc_SE = NULL;     /* end standout mode */
+int tc_SG = 0;          /* blanks left by SO and SE */
+char* tc_US = NULL;     /* start underline mode */
+char* tc_UE = NULL;     /* end underline mode */
+char* tc_UC = NULL;     /* underline a character, if that's how it's done */
+int tc_UG = 0;          /* blanks left by US and UE */
+bool tc_AM = false;     /* does terminal have automatic margins? */
+bool tc_XN = false;     /* does it eat 1st newline after automatic wrap? */
+char tc_PC = 0;         /* pad character for use by tputs() */
 
-speed_t outspeed = 0;	/* terminal output speed, */
+speed_t outspeed = 0;   /* terminal output speed, */
 
 int fire_is_out = 1;
-int tc_LINES = 0;	/* size of screen: lines */
-int tc_COLS = 0;	/* size of screen: columns */
+int tc_LINES = 0;       /* size of screen: lines */
+int tc_COLS = 0;        /* size of screen: columns */
 int term_line, term_col;/* position of cursor */
-int term_scrolled;	/* how many lines scrolled away */
-int just_a_sec = 960;	/* 1 sec at current baud rate */
-			/* (number of nulls) */
+int term_scrolled;      /* how many lines scrolled away */
+int just_a_sec = 960;   /* 1 sec at current baud rate */
+                        /* (number of nulls) */
 
-int page_line = 1;	/* line number for paging in print_line (origin 1) */
+int page_line = 1;      /* line number for paging in print_line (origin 1) */
 bool error_occurred = false;
 
 char* mousebar_btns;
@@ -99,18 +99,18 @@ int mousebar_width = 0;
 bool xmouse_is_on = false;
 bool mouse_is_down = false;
 
-#undef	USETITE		/* use terminal init/exit seqences (not recommended) */
-#undef	USEKSKE		/* use keypad start/end sequences */
+#undef  USETITE         /* use terminal init/exit seqences (not recommended) */
+#undef  USEKSKE         /* use keypad start/end sequences */
 
-char tcarea[TCSIZE];	/* area for "compiled" termcap strings */
+char tcarea[TCSIZE];    /* area for "compiled" termcap strings */
 
-static KEYMAP*	topmap = NULL;
+static KEYMAP*  topmap = NULL;
 
 static const char* lines_export = "LINES";
 static const char* cols_export = "COLUMNS";
 
 static int leftcost, upcost;
-static bool got_a_char = false;	/* true if we got a char since eating */
+static bool got_a_char = false; /* true if we got a char since eating */
 
 /* guarantee capability pointer != NULL */
 /* (I believe terminfo will ignore the &tmpaddr argument.) */
@@ -122,19 +122,19 @@ static bool got_a_char = false;	/* true if we got a char since eating */
 void
 term_init (void)
 {
-    savetty();				/* remember current tty state */
+    savetty();                          /* remember current tty state */
 
-    outspeed = cfgetospeed(&_tty);	/* for tputs() (output) */
-    ERASECH = _tty.c_cc[VERASE];	/* for finish_command() */
-    KILLCH = _tty.c_cc[VKILL];		/* for finish_command() */
+    outspeed = cfgetospeed(&_tty);      /* for tputs() (output) */
+    ERASECH = _tty.c_cc[VERASE];        /* for finish_command() */
+    KILLCH = _tty.c_cc[VKILL];          /* for finish_command() */
 #if 0
-    _tty.c_oflag &= ~OXTABS;	/* turn off kernel tabbing-done in rn */
+    _tty.c_oflag &= ~OXTABS;    /* turn off kernel tabbing-done in rn */
 #endif
 
     /* The following could be a table but I can't be sure that there isn't */
     /* some degree of sparsity out there in the world. */
 
-    switch (outspeed) {			/* 1 second of padding */
+    switch (outspeed) {                 /* 1 second of padding */
 #ifdef BEXTA
         case BEXTA:  just_a_sec = 1920; break;
 #else
@@ -148,8 +148,8 @@ term_init (void)
         case B1800:  just_a_sec =  180; break;
         case B1200:  just_a_sec =  120; break;
         case B600:   just_a_sec =   60; break;
-	case B300:   just_a_sec =   30; break;
-	/* do I really have to type the rest of this??? */
+        case B300:   just_a_sec =   30; break;
+        /* do I really have to type the rest of this??? */
         case B200:   just_a_sec =   20; break;
         case B150:   just_a_sec =   15; break;
         case B134:   just_a_sec =   13; break;
@@ -157,8 +157,8 @@ term_init (void)
         case B75:    just_a_sec =    8; break;
         case B50:    just_a_sec =    5; break;
         default:     just_a_sec =  960; break;
-					/* if we are running detached I */
-    }					/*  don't want to know about it! */
+                                        /* if we are running detached I */
+    }                                   /*  don't want to know about it! */
 }
 
 #ifdef PENDING
@@ -171,10 +171,10 @@ int devtty;
 
 void
 term_set (
-    char *tcbuf		/* temp area for "uncompiled" termcap entry */
+    char *tcbuf         /* temp area for "uncompiled" termcap entry */
 )
 {
-    char* tmpaddr;			/* must not be */
+    char* tmpaddr;                      /* must not be */
     char* tmpstr;
     char* s;
     int status;
@@ -188,12 +188,12 @@ term_set (
 
     devtty = fileno(stdin);
     if (isatty(devtty)) {
-	devtty = open("/dev/tty",0);
-	if (devtty < 0) {
-	    printf(cantopen,"/dev/tty");
-	    finalize(1);
-	}
-	fcntl(devtty,F_SETFL,O_NONBLOCK);
+        devtty = open("/dev/tty",0);
+        if (devtty < 0) {
+            printf(cantopen,"/dev/tty");
+            finalize(1);
+        }
+        fcntl(devtty,F_SETFL,O_NONBLOCK);
     }
 #endif
 #endif
@@ -202,91 +202,91 @@ term_set (
 
 #ifdef HAS_TERMLIB
     s = getenv("TERM");
-    status = tgetent(tcbuf,s? s : "dumb");	/* get termcap entry */
+    status = tgetent(tcbuf,s? s : "dumb");      /* get termcap entry */
     if (status < 1) {
-	printf("No termcap %s found.\n", status ? "file" : "entry");
-	finalize(1);
+        printf("No termcap %s found.\n", status ? "file" : "entry");
+        finalize(1);
     }
-    tmpaddr = tcarea;			/* set up strange tgetstr pointer */
-    s = Tgetstr("pc");			/* get pad character */
-    tc_PC = *s;				/* get it where tputs wants it */
-    if (!tgetflag("bs")) {		/* is backspace not used? */
-	tc_BC = Tgetstr("bc");		/* find out what is */
-	if (tc_BC == nullstr) {		/* terminfo grok's 'bs' but not 'bc' */
-	    tc_BC = Tgetstr("le");
-	    if (tc_BC == nullstr)
-		tc_BC = "\b";		/* better than nothing... */
-	}
+    tmpaddr = tcarea;                   /* set up strange tgetstr pointer */
+    s = Tgetstr("pc");                  /* get pad character */
+    tc_PC = *s;                         /* get it where tputs wants it */
+    if (!tgetflag("bs")) {              /* is backspace not used? */
+        tc_BC = Tgetstr("bc");          /* find out what is */
+        if (tc_BC == nullstr) {         /* terminfo grok's 'bs' but not 'bc' */
+            tc_BC = Tgetstr("le");
+            if (tc_BC == nullstr)
+                tc_BC = "\b";           /* better than nothing... */
+        }
     } else
-	tc_BC = "\b";			/* make a backspace handy */
-    tc_UP = Tgetstr("up");		/* move up a line */
-    tc_CL = Tgetstr("cl");		/* get clear string */
-    tc_CE = Tgetstr("ce");		/* clear to end of line string */
-    tc_TI = Tgetstr("ti");		/* initialize display */
-    tc_TE = Tgetstr("te");		/* reset display */
-    tc_KS = Tgetstr("ks");		/* enter `keypad transmit' mode */
-    tc_KE = Tgetstr("ke");		/* exit `keypad transmit' mode */
-    tc_HO = Tgetstr("ho");		/* home cursor */
-    tc_IL = Tgetstr("al");		/* insert (add) line */
-    tc_CM = Tgetstr("cm");		/* cursor motion */
-    tc_CD = Tgetstr("cd");		/* clear to end of display */
+        tc_BC = "\b";                   /* make a backspace handy */
+    tc_UP = Tgetstr("up");              /* move up a line */
+    tc_CL = Tgetstr("cl");              /* get clear string */
+    tc_CE = Tgetstr("ce");              /* clear to end of line string */
+    tc_TI = Tgetstr("ti");              /* initialize display */
+    tc_TE = Tgetstr("te");              /* reset display */
+    tc_KS = Tgetstr("ks");              /* enter `keypad transmit' mode */
+    tc_KE = Tgetstr("ke");              /* exit `keypad transmit' mode */
+    tc_HO = Tgetstr("ho");              /* home cursor */
+    tc_IL = Tgetstr("al");              /* insert (add) line */
+    tc_CM = Tgetstr("cm");              /* cursor motion */
+    tc_CD = Tgetstr("cd");              /* clear to end of display */
     if (!*tc_CE)
-	tc_CE = tc_CD;
-    tc_SO = Tgetstr("so");		/* begin standout */
-    tc_SE = Tgetstr("se");		/* end standout */
+        tc_CE = tc_CD;
+    tc_SO = Tgetstr("so");              /* begin standout */
+    tc_SE = Tgetstr("se");              /* end standout */
     if ((tc_SG = tgetnum("sg"))<0)
-	tc_SG = 0;			/* blanks left by SG, SE */
-    tc_US = Tgetstr("us");		/* start underline */
-    tc_UE = Tgetstr("ue");		/* end underline */
+        tc_SG = 0;                      /* blanks left by SG, SE */
+    tc_US = Tgetstr("us");              /* start underline */
+    tc_UE = Tgetstr("ue");              /* end underline */
     if ((tc_UG = tgetnum("ug"))<0)
-	tc_UG = 0;			/* blanks left by US, UE */
+        tc_UG = 0;                      /* blanks left by US, UE */
     if (*tc_US)
-	tc_UC = nullstr;		/* UC must not be NULL */
+        tc_UC = nullstr;                /* UC must not be NULL */
     else
-	tc_UC = Tgetstr("uc");		/* underline a character */
-    if (!*tc_US && !*tc_UC) {		/* no underline mode? */
-	tc_US = tc_SO;			/* substitute standout mode */
-	tc_UE = tc_SE;
-	tc_UG = tc_SG;
+        tc_UC = Tgetstr("uc");          /* underline a character */
+    if (!*tc_US && !*tc_UC) {           /* no underline mode? */
+        tc_US = tc_SO;                  /* substitute standout mode */
+        tc_UE = tc_SE;
+        tc_UG = tc_SG;
     }
-    tc_LINES = tgetnum("li");		/* lines per page */
-    tc_COLS = tgetnum("co");		/* columns on page */
+    tc_LINES = tgetnum("li");           /* lines per page */
+    tc_COLS = tgetnum("co");            /* columns on page */
 
     { struct winsize ws;
-	if (ioctl(0, TIOCGWINSZ, &ws) >= 0 && ws.ws_row > 0 && ws.ws_col > 0) {
-	    tc_LINES = ws.ws_row;
-	    tc_COLS = ws.ws_col;
-	}
+        if (ioctl(0, TIOCGWINSZ, &ws) >= 0 && ws.ws_row > 0 && ws.ws_col > 0) {
+            tc_LINES = ws.ws_row;
+            tc_COLS = ws.ws_col;
+        }
     }
 
-    tc_AM = tgetflag("am");		/* terminal wraps automatically? */
-    tc_XN = tgetflag("xn");		/* then eats next newline? */
+    tc_AM = tgetflag("am");             /* terminal wraps automatically? */
+    tc_XN = tgetflag("xn");             /* then eats next newline? */
     tc_VB = Tgetstr("vb");
     if (!*tc_VB)
-	tc_VB = "\007";
+        tc_VB = "\007";
     tc_CR = Tgetstr("cr");
     if (!*tc_CR) {
-	if (tgetflag("nc") && *tc_UP) {
-	    tc_CR = safemalloc((size_t)strlen(tc_UP)+2);
-	    sprintf(tc_CR,"%s\r",tc_UP);
-	}
-	else
-	    tc_CR = "\r";
+        if (tgetflag("nc") && *tc_UP) {
+            tc_CR = safemalloc((size_t)strlen(tc_UP)+2);
+            sprintf(tc_CR,"%s\r",tc_UP);
+        }
+        else
+            tc_CR = "\r";
     }
-	if (ioctl(1, TIOCGWINSZ, &winsize) >= 0) {
-		if (winsize.ws_row > 0)
-		    tc_LINES = winsize.ws_row;
-		if (winsize.ws_col > 0)
-		    tc_COLS = winsize.ws_col;
-	}
-    if (!*tc_UP)			/* no UP string? */
-	marking = 0;			/* disable any marking */
+        if (ioctl(1, TIOCGWINSZ, &winsize) >= 0) {
+                if (winsize.ws_row > 0)
+                    tc_LINES = winsize.ws_row;
+                if (winsize.ws_col > 0)
+                    tc_COLS = winsize.ws_col;
+        }
+    if (!*tc_UP)                        /* no UP string? */
+        marking = 0;                    /* disable any marking */
     if (*tc_CM || *tc_HO)
-	can_home = true;
-    if (!*tc_CD || !can_home)		/* can we CE, CD, and home? */
-	erase_each_line = false;	/*  no, so disable use of clear eol */
-    if (muck_up_clear)			/* this is for weird HPs */
-	tc_CL = NULL;
+        can_home = true;
+    if (!*tc_CD || !can_home)           /* can we CE, CD, and home? */
+        erase_each_line = false;        /*  no, so disable use of clear eol */
+    if (muck_up_clear)                  /* this is for weird HPs */
+        tc_CL = NULL;
     leftcost = strlen(tc_BC);
     upcost = strlen(tc_UP);
 #else /* !HAS_TERMLIB */
@@ -294,8 +294,8 @@ term_set (
 #endif /* !HAS_TERMLIB */
     termlib_init();
     line_col_calcs();
-    noecho();				/* turn off echo */
-    crmode();				/* enter cbreak mode */
+    noecho();                           /* turn off echo */
+    crmode();                           /* enter cbreak mode */
     sprintf(buf, "%d", tc_LINES);
     lines_export = export("LINES",buf);
     sprintf(buf, "%d", tc_COLS);
@@ -307,8 +307,8 @@ term_set (
 
 void
 set_macro (
-    char *seq,	/* input sequence of keys */
-    char *def	/* definition */
+    char *seq,  /* input sequence of keys */
+    char *def   /* definition */
 )
 {
     mac_line(def,seq,0);
@@ -318,16 +318,16 @@ set_macro (
      * Try to recognize and adjust for this case.
      */
     if (seq[0] == '\033' && seq[1] == '[' && seq[2]) {
-	char lbuf[LBUFLEN];	/* copy of possibly non-writable string */
-	strcpy(lbuf,seq);
-	lbuf[1] = 'O';
-	mac_line(def,lbuf,0);
+        char lbuf[LBUFLEN];     /* copy of possibly non-writable string */
+        strcpy(lbuf,seq);
+        lbuf[1] = 'O';
+        mac_line(def,lbuf,0);
     }
     if (seq[0] == '\033' && seq[1] == 'O' && seq[2]) {
-	char lbuf[LBUFLEN];	/* copy of possibly non-writable string */
-	strcpy(lbuf,seq);
-	lbuf[1] = '[';
-	mac_line(def,lbuf,0);
+        char lbuf[LBUFLEN];     /* copy of possibly non-writable string */
+        strcpy(lbuf,seq);
+        lbuf[1] = '[';
+        mac_line(def,lbuf,0);
     }
 }
 
@@ -367,31 +367,31 @@ void
 arrow_macros (char *tmpbuf)
 {
 #ifdef HAS_TERMLIB
-    char lbuf[256];			/* should be long enough */
+    char lbuf[256];                     /* should be long enough */
     char* tmpaddr = tmpbuf;
     char* tmpstr;
 
     /* If arrows are defined as single keys, we probably don't
      * want to redefine them.  (The tvi912c defines kl as ^H)
      */
-    strcpy(lbuf,Tgetstr("ku"));		/* up */
+    strcpy(lbuf,Tgetstr("ku"));         /* up */
     if ((int)strlen(lbuf) > 1)
-	set_macro(lbuf,up[auto_arrow_macros]);
+        set_macro(lbuf,up[auto_arrow_macros]);
 
-    strcpy(lbuf,Tgetstr("kd"));		/* down */
+    strcpy(lbuf,Tgetstr("kd"));         /* down */
     if ((int)strlen(lbuf) > 1)
-	set_macro(lbuf,down[auto_arrow_macros]);
+        set_macro(lbuf,down[auto_arrow_macros]);
 
-    strcpy(lbuf,Tgetstr("kl"));		/* left */
+    strcpy(lbuf,Tgetstr("kl"));         /* left */
     if ((int)strlen(lbuf) > 1)
-	set_macro(lbuf,left[auto_arrow_macros]);
+        set_macro(lbuf,left[auto_arrow_macros]);
 
-    strcpy(lbuf,Tgetstr("kr"));		/* right */
+    strcpy(lbuf,Tgetstr("kr"));         /* right */
     if ((int)strlen(lbuf) > 1)
-	set_macro(lbuf,right[auto_arrow_macros]);
+        set_macro(lbuf,right[auto_arrow_macros]);
 
     if (*lbuf == '\033')
-	set_macro("\033\033", "\033");
+        set_macro("\033\033", "\033");
 #endif
 }
 
@@ -401,14 +401,14 @@ mac_init (char *tcbuf)
     char tmpbuf[1024];
 
     if (auto_arrow_macros)
-	arrow_macros(tmpbuf);
+        arrow_macros(tmpbuf);
     if (!use_threads
      || (tmpfp = fopen(filexp(getval("TRNMACRO",TRNMACRO)),"r")) == NULL)
-	tmpfp = fopen(filexp(getval("RNMACRO",RNMACRO)),"r");
+        tmpfp = fopen(filexp(getval("RNMACRO",RNMACRO)),"r");
     if (tmpfp) {
-	while (fgets(tcbuf,TCBUF_SIZE,tmpfp) != NULL)
-	    mac_line(tcbuf,tmpbuf,sizeof tmpbuf);
-	fclose(tmpfp);
+        while (fgets(tcbuf,TCBUF_SIZE,tmpfp) != NULL)
+            mac_line(tcbuf,tmpbuf,sizeof tmpbuf);
+        fclose(tmpfp);
     }
 }
 
@@ -423,52 +423,52 @@ mac_line (char *line, char *tmpbuf, int tbsize)
     static char override[] = "\nkeymap overrides string\n";
 
     if (topmap == NULL)
-	topmap = newkeymap();
+        topmap = newkeymap();
     if (*line == '#' || *line == '\n')
-	return;
+        return;
     if (line[ch = strlen(line)-1] == '\n')
-	line[ch] = '\0';
+        line[ch] = '\0';
     /* A 0 length signifies we already parsed the macro into tmpbuf,
     ** so line is just the definition. */
     if (tbsize)
-	m = dointerp(tmpbuf,tbsize,line," \t",(char*)NULL);
+        m = dointerp(tmpbuf,tbsize,line," \t",(char*)NULL);
     else
-	m = line;
+        m = line;
     if (!*m)
-	return;
+        return;
     while (*m == ' ' || *m == '\t') m++;
     for (s=tmpbuf,curmap=topmap; *s; s++) {
-	ch = *s & 0177;
-	if (s[1] == '+' && isdigit(s[2])) {
-	    s += 2;
-	    garbage = (*s & KM_GMASK) << KM_GSHIFT;
-	}
-	else
-	    garbage = 0;
-	if (s[1]) {
-	    if ((curmap->km_type[ch] & KM_TMASK) == KM_STRING) {
-		if (tbsize) {
-		    fputs(override,stdout);
-		    termdown(2);
-		}
-		safefree(curmap->km_ptr[ch].km_str);
-		curmap->km_ptr[ch].km_str = NULL;
-	    }
-	    curmap->km_type[ch] = KM_KEYMAP + garbage;
-	    if (curmap->km_ptr[ch].km_km == NULL)
-		curmap->km_ptr[ch].km_km = newkeymap();
-	    curmap = curmap->km_ptr[ch].km_km;
-	}
-	else {
-	    if (tbsize && (curmap->km_type[ch] & KM_TMASK) == KM_KEYMAP) {
-		fputs(override,stdout);
-		termdown(2);
-	    }
-	    else {
-		curmap->km_type[ch] = KM_STRING + garbage;
-		curmap->km_ptr[ch].km_str = estrdup(m);
-	    }
-	}
+        ch = *s & 0177;
+        if (s[1] == '+' && isdigit(s[2])) {
+            s += 2;
+            garbage = (*s & KM_GMASK) << KM_GSHIFT;
+        }
+        else
+            garbage = 0;
+        if (s[1]) {
+            if ((curmap->km_type[ch] & KM_TMASK) == KM_STRING) {
+                if (tbsize) {
+                    fputs(override,stdout);
+                    termdown(2);
+                }
+                safefree(curmap->km_ptr[ch].km_str);
+                curmap->km_ptr[ch].km_str = NULL;
+            }
+            curmap->km_type[ch] = KM_KEYMAP + garbage;
+            if (curmap->km_ptr[ch].km_km == NULL)
+                curmap->km_ptr[ch].km_km = newkeymap();
+            curmap = curmap->km_ptr[ch].km_km;
+        }
+        else {
+            if (tbsize && (curmap->km_type[ch] & KM_TMASK) == KM_KEYMAP) {
+                fputs(override,stdout);
+                termdown(2);
+            }
+            else {
+                curmap->km_type[ch] = KM_STRING + garbage;
+                curmap->km_ptr[ch].km_str = estrdup(m);
+            }
+        }
     }
 }
 
@@ -480,8 +480,8 @@ newkeymap (void)
 
     map = (KEYMAP*)safemalloc(sizeof(KEYMAP));
     for (i = 127; i >= 0; i--) {
-	map->km_ptr[i].km_km = NULL;
-	map->km_type[i] = KM_NOTHIN;
+        map->km_ptr[i].km_km = NULL;
+        map->km_type[i] = KM_NOTHIN;
     }
     return map;
 }
@@ -492,12 +492,12 @@ show_macros (void)
     char prebuf[64];
 
     if (topmap != NULL) {
-	print_lines("Macros:\n",STANDOUT);
-	*prebuf = '\0';
-	show_keymap(topmap,prebuf);
+        print_lines("Macros:\n",STANDOUT);
+        *prebuf = '\0';
+        show_keymap(topmap,prebuf);
     }
     else {
-	print_lines("No macros defined.\n", NOMARKING);
+        print_lines("No macros defined.\n", NOMARKING);
     }
 }
 
@@ -509,37 +509,37 @@ show_keymap (KEYMAP *curmap, char *prefix)
     int kt;
 
     for (i = 0; i < 128; i++) {
-	if ((kt = curmap->km_type[i]) != 0) {
-	    if (i < ' ')
-		sprintf(next,"^%c",i+64);
-	    else if (i == ' ')
-		strcpy(next,"\\040");
-	    else if (i == 127)
-		strcpy(next,"^?");
-	    else
-		sprintf(next,"%c",i);
-	    if ((kt >> KM_GSHIFT) & KM_GMASK) {
-		sprintf(cmd_buf,"+%d", (kt >> KM_GSHIFT) & KM_GMASK);
-		strcat(next,cmd_buf);
-	    }
-	    switch (kt & KM_TMASK) {
-	      case KM_NOTHIN:
-		sprintf(cmd_buf,"%s	%c\n",prefix,i);
-		print_lines(cmd_buf,NOMARKING);
-		break;
-	      case KM_KEYMAP:
-		show_keymap(curmap->km_ptr[i].km_km, prefix);
-		break;
-	      case KM_STRING:
-		sprintf(cmd_buf,"%s	%s\n",prefix,curmap->km_ptr[i].km_str);
-		print_lines(cmd_buf,NOMARKING);
-		break;
-	      case KM_BOGUS:
-		sprintf(cmd_buf,"%s	BOGUS\n",prefix);
-		print_lines(cmd_buf,STANDOUT);
-		break;
-	    }
-	}
+        if ((kt = curmap->km_type[i]) != 0) {
+            if (i < ' ')
+                sprintf(next,"^%c",i+64);
+            else if (i == ' ')
+                strcpy(next,"\\040");
+            else if (i == 127)
+                strcpy(next,"^?");
+            else
+                sprintf(next,"%c",i);
+            if ((kt >> KM_GSHIFT) & KM_GMASK) {
+                sprintf(cmd_buf,"+%d", (kt >> KM_GSHIFT) & KM_GMASK);
+                strcat(next,cmd_buf);
+            }
+            switch (kt & KM_TMASK) {
+              case KM_NOTHIN:
+                sprintf(cmd_buf,"%s     %c\n",prefix,i);
+                print_lines(cmd_buf,NOMARKING);
+                break;
+              case KM_KEYMAP:
+                show_keymap(curmap->km_ptr[i].km_km, prefix);
+                break;
+              case KM_STRING:
+                sprintf(cmd_buf,"%s     %s\n",prefix,curmap->km_ptr[i].km_str);
+                print_lines(cmd_buf,NOMARKING);
+                break;
+              case KM_BOGUS:
+                sprintf(cmd_buf,"%s     BOGUS\n",prefix);
+                print_lines(cmd_buf,STANDOUT);
+                break;
+            }
+        }
     }
 }
 
@@ -547,9 +547,9 @@ void
 set_mode (int new_gmode, int new_mode)
 {
     if (gmode != new_gmode || mode != new_mode) {
-	gmode = new_gmode;
-	mode = new_mode;
-	xmouse_check();
+        gmode = new_gmode;
+        mode = new_mode;
+        xmouse_check();
     }
 }
 
@@ -575,34 +575,34 @@ bool
 finput_pending (bool check_term)
 {
     while (nextout != nextin) {
-	if (circlebuf[nextout] != '\200')
-	    return 1;
-	switch (not_echoing) {
-	  case 0:
-	    return 1;
-	  case 1:
-	    nextout++;
-	    nextout %= PUSHSIZE;
-	    not_echoing = 0;
-	    break;
-	  default:
-	    circlebuf[nextout] = '\n';
-	    not_echoing = 0;
-	    return 1;
-	}
+        if (circlebuf[nextout] != '\200')
+            return 1;
+        switch (not_echoing) {
+          case 0:
+            return 1;
+          case 1:
+            nextout++;
+            nextout %= PUSHSIZE;
+            not_echoing = 0;
+            break;
+          default:
+            circlebuf[nextout] = '\n';
+            not_echoing = 0;
+            return 1;
+        }
     }
 #ifdef PENDING
 #ifdef USE_TK
     if (check_term && ttk_running) {
-	ttk_do_waiting_events();	/* Update screen, process events. */
-	if (ttk_keys && *ttk_keys)
-	    return 1;
+        ttk_do_waiting_events();        /* Update screen, process events. */
+        if (ttk_keys && *ttk_keys)
+            return 1;
     }
 #endif
     if (check_term) {
-	int iocount;
-	ioctl(0, FIONREAD, &iocount);
-	return iocount;
+        int iocount;
+        ioctl(0, FIONREAD, &iocount);
+        return iocount;
     }
 # endif /* !PENDING */
     return 0;
@@ -620,50 +620,50 @@ finish_command (int donewline)
     char gmode_save = gmode;
 
     s = buf;
-    if (s[1] != FINISHCMD)		/* someone faking up a command? */
-	return true;
+    if (s[1] != FINISHCMD)              /* someone faking up a command? */
+        return true;
     set_mode('i',mode);
     if (not_echoing)
-	not_echoing = 2;
+        not_echoing = 2;
     do {
-	s = edit_buf(s, buf);
-	if (s == buf) {			/* entire string gone? */
-	    fflush(stdout);		/* return to single char command mode */
-	    set_mode(gmode_save,mode);
-	    return false;
-	}
-	if (s - buf == buflimit)
-	    break;
-	fflush(stdout);
-	getcmd(s);
-	if (errno || *s == '\f') {
-	    *s = Ctl('r');		/* force rewrite on CONT */
-	}
+        s = edit_buf(s, buf);
+        if (s == buf) {                 /* entire string gone? */
+            fflush(stdout);             /* return to single char command mode */
+            set_mode(gmode_save,mode);
+            return false;
+        }
+        if (s - buf == buflimit)
+            break;
+        fflush(stdout);
+        getcmd(s);
+        if (errno || *s == '\f') {
+            *s = Ctl('r');              /* force rewrite on CONT */
+        }
     } while (*s != '\r' && *s != '\n'); /* until CR or NL (not echoed) */
     mouse_is_down = false;
 
     while (s[-1] == ' ') s--;
-    *s = '\0';				/* terminate the string nicely */
+    *s = '\0';                          /* terminate the string nicely */
 
     if (donewline)
-	newline();
+        newline();
 
     set_mode(gmode_save,mode);
-    return true;			/* retrn success */
+    return true;                        /* retrn success */
 }
 
 static int
 echo_char (int ch)
 {
     if (((Uchar)ch & 0x7F) < ' ') {
-	putchar('^');
-	putchar((ch & 0x7F) | 64);
-	return 2;
+        putchar('^');
+        putchar((ch & 0x7F) | 64);
+        return 2;
     }
     if (ch == '\177') {
-	putchar('^');
-	putchar('?');
-	return 2;
+        putchar('^');
+        putchar('?');
+        return 2;
     }
     putchar(ch);
     return 1;
@@ -678,96 +678,96 @@ edit_buf (char *s, char *cmd)
 {
     static bool quoteone = false;
     if (quoteone) {
-	quoteone = false;
-	if (s != buf)
-	    goto echo_it;
+        quoteone = false;
+        if (s != buf)
+            goto echo_it;
     }
-    if (*s == '\033') {		/* substitution desired? */
+    if (*s == '\033') {         /* substitution desired? */
 #ifdef ESCSUBS
-	char tmpbuf[4], *cpybuf;
+        char tmpbuf[4], *cpybuf;
 
-	tmpbuf[0] = '%';
-	read_tty(&tmpbuf[1],1);
+        tmpbuf[0] = '%';
+        read_tty(&tmpbuf[1],1);
 #ifdef RAWONLY
-	tmpbuf[1] &= 0177;
+        tmpbuf[1] &= 0177;
 #endif
-	tmpbuf[2] = '\0';
-	if (tmpbuf[1] == 'h') {
-	    (void) help_subs();
-	    *s = '\0';
-	    reprint();
-	}
-	else if (tmpbuf[1] == '\033') {
-	    *s = '\0';
-	    cpybuf = estrdup(buf);
-	    interpsearch(buf, sizeof buf, cpybuf, cmd);
-	    safefree(cpybuf);
-	    s = buf + strlen(buf);
-	    reprint();
-	}
-	else {
-	    interpsearch(s, sizeof buf - (s-buf), tmpbuf, cmd);
-	    fputs(s,stdout);
-	    s += strlen(s);
-	}
+        tmpbuf[2] = '\0';
+        if (tmpbuf[1] == 'h') {
+            (void) help_subs();
+            *s = '\0';
+            reprint();
+        }
+        else if (tmpbuf[1] == '\033') {
+            *s = '\0';
+            cpybuf = estrdup(buf);
+            interpsearch(buf, sizeof buf, cpybuf, cmd);
+            safefree(cpybuf);
+            s = buf + strlen(buf);
+            reprint();
+        }
+        else {
+            interpsearch(s, sizeof buf - (s-buf), tmpbuf, cmd);
+            fputs(s,stdout);
+            s += strlen(s);
+        }
 #else
-	notincl("^[");
-	*s = '\0';
-	reprint();
+        notincl("^[");
+        *s = '\0';
+        reprint();
 #endif
-	return s;
+        return s;
     }
-    else if (*s == ERASECH) {		/* they want to rubout a char? */
-	if (s != buf) {
-	    rubout();
-	    s--;			/* discount the char rubbed out */
-	    if (!AT_NORM_CHAR(s))
-		rubout();
-	}
-	return s;
+    else if (*s == ERASECH) {           /* they want to rubout a char? */
+        if (s != buf) {
+            rubout();
+            s--;                        /* discount the char rubbed out */
+            if (!AT_NORM_CHAR(s))
+                rubout();
+        }
+        return s;
     }
-    else if (*s == KILLCH) {		/* wipe out the whole line? */
-	while (s != buf) {		/* emulate that many ERASEs */
-	    rubout();
-	    s--;
-	    if (!AT_NORM_CHAR(s))
-		rubout();
-	}
-	return s;
+    else if (*s == KILLCH) {            /* wipe out the whole line? */
+        while (s != buf) {              /* emulate that many ERASEs */
+            rubout();
+            s--;
+            if (!AT_NORM_CHAR(s))
+                rubout();
+        }
+        return s;
     }
 #ifdef WORDERASE
-    else if (*s == Ctl('w')) {		/* wipe out one word? */
-	if (s == buf)
-	    return s;
-	*s-- = ' ';
-	while (!isspace(*s) || isspace(s[1])) {
-	    rubout();
-	    if (!AT_NORM_CHAR(s))
-		rubout();
-	    if (s == buf)
-		return buf;
-	    s--;
-	}
-	return s+1;
+    else if (*s == Ctl('w')) {          /* wipe out one word? */
+        if (s == buf)
+            return s;
+        *s-- = ' ';
+        while (!isspace(*s) || isspace(s[1])) {
+            rubout();
+            if (!AT_NORM_CHAR(s))
+                rubout();
+            if (s == buf)
+                return buf;
+            s--;
+        }
+        return s+1;
     }
 #endif
     else if (*s == Ctl('r')) {
-	*s = '\0';
-	reprint();
-	return s;
+        *s = '\0';
+        reprint();
+        return s;
     }
     else if (*s == Ctl('v')) {
-	putchar('^');
-	backspace();
-	fflush(stdout);
-	getcmd(s);
+        putchar('^');
+        backspace();
+        fflush(stdout);
+        getcmd(s);
     }
     else if (*s == '\\')
-	quoteone = true;
+        quoteone = true;
 
 echo_it:
     if (!not_echoing)
-	echo_char(*s);
+        echo_char(*s);
     return s+1;
 }
 
@@ -797,57 +797,57 @@ eat_typeahead (void)
       return;
     /* Don't eat twice before getting a character */
     if (!got_a_char)
-	return;
+        return;
     got_a_char = false;
 
     /* cancel only keyboard stuff */
     if (!allow_typeahead && !mouse_is_down && !macro_pending()
      && this_time - last_time > 300) {
 #ifdef PENDING
-	KEYMAP* curmap = topmap;
-	Uchar lc;
-	int i, j;
-	for (j = 0; input_pending(); ) {
-	    errno = 0;
-	    if (read_tty(&buf[j],1) < 0) {
-		if (errno && errno != EINTR) {
-		    perror(readerr);
-		    sig_catcher(0);
-		}
-		continue;
-	    }
-	    lc = *(Uchar*)buf;
-	    if ((lc & 0200) || curmap == NULL) {
-		curmap = topmap;
-		j = 0;
-		continue;
-	    }
-	    j++;
-	    for (i = (curmap->km_type[lc] >> KM_GSHIFT) & KM_GMASK; i; i--) {
-		if (!input_pending())
-		    goto dbl_break;
-		read_tty(&buf[j++],1);
-	    }
+        KEYMAP* curmap = topmap;
+        Uchar lc;
+        int i, j;
+        for (j = 0; input_pending(); ) {
+            errno = 0;
+            if (read_tty(&buf[j],1) < 0) {
+                if (errno && errno != EINTR) {
+                    perror(readerr);
+                    sig_catcher(0);
+                }
+                continue;
+            }
+            lc = *(Uchar*)buf;
+            if ((lc & 0200) || curmap == NULL) {
+                curmap = topmap;
+                j = 0;
+                continue;
+            }
+            j++;
+            for (i = (curmap->km_type[lc] >> KM_GSHIFT) & KM_GMASK; i; i--) {
+                if (!input_pending())
+                    goto dbl_break;
+                read_tty(&buf[j++],1);
+            }
 
-	    switch (curmap->km_type[lc] & KM_TMASK) {
-	      case KM_STRING:		/* a string? */
-	      case KM_NOTHIN:		/* no entry? */
-		curmap = topmap;
-		j = 0;
-		continue;
-	      case KM_KEYMAP:		/* another keymap? */
-		curmap = curmap->km_ptr[lc].km_km;
-		break;
-	    }
-	}
+            switch (curmap->km_type[lc] & KM_TMASK) {
+              case KM_STRING:           /* a string? */
+              case KM_NOTHIN:           /* no entry? */
+                curmap = topmap;
+                j = 0;
+                continue;
+              case KM_KEYMAP:           /* another keymap? */
+                curmap = curmap->km_ptr[lc].km_km;
+                break;
+            }
+        }
       dbl_break:
-	if (j) {
-	    /* Don't delete a partial macro sequence */
-	    buf[j] = '\0';
-	    pushstring(buf,0);
-	}
+        if (j) {
+            /* Don't delete a partial macro sequence */
+            buf[j] = '\0';
+            pushstring(buf,0);
+        }
 #else /* this is probably v7 */
-	tcsetattr(_tty_ch,TCSAFLUSH,&_tty);
+        tcsetattr(_tty_ch,TCSAFLUSH,&_tty);
 #endif
     }
     last_time = this_time;
@@ -859,9 +859,9 @@ save_typeahead (char *buf, int len)
     int cnt;
 
     while (input_pending()) {
-	cnt = read_tty(buf, len);
-	buf += cnt;
-	len -= cnt;
+        cnt = read_tty(buf, len);
+        buf += cnt;
+        len -= cnt;
     }
     *buf = '\0';
 }
@@ -872,7 +872,7 @@ settle_down (void)
     dingaling();
     fflush(stdout);
     /*sleep(1);*/
-    nextout = nextin;			/* empty circlebuf */
+    nextout = nextin;                   /* empty circlebuf */
     not_echoing = 0;
     eat_typeahead();
 }
@@ -895,25 +895,25 @@ int
 read_tty (char *addr, int size)
 {
     if (macro_pending()) {
-	*addr = circlebuf[nextout++];
-	nextout %= PUSHSIZE;
-	return 1;
+        *addr = circlebuf[nextout++];
+        nextout %= PUSHSIZE;
+        return 1;
     }
 #ifdef USE_TK
     if (ttk_running) {
-	ttk_wait_for_input();    /* handle events until input is available */
-	if (ttk_keys && *ttk_keys) {
-	    int len = strlen(ttk_keys);
-	    if (size > len)
-		size = len;
-	    strncpy(addr, ttk_keys, size);      /* return the first bit */
-	    if (len > size)
-		pushstring(ttk_keys+size,0);	/* and push the rest */
-	    safefree(ttk_keys);			/* every byte counts... */
-	    /* A plain NULL pointer will not work -- it is "\0" in TCL */
-	    ttk_keys = estrdup(nullstr);
-	    return size;
-	}
+        ttk_wait_for_input();    /* handle events until input is available */
+        if (ttk_keys && *ttk_keys) {
+            int len = strlen(ttk_keys);
+            if (size > len)
+                size = len;
+            strncpy(addr, ttk_keys, size);      /* return the first bit */
+            if (len > size)
+                pushstring(ttk_keys+size,0);    /* and push the rest */
+            safefree(ttk_keys);                 /* every byte counts... */
+            /* A plain NULL pointer will not work -- it is "\0" in TCL */
+            ttk_keys = estrdup(nullstr);
+            return size;
+        }
     }
 #endif
     size = read(0,addr,size);
@@ -935,10 +935,10 @@ circfill (void)
     Howmany = read(devtty,circlebuf+nextin,1);
 
     if (Howmany < 0 && (errno == EAGAIN || errno == EINTR))
-	Howmany = 0;
+        Howmany = 0;
     if (Howmany) {
-	nextin += Howmany;
-	nextin %= PUSHSIZE;
+        nextin += Howmany;
+        nextin %= PUSHSIZE;
     }
     return Howmany;
 }
@@ -950,10 +950,10 @@ pushchar (int c)
 {
     nextout--;
     if (nextout < 0)
-	nextout = PUSHSIZE - 1;
+        nextout = PUSHSIZE - 1;
     if (nextout == nextin) {
-	fputs("\npushback buffer overflow\n",stdout);
-	sig_catcher(0);
+        fputs("\npushback buffer overflow\n",stdout);
+        sig_catcher(0);
     }
     circlebuf[nextout] = c;
 }
@@ -964,29 +964,29 @@ void
 underprint (char *s)
 {
     assert(tc_UC);
-    if (*tc_UC) {	/* char by char underline? */
-	while (*s) {
-	    if (!AT_NORM_CHAR(s)) {
-		putchar('^');
-		backspace();/* back up over it */
-		underchar();/* and do the underline */
-		putchar((*s & 0x7F) | 64);
-		backspace();/* back up over it */
-		underchar();/* and do the underline */
-	    }
-	    else {
-		putchar(*s);
-		backspace();/* back up over it */
-		underchar();/* and do the underline */
-	    }
-	    s++;
-	}
+    if (*tc_UC) {       /* char by char underline? */
+        while (*s) {
+            if (!AT_NORM_CHAR(s)) {
+                putchar('^');
+                backspace();/* back up over it */
+                underchar();/* and do the underline */
+                putchar((*s & 0x7F) | 64);
+                backspace();/* back up over it */
+                underchar();/* and do the underline */
+            }
+            else {
+                putchar(*s);
+                backspace();/* back up over it */
+                underchar();/* and do the underline */
+            }
+            s++;
+        }
     }
-    else {		/* start and stop underline */
-	underline();	/* start underlining */
-	while (*s)
-	    echo_char(*s++);
-	un_underline();	/* stop underlining */
+    else {              /* start and stop underline */
+        underline();    /* start underlining */
+        while (*s)
+            echo_char(*s++);
+        un_underline(); /* stop underlining */
     }
 }
 
@@ -998,10 +998,10 @@ no_sofire (void)
 {
     /* should we disable fireworks? */
     if (!(fire_is_out & STANDOUT) && (term_line|term_col)==0 && *tc_UP && *tc_SE) {
-	newline();
-	un_standout();
-	up_line();
-	carriage_return();
+        newline();
+        un_standout();
+        up_line();
+        carriage_return();
     }
 }
 #endif
@@ -1012,10 +1012,10 @@ no_ulfire (void)
 {
     /* should we disable fireworks? */
     if (!(fire_is_out & UNDERLINE) && (term_line|term_col)==0 && *tc_UP && *tc_US) {
-	newline();
-	un_underline();
-	up_line();
-	carriage_return();
+        newline();
+        un_underline();
+        up_line();
+        carriage_return();
     }
 }
 #endif
@@ -1028,11 +1028,11 @@ getcmd (char *whatbuf)
     KEYMAP* curmap;
     int i;
     bool no_macros;
-    int times = 0;			/* loop detector */
+    int times = 0;                      /* loop detector */
 
     if (!input_pending()) {
-	sigset(SIGALRM,alarm_catcher);
-	(void) alarm(DATASRC_ALARM_SECS);
+        sigset(SIGALRM,alarm_catcher);
+        (void) alarm(DATASRC_ALARM_SECS);
     }
 
 tryagain:
@@ -1043,62 +1043,62 @@ tryagain:
     no_macros = (whatbuf != buf && !xmouse_is_on);
 #endif
     for (;;) {
-	int_count = 0;
-	errno = 0;
-	ignore_EINTR = false;
-	if (read_tty(whatbuf,1) < 0) {
-	    if (!errno)
-	        errno = EINTR;
-	    if (errno == EINTR) {
-		if (ignore_EINTR)
-		    continue;
-		(void) alarm(0);
-		return;
-	    }
-	    perror(readerr);
-	    sig_catcher(0);
-	}
-	lastchar = *(Uchar*)whatbuf;
-	if (lastchar & 0200 || no_macros) {
-	    *whatbuf &= 0177;
-	    goto got_canonical;
-	}
-	if (curmap == NULL)
-	    goto got_canonical;
-	for (i = (curmap->km_type[lastchar] >> KM_GSHIFT) & KM_GMASK; i; i--)
-	    read_tty(&whatbuf[i],1);
+        int_count = 0;
+        errno = 0;
+        ignore_EINTR = false;
+        if (read_tty(whatbuf,1) < 0) {
+            if (!errno)
+                errno = EINTR;
+            if (errno == EINTR) {
+                if (ignore_EINTR)
+                    continue;
+                (void) alarm(0);
+                return;
+            }
+            perror(readerr);
+            sig_catcher(0);
+        }
+        lastchar = *(Uchar*)whatbuf;
+        if (lastchar & 0200 || no_macros) {
+            *whatbuf &= 0177;
+            goto got_canonical;
+        }
+        if (curmap == NULL)
+            goto got_canonical;
+        for (i = (curmap->km_type[lastchar] >> KM_GSHIFT) & KM_GMASK; i; i--)
+            read_tty(&whatbuf[i],1);
 
-	switch (curmap->km_type[lastchar] & KM_TMASK) {
-	  case KM_NOTHIN:		/* no entry? */
-	    if (curmap == topmap)	/* unmapped canonical */
-		goto got_canonical;
-	    settle_down();
-	    goto tryagain;
-	  case KM_KEYMAP:		/* another keymap? */
-	    curmap = curmap->km_ptr[lastchar].km_km;
-	    assert(curmap != NULL);
-	    break;
-	  case KM_STRING:		/* a string? */
-	    pushstring(curmap->km_ptr[lastchar].km_str,0200);
-	    if (++times > 20) {		/* loop? */
-		fputs("\nmacro loop?\n",stdout);
-		termdown(2);
-		settle_down();
-	    }
-	    no_macros = false;
-	    goto tryagain;
-	}
+        switch (curmap->km_type[lastchar] & KM_TMASK) {
+          case KM_NOTHIN:               /* no entry? */
+            if (curmap == topmap)       /* unmapped canonical */
+                goto got_canonical;
+            settle_down();
+            goto tryagain;
+          case KM_KEYMAP:               /* another keymap? */
+            curmap = curmap->km_ptr[lastchar].km_km;
+            assert(curmap != NULL);
+            break;
+          case KM_STRING:               /* a string? */
+            pushstring(curmap->km_ptr[lastchar].km_str,0200);
+            if (++times > 20) {         /* loop? */
+                fputs("\nmacro loop?\n",stdout);
+                termdown(2);
+                settle_down();
+            }
+            no_macros = false;
+            goto tryagain;
+        }
     }
 
 got_canonical:
     /* This hack is for mouse support */
     if (xmouse_is_on && *whatbuf == Ctl('c')) {
-	mouse_input(whatbuf+1);
-	times = 0;
-	goto tryagain;
+        mouse_input(whatbuf+1);
+        times = 0;
+        goto tryagain;
     }
     if (whatbuf == buf)
-	whatbuf[1] = FINISHCMD;		/* tell finish_command to work */
+        whatbuf[1] = FINISHCMD;         /* tell finish_command to work */
     (void) alarm(0);
 }
 
@@ -1112,7 +1112,7 @@ pushstring (char *str, int bits)
     assert(str != NULL);
     interp(tmpbuf,PUSHSIZE,str);
     for (i = strlen(s)-1; i >= 0; i--)
-	pushchar(s[i] ^ bits);
+        pushchar(s[i] ^ bits);
 }
 
 int
@@ -1122,55 +1122,55 @@ get_anything (void)
     char mode_save = mode;
 
 reask_anything:
-    unflush_output();			/* disable any ^O in effect */
+    unflush_output();                   /* disable any ^O in effect */
     color_object(COLOR_MORE, 1);
 #ifdef VERBOSE
     IF(verbose)
-	fputs("[Type space to continue] ",stdout);
+        fputs("[Type space to continue] ",stdout);
     ELSE
 #endif
 #ifdef TERSE
-	fputs("[MORE] ",stdout);
+        fputs("[MORE] ",stdout);
 #endif
-    color_pop();	/* of COLOR_MORE */
+    color_pop();        /* of COLOR_MORE */
     fflush(stdout);
     eat_typeahead();
     if (int_count)
-	return -1;
+        return -1;
     cache_until_key();
     set_mode(gmode, 'K');
     getcmd(tmpbuf);
     set_mode(gmode,mode_save);
     if (errno || *tmpbuf == '\f') {
-	newline();			/* if return from stop signal */
-	goto reask_anything;		/* give them a prompt again */
+        newline();                      /* if return from stop signal */
+        goto reask_anything;            /* give them a prompt again */
     }
     if (*tmpbuf == 'h') {
 #ifdef VERBOSE
-	IF(verbose)
-	    fputs("\nType q to quit or space to continue.\n",stdout);
-	ELSE
+        IF(verbose)
+            fputs("\nType q to quit or space to continue.\n",stdout);
+        ELSE
 #endif
 #ifdef TERSE
-	    fputs("\nq to quit, space to continue.\n",stdout);
+            fputs("\nq to quit, space to continue.\n",stdout);
 #endif
-	termdown(2);
-	goto reask_anything;
+        termdown(2);
+        goto reask_anything;
     }
     else if (*tmpbuf != ' ' && *tmpbuf != '\n') {
-	erase_line(0);	/* erase the prompt */
-	return *tmpbuf == 'q' ? -1 : *tmpbuf;
+        erase_line(0);  /* erase the prompt */
+        return *tmpbuf == 'q' ? -1 : *tmpbuf;
     }
     if (*tmpbuf == '\n') {
-	page_line = tc_LINES - 1;
-	erase_line(0);
+        page_line = tc_LINES - 1;
+        erase_line(0);
     }
     else {
-	page_line = 1;
-	if (erase_screen)		/* -e? */
-	    clear();			/* clear screen */
-	else
-	    erase_line(0);		/* erase the prompt */
+        page_line = 1;
+        if (erase_screen)               /* -e? */
+            clear();                    /* clear screen */
+        else
+            erase_line(0);              /* erase the prompt */
     }
     return 0;
 }
@@ -1180,30 +1180,30 @@ pause_getcmd (void)
 {
     char mode_save = mode;
 
-    unflush_output();			/* disable any ^O in effect */
+    unflush_output();                   /* disable any ^O in effect */
     color_object(COLOR_CMD, 1);
 #ifdef VERBOSE
     IF(verbose)
-	fputs("[Type space or a command] ",stdout);
+        fputs("[Type space or a command] ",stdout);
     ELSE
 #endif
 #ifdef TERSE
-	fputs("[CMD] ",stdout);
+        fputs("[CMD] ",stdout);
 #endif
-    color_pop();	/* of COLOR_CMD */
+    color_pop();        /* of COLOR_CMD */
     fflush(stdout);
     eat_typeahead();
     if (int_count)
-	return -1;
+        return -1;
     cache_until_key();
     set_mode(gmode,'K');
     getcmd(buf);
     set_mode(gmode,mode_save);
     if (errno || *buf == '\f')
-	return 0;			/* if return from stop signal */
+        return 0;                       /* if return from stop signal */
     if (*buf != ' ') {
-	erase_line(0);	/* erase the prompt */
-	return *buf;
+        erase_line(0);  /* erase the prompt */
+        return *buf;
     }
     return 0;
 }
@@ -1217,12 +1217,12 @@ in_char (char *prompt, int newmode, char *dflt)
     int newlines;
 
     for (newlines = 0, s = prompt; *s; s++) {
-	if (*s == '\n')
-	    newlines++;
+        if (*s == '\n')
+            newlines++;
     }
 
 reask_in_char:
-    unflush_output();			/* disable any ^O in effect */
+    unflush_output();                   /* disable any ^O in effect */
     printf("%s [%s] ", prompt, dflt);
     fflush(stdout);
     termdown(newlines);
@@ -1230,8 +1230,8 @@ reask_in_char:
     set_mode('p',newmode);
     getcmd(buf);
     if (errno || *buf == '\f') {
-	newline();			/* if return from stop signal */
-	goto reask_in_char;		/* give them a prompt again */
+        newline();                      /* if return from stop signal */
+        goto reask_in_char;             /* give them a prompt again */
     }
     setdef(buf,dflt);
     set_mode(gmode_save,mode_save);
@@ -1244,7 +1244,7 @@ in_answer (char *prompt, int newmode)
     char gmode_save = gmode;
 
 reask_in_answer:
-    unflush_output();			/* disable any ^O in effect */
+    unflush_output();                   /* disable any ^O in effect */
     fputs(prompt,stdout);
     fflush(stdout);
     eat_typeahead();
@@ -1252,17 +1252,17 @@ reask_in_answer:
 reinp_in_answer:
     getcmd(buf);
     if (errno || *buf == '\f') {
-	newline();			/* if return from stop signal */
-	goto reask_in_answer;		/* give them a prompt again */
+        newline();                      /* if return from stop signal */
+        goto reask_in_answer;           /* give them a prompt again */
     }
     if (*buf == ERASECH)
-	goto reinp_in_answer;
+        goto reinp_in_answer;
     if (*buf != '\n' && *buf != ' ') {
-	if (!finish_command(false))
-	    goto reinp_in_answer;
+        if (!finish_command(false))
+            goto reinp_in_answer;
     }
     else
-	buf[1] = '\0';
+        buf[1] = '\0';
     newline();
     set_mode(gmode_save,mode_save);
 }
@@ -1281,41 +1281,41 @@ in_choice (char *prompt, char *value, char *choices, int newmode)
     int len, number_was = -1, any_val_OK = 0, value_changed;
     char tmpbuf[80], prefixes[80];
 
-    unflush_output();			/* disable any ^O in effect */
+    unflush_output();                   /* disable any ^O in effect */
     eat_typeahead();
     set_mode('c',newmode);
     screen_is_dirty = false;
 
     cp = choices;
     if (*cp == '[') {
-	for (s = prefixes, cp++; *cp != ']'; ) {
-	    if (*cp == '/') {
-		*s++ = '\0';
-		cp++;
-	    }
-	    else
-		*s++ = *cp++;
-	}
-	*s++ = '\0';
-	*s = '\0';
-	if (*++cp == ' ')
-	    cp++;
+        for (s = prefixes, cp++; *cp != ']'; ) {
+            if (*cp == '/') {
+                *s++ = '\0';
+                cp++;
+            }
+            else
+                *s++ = *cp++;
+        }
+        *s++ = '\0';
+        *s = '\0';
+        if (*++cp == ' ')
+            cp++;
     }
     else
-	*prefixes = '\0';
+        *prefixes = '\0';
     for (s = tmpbuf; *cp; ) {
-	if (*cp == '/') {
-	    *s++ = '\0';
-	    cp++;
-	}
-	else if (*cp == '<') {
-	    do {
-		*s++ = *cp;
-	    } while (*cp++ != '>');
-	    any_val_OK = 1;		/* flag that '<' was found */
-	}
-	else
-	    *s++ = *cp++;
+        if (*cp == '/') {
+            *s++ = '\0';
+            cp++;
+        }
+        else if (*cp == '<') {
+            do {
+                *s++ = *cp;
+            } while (*cp++ != '>');
+            any_val_OK = 1;             /* flag that '<' was found */
+        }
+        else
+            *s++ = *cp++;
     }
     cp = s;
     *s++ = '\0';
@@ -1326,63 +1326,63 @@ reask_in_choice:
     len = strlen(buf);
     bp = buf;
     if (*prefixes != '\0') {
-	s = prefix;
-	for (prefix = prefixes; *prefix; prefix += strlen(prefix)) {
-	    if (*prefix == *buf)
-		break;
-	}
-	if (*prefix) {
-	    for (bp = buf; *bp && *bp != ' '; bp++) ;
-	    while (*bp == ' ') bp++;
-	}
-	else
-	    prefix = NULL;
-	value_changed = prefix != s;
+        s = prefix;
+        for (prefix = prefixes; *prefix; prefix += strlen(prefix)) {
+            if (*prefix == *buf)
+                break;
+        }
+        if (*prefix) {
+            for (bp = buf; *bp && *bp != ' '; bp++) ;
+            while (*bp == ' ') bp++;
+        }
+        else
+            prefix = NULL;
+        value_changed = prefix != s;
     }
     else {
-	prefix = NULL;
-	value_changed = 0;
+        prefix = NULL;
+        value_changed = 0;
     }
     s = cp;
     for (;;) {
-	cp += strlen(cp) + 1;
-	if (!*cp)
-	    cp = tmpbuf;
-	if (*cp == '<'
-	 && (*buf == '<' || cp[1] != '#' || isdigit(*buf) || !*s)) {
-	    prefix = NULL;
-	    break;
-	}
-	if (s == cp) {
-	    if (!value_changed) {
-		if (prefix)
-		    prefix = NULL;
-		else
-		    dingaling();
-	    }
-	    break;
-	}
-	if (!*bp || strnEQ(cp,bp,any_val_OK? len : 1))
-	    break;
+        cp += strlen(cp) + 1;
+        if (!*cp)
+            cp = tmpbuf;
+        if (*cp == '<'
+         && (*buf == '<' || cp[1] != '#' || isdigit(*buf) || !*s)) {
+            prefix = NULL;
+            break;
+        }
+        if (s == cp) {
+            if (!value_changed) {
+                if (prefix)
+                    prefix = NULL;
+                else
+                    dingaling();
+            }
+            break;
+        }
+        if (!*bp || strnEQ(cp,bp,any_val_OK? len : 1))
+            break;
     }
 
     if (*cp == '<') {
-	if (*buf == '<' || cp[1] == '#') {
-	    if (number_was >= 0)
-		sprintf(buf, "%d", number_was);
-	    else {
-		for (s = buf; isdigit(*s); s++) ;
-		*s = '\0';
-	    }
-	}
+        if (*buf == '<' || cp[1] == '#') {
+            if (number_was >= 0)
+                sprintf(buf, "%d", number_was);
+            else {
+                for (s = buf; isdigit(*s); s++) ;
+                *s = '\0';
+            }
+        }
     }
     else {
-	if (prefix) {
-	    sprintf(buf, "%s ", prefix);
-	    strcat(buf,cp);
-	}
-	else
-	    strcpy(buf,cp);
+        if (prefix) {
+            sprintf(buf, "%s ", prefix);
+            strcat(buf,cp);
+        }
+        else
+            strcpy(buf,cp);
     }
     s = buf + strlen(buf);
     carriage_return();
@@ -1394,50 +1394,50 @@ reask_in_choice:
 
 reinp_in_choice:
     if ((s-buf) + len >= tc_COLS)
-	screen_is_dirty = true;
+        screen_is_dirty = true;
     fflush(stdout);
     getcmd(s);
-    if (errno || *s == '\f')		/* if return from stop signal */
-	*s = '\n';
+    if (errno || *s == '\f')            /* if return from stop signal */
+        *s = '\n';
     if (*s != '\n') {
-	char ch = *s;
-	if (*cp == '<' && ch != '\t' && (ch != ' ' || buf != s)) {
-	    if (cp[1] == '#') {
-		s = edit_buf(s, (char*)NULL);
-		if (s != buf) {
-		    if (isdigit(s[-1]))
-			goto reinp_in_choice;
-		    else
-			number_was = atoi(buf);
-		}
-	    }
-	    else {
-		s = edit_buf(s, (char*)NULL);
-		goto reinp_in_choice;
-	    }
-	}
-	*s = '\0';
-	for (s = buf; *s && *s != ' '; s++) ;
-	if (*s == ' ') s++;
-	if (ch == ' ' || ch == '\t') {
-	    if (prefix)
-		*s = '\0';
-	    else
-		*buf = '\0';
-	}
-	else {
-	    char ch1 = buf[0];
-	    if (prefix) {
-		if (ch == ch1)
-		    ch = *s;
-		else {
-		    ch1 = ch;
-		    ch = buf[0];
-		}
-	    }
-	    sprintf(buf,"%c %c",ch == ERASECH || ch == KILLCH? '<' : ch, ch1);
-	}
-	goto reask_in_choice;
+        char ch = *s;
+        if (*cp == '<' && ch != '\t' && (ch != ' ' || buf != s)) {
+            if (cp[1] == '#') {
+                s = edit_buf(s, (char*)NULL);
+                if (s != buf) {
+                    if (isdigit(s[-1]))
+                        goto reinp_in_choice;
+                    else
+                        number_was = atoi(buf);
+                }
+            }
+            else {
+                s = edit_buf(s, (char*)NULL);
+                goto reinp_in_choice;
+            }
+        }
+        *s = '\0';
+        for (s = buf; *s && *s != ' '; s++) ;
+        if (*s == ' ') s++;
+        if (ch == ' ' || ch == '\t') {
+            if (prefix)
+                *s = '\0';
+            else
+                *buf = '\0';
+        }
+        else {
+            char ch1 = buf[0];
+            if (prefix) {
+                if (ch == ch1)
+                    ch = *s;
+                else {
+                    ch1 = ch;
+                    ch = buf[0];
+                }
+            }
+            sprintf(buf,"%c %c",ch == ERASECH || ch == KILLCH? '<' : ch, ch1);
+        }
+        goto reask_in_choice;
     }
     *s = '\0';
 
@@ -1455,53 +1455,53 @@ print_lines (char *what_to_print, int hilite)
     int i;
 
     for (s=what_to_print; *s; ) {
-	i = check_page_line();
-	if (i)
-	    return i;
-	if (hilite == STANDOUT) {
+        i = check_page_line();
+        if (i)
+            return i;
+        if (hilite == STANDOUT) {
 #ifdef NOFIREWORKS
-	    if (erase_screen)
-		no_sofire();
+            if (erase_screen)
+                no_sofire();
 #endif
-	    standout();
-	}
-	else if (hilite == UNDERLINE) {
+            standout();
+        }
+        else if (hilite == UNDERLINE) {
 #ifdef NOFIREWORKS
-	    if (erase_screen)
-		no_ulfire();
+            if (erase_screen)
+                no_ulfire();
 #endif
-	    underline();
-	}
-	for (i = 0; *s && i < tc_COLS; ) {
-	    if (AT_NORM_CHAR(s)) {
-		i += put_char_adv(&s, true);
-	    }
-	    else if (*s == '\t') {
-		putchar(*s);
-		s++;
-		i = ((i+8) & ~7);
-	    }
-	    else if (*s == '\n') {
-		s++;
-		i = 32000;
-	    }
-	    else {
-		putchar('^');
-		putchar(*s + 64);
-		s++;
-		i += 2;
-	    }
-	}
-	if (i) {
-	    if (hilite == STANDOUT)
-		un_standout();
-	    else if (hilite == UNDERLINE)
-		un_underline();
-	    if (tc_AM && i == tc_COLS)
-		fflush(stdout);
-	    else
-		newline();
-	}
+            underline();
+        }
+        for (i = 0; *s && i < tc_COLS; ) {
+            if (AT_NORM_CHAR(s)) {
+                i += put_char_adv(&s, true);
+            }
+            else if (*s == '\t') {
+                putchar(*s);
+                s++;
+                i = ((i+8) & ~7);
+            }
+            else if (*s == '\n') {
+                s++;
+                i = 32000;
+            }
+            else {
+                putchar('^');
+                putchar(*s + 64);
+                s++;
+                i += 2;
+            }
+        }
+        if (i) {
+            if (hilite == STANDOUT)
+                un_standout();
+            else if (hilite == UNDERLINE)
+                un_underline();
+            if (tc_AM && i == tc_COLS)
+                fflush(stdout);
+            else
+                newline();
+        }
     }
     return 0;
 }
@@ -1510,15 +1510,15 @@ int
 check_page_line (void)
 {
     if (page_line < 0)
-	return -1;
+        return -1;
     if (page_line >= tc_LINES || int_count) {
-	int cmd = -1;
-	if (int_count || (cmd = get_anything())) {
-	    page_line = -1;		/* disable further printing */
-	    if (cmd > 0)
-		pushchar(cmd);
-	    return cmd;
-	}
+        int cmd = -1;
+        if (int_count || (cmd = get_anything())) {
+            page_line = -1;             /* disable further printing */
+            if (cmd > 0)
+                pushchar(cmd);
+            return cmd;
+        }
     }
     page_line++;
     return 0;
@@ -1529,22 +1529,22 @@ page_start (void)
 {
     page_line = 1;
     if (erase_screen)
-	clear();
+        clear();
     else
-	newline();
+        newline();
 }
 
 void
 errormsg (char *str)
 {
     if (gmode == 's') {
-	if (str != msg)
-	    strcpy(msg,str);
-	error_occurred = true;
+        if (str != msg)
+            strcpy(msg,str);
+        error_occurred = true;
     }
     else if (*str) {
-	printf("\n%s\n", str);
-	termdown(2);
+        printf("\n%s\n", str);
+        termdown(2);
     }
 }
 
@@ -1552,9 +1552,9 @@ void
 warnmsg (char *str)
 {
     if (gmode != 's') {
-	printf("\n%s\n", str);
-	termdown(2);
-	pad(just_a_sec/3);
+        printf("\n%s\n", str);
+        termdown(2);
+        pad(just_a_sec/3);
     }
 }
 
@@ -1564,7 +1564,7 @@ pad (int num)
     int i;
 
     for (i = num; i; i--)
-	putchar(tc_PC);
+        putchar(tc_PC);
     fflush(stdout);
 }
 
@@ -1575,17 +1575,17 @@ void
 printcmd (void)
 {
     if (verify && buf[1] == FINISHCMD) {
-	if (!AT_NORM_CHAR(buf)) {
-	    putchar('^');
-	    putchar((*buf & 0x7F) | 64);
-	    backspace();
-	    backspace();
-	}
-	else {
-	    putchar(*buf);
-	    backspace();
-	}
-	fflush(stdout);
+        if (!AT_NORM_CHAR(buf)) {
+            putchar('^');
+            putchar((*buf & 0x7F) | 64);
+            backspace();
+            backspace();
+        }
+        else {
+            putchar(*buf);
+            backspace();
+        }
+        fflush(stdout);
     }
 }
 #endif
@@ -1593,9 +1593,9 @@ printcmd (void)
 void
 rubout (void)
 {
-    backspace();			/* do the old backspace, */
-    putchar(' ');			/*   space, */
-    backspace();			/*     backspace trick */
+    backspace();                        /* do the old backspace, */
+    putchar(' ');                       /*   space, */
+    backspace();                        /*     backspace trick */
 }
 
 void
@@ -1606,7 +1606,7 @@ reprint (void)
     fputs("^R\n",stdout);
     termdown(1);
     for (s = buf; *s; s++)
-	echo_char(*s);
+        echo_char(*s);
     screen_is_dirty = true;
 }
 
@@ -1615,10 +1615,10 @@ erase_line (bool to_eos)
 {
     carriage_return();
     if (to_eos)
-	clear_rest();
+        clear_rest();
     else
-	erase_eol();
-    carriage_return();		/* Resets kernel's tab column counter to 0 */
+        erase_eol();
+    carriage_return();          /* Resets kernel's tab column counter to 0 */
     fflush(stdout);
 }
 
@@ -1627,16 +1627,16 @@ clear (void)
 {
     term_line = term_col = fire_is_out = 0;
     if (tc_CL)
-	tputs(tc_CL,tc_LINES,putchr);
+        tputs(tc_CL,tc_LINES,putchr);
     else if (tc_CD) {
-	home_cursor();
-	tputs(tc_CD,tc_LINES,putchr);
+        home_cursor();
+        tputs(tc_CD,tc_LINES,putchr);
     }
     else {
-	int i;
-	for (i = 0; i < tc_LINES; i++)
-	    putchr('\n');
-	home_cursor();
+        int i;
+        for (i = 0; i < tc_LINES; i++)
+            putchr('\n');
+        home_cursor();
     }
     tputs(tc_CR,1,putchr);
 }
@@ -1644,18 +1644,18 @@ clear (void)
 void
 home_cursor (void)
 {
-    if (!*tc_HO) {		/* no home sequence? */
-	if (!*tc_CM) {		/* no cursor motion either? */
-	    fputs("\n\n\n", stdout);
-	    termdown(3);
-	    return;		/* forget it. */
-	}
-	tputs(tgoto(tc_CM, 0, 0), 1, putchr);	/* go to home via CM */
+    if (!*tc_HO) {              /* no home sequence? */
+        if (!*tc_CM) {          /* no cursor motion either? */
+            fputs("\n\n\n", stdout);
+            termdown(3);
+            return;             /* forget it. */
+        }
+        tputs(tgoto(tc_CM, 0, 0), 1, putchr);   /* go to home via CM */
     }
-    else {			/* we have home sequence */
-	tputs(tc_HO, 1, putchr);/* home via HO */
+    else {                      /* we have home sequence */
+        tputs(tc_HO, 1, putchr);/* home via HO */
     }
-    carriage_return();	/* Resets kernel's tab column counter to 0 */
+    carriage_return();  /* Resets kernel's tab column counter to 0 */
     term_line = term_col = 0;
 }
 
@@ -1666,79 +1666,79 @@ goto_xy (int to_col, int to_line)
     int cmcost, xcost, ycost;
 
     if (term_col == to_col && term_line == to_line)
-	return;
+        return;
     if (*tc_CM && !muck_up_clear) {
-	str = tgoto(tc_CM,to_col,to_line);
-	cmcost = strlen(str);
+        str = tgoto(tc_CM,to_col,to_line);
+        cmcost = strlen(str);
     } else {
-	str = NULL;
-	cmcost = 9999;
+        str = NULL;
+        cmcost = 9999;
     }
 
     if ((ycost = (to_line - term_line)) < 0)
-	ycost = (upcost? -ycost * upcost : 7777);
+        ycost = (upcost? -ycost * upcost : 7777);
     else if (ycost > 0)
-	term_col = 0;
+        term_col = 0;
 
     if ((xcost = (to_col - term_col)) < 0) {
-	if (!to_col && ycost+1 < cmcost) {
-	    carriage_return();
-	    xcost = 0;
-	}
-	else
-	    xcost = -xcost * leftcost;
+        if (!to_col && ycost+1 < cmcost) {
+            carriage_return();
+            xcost = 0;
+        }
+        else
+            xcost = -xcost * leftcost;
     }
     else if (xcost > 0 && cmcost < 9999)
-	xcost = 9999;
+        xcost = 9999;
 
     if (cmcost <= xcost + ycost) {
-	tputs(str,1,putchr);
-	term_line = to_line;
-	term_col = to_col;
-	return;
+        tputs(str,1,putchr);
+        term_line = to_line;
+        term_col = to_col;
+        return;
     }
 
     if (ycost == 7777)
-	home_cursor();
+        home_cursor();
 
     if (to_line >= term_line)
-	while(term_line < to_line) newline();
+        while(term_line < to_line) newline();
     else
-	while(term_line > to_line) up_line();
+        while(term_line > to_line) up_line();
 
     if (to_col >= term_col)
-	while(term_col < to_col) term_col++, putchar(' ');
+        while(term_col < to_col) term_col++, putchar(' ');
     else
-	while(term_col > to_col) term_col--, backspace();
+        while(term_col > to_col) term_col--, backspace();
 }
 
 static void
 line_col_calcs (void)
 {
-    if (tc_LINES > 0) {		/* is this a crt? */
-	if (!initlines || !option_def_vals[OI_INITIAL_ARTICLE_LINES]) {
-	    /* no -i or unreasonable value for initlines */
-	    if (outspeed >= B9600) 	/* whole page at >= 9600 baud */
-		initlines = tc_LINES;
-	    else if (outspeed >= B4800)	/* 16 lines at 4800 */
-		initlines = 16;
-	    else			/* otherwise just header */
-		initlines = 8;
-	}
-	/* Check for initlines bigger than the screen and fix it! */
-	if (initlines > tc_LINES)
-	    initlines = tc_LINES;
+    if (tc_LINES > 0) {         /* is this a crt? */
+        if (!initlines || !option_def_vals[OI_INITIAL_ARTICLE_LINES]) {
+            /* no -i or unreasonable value for initlines */
+            if (outspeed >= B9600)      /* whole page at >= 9600 baud */
+                initlines = tc_LINES;
+            else if (outspeed >= B4800) /* 16 lines at 4800 */
+                initlines = 16;
+            else                        /* otherwise just header */
+                initlines = 8;
+        }
+        /* Check for initlines bigger than the screen and fix it! */
+        if (initlines > tc_LINES)
+            initlines = tc_LINES;
     }
-    else {				/* not a crt */
-	tc_LINES = 30000;		/* so don't page */
-	tc_CL = "\n\n";			/* put a couple of lines between */
-	if (!initlines || !option_def_vals[OI_INITIAL_ARTICLE_LINES])
-	    initlines = 8;		/* make initlines reasonable */
+    else {                              /* not a crt */
+        tc_LINES = 30000;               /* so don't page */
+        tc_CL = "\n\n";                 /* put a couple of lines between */
+        if (!initlines || !option_def_vals[OI_INITIAL_ARTICLE_LINES])
+            initlines = 8;              /* make initlines reasonable */
     }
     if (tc_COLS <= 0)
-	tc_COLS = 80;
+        tc_COLS = 80;
 #ifdef SCAN
-    s_resize_win();	/* let various parts know */
+    s_resize_win();     /* let various parts know */
 #endif
 }
 
@@ -1749,23 +1749,23 @@ winch_catcher (int dummy)
     sigset(SIGWINCH, winch_catcher);
 
     /* Come here if window size change signal received */
-    {	struct winsize ws;
-	if (ioctl(0, TIOCGWINSZ, &ws) >= 0 && ws.ws_row > 0 && ws.ws_col > 0) {
-	    if (tc_LINES != ws.ws_row || tc_COLS != ws.ws_col) {
-		char numstr[64];
-		tc_LINES = ws.ws_row;
-		tc_COLS = ws.ws_col;
-		line_col_calcs();
-		snprintf(numstr, sizeof(numstr), "%d", tc_LINES);
-		export(lines_export, numstr);
-		snprintf(numstr, sizeof(numstr), "%d", tc_COLS);
-		export(cols_export, numstr);
-		if (gmode == 's' || mode == 'a' || mode == 'p') {
-		    forceme("\f");	/* cause a refresh */
-					/* (defined only if TIOCSTI defined) */
-		}
-	    }
-	}
+    {   struct winsize ws;
+        if (ioctl(0, TIOCGWINSZ, &ws) >= 0 && ws.ws_row > 0 && ws.ws_col > 0) {
+            if (tc_LINES != ws.ws_row || tc_COLS != ws.ws_col) {
+                char numstr[64];
+                tc_LINES = ws.ws_row;
+                tc_COLS = ws.ws_col;
+                line_col_calcs();
+                snprintf(numstr, sizeof(numstr), "%d", tc_LINES);
+                export(lines_export, numstr);
+                snprintf(numstr, sizeof(numstr), "%d", tc_COLS);
+                export(cols_export, numstr);
+                if (gmode == 's' || mode == 'a' || mode == 'p') {
+                    forceme("\f");      /* cause a refresh */
+                                        /* (defined only if TIOCSTI defined) */
+                }
+            }
+        }
     }
 }
 
@@ -1774,14 +1774,14 @@ termlib_init (void)
 {
 #ifdef USETITE
     if (tc_TI && *tc_TI) {
-	tputs(tc_TI,1,putchr);
-	fflush(stdout);
+        tputs(tc_TI,1,putchr);
+        fflush(stdout);
     }
 #endif
 #ifdef USEKSKE
     if (tc_KS && *tc_KS) {
-	tputs(tc_KS,1,putchr);
-	fflush(stdout);
+        tputs(tc_KS,1,putchr);
+        fflush(stdout);
     }
 #endif
     term_line = tc_LINES-1;
@@ -1794,14 +1794,14 @@ termlib_reset (void)
 {
 #ifdef USETITE
     if (tc_TE && *tc_TE) {
-	tputs(tc_TE,1,putchr);
-	fflush(stdout);
+        tputs(tc_TE,1,putchr);
+        fflush(stdout);
     }
 #endif
 #ifdef USEKSKE
     if (tc_KE && *tc_KE) {
-	tputs(tc_KE,1,putchr);
-	fflush(stdout);
+        tputs(tc_KE,1,putchr);
+        fflush(stdout);
     }
 #endif
 }
@@ -1862,93 +1862,93 @@ static int wait_tbl_size;
 /* returns true if input received */
 bool
 wait_key_pause (
-    int ticks		/* tenths of seconds to wait */
+    int ticks           /* tenths of seconds to wait */
 )
 {
 #ifdef DEBUG_NICEBG
-    ticks = 50;		/* debugging: wait 5 seconds */
+    ticks = 50;         /* debugging: wait 5 seconds */
 #endif
     if (input_pending())
-	return true;
+        return true;
 #ifdef DEBUG_NICEBG
     printf("entry: wait_key_pause\n"); /* */
 #endif
     /* common initialization */
     if (!wait_fd_opened) {
-	wait_ttyfd = open("/dev/tty",0); /*$$ possible cron prob */
-	/* CAA: the open shouldn't really be a problem now that the
-	 * open return value is checked below.  If running from cron,
-	 * I hope that the open will simply fail.  If the open succeeds,
-	 * however, then there should be no cause for complaint by the
-	 * routines below.  (The select method may be safest.)  Still,
-	 * it might be nice to have some flag which means "we are running
-	 * in the background".
-	 */
-	wait_fd_opened = true;
+        wait_ttyfd = open("/dev/tty",0); /*$$ possible cron prob */
+        /* CAA: the open shouldn't really be a problem now that the
+         * open return value is checked below.  If running from cron,
+         * I hope that the open will simply fail.  If the open succeeds,
+         * however, then there should be no cause for complaint by the
+         * routines below.  (The select method may be safest.)  Still,
+         * it might be nice to have some flag which means "we are running
+         * in the background".
+         */
+        wait_fd_opened = true;
     }
     if (wait_ttyfd < 0) {
-	/* tty open failed.  Don't wait around */
-	return input_pending();
+        /* tty open failed.  Don't wait around */
+        return input_pending();
     }
 #ifdef NBG_TERMIO
     /* First try a nice standard way */
     {
-	struct termios save_tty, wait_tty;
-	char lbuf[1];		/* for the read command */
-	int nrd;		/* number read */
+        struct termios save_tty, wait_tty;
+        char lbuf[1];           /* for the read command */
+        int nrd;                /* number read */
 
 #ifdef DEBUG_NICEBG
-	printf("wait_key_pause: using termio(s)\n");
+        printf("wait_key_pause: using termio(s)\n");
 #endif
-	if (!wait_initialized)
-	    wait_initialized = true;
-	if (ioctl(wait_ttyfd,TCGETA,&save_tty) == -1) {
-	    printf("wait_key_pause (term.c): ioctl TCGETA error\n");
-	    assert(false);
-	}
-	wait_tty = save_tty;
-	wait_tty.c_lflag &= ~ICANON;
-	wait_tty.c_lflag &= ~ECHO;
-	wait_tty.c_cc[VMIN] = 0;
-	wait_tty.c_cc[VTIME] = ticks;
-	if (ioctl(wait_ttyfd,TCSETAF,&wait_tty) == -1) {
-	    printf("wait_key_pause (term.c): ioctl TCSETAF error\n");
-	    assert(false);
-	}
-	nrd = read(wait_ttyfd,&lbuf,1);
-	ioctl(wait_ttyfd,TCSETAF,&save_tty);	/* put back the old info */
-	if (nrd == 1) {
-	    pushchar(lbuf[0]);	/* put it back */
+        if (!wait_initialized)
+            wait_initialized = true;
+        if (ioctl(wait_ttyfd,TCGETA,&save_tty) == -1) {
+            printf("wait_key_pause (term.c): ioctl TCGETA error\n");
+            assert(false);
+        }
+        wait_tty = save_tty;
+        wait_tty.c_lflag &= ~ICANON;
+        wait_tty.c_lflag &= ~ECHO;
+        wait_tty.c_cc[VMIN] = 0;
+        wait_tty.c_cc[VTIME] = ticks;
+        if (ioctl(wait_ttyfd,TCSETAF,&wait_tty) == -1) {
+            printf("wait_key_pause (term.c): ioctl TCSETAF error\n");
+            assert(false);
+        }
+        nrd = read(wait_ttyfd,&lbuf,1);
+        ioctl(wait_ttyfd,TCSETAF,&save_tty);    /* put back the old info */
+        if (nrd == 1) {
+            pushchar(lbuf[0]);  /* put it back */
 #ifdef DEBUG_NICEBG
-	    printf("early exit: wait_key_pause\n"); /* */
+            printf("early exit: wait_key_pause\n"); /* */
 #endif
-	}
+        }
 #ifdef DEBUG_NICEBG
-	printf("exit: wait_key_pause\n"); /* */
+        printf("exit: wait_key_pause\n"); /* */
 #endif
-	return input_pending();
+        return input_pending();
     }
 #endif /* NBG_TERMIO */
 #ifdef NBG_SELECT
 #ifdef DEBUG_NICEBG
-	printf("wait_key_pause: using select\n");
+        printf("wait_key_pause: using select\n");
 #endif
-	if (!wait_initialized) {
-	    wait_tbl_size = wait_ttyfd + 1;
-	    wait_initialized = true;
-	}
-	FD_ZERO(&wait_fdset);
-	FD_SET(wait_ttyfd,&wait_fdset);
+        if (!wait_initialized) {
+            wait_tbl_size = wait_ttyfd + 1;
+            wait_initialized = true;
+        }
+        FD_ZERO(&wait_fdset);
+        FD_SET(wait_ttyfd,&wait_fdset);
 
-	wait_time.tv_usec = (ticks%10)*1000000;
-	wait_time.tv_sec = ticks/10;
+        wait_time.tv_usec = (ticks%10)*1000000;
+        wait_time.tv_sec = ticks/10;
 
-	(void)select(wait_tbl_size,&wait_fdset,NULL,NULL,&wait_time);
+        (void)select(wait_tbl_size,&wait_fdset,NULL,NULL,&wait_time);
 
 #ifdef DEBUG_NICEBG
-	printf("exit: wait_key_pause\n"); /* */
+        printf("exit: wait_key_pause\n"); /* */
 #endif
-	return input_pending();
+        return input_pending();
 #endif /* NBG_SELECT */
 #ifdef NBG_SIGIO
 /* SIGIO signal sent for each keystroke style */
@@ -1957,35 +1957,35 @@ wait_key_pause (
  */
     {
 #ifdef DEBUG_NICEBG
-	printf("wait_key_pause: using SIGIO style\n");
+        printf("wait_key_pause: using SIGIO style\n");
 #endif
-	if (!wait_initialized) {	/* not initialized yet? */
+        if (!wait_initialized) {        /* not initialized yet? */
 /* Portable? (probably not) */
-	    wait_initialized = true;
-	    sigset(SIGALRM,waitkey_sig_handler);
-	    sigset(SIGIO,waitkey_sig_handler);
-	    /* enable SIGIO (some systems need it).  ifdef it? */
-	    fcntl(wait_ttyfd,F_SETOWN,(int)getpid());
-	    fcntl(wait_ttyfd,F_SETFL,FASYNC);
-	}
-	(void) alarm((ticks+9)/10);	/* sleep if no key pressed */
+            wait_initialized = true;
+            sigset(SIGALRM,waitkey_sig_handler);
+            sigset(SIGIO,waitkey_sig_handler);
+            /* enable SIGIO (some systems need it).  ifdef it? */
+            fcntl(wait_ttyfd,F_SETOWN,(int)getpid());
+            fcntl(wait_ttyfd,F_SETFL,FASYNC);
+        }
+        (void) alarm((ticks+9)/10);     /* sleep if no key pressed */
 /* NOTE: There is a race condition here, but not a very important one IMO.
- *	 If the alarm signal is sent *before* pause() is called, then this
- *	 function will simply wait until a key is pressed.  In this case
- *	 no background processing will occur.
- *	 Noted by CAA, August 1992.
+ *       If the alarm signal is sent *before* pause() is called, then this
+ *       function will simply wait until a key is pressed.  In this case
+ *       no background processing will occur.
+ *       Noted by CAA, August 1992.
  */
 /* note2: The race condition can be minimized by using a variable
  * which will tell if the alarm arrived before the pause (really before
  * the variable was set, which should be near-instant.)  Look into
  * this later.
  */
-	pause();	/* wait for either ALRM or SIGIO signal */
-	(void) alarm(0);
+        pause();        /* wait for either ALRM or SIGIO signal */
+        (void) alarm(0);
 #ifdef DEBUG_NICEBG
-	printf("exit: wait_key_pause\n");
+        printf("exit: wait_key_pause\n");
 #endif
-	return input_pending();
+        return input_pending();
     }
 #endif /* NBG_SIGIO */
 /* if no nice-background methods are defined, return. */
@@ -1998,7 +1998,7 @@ wait_key_pause (
 #ifdef DEBUG_NICEBG
     printf("wait_key_pause: no handler style, returning false.\n");
 #endif
-    return false;	/* don't worry if not reached */
+    return false;       /* don't worry if not reached */
 #endif
 #endif
 #endif
@@ -2011,15 +2011,15 @@ xmouse_init (char *progname)
 {
     char* s;
     if (!can_home || !use_threads)
-	return;
+        return;
     s = getenv("XTERMMOUSE");
     if (s && *s) {
-	interp(msg, sizeof msg, s);
-	set_option(OI_USE_MOUSE, msg);
+        interp(msg, sizeof msg, s);
+        set_option(OI_USE_MOUSE, msg);
     }
     else if (progname[strlen(progname)-1] == 'x') {
-	/* an 'x' at the end means enable Xterm mouse tracking */
-	set_option(OI_USE_MOUSE, "y");
+        /* an 'x' at the end means enable Xterm mouse tracking */
+        set_option(OI_USE_MOUSE, "y");
     }
 }
 
@@ -2028,75 +2028,75 @@ xmouse_check (void)
 {
     mousebar_cnt = 0;
     if (UseMouse) {
-	bool turn_it_on;
-	char mmode = mode;
-	if (gmode == 'p') {
-	    turn_it_on = true;
-	    mmode = '\0';
-	}
-	else if (gmode == 'i' || gmode == 'p'
-	      || (muck_up_clear && gmode != 's'))
-	    turn_it_on = false;
-	else {
-	    interp(msg, sizeof msg, MouseModes);
-	    turn_it_on = (index(msg, mode) != NULL);
-	}
-	if (turn_it_on) {
-	    char* s;
-	    int i, j;
-	    switch (mmode) {
-	      case 'c':
-		mousebar_btns = NewsrcSelBtns;
-		mousebar_cnt = NewsrcSelBtnCnt;
-		break;
-	      case 'j':
-		mousebar_btns = AddSelBtns;
-		mousebar_cnt = AddSelBtnCnt;
-		break;
-	      case 'l':
-		mousebar_btns = OptionSelBtns;
-		mousebar_cnt = OptionSelBtnCnt;
-		break;
-	      case 't':
-		mousebar_btns = NewsSelBtns;
-		mousebar_cnt = NewsSelBtnCnt;
-		break;
-	      case 'w':
-		mousebar_btns = NewsgroupSelBtns;
-		mousebar_cnt = NewsgroupSelBtnCnt;
-		break;
-	      case 'a':  case 'p':
-		mousebar_btns = ArtPagerBtns;
-		mousebar_cnt = ArtPagerBtnCnt;
-		break;
-	      case 'v':
-		mousebar_btns = UnivSelBtns;
-		mousebar_cnt = UnivSelBtnCnt;
-		break;
-	      default:
-		mousebar_btns = nullstr;
-		/*mousebar_cnt = 0;*/
-		break;
-	    }
-	    s = mousebar_btns;
-	    mousebar_width = 0;
-	    for (i = 0; i < mousebar_cnt; i++) {
-		j = strlen(s);
-		if (*s == '[') {
-		    mousebar_width += j;
-		    s += j + 1;
-		    j = strlen(s);
-		}
-		else
-		    mousebar_width += (j < 2? 3+1 : (j == 2? 4+1
-						     : (j < 5? j: 5+1)));
-		s += j + 1;
-	    }
-	    xmouse_on();
-	}
-	else
-	    xmouse_off();
-	mouse_is_down = false;
+        bool turn_it_on;
+        char mmode = mode;
+        if (gmode == 'p') {
+            turn_it_on = true;
+            mmode = '\0';
+        }
+        else if (gmode == 'i' || gmode == 'p'
+              || (muck_up_clear && gmode != 's'))
+            turn_it_on = false;
+        else {
+            interp(msg, sizeof msg, MouseModes);
+            turn_it_on = (strchr(msg, mode) != NULL);
+        }
+        if (turn_it_on) {
+            char* s;
+            int i, j;
+            switch (mmode) {
+              case 'c':
+                mousebar_btns = NewsrcSelBtns;
+                mousebar_cnt = NewsrcSelBtnCnt;
+                break;
+              case 'j':
+                mousebar_btns = AddSelBtns;
+                mousebar_cnt = AddSelBtnCnt;
+                break;
+              case 'l':
+                mousebar_btns = OptionSelBtns;
+                mousebar_cnt = OptionSelBtnCnt;
+                break;
+              case 't':
+                mousebar_btns = NewsSelBtns;
+                mousebar_cnt = NewsSelBtnCnt;
+                break;
+              case 'w':
+                mousebar_btns = NewsgroupSelBtns;
+                mousebar_cnt = NewsgroupSelBtnCnt;
+                break;
+              case 'a':  case 'p':
+                mousebar_btns = ArtPagerBtns;
+                mousebar_cnt = ArtPagerBtnCnt;
+                break;
+              case 'v':
+                mousebar_btns = UnivSelBtns;
+                mousebar_cnt = UnivSelBtnCnt;
+                break;
+              default:
+                mousebar_btns = nullstr;
+                /*mousebar_cnt = 0;*/
+                break;
+            }
+            s = mousebar_btns;
+            mousebar_width = 0;
+            for (i = 0; i < mousebar_cnt; i++) {
+                j = strlen(s);
+                if (*s == '[') {
+                    mousebar_width += j;
+                    s += j + 1;
+                    j = strlen(s);
+                }
+                else
+                    mousebar_width += (j < 2? 3+1 : (j == 2? 4+1
+                                                     : (j < 5? j: 5+1)));
+                s += j + 1;
+            }
+            xmouse_on();
+        }
+        else
+            xmouse_off();
+        mouse_is_down = false;
     }
 }
 
@@ -2104,10 +2104,10 @@ void
 xmouse_on (void)
 {
     if (!xmouse_is_on) {
-	/* save old highlight mouse tracking and enable mouse tracking */
-	fputs("\033[?1001s\033[?1000h",stdout);
-	fflush(stdout);
-	xmouse_is_on = true;
+        /* save old highlight mouse tracking and enable mouse tracking */
+        fputs("\033[?1001s\033[?1000h",stdout);
+        fflush(stdout);
+        xmouse_is_on = true;
     }
 }
 
@@ -2115,10 +2115,10 @@ void
 xmouse_off (void)
 {
     if (xmouse_is_on) {
-	/* disable mouse tracking and restore old highlight mouse tracking */
-	fputs("\033[?1000l\033[?1001r",stdout);
-	fflush(stdout);
-	xmouse_is_on = false;
+        /* disable mouse tracking and restore old highlight mouse tracking */
+        fputs("\033[?1000l\033[?1001r",stdout);
+        fflush(stdout);
+        xmouse_is_on = false;
     }
 }
 
@@ -2133,57 +2133,57 @@ draw_mousebar (int limit, bool restore_cursor)
 
     mousebar_width = 0;
     if (mousebar_cnt == 0)
-	return;
+        return;
 
     s = mousebar_btns;
     t = msg;
     for (i = 0; i < mousebar_cnt; i++) {
-	if (*s == '[') {
-	    while (*++s) *t++ = *s;
-	    s++;
-	}
-	else {
-	    switch (strlen(s)) {
-	      case 0:
-		*t++ = ' ';
-		/* FALL THROUGH */
-	      case 1:  case 2:
-		*t++ = ' ';
-		while (*s) *t++ = *s++;
-		*t++ = ' ';
-		break;
-	      case 3:  case 4:
-		while (*s) *t++ = *s++;
-		break;
-	      default:
-		strncpy(t, s, 5);
-		t += 5;
-		break;
-	    }
-	}
-	s += strlen(s) + 1;
-	*t++ = '\0';
+        if (*s == '[') {
+            while (*++s) *t++ = *s;
+            s++;
+        }
+        else {
+            switch (strlen(s)) {
+              case 0:
+                *t++ = ' ';
+                /* FALL THROUGH */
+              case 1:  case 2:
+                *t++ = ' ';
+                while (*s) *t++ = *s++;
+                *t++ = ' ';
+                break;
+              case 3:  case 4:
+                while (*s) *t++ = *s++;
+                break;
+              default:
+                strncpy(t, s, 5);
+                t += 5;
+                break;
+            }
+        }
+        s += strlen(s) + 1;
+        *t++ = '\0';
     }
     mousebar_width = t - msg;
     mousebar_start = 0;
 
     s = msg;
     while (mousebar_width > limit) {
-	int len = strlen(s) + 1;
-	s += len;
-	mousebar_width -= len;
-	mousebar_start++;
+        int len = strlen(s) + 1;
+        s += len;
+        mousebar_width -= len;
+        mousebar_start++;
     }
 
     goto_xy(tc_COLS - mousebar_width - 1, tc_LINES-1);
     for (i = mousebar_start; i < mousebar_cnt; i++) {
-	putchar(' ');
-	color_string(COLOR_MOUSE,s);
-	s += strlen(s) + 1;
+        putchar(' ');
+        color_string(COLOR_MOUSE,s);
+        s += strlen(s) + 1;
     }
     term_col = tc_COLS-1;
     if (restore_cursor)
-	goto_xy(save_col, save_line);
+        goto_xy(save_col, save_line);
 }
 
 static void
@@ -2195,35 +2195,35 @@ mouse_input (char *cp)
     int x, y;
 
     if (cp[2] < ' ' || cp[2] > ' '+3)
-	return;
+        return;
     btn = (cp[2] & 3);
     x = cp[1] - 33;
     y = cp[0] - 33;
 
     if (btn != 3) {
-	static uint64_t last_time = 0.;
-	uint64_t this_time = current_time_ms();
-	if (last_btn == btn && last_y == y && this_time - last_time <= 750
-	 && (last_x == x || last_x == x-1 || last_x == x+1))
-	    btn |= 4;
-	last_time = this_time;
-	last_btn = (btn & 3);
-	last_x = x;
-	last_y = y;
-	mouse_is_down = true;
+        static uint64_t last_time = 0.;
+        uint64_t this_time = current_time_ms();
+        if (last_btn == btn && last_y == y && this_time - last_time <= 750
+         && (last_x == x || last_x == x-1 || last_x == x+1))
+            btn |= 4;
+        last_time = this_time;
+        last_btn = (btn & 3);
+        last_x = x;
+        last_y = y;
+        mouse_is_down = true;
     }
     else {
-	if (!mouse_is_down)
-	    return;
-	mouse_is_down = false;
+        if (!mouse_is_down)
+            return;
+        mouse_is_down = false;
     }
 
     if (gmode == 's')
-	selector_mouse(btn, x,y, last_btn, last_x,last_y);
+        selector_mouse(btn, x,y, last_btn, last_x,last_y);
     else if (mode == 'a' || mode == 'p')
-	pager_mouse(btn, x,y, last_btn, last_x,last_y);
+        pager_mouse(btn, x,y, last_btn, last_x,last_y);
     else
-	pushchar(' ');
+        pushchar(' ');
 }
 
 bool
@@ -2236,57 +2236,57 @@ check_mousebar (int btn, int x, int y, int btn_clk, int x_clk, int y_clk)
 
     if (mousebar_width != 0 && btn_clk == 0 && y_clk == tc_LINES-1
      && (x_clk -= col-1) > 0) {
-	x -= col-1;
-	for (i = 0; i < mousebar_start; i++) {
-	    if (*s == '[')
-		s += strlen(s) + 1;
-	    s += strlen(s) + 1;
-	}
-	while (1) {
-	    i = strlen(s);
-	    t = s;
-	    if (*s == '[') {
-		s += i + 1;
-		j = 0;
-		while (*++t == ' ') j++;
-	    }
-	    else if (i <= 2) {
-		i = 3 + (i==2) + 1;
-		j = 1;
-	    }
-	    else {
-		i = (i < 5? i+1 : 5+1);
-		j = 0;
-	    }
-	    if (x_clk < i) {
-		int tcol = term_col;
-		int tline = term_line;
-		goto_xy(col+j,tc_LINES-1);
-		if (btn == 3)
-		    color_object(COLOR_MOUSE, 1);
-		if (s == t) {
-		    for (j = 0; j < 5 && *t; j++, t++)
-			term_col++, putchar(*t);
-		}
-		else {
-		    for (; *t && *t != ' '; t++)
-			term_col++, putchar(*t);
-		}
-		if (btn == 3)
-		    color_pop();	/* of COLOR_MOUSE */
-		goto_xy(tcol,tline);
-		fflush(stdout);
-		if (btn == 3 && x > 0 && x < i)
-		    pushstring(s,0);
-		break;
-	    }
-	    if (!(x_clk -= i))
-		break;
-	    x -= i;
-	    col += i;
-	    s += strlen(s) + 1;
-	}
-	return true;
+        x -= col-1;
+        for (i = 0; i < mousebar_start; i++) {
+            if (*s == '[')
+                s += strlen(s) + 1;
+            s += strlen(s) + 1;
+        }
+        while (1) {
+            i = strlen(s);
+            t = s;
+            if (*s == '[') {
+                s += i + 1;
+                j = 0;
+                while (*++t == ' ') j++;
+            }
+            else if (i <= 2) {
+                i = 3 + (i==2) + 1;
+                j = 1;
+            }
+            else {
+                i = (i < 5? i+1 : 5+1);
+                j = 0;
+            }
+            if (x_clk < i) {
+                int tcol = term_col;
+                int tline = term_line;
+                goto_xy(col+j,tc_LINES-1);
+                if (btn == 3)
+                    color_object(COLOR_MOUSE, 1);
+                if (s == t) {
+                    for (j = 0; j < 5 && *t; j++, t++)
+                        term_col++, putchar(*t);
+                }
+                else {
+                    for (; *t && *t != ' '; t++)
+                        term_col++, putchar(*t);
+                }
+                if (btn == 3)
+                    color_pop();        /* of COLOR_MOUSE */
+                goto_xy(tcol,tline);
+                fflush(stdout);
+                if (btn == 3 && x > 0 && x < i)
+                    pushstring(s,0);
+                break;
+            }
+            if (!(x_clk -= i))
+                break;
+            x -= i;
+            col += i;
+            s += strlen(s) + 1;
+        }
+        return true;
     }
     return false;
 }
@@ -2294,8 +2294,8 @@ check_mousebar (int btn, int x, int y, int btn_clk, int x_clk, int y_clk)
 static int tc_string_cnt = 0;
 
 static struct {
-	char* capability;	/* name of capability, e.g. "forground red" */
-	char* string;		/* escape sequence, e.g. "\033[31m" */
+        char* capability;       /* name of capability, e.g. "forground red" */
+        char* string;           /* escape sequence, e.g. "\033[31m" */
 } tc_strings[TC_STRINGS];
 
 /* Parse a line from the [termcap] section of trnrc. */
@@ -2305,19 +2305,19 @@ add_tc_string (char *capability, char *string)
     int i;
 
     for (i = 0; i < tc_string_cnt; i++) {
-	if (strEQ(capability, tc_strings[i].capability)) {
-	    safefree(tc_strings[i].string);
-	    break;
-	}
+        if (strEQ(capability, tc_strings[i].capability)) {
+            safefree(tc_strings[i].string);
+            break;
+        }
     }
     if (i == tc_string_cnt) {
-	if (tc_string_cnt == TC_STRINGS) {
-	    fprintf(stderr,"trn: too many colors in [termcap] section (max is %d).\n",
-		    TC_STRINGS);
-	    finalize(1);
-	}
-	tc_string_cnt++;
-	tc_strings[i].capability = estrdup(capability);
+        if (tc_string_cnt == TC_STRINGS) {
+            fprintf(stderr,"trn: too many colors in [termcap] section (max is %d).\n",
+                    TC_STRINGS);
+            finalize(1);
+        }
+        tc_string_cnt++;
+        tc_strings[i].capability = estrdup(capability);
     }
 
     tc_strings[i].string = estrdup(string);
@@ -2330,8 +2330,8 @@ tc_color_capability (char *capability)
     int c;
 
     for (c = 0; c < tc_string_cnt; c++) {
-	if (strEQ(tc_strings[c].capability, capability))
-	    return tc_strings[c].string;
+        if (strEQ(tc_strings[c].capability, capability))
+            return tc_strings[c].string;
     }
     return NULL;
 }

@@ -45,7 +45,7 @@ ART_UNREAD ng_min_toread = 1; /* == TR_ONE or TR_NONE */
 
 NGDATA* first_ng = NULL;
 NGDATA* last_ng = NULL;
-NGDATA* ngptr = NULL;	/* current newsgroup data ptr */
+NGDATA* ngptr = NULL;   /* current newsgroup data ptr */
 
 NGDATA* current_ng = NULL;/* stable current newsgroup so we can ditz with ngptr */
 NGDATA* recent_ng = NULL; /* the prior newsgroup we visited */
@@ -54,10 +54,10 @@ NGDATA* starthere = NULL; /* set to the first newsgroup with unread news on star
 NGDATA* sel_page_np;
 NGDATA* sel_next_np;
 
-ART_NUM absfirst = 0;	/* 1st real article in current newsgroup */
-ART_NUM firstart = 0;	/* minimum unread article number in newsgroup */
-ART_NUM lastart = 0;	/* maximum article number in newsgroup */
-ART_UNREAD missing_count;	/* for reports on missing articles */
+ART_NUM absfirst = 0;   /* 1st real article in current newsgroup */
+ART_NUM firstart = 0;   /* minimum unread article number in newsgroup */
+ART_NUM lastart = 0;    /* maximum article number in newsgroup */
+ART_UNREAD missing_count;       /* for reports on missing articles */
 
 char* moderated;
 char* redirected;
@@ -81,7 +81,7 @@ set_ng (NGDATA *np)
 {
     ngptr = np;
     if (ngptr)
-	set_ngname(ngptr->rcline);
+        set_ngname(ngptr->rcline);
 }
 
 int
@@ -90,64 +90,64 @@ access_ng (void)
     ART_NUM old_first = ngptr->abs1st;
 
     if (datasrc->flags & DF_REMOTE) {
-	int ret = nntp_group(ngname,ngptr);
-	if (ret == -2)
-	    return -2;
-	if (ret <= 0) {
-	    ngptr->toread = TR_BOGUS;
-	    return 0;
-	}
-	if ((lastart = getngsize(ngptr)) < 0) /* Impossible... */
-	    return 0;
-	absfirst = ngptr->abs1st;
-	if (absfirst > old_first)
-	    checkexpired(ngptr,absfirst);
+        int ret = nntp_group(ngname,ngptr);
+        if (ret == -2)
+            return -2;
+        if (ret <= 0) {
+            ngptr->toread = TR_BOGUS;
+            return 0;
+        }
+        if ((lastart = getngsize(ngptr)) < 0) /* Impossible... */
+            return 0;
+        absfirst = ngptr->abs1st;
+        if (absfirst > old_first)
+            checkexpired(ngptr,absfirst);
     }
     else
     {
-	if (eaccess(ngdir,5)) {		/* directory read protected? */
-	    if (eaccess(ngdir,0)) {
+        if (eaccess(ngdir,5)) {         /* directory read protected? */
+            if (eaccess(ngdir,0)) {
 # ifdef VERBOSE
-		IF(verbose)
-		    printf("\nNewsgroup %s does not have a spool directory!\n",
-			   ngname);
-		ELSE
+                IF(verbose)
+                    printf("\nNewsgroup %s does not have a spool directory!\n",
+                           ngname);
+                ELSE
 # endif
 # ifdef TERSE
-		    printf("\nNo spool for %s!\n",ngname);
+                    printf("\nNo spool for %s!\n",ngname);
 # endif
-		termdown(2);
-	    } else {
+                termdown(2);
+            } else {
 # ifdef VERBOSE
-		IF(verbose)
-		    printf("\nNewsgroup %s is not currently accessible.\n",
-			   ngname);
-		ELSE
+                IF(verbose)
+                    printf("\nNewsgroup %s is not currently accessible.\n",
+                           ngname);
+                ELSE
 # endif
 # ifdef TERSE
-		    printf("\n%s not readable.\n",ngname);
+                    printf("\n%s not readable.\n",ngname);
 # endif
-		termdown(2);
-	    }
-	    /* make this newsgroup temporarily invisible */
-	    ngptr->toread = TR_NONE;
-	    return 0;
-	}
+                termdown(2);
+            }
+            /* make this newsgroup temporarily invisible */
+            ngptr->toread = TR_NONE;
+            return 0;
+        }
 
-	/* chdir to newsgroup subdirectory */
+        /* chdir to newsgroup subdirectory */
 
-	if (chdir(ngdir)) {
-	    printf(nocd,ngdir);
-	    return 0;
-	}
-	if ((lastart = getngsize(ngptr)) < 0) /* Impossible... */
-	    return 0;
-	absfirst = ngptr->abs1st;
+        if (chdir(ngdir)) {
+            printf(nocd,ngdir);
+            return 0;
+        }
+        if ((lastart = getngsize(ngptr)) < 0) /* Impossible... */
+            return 0;
+        absfirst = ngptr->abs1st;
     }
 
     dmcount = 0;
     missing_count = 0;
-    in_ng = true;			/* tell the world we are here */
+    in_ng = true;                       /* tell the world we are here */
 
     build_cache();
     return 1;
@@ -157,10 +157,10 @@ void
 chdir_newsdir (void)
 {
     if (chdir(datasrc->spool_dir) || (
-			 !(datasrc->flags & DF_REMOTE) &&
-					    chdir(ngdir))) {
-	printf(nocd,ngdir);
-	sig_catcher(0);
+                         !(datasrc->flags & DF_REMOTE) &&
+                                            chdir(ngdir))) {
+        printf(nocd,ngdir);
+        sig_catcher(0);
     }
 }
 
@@ -171,45 +171,45 @@ grow_ng (ART_NUM newlast)
 
     forcegrow = false;
     if (newlast > lastart) {
-	ART_NUM tmpart = art;
-	ngptr->toread += (ART_UNREAD)(newlast-lastart);
-	tmpfirst = lastart+1;
+        ART_NUM tmpart = art;
+        ngptr->toread += (ART_UNREAD)(newlast-lastart);
+        tmpfirst = lastart+1;
 #ifdef SCAN_ART
-	/* Increase the size of article scan arrays. */
-	sa_grow(lastart,newlast);
+        /* Increase the size of article scan arrays. */
+        sa_grow(lastart,newlast);
 #endif
-	do {
-	    lastart++;
-	    article_ptr(lastart)->flags |= AF_EXISTS|AF_UNREAD;
-	} while (lastart < newlast);
-	article_list->high = lastart;
-	thread_grow();
+        do {
+            lastart++;
+            article_ptr(lastart)->flags |= AF_EXISTS|AF_UNREAD;
+        } while (lastart < newlast);
+        article_list->high = lastart;
+        thread_grow();
 #ifdef SCORE
-	/* Score all new articles now just in case they weren't done above. */
-	sc_fill_scorelist(tmpfirst,newlast);
+        /* Score all new articles now just in case they weren't done above. */
+        sc_fill_scorelist(tmpfirst,newlast);
 #endif
 #ifdef KILLFILES
 #ifdef VERBOSE
-	IF(verbose)
-	    sprintf(buf,
-		"%ld more article%s arrived -- processing memorized commands...\n\n",
-		(long)(lastart - tmpfirst + 1),
-		(lastart > tmpfirst ? "s have" : " has" ) );
-	ELSE			/* my, my, how clever we are */
+        IF(verbose)
+            sprintf(buf,
+                "%ld more article%s arrived -- processing memorized commands...\n\n",
+                (long)(lastart - tmpfirst + 1),
+                (lastart > tmpfirst ? "s have" : " has" ) );
+        ELSE                    /* my, my, how clever we are */
 #endif
 #ifdef TERSE
-	    strcpy(buf, "More news -- auto-processing...\n\n");
+            strcpy(buf, "More news -- auto-processing...\n\n");
 #endif
-	termdown(2);
-	if (kf_state & KFS_NORMAL_LINES) {
-	    bool forcelast_save = forcelast;
-	    ARTICLE* artp_save = artp;
-	    kill_unwanted(tmpfirst,buf,true);
-	    artp = artp_save;
-	    forcelast = forcelast_save;
-	}
+        termdown(2);
+        if (kf_state & KFS_NORMAL_LINES) {
+            bool forcelast_save = forcelast;
+            ARTICLE* artp_save = artp;
+            kill_unwanted(tmpfirst,buf,true);
+            artp = artp_save;
+            forcelast = forcelast_save;
+        }
 #endif
-	art = tmpart;
+        art = tmpart;
     }
 }
 
@@ -230,7 +230,7 @@ ngorder_count (NGDATA **npp1, NGDATA **npp2)
 {
     int eq;
     if ((eq = (int)((*npp1)->toread - (*npp2)->toread)) != 0)
-	return eq * sel_direction;
+        return eq * sel_direction;
     return (int)((*npp1)->num - (*npp2)->num);
 }
 
@@ -247,24 +247,24 @@ sort_newsgroups (void)
 
     /* If we don't have at least two newsgroups, we're done! */
     if (!first_ng || !first_ng->next)
-	return;
+        return;
 
     switch (sel_sort) {
       case SS_NATURAL:
       default:
-	sort_procedure = ngorder_number;
-	break;
+        sort_procedure = ngorder_number;
+        break;
       case SS_STRING:
-	sort_procedure = ngorder_groupname;
-	break;
+        sort_procedure = ngorder_groupname;
+        break;
       case SS_COUNT:
-	sort_procedure = ngorder_count;
-	break;
+        sort_procedure = ngorder_count;
+        break;
     }
 
     ng_list = (NGDATA**)safemalloc(newsgroup_cnt * sizeof (NGDATA*));
     for (lp = ng_list, np = first_ng; np; np = np->next)
-	*lp++ = np;
+        *lp++ = np;
     assert(lp - ng_list == newsgroup_cnt);
 
     qsort(ng_list, newsgroup_cnt, sizeof (NGDATA*), sort_procedure);
@@ -272,8 +272,8 @@ sort_newsgroups (void)
     first_ng = np = ng_list[0];
     np->prev = NULL;
     for (i = newsgroup_cnt, lp = ng_list; --i; lp++) {
-	lp[0]->next = lp[1];
-	lp[1]->prev = lp[0];
+        lp[0]->next = lp[1];
+        lp[1]->prev = lp[0];
     }
     last_ng = lp[0];
     last_ng->next = NULL;
@@ -284,57 +284,57 @@ void
 ng_skip (void)
 {
     if (datasrc->flags & DF_REMOTE) {
-	ART_NUM artnum;
+        ART_NUM artnum;
 
-	clear();
+        clear();
 # ifdef VERBOSE
-	IF(verbose)
-	    fputs("Skipping unavailable article\n",stdout);
-	ELSE
+        IF(verbose)
+            fputs("Skipping unavailable article\n",stdout);
+        ELSE
 # endif /* VERBOSE */
 # ifdef TERSE
-	    fputs("Skipping\n",stdout);
+            fputs("Skipping\n",stdout);
 # endif /* TERSE */
-	termdown(1);
-	if (novice_delays) {
-	    pad(just_a_sec/3);
-	    sleep(1);
-	}
-	art = article_next(art);
-	artp = article_ptr(art);
-	do {
-	    /* tries to grab PREFETCH_SIZE XHDRS, flagging missing articles */
-	    (void) fetchsubj(art, false);
-	    artnum = art+PREFETCH_SIZE-1;
-	    if (artnum > lastart)
-		artnum = lastart;
-	    while (art <= artnum) {
-		if (artp->flags & AF_EXISTS)
-		    return;
-		art = article_next(art);
-		artp = article_ptr(art);
-	    }
-	} while (art <= lastart);
+        termdown(1);
+        if (novice_delays) {
+            pad(just_a_sec/3);
+            sleep(1);
+        }
+        art = article_next(art);
+        artp = article_ptr(art);
+        do {
+            /* tries to grab PREFETCH_SIZE XHDRS, flagging missing articles */
+            (void) fetchsubj(art, false);
+            artnum = art+PREFETCH_SIZE-1;
+            if (artnum > lastart)
+                artnum = lastart;
+            while (art <= artnum) {
+                if (artp->flags & AF_EXISTS)
+                    return;
+                art = article_next(art);
+                artp = article_ptr(art);
+            }
+        } while (art <= lastart);
     }
     else
     {
-	if (errno != ENOENT) {	/* has it not been deleted? */
-	    clear();
+        if (errno != ENOENT) {  /* has it not been deleted? */
+            clear();
 # ifdef VERBOSE
-	    IF(verbose)
-		printf("\n(Article %ld exists but is unreadable.)\n",(long)art);
-	    ELSE
+            IF(verbose)
+                printf("\n(Article %ld exists but is unreadable.)\n",(long)art);
+            ELSE
 # endif
 # ifdef TERSE
-		printf("\n(%ld unreadable.)\n",(long)art);
+                printf("\n(%ld unreadable.)\n",(long)art);
 # endif
-	    termdown(2);
-	    if (novice_delays) {
-		pad(just_a_sec);
-		sleep(2);
-	    }
-	}
-	inc_art(selected_only,false);	/* try next article */
+            termdown(2);
+            if (novice_delays) {
+                pad(just_a_sec);
+                sleep(2);
+            }
+        }
+        inc_art(selected_only,false);   /* try next article */
     }
 }
 
@@ -353,12 +353,12 @@ getngsize (NGDATA *gp)
     len = gp->numoffset - 1;
 
     if (!find_actgrp(gp->rc->datasrc,tmpbuf,nam,len,gp->ngmax)) {
-	if (gp->subscribechar == ':') {
-	    gp->subscribechar = NEGCHAR;
-	    gp->rc->flags |= RF_RCCHANGED;
-	    newsgroup_toread--;
-	}
-	return TR_BOGUS;
+        if (gp->subscribechar == ':') {
+            gp->subscribechar = NEGCHAR;
+            gp->rc->flags |= RF_RCCHANGED;
+            newsgroup_toread--;
+        }
+        return TR_BOGUS;
     }
 
 #ifdef ANCIENT_NEWS
@@ -368,37 +368,37 @@ getngsize (NGDATA *gp)
     sscanf(tmpbuf+len+1, "%ld %ld %c", &last, &first, &ch);
 #endif
     if (!gp->abs1st)
-	gp->abs1st = (ART_NUM)first;
+        gp->abs1st = (ART_NUM)first;
     if (!in_ng) {
-	if (redirected) {
-	    if (redirected != nullstr)
-		safefree(redirected);
-	    redirected = NULL;
-	}
-	switch (ch) {
-	case 'n':
-	    moderated = getval("NOPOSTRING"," (no posting)");
-	    break;
-	case 'm':
-	    moderated = getval("MODSTRING", " (moderated)");
-	    break;
-	case 'x':
-	    redirected = nullstr;
-	    moderated = " (DISABLED)";
-	    break;
-	case '=':
-	    len = strlen(tmpbuf);
-	    if (tmpbuf[len-1] == '\n')
-		tmpbuf[len-1] = '\0';
-	    redirected = estrdup(rindex(tmpbuf, '=') + 1);
-	    moderated = " (REDIRECTED)";
-	    break;
-	default:
-	    moderated = nullstr;
-	    break;
-	}
+        if (redirected) {
+            if (redirected != nullstr)
+                safefree(redirected);
+            redirected = NULL;
+        }
+        switch (ch) {
+        case 'n':
+            moderated = getval("NOPOSTRING"," (no posting)");
+            break;
+        case 'm':
+            moderated = getval("MODSTRING", " (moderated)");
+            break;
+        case 'x':
+            redirected = nullstr;
+            moderated = " (DISABLED)";
+            break;
+        case '=':
+            len = strlen(tmpbuf);
+            if (tmpbuf[len-1] == '\n')
+                tmpbuf[len-1] = '\0';
+            redirected = estrdup(strrchr(tmpbuf, '=') + 1);
+            moderated = " (REDIRECTED)";
+            break;
+        default:
+            moderated = nullstr;
+            break;
+        }
     }
     if (last <= gp->ngmax)
-	return gp->ngmax;
+        return gp->ngmax;
     return gp->ngmax = (ART_NUM)last;
 }

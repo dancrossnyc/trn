@@ -27,8 +27,8 @@ backpage_init (void)
     varyfd = open(varyname,2);
     UNLINK(varyname);
     if (varyfd < 0) {
-	printf(cantopen,varyname);
-	sig_catcher(0);
+        printf(cantopen,varyname);
+        sig_catcher(0);
     }
 
 }
@@ -43,22 +43,22 @@ vrdary (ART_LINE indx)
 
 #ifdef DEBUG
     if (indx > maxindx) {
-	printf("vrdary(%ld) > %ld\n",(long)indx, (long)maxindx);
-	return 0;
+        printf("vrdary(%ld) > %ld\n",(long)indx, (long)maxindx);
+        return 0;
     }
 #endif
     if (indx < 0)
-	return 0;
+        return 0;
     subindx = indx % VARYSIZE;
     offset = (indx - subindx) * sizeof(varybuf[0]);
     if (offset != oldoffset) {
-	if (oldoffset >= 0) {
-	    (void)lseek(varyfd,oldoffset,0);
-	    write(varyfd, (char*)varybuf,sizeof(varybuf));
-	}
-	(void)lseek(varyfd,offset,0);
-	read(varyfd,(char*)varybuf,sizeof(varybuf));
-	oldoffset = offset;
+        if (oldoffset >= 0) {
+            (void)lseek(varyfd,oldoffset,0);
+            write(varyfd, (char*)varybuf,sizeof(varybuf));
+        }
+        (void)lseek(varyfd,offset,0);
+        read(varyfd,(char*)varybuf,sizeof(varybuf));
+        oldoffset = offset;
     }
     return varybuf[subindx];
 }
@@ -73,25 +73,25 @@ vwtary (ART_LINE indx, ART_POS newvalue)
 
 #ifdef DEBUG
     if (indx < 0)
-	printf("vwtary(%ld)\n",(long)indx);
+        printf("vwtary(%ld)\n",(long)indx);
     if (!indx)
-	maxindx = 0;
+        maxindx = 0;
     if (indx > maxindx) {
-	if (indx != maxindx + 1)
-	    printf("indx skipped %d-%d\n",maxindx+1,indx-1);
-	maxindx = indx;
+        if (indx != maxindx + 1)
+            printf("indx skipped %d-%d\n",maxindx+1,indx-1);
+        maxindx = indx;
     }
 #endif
     subindx = indx % VARYSIZE;
     offset = (indx - subindx) * sizeof(varybuf[0]);
     if (offset != oldoffset) {
-	if (oldoffset >= 0) {
-	    (void)lseek(varyfd,oldoffset,0);
-	    write(varyfd,(char*)varybuf,sizeof(varybuf));
-	}
-	(void)lseek(varyfd,offset,0);
-	read(varyfd,(char*)varybuf,sizeof(varybuf));
-	oldoffset = offset;
+        if (oldoffset >= 0) {
+            (void)lseek(varyfd,oldoffset,0);
+            write(varyfd,(char*)varybuf,sizeof(varybuf));
+        }
+        (void)lseek(varyfd,offset,0);
+        read(varyfd,(char*)varybuf,sizeof(varybuf));
+        oldoffset = offset;
     }
     varybuf[subindx] = newvalue;
 }

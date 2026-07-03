@@ -28,8 +28,8 @@
 #include "datasrc.ih"
 #include "nntp.h"
 
-LIST* datasrc_list;		/* a list of all DATASRCs */
-DATASRC* datasrc;		/* the current datasrc */
+LIST* datasrc_list;             /* a list of all DATASRCs */
+DATASRC* datasrc;               /* the current datasrc */
 int datasrc_cnt = 0;
 
 char* trnaccess_mem = NULL;
@@ -50,50 +50,50 @@ datasrc_init (void)
 
     machine = getenv("NNTPSERVER");
     if (machine && strNE(machine,"local")) {
-	vals[DI_NNTP_SERVER] = machine;
-	vals[DI_AUTH_USER] = read_auth_file(nntp_auth_file,
-					    &vals[DI_AUTH_PASS]);
+        vals[DI_NNTP_SERVER] = machine;
+        vals[DI_AUTH_USER] = read_auth_file(nntp_auth_file,
+                                            &vals[DI_AUTH_PASS]);
 #ifdef USE_GENAUTH
-	vals[DI_AUTH_COMMAND] = getenv("NNTPAUTH");
+        vals[DI_AUTH_COMMAND] = getenv("NNTPAUTH");
 #endif
-	vals[DI_FORCE_AUTH] = getenv("NNTP_FORCE_AUTH");
-	new_datasrc("default",vals);
+        vals[DI_FORCE_AUTH] = getenv("NNTP_FORCE_AUTH");
+        new_datasrc("default",vals);
     }
 
     trnaccess_mem = read_datasrcs(TRNACCESS);
     s = read_datasrcs(DEFACCESS);
     if (!trnaccess_mem)
-	trnaccess_mem = s;
+        trnaccess_mem = s;
     else if (s)
-	safefree(s);
+        safefree(s);
 
     if (!machine) {
-	machine = filexp(SERVER_NAME);
-	if (FILE_REF(machine))
-	    machine = nntp_servername(machine);
-	if (strEQ(machine,"local")) {
-	    machine = NULL;
-	    actname = ACTIVE;
-	}
-	prep_ini_words(datasrc_ini);	/* re-zero the values */
+        machine = filexp(SERVER_NAME);
+        if (FILE_REF(machine))
+            machine = nntp_servername(machine);
+        if (strEQ(machine,"local")) {
+            machine = NULL;
+            actname = ACTIVE;
+        }
+        prep_ini_words(datasrc_ini);    /* re-zero the values */
 
-	vals[DI_NNTP_SERVER] = machine;
-	vals[DI_ACTIVE_FILE] = actname;
-	vals[DI_SPOOL_DIR] = NEWSSPOOL;
-	vals[DI_THREAD_DIR] = THREAD_DIR;
-	vals[DI_OVERVIEW_DIR] = OVERVIEW_DIR;
-	vals[DI_OVERVIEW_FMT] = OVERVIEW_FMT;
-	vals[DI_ACTIVE_TIMES] = ACTIVE_TIMES;
-	vals[DI_GROUP_DESC] = GROUPDESC;
-	if (machine) {
-	    vals[DI_AUTH_USER] = read_auth_file(nntp_auth_file,
-						&vals[DI_AUTH_PASS]);
+        vals[DI_NNTP_SERVER] = machine;
+        vals[DI_ACTIVE_FILE] = actname;
+        vals[DI_SPOOL_DIR] = NEWSSPOOL;
+        vals[DI_THREAD_DIR] = THREAD_DIR;
+        vals[DI_OVERVIEW_DIR] = OVERVIEW_DIR;
+        vals[DI_OVERVIEW_FMT] = OVERVIEW_FMT;
+        vals[DI_ACTIVE_TIMES] = ACTIVE_TIMES;
+        vals[DI_GROUP_DESC] = GROUPDESC;
+        if (machine) {
+            vals[DI_AUTH_USER] = read_auth_file(nntp_auth_file,
+                                                &vals[DI_AUTH_PASS]);
 #ifdef USE_GENAUTH
-	    vals[DI_AUTH_COMMAND] = getenv("NNTPAUTH");
+            vals[DI_AUTH_COMMAND] = getenv("NNTPAUTH");
 #endif
-	    vals[DI_FORCE_AUTH] = getenv("NNTP_FORCE_AUTH");
-	}
-	new_datasrc("default",vals);
+            vals[DI_FORCE_AUTH] = getenv("NNTP_FORCE_AUTH");
+        }
+        new_datasrc("default",vals);
     }
     unprep_ini_words(datasrc_ini);
 }
@@ -109,26 +109,26 @@ read_datasrcs (char *filename)
     char** vals = INI_VALUES(datasrc_ini);
 
     if ((fd = open(filexp(filename),0)) >= 0) {
-	fstat(fd,&filestat);
-	if (filestat.st_size) {
-	    int len;
-	    filebuf = safemalloc((size_t)filestat.st_size+2);
-	    len = read(fd,filebuf,(int)filestat.st_size);
-	    (filebuf)[len] = '\0';
-	    prep_ini_data(filebuf,filename);
-	    s = filebuf;
-	    while ((s = next_ini_section(s,&section,&cond)) != NULL) {
-		if (*cond && !check_ini_cond(cond))
-		    continue;
-		if (strncaseEQ(section, "group ", 6))
-		    continue;
-		s = parse_ini_section(s, datasrc_ini);
-		if (!s)
-		    break;
-		new_datasrc(section,vals);
-	    }
-	}
-	close(fd);
+        fstat(fd,&filestat);
+        if (filestat.st_size) {
+            int len;
+            filebuf = safemalloc((size_t)filestat.st_size+2);
+            len = read(fd,filebuf,(int)filestat.st_size);
+            (filebuf)[len] = '\0';
+            prep_ini_data(filebuf,filename);
+            s = filebuf;
+            while ((s = next_ini_section(s,&section,&cond)) != NULL) {
+                if (*cond && !check_ini_cond(cond))
+                    continue;
+                if (strncaseEQ(section, "group ", 6))
+                    continue;
+                s = parse_ini_section(s, datasrc_ini);
+                if (!s)
+                    break;
+                new_datasrc(section,vals);
+            }
+        }
+        close(fd);
     }
     return filebuf;
 }
@@ -138,8 +138,8 @@ get_datasrc (char *name)
 {
     DATASRC* dp;
     for (dp = datasrc_first(); dp && dp->name; dp = datasrc_next(dp))
-	if (strEQ(dp->name,name))
-	    return dp;
+        if (strEQ(dp->name,name))
+            return dp;
     return NULL;
 }
 
@@ -150,33 +150,33 @@ new_datasrc (char *name, char **vals)
     char* v;
 
     if (vals[DI_NNTP_SERVER]) {
-	dp->flags |= DF_REMOTE;
+        dp->flags |= DF_REMOTE;
     }
     else if (!vals[DI_ACTIVE_FILE])
-	return NULL; /*$$*/
+        return NULL; /*$$*/
 
     dp->name = estrdup(name);
     if (strEQ(name,"default"))
-	dp->flags |= DF_DEFAULT;
+        dp->flags |= DF_DEFAULT;
 
     if ((v = vals[DI_NNTP_SERVER]) != NULL) {
-	char* cp;
-	dp->newsid = estrdup(v);
-	if ((cp = index(dp->newsid, ';')) != NULL) {
-	    *cp = '\0';
-	    dp->nntplink.port_number = atoi(cp+1);
-	}
+        char* cp;
+        dp->newsid = estrdup(v);
+        if ((cp = strchr(dp->newsid, ';')) != NULL) {
+            *cp = '\0';
+            dp->nntplink.port_number = atoi(cp+1);
+        }
 
-	if ((v = vals[DI_ACT_REFETCH]) != NULL && *v)
-	    dp->act_sf.refetch_secs = text2secs(v,defRefetchSecs);
-	else if (!vals[DI_ACTIVE_FILE])
-	    dp->act_sf.refetch_secs = defRefetchSecs;
+        if ((v = vals[DI_ACT_REFETCH]) != NULL && *v)
+            dp->act_sf.refetch_secs = text2secs(v,defRefetchSecs);
+        else if (!vals[DI_ACTIVE_FILE])
+            dp->act_sf.refetch_secs = defRefetchSecs;
     }
     else
-	dp->newsid = estrdup(filexp(vals[DI_ACTIVE_FILE]));
+        dp->newsid = estrdup(filexp(vals[DI_ACTIVE_FILE]));
 
     if (!(dp->spool_dir = file_or_none(vals[DI_SPOOL_DIR])))
-	dp->spool_dir = estrdup(tmpdir);
+        dp->spool_dir = estrdup(tmpdir);
 
     dp->over_dir = dir_or_none(dp,vals[DI_OVERVIEW_DIR],DF_TRY_OVERVIEW);
     dp->over_fmt = file_or_none(vals[DI_OVERVIEW_FMT]);
@@ -184,48 +184,48 @@ new_datasrc (char *name, char **vals)
     dp->grpdesc = dir_or_none(dp,vals[DI_GROUP_DESC],0);
     dp->extra_name = dir_or_none(dp,vals[DI_ACTIVE_TIMES],DF_ADD_OK);
     if (dp->flags & DF_REMOTE) {
-	/* FYI, we know extra_name to be NULL in this case. */
-	if (vals[DI_ACTIVE_FILE]) {
-	    dp->extra_name = estrdup(filexp(vals[DI_ACTIVE_FILE]));
-	    if (stat(dp->extra_name,&filestat) >= 0)
-		dp->act_sf.lastfetch = filestat.st_mtime;
-	}
-	else {
-	    dp->extra_name = temp_filename();
-	    dp->flags |= DF_TMPACTFILE;
-	    if (!dp->act_sf.refetch_secs)
-		dp->act_sf.refetch_secs = 1;
-	}
+        /* FYI, we know extra_name to be NULL in this case. */
+        if (vals[DI_ACTIVE_FILE]) {
+            dp->extra_name = estrdup(filexp(vals[DI_ACTIVE_FILE]));
+            if (stat(dp->extra_name,&filestat) >= 0)
+                dp->act_sf.lastfetch = filestat.st_mtime;
+        }
+        else {
+            dp->extra_name = temp_filename();
+            dp->flags |= DF_TMPACTFILE;
+            if (!dp->act_sf.refetch_secs)
+                dp->act_sf.refetch_secs = 1;
+        }
 
-	if ((v = vals[DI_DESC_REFETCH]) != NULL && *v)
-	    dp->desc_sf.refetch_secs = text2secs(v,defRefetchSecs);
-	else if (!dp->grpdesc)
-	    dp->desc_sf.refetch_secs = defRefetchSecs;
-	if (dp->grpdesc) {
-	    if (stat(dp->grpdesc,&filestat) >= 0)
-		dp->desc_sf.lastfetch = filestat.st_mtime;
-	}
-	else {
-	    dp->grpdesc = temp_filename();
-	    dp->flags |= DF_TMPGRPDESC;
-	    if (!dp->desc_sf.refetch_secs)
-		dp->desc_sf.refetch_secs = 1;
-	}
+        if ((v = vals[DI_DESC_REFETCH]) != NULL && *v)
+            dp->desc_sf.refetch_secs = text2secs(v,defRefetchSecs);
+        else if (!dp->grpdesc)
+            dp->desc_sf.refetch_secs = defRefetchSecs;
+        if (dp->grpdesc) {
+            if (stat(dp->grpdesc,&filestat) >= 0)
+                dp->desc_sf.lastfetch = filestat.st_mtime;
+        }
+        else {
+            dp->grpdesc = temp_filename();
+            dp->flags |= DF_TMPGRPDESC;
+            if (!dp->desc_sf.refetch_secs)
+                dp->desc_sf.refetch_secs = 1;
+        }
     }
     if ((v = vals[DI_FORCE_AUTH]) != NULL && (*v == 'y' || *v == 'Y'))
-	dp->nntplink.flags |= NNTP_FORCE_AUTH_NEEDED;
+        dp->nntplink.flags |= NNTP_FORCE_AUTH_NEEDED;
     if ((v = vals[DI_AUTH_USER]) != NULL)
-	dp->auth_user = estrdup(v);
+        dp->auth_user = estrdup(v);
     if ((v = vals[DI_AUTH_PASS]) != NULL)
-	dp->auth_pass = estrdup(v);
+        dp->auth_pass = estrdup(v);
 #ifdef USE_GENAUTH
     if ((v = vals[DI_AUTH_COMMAND]) != NULL)
-	dp->auth_command = estrdup(v);
+        dp->auth_command = estrdup(v);
 #endif
     if ((v = vals[DI_XHDR_BROKEN]) != NULL && (*v == 'y' || *v == 'Y'))
-	dp->flags |= DF_XHDR_BROKEN;
+        dp->flags |= DF_XHDR_BROKEN;
     if ((v = vals[DI_XREFS]) != NULL && (*v == 'n' || *v == 'N'))
-	dp->flags |= DF_NOXREFS;
+        dp->flags |= DF_NOXREFS;
 
 
     return dp;
@@ -235,35 +235,35 @@ static char *
 dir_or_none (DATASRC *dp, char *dir, int flag)
 {
     if (!dir || !*dir || strEQ(dir, "remote")) {
-	dp->flags |= flag;
-	if (dp->flags & DF_REMOTE)
-	    return NULL;
-	if (flag == DF_ADD_OK) {
-	    char* cp = safemalloc(strlen(dp->newsid)+6+1);
-	    sprintf(cp,"%s.times",dp->newsid);
-	    return cp;
-	}
-	if (flag == 0) {
-	    char* cp = rindex(dp->newsid,'/');
-	    int len;
-	    if (!cp)
-		return NULL;
-	    len = cp - dp->newsid + 1;
-	    cp = safemalloc(len+10+1);
-	    strcpy(cp,dp->newsid);
-	    strcpy(cp+len,"newsgroups");
-	    return cp;
-	}
-	return dp->spool_dir;
+        dp->flags |= flag;
+        if (dp->flags & DF_REMOTE)
+            return NULL;
+        if (flag == DF_ADD_OK) {
+            char* cp = safemalloc(strlen(dp->newsid)+6+1);
+            sprintf(cp,"%s.times",dp->newsid);
+            return cp;
+        }
+        if (flag == 0) {
+            char* cp = strrchr(dp->newsid, '/');
+            int len;
+            if (!cp)
+                return NULL;
+            len = cp - dp->newsid + 1;
+            cp = safemalloc(len+10+1);
+            strcpy(cp,dp->newsid);
+            strcpy(cp+len,"newsgroups");
+            return cp;
+        }
+        return dp->spool_dir;
     }
 
     if (strEQ(dir, "none"))
-	return NULL;
+        return NULL;
 
     dp->flags |= flag;
     dir = filexp(dir);
     if (strEQ(dir,dp->spool_dir))
-	return dp->spool_dir;
+        return dp->spool_dir;
     return estrdup(dir);
 }
 
@@ -271,7 +271,7 @@ static char *
 file_or_none (char *fn)
 {
     if (!fn || !*fn || strEQ(fn, "none") || strEQ(fn, "remote"))
-	return NULL;
+        return NULL;
     return estrdup(filexp(fn));
 }
 
@@ -281,71 +281,71 @@ open_datasrc (DATASRC *dp)
     bool success;
 
     if (dp->flags & DF_UNAVAILABLE)
-	return false;
+        return false;
     set_datasrc(dp);
     if (dp->flags & DF_OPEN)
-	return true;
+        return true;
     if (dp->flags & DF_REMOTE) {
-	if (nntp_connect(dp->newsid,1) <= 0) {
-	    dp->flags |= DF_UNAVAILABLE;
-	    return false;
-	}
-	nntp_allow_timeout = false;
-	dp->nntplink = nntplink;
-	if (dp->act_sf.refetch_secs) {
-	    switch (nntp_list("active", "control", 7)) {
-	    case 1:
-		if (strnNE(ser_line, "control ", 8)) {
-		    strcpy(buf, ser_line);
-		    dp->act_sf.lastfetch = 0;
-		    success = actfile_hash(dp);
-		    break;
-		}
-		if (nntp_gets(buf, sizeof buf - 1) > 0
-		 && !nntp_at_list_end(buf)) {
-		    nntp_finish_list();
-		    success = actfile_hash(dp);
-		    break;
-		}
-		/* FALL THROUGH */
-	    case 0:
-		dp->flags |= DF_USELISTACT;
-		if (dp->flags & DF_TMPACTFILE) {
-		    dp->flags &= ~DF_TMPACTFILE;
-		    safefree(dp->extra_name);
-		    dp->extra_name = NULL;
-		    dp->act_sf.refetch_secs = 0;
-		    success = srcfile_open(&dp->act_sf,(char*)NULL,
-					   (char*)NULL,(char*)NULL);
-		}
-		else
-		    success = actfile_hash(dp);
-		break;
-	    case -2:
-		printf("Failed to open news server %s:\n%s\n", dp->newsid, ser_line);
-		termdown(2);
-		success = false;
-		break;
-	    default:
-		success = actfile_hash(dp);
-		break;
-	    }
-	} else
-	    success = actfile_hash(dp);
+        if (nntp_connect(dp->newsid,1) <= 0) {
+            dp->flags |= DF_UNAVAILABLE;
+            return false;
+        }
+        nntp_allow_timeout = false;
+        dp->nntplink = nntplink;
+        if (dp->act_sf.refetch_secs) {
+            switch (nntp_list("active", "control", 7)) {
+            case 1:
+                if (strnNE(ser_line, "control ", 8)) {
+                    strcpy(buf, ser_line);
+                    dp->act_sf.lastfetch = 0;
+                    success = actfile_hash(dp);
+                    break;
+                }
+                if (nntp_gets(buf, sizeof buf - 1) > 0
+                 && !nntp_at_list_end(buf)) {
+                    nntp_finish_list();
+                    success = actfile_hash(dp);
+                    break;
+                }
+                /* FALL THROUGH */
+            case 0:
+                dp->flags |= DF_USELISTACT;
+                if (dp->flags & DF_TMPACTFILE) {
+                    dp->flags &= ~DF_TMPACTFILE;
+                    safefree(dp->extra_name);
+                    dp->extra_name = NULL;
+                    dp->act_sf.refetch_secs = 0;
+                    success = srcfile_open(&dp->act_sf,(char*)NULL,
+                                           (char*)NULL,(char*)NULL);
+                }
+                else
+                    success = actfile_hash(dp);
+                break;
+            case -2:
+                printf("Failed to open news server %s:\n%s\n", dp->newsid, ser_line);
+                termdown(2);
+                success = false;
+                break;
+            default:
+                success = actfile_hash(dp);
+                break;
+            }
+        } else
+            success = actfile_hash(dp);
     }
     else
-	success = actfile_hash(dp);
+        success = actfile_hash(dp);
     if (success) {
-	dp->flags |= DF_OPEN;
-	if (dp->flags & DF_TRY_OVERVIEW)
-	    ov_init();
-	if (dp->flags & DF_TRY_THREAD)
-	    mt_init();
+        dp->flags |= DF_OPEN;
+        if (dp->flags & DF_TRY_OVERVIEW)
+            ov_init();
+        if (dp->flags & DF_TRY_THREAD)
+            mt_init();
     }
     else
-	dp->flags |= DF_UNAVAILABLE;
+        dp->flags |= DF_UNAVAILABLE;
     if (dp->flags & DF_REMOTE)
-	nntp_allow_timeout = true;
+        nntp_allow_timeout = true;
     return success;
 }
 
@@ -353,9 +353,9 @@ void
 set_datasrc (DATASRC *dp)
 {
     if (datasrc)
-	datasrc->nntplink = nntplink;
+        datasrc->nntplink = nntplink;
     if (dp)
-	nntplink = dp->nntplink;
+        nntplink = dp->nntplink;
     datasrc = dp;
 }
 
@@ -367,19 +367,19 @@ check_datasrcs (void)
     time_t limit;
 
     if (datasrc_list) {
-	for (dp = datasrc_first(); dp && dp->name; dp = datasrc_next(dp)) {
-	    if ((dp->flags & DF_OPEN) && dp->nntplink.rd_fp != NULL) {
-		limit = ((dp->flags & DF_ACTIVE)? 30*60 : 10*60);
-		if (now - dp->nntplink.last_command > limit) {
-		    DATASRC* save_datasrc = datasrc;
-		    /*printf("\n*** Closing %s ***\n", dp->name); $$*/
-		    set_datasrc(dp);
-		    nntp_close(true);
-		    dp->nntplink = nntplink;
-		    set_datasrc(save_datasrc);
-		}
-	    }
-	}
+        for (dp = datasrc_first(); dp && dp->name; dp = datasrc_next(dp)) {
+            if ((dp->flags & DF_OPEN) && dp->nntplink.rd_fp != NULL) {
+                limit = ((dp->flags & DF_ACTIVE)? 30*60 : 10*60);
+                if (now - dp->nntplink.last_command > limit) {
+                    DATASRC* save_datasrc = datasrc;
+                    /*printf("\n*** Closing %s ***\n", dp->name); $$*/
+                    set_datasrc(dp);
+                    nntp_close(true);
+                    dp->nntplink = nntplink;
+                    set_datasrc(save_datasrc);
+                }
+            }
+        }
     }
 }
 
@@ -387,33 +387,33 @@ void
 close_datasrc (DATASRC *dp)
 {
     if (dp->flags & DF_REMOTE) {
-	if (dp->flags & DF_TMPACTFILE)
-	    UNLINK(dp->extra_name);
-	else
-	    srcfile_end_append(&dp->act_sf, dp->extra_name);
-	if (dp->grpdesc) {
-	    if (dp->flags & DF_TMPGRPDESC)
-		UNLINK(dp->grpdesc);
-	    else
-		srcfile_end_append(&dp->desc_sf, dp->grpdesc);
-	}
+        if (dp->flags & DF_TMPACTFILE)
+            UNLINK(dp->extra_name);
+        else
+            srcfile_end_append(&dp->act_sf, dp->extra_name);
+        if (dp->grpdesc) {
+            if (dp->flags & DF_TMPGRPDESC)
+                UNLINK(dp->grpdesc);
+            else
+                srcfile_end_append(&dp->desc_sf, dp->grpdesc);
+        }
     }
 
     if (!(dp->flags & DF_OPEN))
-	return;
+        return;
 
     if (dp->flags & DF_REMOTE) {
-	DATASRC* save_datasrc = datasrc;
-	set_datasrc(dp);
-	nntp_close(true);
-	dp->nntplink = nntplink;
-	set_datasrc(save_datasrc);
+        DATASRC* save_datasrc = datasrc;
+        set_datasrc(dp);
+        nntp_close(true);
+        dp->nntplink = nntplink;
+        set_datasrc(save_datasrc);
     }
     srcfile_close(&dp->act_sf);
     srcfile_close(&dp->desc_sf);
     dp->flags &= ~DF_OPEN;
     if (datasrc == dp)
-	datasrc = NULL;
+        datasrc = NULL;
 }
 
 bool
@@ -421,16 +421,16 @@ actfile_hash (DATASRC *dp)
 {
     int ret;
     if (dp->flags & DF_REMOTE) {
-	DATASRC* save_datasrc = datasrc;
-	set_datasrc(dp);
-	spin_todo = dp->act_sf.recent_cnt;
-	ret = srcfile_open(&dp->act_sf, dp->extra_name, "active", dp->newsid);
-	if (spin_count > 0)
-	    dp->act_sf.recent_cnt = spin_count;
-	set_datasrc(save_datasrc);
+        DATASRC* save_datasrc = datasrc;
+        set_datasrc(dp);
+        spin_todo = dp->act_sf.recent_cnt;
+        ret = srcfile_open(&dp->act_sf, dp->extra_name, "active", dp->newsid);
+        if (spin_count > 0)
+            dp->act_sf.recent_cnt = spin_count;
+        set_datasrc(save_datasrc);
     }
     else
-	ret = srcfile_open(&dp->act_sf, dp->newsid, (char*)NULL, (char*)NULL);
+        ret = srcfile_open(&dp->act_sf, dp->newsid, (char*)NULL, (char*)NULL);
     return ret;
 }
 
@@ -448,93 +448,93 @@ find_actgrp (DATASRC *dp, char *outbuf, char *nam, int len, ART_NUM high)
     outbuf[0] = '\0';
     data = hashfetch(dp->act_sf.hp, nam, len);
     if (data.dat_ptr) {
-	LISTNODE* node = (LISTNODE*)data.dat_ptr;
-	/*dp->act_sf.lp->recent = node;*/
-	act_pos = node->low + data.dat_len;
-	lbp = node->data + data.dat_len;
-	lbp_len = index(lbp, '\n') - lbp + 1;
+        LISTNODE* node = (LISTNODE*)data.dat_ptr;
+        /*dp->act_sf.lp->recent = node;*/
+        act_pos = node->low + data.dat_len;
+        lbp = node->data + data.dat_len;
+        lbp_len = strchr(lbp, '\n') - lbp + 1;
     }
     else {
-	lbp = NULL;
-	lbp_len = 0;
+        lbp = NULL;
+        lbp_len = 0;
     }
     if ((dp->flags & DF_USELISTACT)
      && (DATASRC_NNTP_FLAGS(dp) & NNTP_NEW_CMD_OK)) {
-	DATASRC* save_datasrc = datasrc;
-	set_datasrc(dp);
-	switch (nntp_list("active", nam, len)) {
-	case 0:
-	    set_datasrc(save_datasrc);
-	    return 0;
-	case 1:
-	    sprintf(outbuf, "%s\n", ser_line);
-	    nntp_finish_list();
-	    break;
-	case -2:
-	    /*$$$$*/
-	    break;
-	}
-	set_datasrc(save_datasrc);
-	if (!lbp_len) {
-	    if (fp)
-		(void) srcfile_append(&dp->act_sf, outbuf, len);
-	    return 1;
-	}
+        DATASRC* save_datasrc = datasrc;
+        set_datasrc(dp);
+        switch (nntp_list("active", nam, len)) {
+        case 0:
+            set_datasrc(save_datasrc);
+            return 0;
+        case 1:
+            sprintf(outbuf, "%s\n", ser_line);
+            nntp_finish_list();
+            break;
+        case -2:
+            /*$$$$*/
+            break;
+        }
+        set_datasrc(save_datasrc);
+        if (!lbp_len) {
+            if (fp)
+                (void) srcfile_append(&dp->act_sf, outbuf, len);
+            return 1;
+        }
 # ifndef ANCIENT_NEWS
-	/* Safely update the low-water mark */
-	{
-	    char* f = rindex(outbuf, ' ');
-	    char* t = lbp + lbp_len;
-	    while (*--t != ' ') ;
-	    while (t > lbp) {
-		if (*--t == ' ')
-		    break;
-		if (f[-1] == ' ')
-		    *t = '0';
-		else
-		    *t = *--f;
-	    }
-	}
+        /* Safely update the low-water mark */
+        {
+            char* f = strrchr(outbuf, ' ');
+            char* t = lbp + lbp_len;
+            while (*--t != ' ') ;
+            while (t > lbp) {
+                if (*--t == ' ')
+                    break;
+                if (f[-1] == ' ')
+                    *t = '0';
+                else
+                    *t = *--f;
+            }
+        }
 # endif
-	high = (ART_NUM)atol(outbuf+len+1);
+        high = (ART_NUM)atol(outbuf+len+1);
     }
 
     if (lbp_len) {
-	if ((dp->flags & DF_REMOTE) && dp->act_sf.refetch_secs) {
-	    int num;
-	    char* cp;
-	    if (high && high != (ART_NUM)atol(cp = lbp+len+1)) {
-		while (isdigit(*cp)) cp++;
-		while (*--cp != ' ') {
-		    num = high % 10;
-		    high = high / 10;
-		    *cp = '0' + (char)num;
-		}
-		fseek(fp, act_pos, 0);
-		fwrite(lbp, 1, lbp_len, fp);
-	    }
-	    goto use_cache;
-	}
+        if ((dp->flags & DF_REMOTE) && dp->act_sf.refetch_secs) {
+            int num;
+            char* cp;
+            if (high && high != (ART_NUM)atol(cp = lbp+len+1)) {
+                while (isdigit(*cp)) cp++;
+                while (*--cp != ' ') {
+                    num = high % 10;
+                    high = high / 10;
+                    *cp = '0' + (char)num;
+                }
+                fseek(fp, act_pos, 0);
+                fwrite(lbp, 1, lbp_len, fp);
+            }
+            goto use_cache;
+        }
 
-	/* hopefully this forces a reread */
-	fseek(fp,2000000000L,1);
+        /* hopefully this forces a reread */
+        fseek(fp,2000000000L,1);
 
-	/*$$ if line has changed length or is not there, we should
-	 * discard/close the active file, and re-open it. $$*/
-	if (fseek(fp, act_pos, 0) >= 0
-	 && fgets(outbuf, LBUFLEN, fp) != NULL
-	 && strnEQ(outbuf, nam, len) && outbuf[len] == ' ') {
-	    /* Remember the latest info in our cache. */
-	    (void) bcopy(outbuf, lbp, lbp_len);
-	    return 1;
-	}
+        /*$$ if line has changed length or is not there, we should
+         * discard/close the active file, and re-open it. $$*/
+        if (fseek(fp, act_pos, 0) >= 0
+         && fgets(outbuf, LBUFLEN, fp) != NULL
+         && strnEQ(outbuf, nam, len) && outbuf[len] == ' ') {
+            /* Remember the latest info in our cache. */
+            (void) memmove(lbp, outbuf, lbp_len);
+            return 1;
+        }
       use_cache:
-	/* Return our cached version */
-	(void) bcopy(lbp, outbuf, lbp_len);
-	outbuf[lbp_len] = '\0';
-	return 1;
+        /* Return our cached version */
+        (void) memmove(outbuf, lbp, lbp_len);
+        outbuf[lbp_len] = '\0';
+        return 1;
     }
-    return 0;	/* no such group */
+    return 0;   /* no such group */
 }
 
 char *
@@ -545,67 +545,67 @@ find_grpdesc (DATASRC *dp, char *groupname)
     int ret;
 
     if (!dp->grpdesc)
-	return nullstr;
+        return nullstr;
 
     if (!dp->desc_sf.hp) {
-	if ((dp->flags & DF_REMOTE) && dp->desc_sf.refetch_secs) {
-	    /*DATASRC* save_datasrc = datasrc;*/
-	    set_datasrc(dp);
-	    spin_todo = dp->desc_sf.recent_cnt;
-	    ret = srcfile_open(&dp->desc_sf, dp->grpdesc,
-			       "newsgroups", dp->newsid);
-	    if (spin_count > 0)
-		dp->desc_sf.recent_cnt = spin_count;
-	    /*set_datasrc(save_datasrc);*/
-	}
-	else
-	    ret = srcfile_open(&dp->desc_sf, dp->grpdesc,
-			       (char*)NULL, (char*)NULL);
-	if (!ret) {
-	    if (dp->flags & DF_TMPGRPDESC) {
-		dp->flags &= ~DF_TMPGRPDESC;
-		UNLINK(dp->grpdesc);
-	    }
-	    safefree(dp->grpdesc);
-	    dp->grpdesc = NULL;
-	    return nullstr;
-	}
-	if (ret == 2 || !dp->desc_sf.refetch_secs)
-	    dp->flags |= DF_NOXGTITLE;
+        if ((dp->flags & DF_REMOTE) && dp->desc_sf.refetch_secs) {
+            /*DATASRC* save_datasrc = datasrc;*/
+            set_datasrc(dp);
+            spin_todo = dp->desc_sf.recent_cnt;
+            ret = srcfile_open(&dp->desc_sf, dp->grpdesc,
+                               "newsgroups", dp->newsid);
+            if (spin_count > 0)
+                dp->desc_sf.recent_cnt = spin_count;
+            /*set_datasrc(save_datasrc);*/
+        }
+        else
+            ret = srcfile_open(&dp->desc_sf, dp->grpdesc,
+                               (char*)NULL, (char*)NULL);
+        if (!ret) {
+            if (dp->flags & DF_TMPGRPDESC) {
+                dp->flags &= ~DF_TMPGRPDESC;
+                UNLINK(dp->grpdesc);
+            }
+            safefree(dp->grpdesc);
+            dp->grpdesc = NULL;
+            return nullstr;
+        }
+        if (ret == 2 || !dp->desc_sf.refetch_secs)
+            dp->flags |= DF_NOXGTITLE;
     }
 
     grouplen = strlen(groupname);
     data = hashfetch(dp->desc_sf.hp, groupname, grouplen);
     if (data.dat_ptr) {
-	LISTNODE* node = (LISTNODE*)data.dat_ptr;
-	/*dp->act_sf.lp->recent = node;*/
-	return node->data + data.dat_len + grouplen + 1;
+        LISTNODE* node = (LISTNODE*)data.dat_ptr;
+        /*dp->act_sf.lp->recent = node;*/
+        return node->data + data.dat_len + grouplen + 1;
     }
 
   try_xgtitle:
 
     if ((dp->flags & (DF_REMOTE|DF_NOXGTITLE)) == DF_REMOTE) {
-	set_datasrc(dp);
-	sprintf(ser_line, "XGTITLE %s", groupname);
-	if (nntp_command(ser_line) > 0 && nntp_check() > 0) {
-	    nntp_gets(buf, sizeof buf - 1);
-	    if (nntp_at_list_end(buf))
-		sprintf(buf, "%s \n", groupname);
-	    else {
-		nntp_finish_list();
-		strcat(buf, "\n");
-	    }
-	    groupname = srcfile_append(&dp->desc_sf, buf, grouplen);
-	    return groupname+grouplen+1;
-	}
-	dp->flags |= DF_NOXGTITLE;
-	if (dp->desc_sf.lp->high == -1) {
-	    srcfile_close(&dp->desc_sf);
-	    if (dp->flags & DF_TMPGRPDESC)
-		return find_grpdesc(dp, groupname);
-	    safefree(dp->grpdesc);
-	    dp->grpdesc = NULL;
-	}
+        set_datasrc(dp);
+        sprintf(ser_line, "XGTITLE %s", groupname);
+        if (nntp_command(ser_line) > 0 && nntp_check() > 0) {
+            nntp_gets(buf, sizeof buf - 1);
+            if (nntp_at_list_end(buf))
+                sprintf(buf, "%s \n", groupname);
+            else {
+                nntp_finish_list();
+                strcat(buf, "\n");
+            }
+            groupname = srcfile_append(&dp->desc_sf, buf, grouplen);
+            return groupname+grouplen+1;
+        }
+        dp->flags |= DF_NOXGTITLE;
+        if (dp->desc_sf.lp->high == -1) {
+            srcfile_close(&dp->desc_sf);
+            if (dp->flags & DF_TMPGRPDESC)
+                return find_grpdesc(dp, groupname);
+            safefree(dp->grpdesc);
+            dp->grpdesc = NULL;
+        }
     }
     return nullstr;
 }
@@ -619,17 +619,17 @@ char *
 adv_then_find_next_nl_and_dectrl (char *s)
 {
     if (s == NULL)
-	return s;
+        return s;
 
     for (s++; *s && *s != '\n';) {
-	int w = byte_length_at(s);
-	if (AT_GREY_SPACE(s)) {
-	    int i;
-	    for (i = 0; i < w; i += 1) {
-		s[i] = ' ';
-	    }
-	}
-	s += w;
+        int w = byte_length_at(s);
+        if (AT_GREY_SPACE(s)) {
+            int i;
+            for (i = 0; i < w; i += 1) {
+                s[i] = ' ';
+            }
+        }
+        s += w;
     }
     return s;
 }
@@ -648,55 +648,55 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
     bool use_buffered_nntp_gets = 0;
 
     if (!filename)
-	fp = NULL;
+        fp = NULL;
     else if (server) {
-	if (!sfp->refetch_secs) {
-	    server = NULL;
-	    fp = fopen(filename, "r");
-	    spin_todo = 0;
-	}
-	else if (now - sfp->lastfetch > sfp->refetch_secs
-	      && (sfp->refetch_secs != 2 || !sfp->lastfetch)) {
-	    fp = fopen(filename, "w+");
-	    if (fp) {
-		printf("Getting %s file from %s.", fetchcmd, server);
-		fflush(stdout);
-		/* tell server we want the file */
-		if (!(nntplink.flags & NNTP_NEW_CMD_OK))
-		    use_buffered_nntp_gets = 1;
-		else if (nntp_list(fetchcmd, nullstr, 0) < 0) {
-		    printf("\nCan't get %s file from server: \n%s\n",
-			   fetchcmd, ser_line);
-		    termdown(2);
-		    fclose(fp);
-		    return 0;
-		}
-		sfp->lastfetch = now;
-	        spin_todo = 0;
-	    }
-	}
-	else {
-	    server = NULL;
-	    fp = fopen(filename, "r+");
-	    if (!fp) {
-		sfp->refetch_secs = 0;
-		fp = fopen(filename, "r");
-	    }
-	    spin_todo = 0;
-	}
-	if (sfp->refetch_secs & 3)
-	    sfp->refetch_secs += 365L*24*60*60;
+        if (!sfp->refetch_secs) {
+            server = NULL;
+            fp = fopen(filename, "r");
+            spin_todo = 0;
+        }
+        else if (now - sfp->lastfetch > sfp->refetch_secs
+              && (sfp->refetch_secs != 2 || !sfp->lastfetch)) {
+            fp = fopen(filename, "w+");
+            if (fp) {
+                printf("Getting %s file from %s.", fetchcmd, server);
+                fflush(stdout);
+                /* tell server we want the file */
+                if (!(nntplink.flags & NNTP_NEW_CMD_OK))
+                    use_buffered_nntp_gets = 1;
+                else if (nntp_list(fetchcmd, nullstr, 0) < 0) {
+                    printf("\nCan't get %s file from server: \n%s\n",
+                           fetchcmd, ser_line);
+                    termdown(2);
+                    fclose(fp);
+                    return 0;
+                }
+                sfp->lastfetch = now;
+                spin_todo = 0;
+            }
+        }
+        else {
+            server = NULL;
+            fp = fopen(filename, "r+");
+            if (!fp) {
+                sfp->refetch_secs = 0;
+                fp = fopen(filename, "r");
+            }
+            spin_todo = 0;
+        }
+        if (sfp->refetch_secs & 3)
+            sfp->refetch_secs += 365L*24*60*60;
     }
     else
     {
-	fp = fopen(filename, "r");
-	spin_todo = 0;
+        fp = fopen(filename, "r");
+        spin_todo = 0;
     }
 
     if (filename && fp == NULL) {
-	printf(cantopen, filename);
-	termdown(1);
-	return 0;
+        printf(cantopen, filename);
+        termdown(1);
+        return 0;
     }
     setspin(spin_todo > 0? SPIN_BARGRAPH : SPIN_FOREGROUND);
 
@@ -708,81 +708,81 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
     sfp->fp = fp;
 
     if (!filename) {
-	(void) listnum2listitem(sfp->lp, 0);
-	sfp->lp->high = -1;
-	setspin(SPIN_OFF);
-	return 1;
+        (void) listnum2listitem(sfp->lp, 0);
+        sfp->lp->high = -1;
+        setspin(SPIN_OFF);
+        return 1;
     }
 
     lbp = listnum2listitem(sfp->lp, 0);
     data.dat_ptr = (char*)sfp->lp->first;
 
     for (offset = 0, node_low = 0; ; offset += linelen, lbp += linelen) {
-	if (server) {
-	    if (use_buffered_nntp_gets)
-		use_buffered_nntp_gets = 0;
-	    else if (nntp_gets(buf, sizeof buf - 1) < 0) {
-		printf("\nError getting %s file.\n", fetchcmd);
-		termdown(2);
-		srcfile_close(sfp);
-		setspin(SPIN_OFF);
-		return 0;
-	    }
-	    if (nntp_at_list_end(buf))
-		break;
-	    strcat(buf,"\n");
-	    fputs(buf, fp);
-	    spin(4000);
-	}
-	ElseIf (!fgets(buf, sizeof buf, fp))
-	    break;
+        if (server) {
+            if (use_buffered_nntp_gets)
+                use_buffered_nntp_gets = 0;
+            else if (nntp_gets(buf, sizeof buf - 1) < 0) {
+                printf("\nError getting %s file.\n", fetchcmd);
+                termdown(2);
+                srcfile_close(sfp);
+                setspin(SPIN_OFF);
+                return 0;
+            }
+            if (nntp_at_list_end(buf))
+                break;
+            strcat(buf,"\n");
+            fputs(buf, fp);
+            spin(4000);
+        }
+        ElseIf (!fgets(buf, sizeof buf, fp))
+            break;
 
-	for (s = buf; *s && !isspace(*s); s++) ;
-	if (!*s) {
-	    linelen = 0;
-	    continue;
-	}
-	keylen = s - buf;
-	if (*++s != '\n' && isspace(*s)) {
-	    while (*++s != '\n' && isspace(*s)) ;
-	    strcpy(buf+keylen+1, s);
-	    s = buf+keylen+1;
-	}
-	s = adv_then_find_next_nl_and_dectrl(s);
-	linelen = s - buf + 1;
-	if (*s != '\n') {
-	    if (linelen == sizeof buf) {
-		linelen = 0;
-		continue;
-	    }
-	    *s++ = '\n';
-	    *s = '\0';
-	}
-	if (offset + linelen > SRCFILE_CHUNK_SIZE) {
-	    LISTNODE* node = sfp->lp->recent;
-	    node_low += offset;
-	    node->high = node_low - 1;
-	    node->data_high = node->data + offset - 1;
-	    offset = 0;
-	    lbp = listnum2listitem(sfp->lp, node_low);
-	    data.dat_ptr = (char*)sfp->lp->recent;
-	}
-	data.dat_len = offset;
-	(void) bcopy(buf, lbp, linelen);
-	hashstore(sfp->hp, buf, keylen, data);
+        for (s = buf; *s && !isspace(*s); s++) ;
+        if (!*s) {
+            linelen = 0;
+            continue;
+        }
+        keylen = s - buf;
+        if (*++s != '\n' && isspace(*s)) {
+            while (*++s != '\n' && isspace(*s)) ;
+            strcpy(buf+keylen+1, s);
+            s = buf+keylen+1;
+        }
+        s = adv_then_find_next_nl_and_dectrl(s);
+        linelen = s - buf + 1;
+        if (*s != '\n') {
+            if (linelen == sizeof buf) {
+                linelen = 0;
+                continue;
+            }
+            *s++ = '\n';
+            *s = '\0';
+        }
+        if (offset + linelen > SRCFILE_CHUNK_SIZE) {
+            LISTNODE* node = sfp->lp->recent;
+            node_low += offset;
+            node->high = node_low - 1;
+            node->data_high = node->data + offset - 1;
+            offset = 0;
+            lbp = listnum2listitem(sfp->lp, node_low);
+            data.dat_ptr = (char*)sfp->lp->recent;
+        }
+        data.dat_len = offset;
+        (void) bcopy(buf, lbp, linelen);
+        hashstore(sfp->hp, buf, keylen, data);
     }
     sfp->lp->high = node_low + offset - 1;
     setspin(SPIN_OFF);
 
     if (server) {
-	fflush(fp);
-	if (ferror(fp)) {
-	    printf("\nError writing the %s file %s.\n",fetchcmd,filename);
-	    termdown(2);
-	    srcfile_close(sfp);
-	    return 0;
-	}
-	newline();
+        fflush(fp);
+        if (ferror(fp)) {
+            printf("\nError writing the %s file %s.\n",fetchcmd,filename);
+            termdown(2);
+            srcfile_close(sfp);
+            return 0;
+        }
+        newline();
     }
     fseek(fp,0L,0);
 
@@ -806,30 +806,30 @@ srcfile_append (SRCFILE *sfp, char *bp, int keylen)
 
     s = bp + keylen + 1;
     if (sfp->fp && sfp->refetch_secs && *s != '\n') {
-	fseek(sfp->fp, 0, 2);
-	fputs(bp, sfp->fp);
+        fseek(sfp->fp, 0, 2);
+        fputs(bp, sfp->fp);
     }
 
     if (*s != '\n' && isspace(*s)) {
-	while (*++s != '\n' && isspace(*s)) ;
-	strcpy(bp+keylen+1, s);
-	s = bp+keylen+1;
+        while (*++s != '\n' && isspace(*s)) ;
+        strcpy(bp+keylen+1, s);
+        s = bp+keylen+1;
     }
     s = adv_then_find_next_nl_and_dectrl(s);
     linelen = s - bp + 1;
     if (*s != '\n') {
-	*s++ = '\n';
-	*s = '\0';
+        *s++ = '\n';
+        *s = '\0';
     }
     if (data.dat_len + linelen > SRCFILE_CHUNK_SIZE) {
-	node->high = pos - 1;
-	node->data_high = node->data + data.dat_len - 1;
-	lbp = listnum2listitem(sfp->lp, pos);
-	node = sfp->lp->recent;
-	data.dat_len = 0;
+        node->high = pos - 1;
+        node->data_high = node->data + data.dat_len - 1;
+        lbp = listnum2listitem(sfp->lp, pos);
+        node = sfp->lp->recent;
+        data.dat_len = 0;
     }
     data.dat_ptr = (char*)node;
-    (void) bcopy(bp, lbp, linelen);
+    (void) memmove(lbp, bp, linelen);
     hashstore(sfp->hp, bp, keylen, data);
     sfp->lp->high = pos + linelen - 1;
 
@@ -840,14 +840,14 @@ void
 srcfile_end_append (SRCFILE *sfp, char *filename)
 {
     if (sfp->fp && sfp->refetch_secs) {
-	fflush(sfp->fp);
+        fflush(sfp->fp);
 
-	if (sfp->lastfetch) {
-	    struct utimbuf ut;
-	    time(&ut.actime);
-	    ut.modtime = sfp->lastfetch;
-	    (void) utime(filename, &ut);
-	}
+        if (sfp->lastfetch) {
+            struct utimbuf ut;
+            time(&ut.actime);
+            ut.modtime = sfp->lastfetch;
+            (void) utime(filename, &ut);
+        }
     }
 }
 
@@ -855,16 +855,16 @@ void
 srcfile_close (SRCFILE *sfp)
 {
     if (sfp->fp) {
-	fclose(sfp->fp);
-	sfp->fp = NULL;
+        fclose(sfp->fp);
+        sfp->fp = NULL;
     }
     if (sfp->lp) {
-	delete_list(sfp->lp);
-	sfp->lp = NULL;
+        delete_list(sfp->lp);
+        sfp->lp = NULL;
     }
     if (sfp->hp) {
-	hashdestroy(sfp->hp);
-	sfp->hp = NULL;
+        hashdestroy(sfp->hp);
+        sfp->hp = NULL;
     }
 }
 
@@ -880,11 +880,11 @@ srcfile_cmp(const void *key, size_t keylen, HASHDATUM data)
 
 /* Edit Distance extension to trn
  *
- *	Mark Maimone (mwm@cmu.edu)
- *	Carnegie Mellon Computer Science
- *	9 May 1993
+ *      Mark Maimone (mwm@cmu.edu)
+ *      Carnegie Mellon Computer Science
+ *      9 May 1993
  *
- *	This code helps trn handle typos in newsgroup names much more
+ *      This code helps trn handle typos in newsgroup names much more
  *   gracefully.  Instead of "... does not exist!!", it will pick the
  *   nearest one, or offer you a choice if there are several options.
  */
@@ -907,9 +907,9 @@ srcfile_cmp(const void *key, size_t keylen, HASHDATUM data)
  * or not they had precisely the same edit distance, but oh well.
  */
 
-static char** ngptrs;		/* List of potential matches */
-static int ngn;			/* Length of list in ngptrs[] */
-static int best_match;		/* Value of best match */
+static char** ngptrs;           /* List of potential matches */
+static int ngn;                 /* Length of list in ngptrs[] */
+static int best_match;          /* Value of best match */
 
 int
 find_close_match (void)
@@ -923,45 +923,45 @@ find_close_match (void)
 
     /* Iterate over all legal newsgroups */
     for (dp = datasrc_first(); dp && dp->name; dp = datasrc_next(dp)) {
-	if (dp->flags & DF_OPEN) {
-	    if (dp->act_sf.hp)
-		hashwalk(dp->act_sf.hp, check_distance, 0);
-	    else
-		ret = -1;
-	}
+        if (dp->flags & DF_OPEN) {
+            if (dp->act_sf.hp)
+                hashwalk(dp->act_sf.hp, check_distance, 0);
+            else
+                ret = -1;
+        }
     }
 
     if (ret < 0) {
-	hashwalk(newsrc_hash, check_distance, 1);
-	ret = 0;
+        hashwalk(newsrc_hash, check_distance, 1);
+        ret = 0;
     }
 
     /* ngn is the number of possibilities.  If there's just one, go with it. */
 
     switch (ngn) {
         case 0:
-	    break;
-	case 1: {
-	    char* cp = index(ngptrs[0], ' ');
-	    if (cp)
-		*cp = '\0';
+            break;
+        case 1: {
+            char* cp = index(ngptrs[0], ' ');
+            if (cp)
+                *cp = '\0';
 #ifdef VERBOSE
-	    IF(verbose)
-		printf("(I assume you meant %s)\n", ngptrs[0]);
-	    ELSE
+            IF(verbose)
+                printf("(I assume you meant %s)\n", ngptrs[0]);
+            ELSE
 #endif
 #ifdef TERSE
-		printf("(Using %s)\n", ngptrs[0]);
+                printf("(Using %s)\n", ngptrs[0]);
 #endif
-	    set_ngname(ngptrs[0]);
-	    if (cp)
-		*cp = ' ';
-	    ret = 1;
-	    break;
-	}
-	default:
-	    ret = get_near_miss();
-	    break;
+            set_ngname(ngptrs[0]);
+            if (cp)
+                *cp = ' ';
+            ret = 1;
+            break;
+        }
+        default:
+            ret = get_near_miss();
+            break;
     }
     safefree(ngptrs);
     return ret;
@@ -974,35 +974,35 @@ check_distance (int len, HASHDATUM *data, int newsrc_ptr)
     char* name;
 
     if (newsrc_ptr)
-	name = ((NGDATA*)data->dat_ptr)->rcline;
+        name = ((NGDATA*)data->dat_ptr)->rcline;
     else
-	name = ((LISTNODE*)data->dat_ptr)->data + data->dat_len;
+        name = ((LISTNODE*)data->dat_ptr)->data + data->dat_len;
 
     /* Efficiency: don't call edit_dist when the lengths are too different. */
     if (len < ngname_len) {
-	if (ngname_len - len > LENGTH_HACK)
-	    return 0;
+        if (ngname_len - len > LENGTH_HACK)
+            return 0;
     }
     else {
-	if (len - ngname_len > LENGTH_HACK)
-	    return 0;
+        if (len - ngname_len > LENGTH_HACK)
+            return 0;
     }
 
     value = edit_distn(ngname, ngname_len, name, len);
     if (value > MIN_DIST)
-	return 0;
+        return 0;
 
     if (value < best_match)
-	ngn = 0;
+        ngn = 0;
     if (best_match < 0 || value <= best_match) {
-	int i;
-	for (i = 0; i < ngn; i++) {
-	    if (strEQ(name, ngptrs[i]))
-		return 0;
-	}
-	best_match = value;
-	if (ngn < MAX_NG)
-	    ngptrs[ngn++] = name;
+        int i;
+        for (i = 0; i < ngn; i++) {
+            if (strEQ(name, ngptrs[i]))
+                return 0;
+        }
+        best_match = value;
+        if (ngn < MAX_NG)
+            ngptrs[ngn++] = name;
     }
     return 0;
 }
@@ -1020,29 +1020,29 @@ get_near_miss (void)
 
 #ifdef VERBOSE
     IF(verbose)
-	printf("However, here are some close matches:\n");
+        printf("However, here are some close matches:\n");
 #endif
     if (ngn > 9)
-	ngn = 9;	/* Since we're using single digits.... */
+        ngn = 9;        /* Since we're using single digits.... */
     for (i = 0; i < ngn; i++) {
-	char* cp = index(ngptrs[i], ' ');
-	if (cp)
-	    *cp = '\0';
-	printf("  %d.  %s\n", i+1, ngptrs[i]);
-	sprintf(op++, "%d", i+1);	/* Expensive, but avoids ASCII deps */
-	if (cp)
-	    *cp = ' ';
+        char* cp = index(ngptrs[i], ' ');
+        if (cp)
+            *cp = '\0';
+        printf("  %d.  %s\n", i+1, ngptrs[i]);
+        sprintf(op++, "%d", i+1);       /* Expensive, but avoids ASCII deps */
+        if (cp)
+            *cp = ' ';
     }
     *op++ = 'n';
     *op = '\0';
 
 #ifdef VERBOSE
     IF(verbose)
-	sprintf(promptbuf, "Which of these would you like?");
+        sprintf(promptbuf, "Which of these would you like?");
     ELSE
 #endif
 #ifdef TERSE
-	sprintf(promptbuf, "Which?");
+        sprintf(promptbuf, "Which?");
 #endif
 reask:
     in_char(promptbuf, 'A', options);
@@ -1052,40 +1052,40 @@ reask:
     putchar('\n');
     switch (*buf) {
         case 'n':
-	case 'N':
-	case 'q':
-	case 'Q':
-	case 'x':
-	case 'X':
-	    return 0;
-	case 'h':
-	case 'H':
+        case 'N':
+        case 'q':
+        case 'Q':
+        case 'x':
+        case 'X':
+            return 0;
+        case 'h':
+        case 'H':
 #ifdef VERBOSE
-	    IF(verbose)
-		fputs("  You entered an illegal newsgroup name, and these are the nearest possible\n  matches.  If you want one of these, then enter its number.  Otherwise\n  just say 'n'.\n", stdout);
-	    ELSE
+            IF(verbose)
+                fputs("  You entered an illegal newsgroup name, and these are the nearest possible\n  matches.  If you want one of these, then enter its number.  Otherwise\n  just say 'n'.\n", stdout);
+            ELSE
 #endif
 #ifdef TERSE
-		fputs("Illegal newsgroup, enter a number or 'n'.\n", stdout);
+                fputs("Illegal newsgroup, enter a number or 'n'.\n", stdout);
 #endif
-	    goto reask;
-	default:
-	    if (isdigit(*buf)) {
-		char* s = index(options, *buf);
+            goto reask;
+        default:
+            if (isdigit(*buf)) {
+                char* s = index(options, *buf);
 
-		i = s ? (s - options) : ngn;
-		if (i >= 0 && i < ngn) {
-		    char* cp = index(ngptrs[i], ' ');
-		    if (cp)
-			*cp = '\0';
-		    set_ngname(ngptrs[i]);
-		    if (cp)
-			*cp = ' ';
-		    return 1;
-		}
-	    }
-	    fputs(hforhelp, stdout);
-	    break;
+                i = s ? (s - options) : ngn;
+                if (i >= 0 && i < ngn) {
+                    char* cp = index(ngptrs[i], ' ');
+                    if (cp)
+                        *cp = '\0';
+                    set_ngname(ngptrs[i]);
+                    if (cp)
+                        *cp = ' ';
+                    return 1;
+                }
+            }
+            fputs(hforhelp, stdout);
+            break;
     }
 
     settle_down();

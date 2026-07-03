@@ -28,29 +28,29 @@ nntp_handle_auth_err (void)
 
 #ifdef USE_GENAUTH
     if ((auth_command = get_auth_command()) != NULL) {
-	/* issue authentication request */
-	sprintf(ser_line, "AUTHINFO GENERIC %s", auth_command);
-	if (nntp_command(ser_line) <= 0
-	 || nntp_auth(auth_command) <= 0)
-	    return -2;
+        /* issue authentication request */
+        sprintf(ser_line, "AUTHINFO GENERIC %s", auth_command);
+        if (nntp_command(ser_line) <= 0
+         || nntp_auth(auth_command) <= 0)
+            return -2;
     }
     else
 #endif
     {
-	char* auth_user = get_auth_user();
-	char* auth_pass = get_auth_pass();
-	if (!auth_user || !auth_pass)
-	    return -2;
-	sprintf(ser_line, "AUTHINFO USER %s", auth_user);
-	if (nntp_command(ser_line) <= 0 || nntp_check() <= 0)
-	    return -2;
-	sprintf(ser_line, "AUTHINFO PASS %s", auth_pass);
-	if (nntp_command(ser_line) <= 0 || nntp_check() <= 0)
-	    return -2;
+        char* auth_user = get_auth_user();
+        char* auth_pass = get_auth_pass();
+        if (!auth_user || !auth_pass)
+            return -2;
+        sprintf(ser_line, "AUTHINFO USER %s", auth_user);
+        if (nntp_command(ser_line) <= 0 || nntp_check() <= 0)
+            return -2;
+        sprintf(ser_line, "AUTHINFO PASS %s", auth_pass);
+        if (nntp_command(ser_line) <= 0 || nntp_check() <= 0)
+            return -2;
     }
 
     if (nntp_command(last_command_save) <= 0)
-	return -2;
+        return -2;
 
     return 1;
 }
@@ -62,26 +62,26 @@ nntp_auth (char *authc)
     int ret;
 
     if (nntplink.cookiefd == 0) {
-	FILE* fp = tmpfile();
-	if (fp)
-	    nntplink.cookiefd = fileno(fp);
+        FILE* fp = tmpfile();
+        if (fp)
+            nntplink.cookiefd = fileno(fp);
     }
 
 #if 0
     /*termlib_reset();*/
-    resetty();		/* restore tty state */
+    resetty();          /* restore tty state */
 #endif
     export_nntp_fds = true;
     ret = doshell(sh,authc);
     export_nntp_fds = false;
 #if 0
-    noecho();		/* revert to cbreaking */
+    noecho();           /* revert to cbreaking */
     crmode();
     /*termlib_init();*/
 #endif
     if (ret) {
-	strcpy(ser_line, "502 Authentication failed");
-	return -1;
+        strcpy(ser_line, "502 Authentication failed");
+        return -1;
     }
     strcpy(ser_line, "281 Ok");
     return 1;

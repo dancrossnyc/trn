@@ -8,7 +8,7 @@
 #define NN_REREAD 2
 #define NN_ASK 3
 
-extern bool one_command;	/* no ':' processing in perform() */
+extern bool one_command;        /* no ':' processing in perform() */
 
 /* CAA: given the new and complex universal/help possibilities,
  *      the following interlock variable may save some trouble.

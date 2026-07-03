@@ -8,12 +8,12 @@
 #include "list.h"
 #include "hash.h"
 #include "cache.h"
-#include "bits.h"	/* for absfirst */
-#include "head.h"	/* hc_setspin() */
+#include "bits.h"       /* for absfirst */
+#include "head.h"       /* hc_setspin() */
 #include "ngdata.h"
 #include "mempool.h"
 #include "scanart.h"
-#include "sadesc.h"	/* sa_desc_subject() */
+#include "sadesc.h"     /* sa_desc_subject() */
 #include "samain.h"
 #include "samisc.h"
 #include "sorder.h"
@@ -29,8 +29,8 @@ sa_init_threads (void)
     mp_free(MP_SATHREAD);
     sa_num_threads = 0;
     if (sa_thread_hash) {
-	hashdestroy(sa_thread_hash);
-	sa_thread_hash = 0;
+        hashdestroy(sa_thread_hash);
+        sa_thread_hash = 0;
     }
 }
 
@@ -41,7 +41,7 @@ sa_init_threads (void)
  */
 long
 sa_get_subj_thread (
-    long e			/* entry number */
+    long e                      /* entry number */
 )
 {
     HASHDATUM data;
@@ -57,14 +57,14 @@ sa_get_subj_thread (
     if (!s || !*s)
       return -2;
     if ((*s == '>') && (s[1] == ' '))
-	s += 2;
+        s += 2;
 
     if (!sa_thread_hash) {
-	sa_thread_hash = hashcreate(401, HASH_DEFCMPFUNC);
+        sa_thread_hash = hashcreate(401, HASH_DEFCMPFUNC);
     }
     data = hashfetch(sa_thread_hash,s,strlen(s));
     if (data.dat_ptr) {
-	return (long)(data.dat_len);
+        return (long)(data.dat_len);
     }
     p = mp_estrdup(s,MP_SATHREAD);
     data = hashfetch(sa_thread_hash,p,strlen(s));
@@ -86,8 +86,8 @@ sa_subj_thread_count (long a)
     b = a;
 
     while ((b = sa_subj_thread_next(b)) != 0)
-	if (sa_basic_elig(b))
-	    count++;
+        if (sa_basic_elig(b))
+            count++;
     return count;
 }
 
@@ -99,12 +99,12 @@ sa_subj_thread_prev (long a)
 
     i = sa_subj_thread(a);
     while ((a = s_prev(a)) != 0) {
-	if (!sa_basic_elig(a))
-	    continue;
-	if (!(j = sa_ents[a].subj_thread_num))
-	    j = sa_subj_thread(a);
-	if (i == j)
-	    return a;
+        if (!sa_basic_elig(a))
+            continue;
+        if (!(j = sa_ents[a].subj_thread_num))
+            j = sa_subj_thread(a);
+        if (i == j)
+            return a;
     }
     return 0L;
 }
@@ -116,12 +116,12 @@ sa_subj_thread_next (long a)
 
     i = sa_subj_thread(a);
     while ((a = s_next(a)) != 0) {
-	if (!sa_basic_elig(a))
-	    continue;
-	if (!(j = sa_ents[a].subj_thread_num))
-	    j = sa_subj_thread(a);
-	if (i == j)
-	    return a;
+        if (!sa_basic_elig(a))
+            continue;
+        if (!(j = sa_ents[a].subj_thread_num))
+            j = sa_subj_thread(a);
+        if (i == j)
+            return a;
     }
     return 0L;
 }

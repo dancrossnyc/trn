@@ -26,33 +26,6 @@
 
 /* some slight-of-hand for compatibility issues */
 
-#ifdef HAS_STRCHR
-# ifndef index
-#   define index strchr
-# endif
-# ifndef rindex
-#   define rindex strrchr
-# endif
-#endif
-#ifdef HAS_MEMCPY
-# ifndef bcopy
-#   define bcopy(s,d,l) memcpy((d),(s),(l))
-# endif
-#endif
-#ifdef HAS_MEMSET
-# ifndef bzero
-#   define bzero(s,l) memset((s),0,(l))
-# endif
-#endif
-
 #ifndef FILE_REF
 #   define FILE_REF(s) (*(s) == '/' ? '/' : 0)
-#endif
-
-/* how to open binary format files */
-#ifndef FOPEN_RB
-#   define FOPEN_RB "r"
-#endif
-#ifndef FOPEN_WB
-#   define FOPEN_WB "w"
 #endif

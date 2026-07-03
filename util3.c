@@ -36,13 +36,13 @@ dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
 {
     extern char* dotdir;
     if (*pattern == '%' && pattern[1] == '.') {
-	int len = strlen(dotdir);
-	safecpy(dest, dotdir, destsize);
-	if (len < destsize)
-	    safecpy(dest+len, pattern+2, destsize - len);
+        int len = strlen(dotdir);
+        safecpy(dest, dotdir, destsize);
+        if (len < destsize)
+            safecpy(dest+len, pattern+2, destsize - len);
     }
     else
-	safecpy(dest, pattern, destsize);
+        safecpy(dest, pattern, destsize);
     return stoppers; /* This is wrong on purpose */
 }
 

@@ -4,13 +4,13 @@
 static const unsigned char HASHMAG = 0257;
 
 struct hashent {
-    HASHENT *he_next;		/* in hash chain */
+    HASHENT *he_next;           /* in hash chain */
     HASHDATUM he_data;
-    size_t he_keylen;		/* to help verify a match */
+    size_t he_keylen;           /* to help verify a match */
 };
 
 struct hashtable {
-    HASHENT **ht_addr;		/* array of HASHENT pointers */
+    HASHENT **ht_addr;          /* array of HASHENT pointers */
     size_t ht_size;
     unsigned char ht_magic;
     int (*ht_cmp)(const void *, size_t, HASHDATUM);

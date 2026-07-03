@@ -20,7 +20,7 @@
 #include "samain.h"
 #include "sadesc.h"
 #include "samisc.h"
-#include "sathread.h"	/* for fold mode flag */
+#include "sathread.h"   /* for fold mode flag */
 #ifdef SCORE
 #include "score.h"
 #endif
@@ -38,16 +38,16 @@ sa_refresh_top (void)
     printf(" %d",sa_number_arts());
 
     if (sa_mode_read_elig)
-	printf(" unread+read");
+        printf(" unread+read");
     else
-	printf(" unread");
+        printf(" unread");
     if (sa_mode_zoom)
-	printf(" zoom");
+        printf(" zoom");
     if (sa_mode_fold)
-	printf(" Fold");
+        printf(" Fold");
     if (sa_follow)
-	printf(" follow");
-    color_pop();	/* of COLOR_SCORE */
+        printf(" follow");
+    color_pop();        /* of COLOR_SCORE */
     erase_eol();
     printf("\n");
 }
@@ -62,26 +62,26 @@ sa_refresh_bot (void)
     printf("(");
     switch (sa_mode_order) {
       case 1:
-	s = "arrival";
-	break;
+        s = "arrival";
+        break;
 #ifdef SCORE
       case 2:
-	if (score_newfirst)
-	    s = "score (new>old)";
-	else
-	    s = "score (old>new)";
-	break;
+        if (score_newfirst)
+            s = "score (new>old)";
+        else
+            s = "score (old>new)";
+        break;
 #endif
       default:
-	s = "unknown";
-	break;
+        s = "unknown";
+        break;
     }
     printf("%s order",s);
 #ifdef SCORE
     printf(", %d%% scored",sc_percent_scored());
 #endif
     printf(")");
-    color_pop();	/* of COLOR_SCORE */
+    color_pop();        /* of COLOR_SCORE */
     fflush(stdout);
 }
 
@@ -97,9 +97,9 @@ sa_set_screen (void)
     s_cursor_cols = 2;
 
     if (s_itemnum)
-	s_itemnum_cols = 3;
+        s_itemnum_cols = 3;
     else
-	s_itemnum_cols = 0;
+        s_itemnum_cols = 0;
 
     /* (scr_width-1) keeps last character blank. */
     s_desc_cols = (scr_width-1) -s_status_cols -s_cursor_cols -s_itemnum_cols;

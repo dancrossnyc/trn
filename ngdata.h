@@ -6,16 +6,16 @@
 struct ngdata {
     NGDATA* prev;
     NGDATA* next;
-    NEWSRC* rc;		/* which rc is this line from? */
-    char* rcline;	/* pointer to group's .newsrc line */
-    ART_NUM abs1st;	/* 1st real article in newsgroup */
-    ART_NUM ngmax;	/* high message num for the group */
-    ART_UNREAD toread;	/* number of articles to be read in newsgroup */
-			/* < 0 is invalid or unsubscribed newsgroup */
-    NG_NUM num;		/* a possible sort order for this group */
-    int numoffset;	/* offset from rcline to numbers on line */
-    char subscribechar;	/* holds the character : or ! while spot is \0 */
-    char flags;  	/* flags for each group */
+    NEWSRC* rc;         /* which rc is this line from? */
+    char* rcline;       /* pointer to group's .newsrc line */
+    ART_NUM abs1st;     /* 1st real article in newsgroup */
+    ART_NUM ngmax;      /* high message num for the group */
+    ART_UNREAD toread;  /* number of articles to be read in newsgroup */
+                        /* < 0 is invalid or unsubscribed newsgroup */
+    NG_NUM num;         /* a possible sort order for this group */
+    int numoffset;      /* offset from rcline to numbers on line */
+    char subscribechar; /* holds the character : or ! while spot is \0 */
+    char flags;         /* flags for each group */
 };
 
 extern LIST* ngdata_list; /* a list of NGDATA */
@@ -26,7 +26,7 @@ extern ART_UNREAD ng_min_toread; /* == TR_ONE or TR_NONE */
 
 extern NGDATA* first_ng;
 extern NGDATA* last_ng;
-extern NGDATA* ngptr;	/* current newsgroup data ptr */
+extern NGDATA* ngptr;   /* current newsgroup data ptr */
 
 extern NGDATA* current_ng;/* stable current newsgroup so we can ditz with ngptr */
 extern NGDATA* recent_ng; /* the prior newsgroup we visited */
@@ -38,10 +38,10 @@ extern NGDATA* starthere; /* set to the first newsgroup with unread news on star
 extern NGDATA* sel_page_np;
 extern NGDATA* sel_next_np;
 
-extern ART_NUM absfirst;	/* 1st real article in current newsgroup */
-extern ART_NUM firstart;	/* minimum unread article number in newsgroup */
-extern ART_NUM lastart;	/* maximum article number in newsgroup */
-extern ART_UNREAD missing_count;	/* for reports on missing articles */
+extern ART_NUM absfirst;        /* 1st real article in current newsgroup */
+extern ART_NUM firstart;        /* minimum unread article number in newsgroup */
+extern ART_NUM lastart; /* maximum article number in newsgroup */
+extern ART_UNREAD missing_count;        /* for reports on missing articles */
 
 extern char* moderated;
 extern char* redirected;

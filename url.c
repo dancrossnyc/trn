@@ -45,28 +45,28 @@ fetch_http (char *host, int port, char *path, char *outname)
     sprintf(url_buf, "GET %s\n",path);
     /* Should I be writing the 0 char at the end? */
     if (write(sock, url_buf, strlen(url_buf)+1) < 0) {
-	printf("\nError: writing on URL socket\n");
-	close(sock);
-	return false;
+        printf("\nError: writing on URL socket\n");
+        close(sock);
+        return false;
     }
 
     fp_out = fopen(outname,"w");
     if (!fp_out) {
-	printf("\nURL output file could not be opened.\n");
-	return false;
+        printf("\nURL output file could not be opened.\n");
+        return false;
     }
     /* XXX some kind of URL timeout would be really nice */
     /* (the old nicebg code caused portability problems) */
     /* later consider larger buffers, spinner */
     while (1) {
-	if ((len = read(sock, url_buf, 1024)) < 0) {
-	    printf("\nError: reading URL reply\n");
-	    return false;
-	}
-	if (len == 0) {
-	    break;	/* no data, end connection */
-	}
-	fwrite(url_buf,1,len,fp_out);
+        if ((len = read(sock, url_buf, 1024)) < 0) {
+            printf("\nError: reading URL reply\n");
+            return false;
+        }
+        if (len == 0) {
+            break;      /* no data, end connection */
+        }
+        fwrite(url_buf,1,len,fp_out);
     }
     fclose(fp_out);
     close(sock);
@@ -79,7 +79,7 @@ fetch_ftp (char *host, char *origpath, char *outname)
 {
 #ifdef USEFTP
     static char cmdline[1024];
-    static char path[512];	/* use to make writable copy */
+    static char path[512];      /* use to make writable copy */
     /* buffers used because because filexp overwrites previous call results */
     static char username[128];
     static char userhost[128];
@@ -89,37 +89,37 @@ fetch_ftp (char *host, char *origpath, char *outname)
     int x,y,l;
 
     safecpy(path,origpath,510);
-    p = rindex(path, '/');	/* p points to last slash or NULL*/
+    p = strrchr(path, '/');     /* p points to last slash or NULL*/
     if (p == NULL) {
-	printf("Error: URL:ftp path has no '/' character.\n");
-	return false;
+        printf("Error: URL:ftp path has no '/' character.\n");
+        return false;
     }
     if (p[1] == '\0') {
-	printf("Error: URL:ftp path has no final filename.\n");
-	return false;
+        printf("Error: URL:ftp path has no final filename.\n");
+        return false;
     }
     safecpy(username,filexp("%L"),120);
     safecpy(userhost,filexp("%H"),120);
-    if (p != path) {	/* not of form /foo */
-	*p = '\0';
-	cdpath = path;
+    if (p != path) {    /* not of form /foo */
+        *p = '\0';
+        cdpath = path;
     } else
-	cdpath = "/";
+        cdpath = "/";
 
     sprintf(cmdline,"%s/ftpgrab %s ftp %s@%s %s %s %s",
-	    filexp("%X"),host,username,userhost,cdpath,p+1,outname);
+            filexp("%X"),host,username,userhost,cdpath,p+1,outname);
 
     /* modified escape_shell_cmd code from NCSA HTTPD util.c */
     /* serious security holes could result without this code */
     l = strlen(cmdline);
     for (x = 0; cmdline[x]; x++) {
-	if (index("&;`'\"|*?~<>^()[]{}$\\",cmdline[x])) {
-	    for (y = l+1; y > x; y--)
-		cmdline[y] = cmdline[y-1];
-	    l++; /* length has been increased */
-	    cmdline[x] = '\\';
-	    x++; /* skip the character */
-	}
+        if (strchr("&;`'\"|*?~<>^()[]{}$\\", cmdline[x])) {
+            for (y = l+1; y > x; y--)
+                cmdline[y] = cmdline[y-1];
+            l++; /* length has been increased */
+            cmdline[x] = '\\';
+            x++; /* skip the character */
+        }
     }
 
 #if 0
@@ -150,60 +150,60 @@ parse_url (char *url)
     char* p;
 
     /* consider using 0 as default to look up the service? */
-    url_port = 80;	/* the default */
+    url_port = 80;      /* the default */
     if (!url || !*url) {
-	printf("Empty URL -- ignoring.\n");
-	return false;
+        printf("Empty URL -- ignoring.\n");
+        return false;
     }
     p = url_type;
     for (s = url; *s && *s != ':'; *p++ = *s++) ;
     *p = '\0';
     if (!*s) {
-	printf("Incomplete URL: %s\n",url);
-	return false;
+        printf("Incomplete URL: %s\n",url);
+        return false;
     }
     s++;
     if (strnEQ(s,"//",2)) {
-	/* normal URL type, will have host (optional portnum) */
-	s += 2;
-	p = url_host;
-	/* check for address literal: news://[ip:v6:address]:port/ */
-	if (*s == '[') {
-	    while (*s && *s != ']')
-		*p++ = *s++;
-	    if (!*s) {
-		printf("Bad address literal: %s\n",url);
-		return false;
-	    }
-	    s++;	/* skip ] */
-	} else
-	    while (*s && *s != '/' && *s != ':') *p++ = *s++;
-	*p = '\0';
-	if (!*s) {
-	    printf("Incomplete URL: %s\n",url);
-	    return false;
-	}
-	if (*s == ':') {
-	    s++;
-	    p = url_buf;	/* temp space */
-	    if (!isdigit(*s)) {
-		printf("Bad URL (non-numeric portnum): %s\n",url);
-		return false;
-	    }
-	    while (isdigit(*s)) *p++ = *s++;
-	    *p = '\0';
-	    url_port = atoi(url_buf);
-	}
+        /* normal URL type, will have host (optional portnum) */
+        s += 2;
+        p = url_host;
+        /* check for address literal: news://[ip:v6:address]:port/ */
+        if (*s == '[') {
+            while (*s && *s != ']')
+                *p++ = *s++;
+            if (!*s) {
+                printf("Bad address literal: %s\n",url);
+                return false;
+            }
+            s++;        /* skip ] */
+        } else
+            while (*s && *s != '/' && *s != ':') *p++ = *s++;
+        *p = '\0';
+        if (!*s) {
+            printf("Incomplete URL: %s\n",url);
+            return false;
+        }
+        if (*s == ':') {
+            s++;
+            p = url_buf;        /* temp space */
+            if (!isdigit(*s)) {
+                printf("Bad URL (non-numeric portnum): %s\n",url);
+                return false;
+            }
+            while (isdigit(*s)) *p++ = *s++;
+            *p = '\0';
+            url_port = atoi(url_buf);
+        }
     } else {
-	if (!strEQ(url_type,"news")) {
-	    printf("URL needs a hostname: %s\n",url);
-	    return false;
-	}
+        if (!strEQ(url_type,"news")) {
+            printf("URL needs a hostname: %s\n",url);
+            return false;
+        }
     }
     /* finally, just do the path */
     if (*s != '/') {
-	printf("Bad URL (path does not start with /): %s\n",url);
-	return false;
+        printf("Bad URL (path does not start with /): %s\n",url);
+        return false;
     }
     strcpy(url_path,s);
     return true;
@@ -215,16 +215,16 @@ url_get (char *url, char *outfile)
     bool flag;
 
     if (!parse_url(url))
-	return false;
+        return false;
 
     if (strEQ(url_type,"http"))
-	flag = fetch_http(url_host,url_port,url_path,outfile);
+        flag = fetch_http(url_host,url_port,url_path,outfile);
     else if (strEQ(url_type,"ftp"))
-	flag = fetch_ftp(url_host,url_path,outfile);
+        flag = fetch_ftp(url_host,url_path,outfile);
     else {
-	if (url_type)
-	    printf("\nURL type %s not supported (yet?)\n",url_type);
-	flag = false;
+        if (url_type)
+            printf("\nURL type %s not supported (yet?)\n",url_type);
+        flag = false;
     }
     return flag;
 }

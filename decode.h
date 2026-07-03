@@ -4,15 +4,15 @@
 
 extern char* decode_filename;
 
-#define DECODE_DONE	 0
-#define DECODE_START	 1
+#define DECODE_DONE      0
+#define DECODE_START     1
 #define DECODE_INACTIVE  2
-#define DECODE_SETLEN	 3
-#define DECODE_ACTIVE	 4
+#define DECODE_SETLEN    3
+#define DECODE_ACTIVE    4
 #define DECODE_NEXT2LAST 5
-#define DECODE_LAST	 6
+#define DECODE_LAST      6
 #define DECODE_MAYBEDONE 7
-#define DECODE_ERROR	 8
+#define DECODE_ERROR     8
 
 #define BADCHARS "!$&*()|\'\";<>[]{}?/`\\ \t"
 

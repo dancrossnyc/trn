@@ -4,9 +4,9 @@
  * scan display functions
  */
 
-	/* height of screen in characters */
+        /* height of screen in characters */
 extern int scr_height;
-	/* width of screen in characters */
+        /* width of screen in characters */
 extern int scr_width;
 
 /* has the window been resized? */

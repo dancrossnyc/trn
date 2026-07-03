@@ -4,46 +4,46 @@
  *
  */
 
-#define UN_NONE		0
+#define UN_NONE         0
 /* textual placeholder */
-#define UN_TXT		1
-#define UN_DATASRC	2
-#define UN_NEWSGROUP	3
-#define UN_GROUPMASK	4
+#define UN_TXT          1
+#define UN_DATASRC      2
+#define UN_NEWSGROUP    3
+#define UN_GROUPMASK    4
 /* an individual article */
-#define UN_ARTICLE	5
+#define UN_ARTICLE      5
 /* filename for a configuration file */
-#define UN_CONFIGFILE	6
+#define UN_CONFIGFILE   6
 /* Virtual newsgroup file (reserved for compatability with strn) */
-#define UN_VIRTUAL1	7
+#define UN_VIRTUAL1     7
 /* virtual newsgroup marker (for pass 2) */
-#define UN_VGROUP	8
+#define UN_VGROUP       8
 /* text file */
-#define UN_TEXTFILE	9
+#define UN_TEXTFILE     9
 /* keystroke help functions from help.c */
-#define UN_HELPKEY	10
+#define UN_HELPKEY      10
 
 /* quick debugging: just has data */
-#define UN_DEBUG1	-1
+#define UN_DEBUG1       -1
 /* group that is deselected (with !group) */
 #define UN_GROUP_DESEL  -2
 /* virtual newsgroup deselected (with !group) */
 #define UN_VGROUP_DESEL -3
 /* generic deleted item -- no per-item memory */
-#define UN_DELETED	-4
+#define UN_DELETED      -4
 
 /* selector flags */
-#define UF_SEL		0x01
-#define UF_DEL		0x02
-#define UF_DELSEL	0x04
-#define UF_INCLUDED	0x10
-#define UF_EXCLUDED	0x20
+#define UF_SEL          0x01
+#define UF_DEL          0x02
+#define UF_DELSEL       0x04
+#define UF_INCLUDED     0x10
+#define UF_EXCLUDED     0x20
 
 /* virtual/merged group flags (UNIV_VIRT_GROUP.flags) */
 /* articles use minimum score */
-#define UF_VG_MINSCORE	0x01
+#define UF_VG_MINSCORE  0x01
 /* articles use maximum score */
-#define UF_VG_MAXSCORE	0x02
+#define UF_VG_MAXSCORE  0x02
 
 struct univ_groupmask_data {
     char* title;
@@ -95,14 +95,14 @@ union univ_data {
 struct univ_item {
     UNIV_ITEM* next;
     UNIV_ITEM* prev;
-    int num;				/* natural order (for sort) */
-    int flags;				/* for selector */
-    int type;				/* what kind of object is it? */
-    char* desc;				/* default description */
+    int num;                            /* natural order (for sort) */
+    int flags;                          /* for selector */
+    int type;                           /* what kind of object is it? */
+    char* desc;                         /* default description */
 #ifdef SCORE
     int score;
 #endif
-    UNIV_DATA data;			/* describes the object */
+    UNIV_DATA data;                     /* describes the object */
 };
 
 /* have we ever been initialized? */
@@ -130,10 +130,10 @@ extern UNIV_ITEM* first_univ;
 extern UNIV_ITEM* last_univ;
 extern UNIV_ITEM* sel_page_univ;
 extern UNIV_ITEM* sel_next_univ;
-extern char* univ_fname;			/* current filename (may be null) */
-extern char* univ_label;			/* current label (may be null) */
-extern char* univ_title;			/* title of current level */
-extern char* univ_tmp_file;		/* temp. file (may be null) */
+extern char* univ_fname;                        /* current filename (may be null) */
+extern char* univ_label;                        /* current label (may be null) */
+extern char* univ_title;                        /* title of current level */
+extern char* univ_tmp_file;             /* temp. file (may be null) */
 extern HASHTABLE* univ_ng_hash;
 extern HASHTABLE* univ_vg_hash;
 /* end of items that must be saved */

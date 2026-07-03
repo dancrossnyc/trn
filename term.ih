@@ -5,8 +5,8 @@
 struct keymap {
     char km_type[128];
     union km_union {
-	KEYMAP* km_km;
-	char* km_str;
+        KEYMAP* km_km;
+        char* km_str;
     } km_ptr[128];
 };
 
@@ -19,7 +19,7 @@ struct keymap {
 #define KM_GSHIFT 4
 #define KM_GMASK 7
 
-#define TC_STRINGS 48	/* number of colors we can keep track of */
+#define TC_STRINGS 48   /* number of colors we can keep track of */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

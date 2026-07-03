@@ -6,20 +6,20 @@
 #define DEFAULT_SCOREDIR "%+/scores"
 
 struct sf_entry {
-    int head_type;	/* header # (see head.h) */
-    int score;		/* score change */
-    char* str1;		/* first string part */
-    char* str2;		/* second string part */
-    COMPEX* compex;	/* regular expression ptr */
-    char flags;		/* 1: regex is valid
-			 * 2: rule has been applied to the current article.
-			 * 4: use faster rule checking  (later)
-			 */
+    int head_type;      /* header # (see head.h) */
+    int score;          /* score change */
+    char* str1;         /* first string part */
+    char* str2;         /* second string part */
+    COMPEX* compex;     /* regular expression ptr */
+    char flags;         /* 1: regex is valid
+                         * 2: rule has been applied to the current article.
+                         * 4: use faster rule checking  (later)
+                         */
 };
 /* note that negative header #s are used to indicate special entries... */
 
-extern int sf_num_entries;	/* # of entries */
-extern SF_ENTRY* sf_entries;	/* array of entries */
+extern int sf_num_entries;      /* # of entries */
+extern SF_ENTRY* sf_entries;    /* array of entries */
 
 #ifdef SCOREFILE_CACHE
 /* for cached score rules */
@@ -35,7 +35,7 @@ extern SF_FILE *sf_files;
 extern int sf_num_files;
 #endif
 
-extern char **sf_abbr;		/* abbreviations */
+extern char **sf_abbr;          /* abbreviations */
 
 /* when true, the scoring routine prints lots of info... */
 extern int sf_score_verbose;

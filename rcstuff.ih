@@ -2,9 +2,9 @@
  */
 /* This software is copyrighted as detailed in the LICENSE file. */
 
-#define RI_ID		1
-#define RI_NEWSRC	2
-#define RI_ADDGROUPS	3
+#define RI_ID           1
+#define RI_NEWSRC       2
+#define RI_ADDGROUPS    3
 
 INI_WORDS rcgroups_ini[] = {
     { 0, "RCGROUPS", 0 },

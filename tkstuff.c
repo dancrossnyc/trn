@@ -27,10 +27,10 @@ int ttk_do_waiting_flag = 1;
 /* if true, we are really running TCL */
 int ttcl_running = 0;
 
-Tcl_Interp* ttcl_interp;	/* Interpreter for this application. */
+Tcl_Interp* ttcl_interp;        /* Interpreter for this application. */
 
 #ifdef USE_TK
-Tk_Window mainWindow;	/* The main window for the application. */
+Tk_Window mainWindow;   /* The main window for the application. */
 
 static char* ttk_idle_pending_buf;
 #endif
@@ -44,7 +44,7 @@ static void
 ttk_waitidle_pending (void)
 {
     if (ttk_idle_flag) {
-	(void)Tcl_Eval(ttcl_interp,ttk_idle_pending_buf);
+        (void)Tcl_Eval(ttcl_interp,ttk_idle_pending_buf);
     }
 }
 #endif
@@ -54,15 +54,15 @@ void
 ttk_do_waiting_events (void)
 {
     if (ttk_running) {
-	ttk_waitidle_pending();
-	if (ttk_do_waiting_flag) {
-	    while (Tk_DoOneEvent(TK_DONT_WAIT))
-		;				/* EMPTY */
-	} else {
-	    /* always at least do file events */
-	    while (Tk_DoOneEvent(TK_FILE_EVENTS|TK_DONT_WAIT))
-		;				/* EMPTY */
-	}
+        ttk_waitidle_pending();
+        if (ttk_do_waiting_flag) {
+            while (Tk_DoOneEvent(TK_DONT_WAIT))
+                ;                               /* EMPTY */
+        } else {
+            /* always at least do file events */
+            while (Tk_DoOneEvent(TK_FILE_EVENTS|TK_DONT_WAIT))
+                ;                               /* EMPTY */
+        }
     }
 }
 #endif
@@ -75,10 +75,10 @@ void
 ttk_wait_for_input (void)
 {
     if (ttk_running) {
-	while (!finput_pending(1)) {
-	    ttk_waitidle_pending();
-	    Tk_DoOneEvent(0);
-	}
+        while (!finput_pending(1)) {
+            ttk_waitidle_pending();
+            Tk_DoOneEvent(0);
+        }
     }
 }
 #endif /* USE_TK */
@@ -98,36 +98,36 @@ ttcl_init (void)
 
 #ifdef USE_TK
     if (UseTk)
-      UseTcl = 1;	/* TCL is required for TK */
+      UseTcl = 1;       /* TCL is required for TK */
 #endif
 
     /* do we really want to run TCL? */
     if (!UseTcl) {
-	return;
+        return;
     }
 
 #ifdef USE_TK
     if (UseTk) {
-	/* set up the idle buffer */
-	strcpy(pending_buf,"ttk_idlepending");
-	ttk_idle_pending_buf = pending_buf;
+        /* set up the idle buffer */
+        strcpy(pending_buf,"ttk_idlepending");
+        ttk_idle_pending_buf = pending_buf;
 
-	/* plain NULL pointer does not work (it is "NULL" in TCL) */
-	ttk_keys = (char*)safemalloc(sizeof(char));
-	if (!ttk_keys)		/* sheer paranoia */
-	    return;
-	*ttk_keys = '\0';
+        /* plain NULL pointer does not work (it is "NULL" in TCL) */
+        ttk_keys = (char*)safemalloc(sizeof(char));
+        if (!ttk_keys)          /* sheer paranoia */
+            return;
+        *ttk_keys = '\0';
     }
 #endif
 
     if (TCL_MAJOR_VERSION<7) {
-	UseTcl = UseTk = 0;	/* TCL is too old */
-	return;
+        UseTcl = UseTk = 0;     /* TCL is too old */
+        return;
     }
 
 #ifdef USE_TK
     if (TK_MAJOR_VERSION<4) {
-	UseTk = 0;	/* TK is too old.  (We probably won't compile.) */
+        UseTk = 0;      /* TK is too old.  (We probably won't compile.) */
     }
 #endif
 
@@ -137,44 +137,44 @@ ttcl_init (void)
 #endif
 
 #ifdef USE_TK
-    ttk_running = 1;	/* be optimistic */
+    ttk_running = 1;    /* be optimistic */
 #if TK_MINOR_VERSION == 0
     if (UseTk && (TK_MINOR_VERSION==0)) {
-	/* TK 4.0 initialization */
-	name = "tktrn";
-	class = (char*)ckalloc((unsigned) (strlen(name) + 1));
-	strcpy(class, name);
-	class[0] = toupper((unsigned char) class[0]);
-	mainWindow = Tk_CreateMainWindow(ttcl_interp, 0, name, class);
-	ckfree(class);
-	if (mainWindow == NULL) {
+        /* TK 4.0 initialization */
+        name = "tktrn";
+        class = (char*)ckalloc((unsigned) (strlen(name) + 1));
+        strcpy(class, name);
+        class[0] = toupper((unsigned char) class[0]);
+        mainWindow = Tk_CreateMainWindow(ttcl_interp, 0, name, class);
+        ckfree(class);
+        if (mainWindow == NULL) {
 #if 0
-	    /* XXX handle error better */
-	    fprintf(stderr, "%s\n", ttcl_interp->result);
+            /* XXX handle error better */
+            fprintf(stderr, "%s\n", ttcl_interp->result);
 #endif
-	    ttk_running = 0;
-	}
+            ttk_running = 0;
+        }
     }
 #endif
 #endif
 
     if (Tcl_Init(ttcl_interp) == TCL_ERROR) {
 #ifdef USE_TK
-	ttk_running = 0;
+        ttk_running = 0;
 #endif
-	return;
+        return;
     }
     ttcl_running = 1;
 
 #ifdef USE_TK
     if (ttk_running) {
-	if (Tk_Init(ttcl_interp) == TCL_ERROR) {
-	    ttk_running = 0;
-	}
+        if (Tk_Init(ttcl_interp) == TCL_ERROR) {
+            ttk_running = 0;
+        }
 #if TK_MINOR_VERSION > 0
-	/* TK 4.1 or higher initialization */
-	Tcl_StaticPackage(ttcl_interp, "Tk", Tk_Init,
-		  (Tcl_PackageInitProc *) NULL);
+        /* TK 4.1 or higher initialization */
+        Tcl_StaticPackage(ttcl_interp, "Tk", Tk_Init,
+                  (Tcl_PackageInitProc *) NULL);
 #endif
     }
 #endif
@@ -183,36 +183,36 @@ ttcl_init (void)
 
 #ifdef USE_TK
     if (ttk_running) {
-	/* misc. initialization done *before* the user tkinit file */
-	Tcl_LinkVar(ttcl_interp, "ttk_keys", (char*)&ttk_keys,
-		    TCL_LINK_STRING);
-	ttk_idle_flag = 0;
-	Tcl_LinkVar(ttcl_interp, "ttk_idle_flag",
-		    (char*)&ttk_idle_flag, TCL_LINK_INT);
-	/* later make the article tree stuff optional, check value */
-	(void)ttk_tree_init();
+        /* misc. initialization done *before* the user tkinit file */
+        Tcl_LinkVar(ttcl_interp, "ttk_keys", (char*)&ttk_keys,
+                    TCL_LINK_STRING);
+        ttk_idle_flag = 0;
+        Tcl_LinkVar(ttcl_interp, "ttk_idle_flag",
+                    (char*)&ttk_idle_flag, TCL_LINK_INT);
+        /* later make the article tree stuff optional, check value */
+        (void)ttk_tree_init();
     }
 #endif
 
     /* Load the user TCL startup code */
     if (Tcl_EvalFile(ttcl_interp, estrdup(filexp("%+/tclinit")))
-	!= TCL_OK) {
-	/* XXX Later print some message about problem? */
-	/* This file is optional, so don't do anything */
-	;
+        != TCL_OK) {
+        /* XXX Later print some message about problem? */
+        /* This file is optional, so don't do anything */
+        ;
     }
 
 #ifdef USE_TK
     if (ttk_running) {
-	if (Tcl_EvalFile(ttcl_interp, estrdup(filexp("%+/tkinit")))
-	    != TCL_OK) {
-	    /* XXX Later print some message about problem? */
-	    ttk_running = 0;		/* don't try to run */
-	}
-	/* do simple initialization internally */
-	Tcl_Eval(ttcl_interp,
+        if (Tcl_EvalFile(ttcl_interp, estrdup(filexp("%+/tkinit")))
+            != TCL_OK) {
+            /* XXX Later print some message about problem? */
+            ttk_running = 0;            /* don't try to run */
+        }
+        /* do simple initialization internally */
+        Tcl_Eval(ttcl_interp,
       "fileevent stdin readable { set ttk_keys \"$ttk_keys[read stdin 1]\" }");
-	ttk_do_waiting_events();
+        ttk_do_waiting_events();
     }
 #endif
 }
@@ -253,7 +253,7 @@ ttcl_get_int (char *varname)
     /* check errors later? */
     s = Tcl_GetVar(ttcl_interp,varname,0);
     if (!s)
-	return 0;
+        return 0;
     (void)Tcl_GetInt(ttcl_interp,s,&result);
     return result;
 }
@@ -272,17 +272,17 @@ ttcl_eval (char *str)
     int len;
 
     if (ttcl_running) {
-	if ((len = strlen(str)) > 1020) {
-	    p = estrdup(str);
-	} else {
-	    strcpy(buf,str);
-	    p = buf;
-	}
-	/* later do error checking */
-	(void)Tcl_Eval(ttcl_interp,p);
-	if (len > 1020) {
-	    safefree(p);
-	}
+        if ((len = strlen(str)) > 1020) {
+            p = estrdup(str);
+        } else {
+            strcpy(buf,str);
+            p = buf;
+        }
+        /* later do error checking */
+        (void)Tcl_Eval(ttcl_interp,p);
+        if (len > 1020) {
+            safefree(p);
+        }
     }
 }
 #endif /* USE_TCL */

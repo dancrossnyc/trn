@@ -31,28 +31,28 @@ nntp_list (char *type, char *arg, int len)
     int ret;
 #ifdef DEBUG /*$$*/
     if (len && (debug & 1) && strcaseEQ(type,"active"))
-	return -1;
+        return -1;
 #endif
     if (len)
-	sprintf(ser_line, "LIST %s %.*s", type, len, arg);
+        sprintf(ser_line, "LIST %s %.*s", type, len, arg);
     else if (strcaseEQ(type,"active"))
-	strcpy(ser_line, "LIST");
+        strcpy(ser_line, "LIST");
     else
-	sprintf(ser_line, "LIST %s", type);
+        sprintf(ser_line, "LIST %s", type);
     if (nntp_command(ser_line) <= 0)
-	return -2;
+        return -2;
     if ((ret = nntp_check()) <= 0)
-	return ret? ret : -1;
+        return ret? ret : -1;
     if (!len)
-	return 1;
+        return 1;
     if ((ret = nntp_gets(ser_line, sizeof ser_line)) < 0)
-	return ret;
+        return ret;
 #if defined(DEBUG)
     if (debug & DEB_NNTP)
-	printf("<%s\n", ser_line);
+        printf("<%s\n", ser_line);
 #endif
     if (nntp_at_list_end(ser_line))
-	return 0;
+        return 0;
     return 1;
 }
 
@@ -61,14 +61,14 @@ nntp_finish_list (void)
 {
     int ret;
     do {
-	while ((ret = nntp_gets(ser_line, sizeof ser_line)) == 0) {
-	    /* A line w/o a newline is too long to be the end of the
-	    ** list, so grab the rest of this line and try again. */
-	    while ((ret = nntp_gets(ser_line, sizeof ser_line)) == 0)
-		;
-	    if (ret < 0)
-		return;
-	}
+        while ((ret = nntp_gets(ser_line, sizeof ser_line)) == 0) {
+            /* A line w/o a newline is too long to be the end of the
+            ** list, so grab the rest of this line and try again. */
+            while ((ret = nntp_gets(ser_line, sizeof ser_line)) == 0)
+                ;
+            if (ret < 0)
+                return;
+        }
     } while (ret > 0 && !nntp_at_list_end(ser_line));
 }
 
@@ -79,36 +79,36 @@ nntp_group (char *group, NGDATA *gp)
 {
     sprintf(ser_line, "GROUP %s", group);
     if (nntp_command(ser_line) <= 0)
-	return -2;
+        return -2;
     switch (nntp_check()) {
       case -2:
-	return -2;
+        return -2;
       case -1:
       case 0: {
-	int ser_int = atoi(ser_line);
-	if (ser_int != NNTP_NOSUCHGROUP_VAL
-	 && ser_int != NNTP_SYNTAX_VAL) {
-	    if (ser_int != NNTP_AUTH_NEEDED_VAL && ser_int != NNTP_ACCESS_VAL
-	     && ser_int != NNTP_AUTH_REJECT_VAL) {
-		fprintf(stderr, "\nServer's response to GROUP %s:\n%s\n",
-			group, ser_line);
-		return -1;
-	    }
-	}
-	return 0;
+        int ser_int = atoi(ser_line);
+        if (ser_int != NNTP_NOSUCHGROUP_VAL
+         && ser_int != NNTP_SYNTAX_VAL) {
+            if (ser_int != NNTP_AUTH_NEEDED_VAL && ser_int != NNTP_ACCESS_VAL
+             && ser_int != NNTP_AUTH_REJECT_VAL) {
+                fprintf(stderr, "\nServer's response to GROUP %s:\n%s\n",
+                        group, ser_line);
+                return -1;
+            }
+        }
+        return 0;
       }
     }
     if (gp) {
-	long count, first, last;
+        long count, first, last;
 
-	(void) sscanf(ser_line,"%*d%ld%ld%ld",&count,&first,&last);
-	/* NNTP mangles the high/low values when no articles are present. */
-	if (!count)
-	    gp->abs1st = gp->ngmax+1;
-	else {
-	    gp->abs1st = (ART_NUM)first;
-	    gp->ngmax = (ART_NUM)last;
-	}
+        (void) sscanf(ser_line,"%*d%ld%ld%ld",&count,&first,&last);
+        /* NNTP mangles the high/low values when no articles are present. */
+        if (!count)
+            gp->abs1st = gp->ngmax+1;
+        else {
+            gp->abs1st = (ART_NUM)first;
+            gp->ngmax = (ART_NUM)last;
+        }
     }
     return 1;
 }
@@ -120,7 +120,7 @@ nntp_stat (ART_NUM artnum)
 {
     sprintf(ser_line, "STAT %ld", (long)artnum);
     if (nntp_command(ser_line) <= 0)
-	return -2;
+        return -2;
     return nntp_check();
 }
 
@@ -133,10 +133,10 @@ nntp_stat_id (char *msgid)
 
     sprintf(ser_line, "STAT %s", msgid);
     if (nntp_command(ser_line) <= 0)
-	return -2;
+        return -2;
     artnum = nntp_check();
     if (artnum > 0 && sscanf(ser_line, "%*d%ld", &artnum) != 1)
-	artnum = 0;
+        artnum = 0;
     return (ART_NUM)artnum;
 }
 
@@ -146,10 +146,10 @@ nntp_next_art (void)
     long artnum;
 
     if (nntp_command("NEXT") <= 0)
-	return -2;
+        return -2;
     artnum = nntp_check();
     if (artnum > 0 && sscanf(ser_line, "%*d %ld", &artnum) != 1)
-	artnum = 0;
+        artnum = 0;
     return (ART_NUM)artnum;
 }
 
@@ -160,7 +160,7 @@ nntp_header (ART_NUM artnum)
 {
     sprintf(ser_line, "HEAD %ld", (long)artnum);
     if (nntp_command(ser_line) <= 0)
-	return -2;
+        return -2;
     return nntp_check();
 }
 
@@ -173,51 +173,51 @@ nntp_body (ART_NUM artnum)
 
     artname = nntp_artname(artnum, false); /* Is it already in a tmp file? */
     if (artname) {
-	if (body_pos >= 0)
-	    nntp_finishbody(FB_DISCARD);
-	artfp = fopen(artname,"r");
-	if (artfp && fstat(fileno(artfp),&filestat) == 0)
-	    body_end = filestat.st_size;
-	return;
+        if (body_pos >= 0)
+            nntp_finishbody(FB_DISCARD);
+        artfp = fopen(artname,"r");
+        if (artfp && fstat(fileno(artfp),&filestat) == 0)
+            body_end = filestat.st_size;
+        return;
     }
 
     artname = nntp_artname(artnum, true);   /* Allocate a tmp file */
     if (!(artfp = fopen(artname, "w+"))) {
-	fprintf(stderr, "\nUnable to write temporary file: '%s'.\n",
-		artname);
-	finalize(1); /*$$*/
+        fprintf(stderr, "\nUnable to write temporary file: '%s'.\n",
+                artname);
+        finalize(1); /*$$*/
     }
     chmod(artname, 0600);
     /*artio_setbuf(artfp);$$*/
     if (parsed_art == artnum)
-	sprintf(ser_line, "BODY %ld", (long)artnum);
+        sprintf(ser_line, "BODY %ld", (long)artnum);
     else
-	sprintf(ser_line, "ARTICLE %ld", (long)artnum);
+        sprintf(ser_line, "ARTICLE %ld", (long)artnum);
     if (nntp_command(ser_line) <= 0)
-	finalize(1); /*$$*/
+        finalize(1); /*$$*/
     switch (nntp_check()) {
       case -2:
       case -1:
-	finalize(1); /*$$*/
+        finalize(1); /*$$*/
       case 0:
-	fclose(artfp);
-	artfp = NULL;
-	errno = ENOENT;			/* Simulate file-not-found */
-	return;
+        fclose(artfp);
+        artfp = NULL;
+        errno = ENOENT;                 /* Simulate file-not-found */
+        return;
     }
     body_pos = 0;
     if (parsed_art == artnum) {
-	fwrite(headbuf, 1, strlen(headbuf), artfp);
-	htype[PAST_HEADER].minpos = body_end = (ART_POS)ftell(artfp);
+        fwrite(headbuf, 1, strlen(headbuf), artfp);
+        htype[PAST_HEADER].minpos = body_end = (ART_POS)ftell(artfp);
     }
     else {
-	char b[NNTP_STRLEN];
-	ART_POS prev_pos = body_end = 0;
-	while (nntp_copybody(b, sizeof b, body_end+1) > 0) {
-	    if (*b == '\n' && body_end - prev_pos < sizeof b)
-		break;
-	    prev_pos = body_end;
-	}
+        char b[NNTP_STRLEN];
+        ART_POS prev_pos = body_end = 0;
+        while (nntp_copybody(b, sizeof b, body_end+1) > 0) {
+            if (*b == '\n' && body_end - prev_pos < sizeof b)
+                break;
+            prev_pos = body_end;
+        }
     }
     fseek(artfp, 0L, 0);
     nntplink.flags &= ~NNTP_NEW_CMD_OK;
@@ -237,24 +237,24 @@ nntp_copybody (char *s, int limit, ART_POS pos)
     int found_nl;
 
     while (pos > body_end || !had_nl) {
-	found_nl = nntp_gets(s, limit);
-	if (found_nl < 0)
-	    strcpy(s,"."); /*$$*/
-	if (had_nl) {
-	    if (nntp_at_list_end(s)) {
-		fseek(artfp, (long)body_pos, 0);
-		body_pos = -1;
-		return 0;
-	    }
-	    if (s[0] == '.')
-		safecpy(s,s+1,limit);
-	}
-	len = strlen(s);
-	if (found_nl)
-	    strcpy(s+len, "\n");
-	fputs(s, artfp);
-	body_end = ftell(artfp);
-	had_nl = found_nl;
+        found_nl = nntp_gets(s, limit);
+        if (found_nl < 0)
+            strcpy(s,"."); /*$$*/
+        if (had_nl) {
+            if (nntp_at_list_end(s)) {
+                fseek(artfp, (long)body_pos, 0);
+                body_pos = -1;
+                return 0;
+            }
+            if (s[0] == '.')
+                safecpy(s,s+1,limit);
+        }
+        len = strlen(s);
+        if (found_nl)
+            strcpy(s+len, "\n");
+        fputs(s, artfp);
+        body_end = ftell(artfp);
+        had_nl = found_nl;
     }
     return 1;
 }
@@ -264,40 +264,40 @@ nntp_finishbody (int bmode)
 {
     char b[NNTP_STRLEN];
     if (body_pos < 0)
-	return 0;
+        return 0;
     if (bmode == FB_DISCARD) {
-	/*printf("Discarding the rest of the article...\n"); $$*/
+        /*printf("Discarding the rest of the article...\n"); $$*/
 #if 0
-	/* Implement this if flushing the data becomes possible */
-	nntp_artname(openart, -1); /* Or something... */
-	openart = 0;	/* Since we didn't finish the art, forget its number */
+        /* Implement this if flushing the data becomes possible */
+        nntp_artname(openart, -1); /* Or something... */
+        openart = 0;    /* Since we didn't finish the art, forget its number */
 #endif
     }
     else
     if (bmode == FB_OUTPUT) {
 #ifdef VERBOSE
-	IF(verbose)
-	    printf("Receiving the rest of the article..."), fflush(stdout);
-	ELSE
+        IF(verbose)
+            printf("Receiving the rest of the article..."), fflush(stdout);
+        ELSE
 #endif
 #ifdef TERSE
-	    printf("Receiving..."), fflush(stdout);
+            printf("Receiving..."), fflush(stdout);
 #endif
     }
     if (body_end != body_pos)
-	fseek(artfp, (long)body_end, 0);
+        fseek(artfp, (long)body_end, 0);
     if (bmode != FB_BACKGROUND)
-	nntp_copybody(b, sizeof b, (ART_POS)0x7fffffffL);
+        nntp_copybody(b, sizeof b, (ART_POS)0x7fffffffL);
     else {
-	while (nntp_copybody(b, sizeof b, body_end+1)) {
-	    if (input_pending())
-		break;
-	}
-	if (body_pos >= 0)
-	    fseek(artfp, (long)body_pos, 0);
+        while (nntp_copybody(b, sizeof b, body_end+1)) {
+            if (input_pending())
+                break;
+        }
+        if (body_pos >= 0)
+            fseek(artfp, (long)body_pos, 0);
     }
     if (bmode == FB_OUTPUT)
-	erase_line(0);	/* erase the prompt */
+        erase_line(0);  /* erase the prompt */
     return 1;
 }
 
@@ -305,15 +305,15 @@ int
 nntp_seekart (ART_POS pos)
 {
     if (body_pos >= 0) {
-	if (body_end < pos) {
-	    char b[NNTP_STRLEN];
-	    fseek(artfp, (long)body_end, 0);
-	    nntp_copybody(b, sizeof b, pos);
-	    if (body_pos >= 0)
-		body_pos = pos;
-	}
-	else
-	    body_pos = pos;
+        if (body_end < pos) {
+            char b[NNTP_STRLEN];
+            fseek(artfp, (long)body_end, 0);
+            nntp_copybody(b, sizeof b, pos);
+            if (body_pos >= 0)
+                body_pos = pos;
+        }
+        else
+            body_pos = pos;
     }
     return fseek(artfp, (long)pos, 0);
 }
@@ -328,20 +328,20 @@ char *
 nntp_readart (char *s, int limit)
 {
     if (body_pos >= 0) {
-	if (body_pos == body_end) {
-	    if (nntp_copybody(s, limit, body_pos+1) <= 0)
-		return NULL;
-	    if (body_end - body_pos < limit) {
-		body_pos = body_end;
-		return s;
-	    }
-	    fseek(artfp, (long)body_pos, 0);
-	}
-	s = fgets(s, limit, artfp);
-	body_pos = ftell(artfp);
-	if (body_pos == body_end)
-	    fseek(artfp, (long)body_pos, 0);  /* Prepare for coming write */
-	return s;
+        if (body_pos == body_end) {
+            if (nntp_copybody(s, limit, body_pos+1) <= 0)
+                return NULL;
+            if (body_end - body_pos < limit) {
+                body_pos = body_end;
+                return s;
+            }
+            fseek(artfp, (long)body_pos, 0);
+        }
+        s = fgets(s, limit, artfp);
+        body_pos = ftell(artfp);
+        if (body_pos == body_end)
+            fseek(artfp, (long)body_pos, 0);  /* Prepare for coming write */
+        return s;
     }
     return fgets(s, limit, artfp);
 }
@@ -357,11 +357,11 @@ nntp_time (void)
     time_t ss;
 
     if (nntp_command("DATE") <= 0)
-	return -2;
+        return -2;
     if (nntp_check() <= 0)
-	return time((time_t*)NULL);
+        return time((time_t*)NULL);
 
-    s = rindex(ser_line, ' ') + 1;
+    s = strrchr(ser_line, ' ') + 1;
     month = (s[4] - '0') * 10 + (s[5] - '0');
     day = (s[6] - '0') * 10 + (s[7] - '0');
     hh = (s[8] - '0') * 10 + (s[9] - '0');
@@ -372,19 +372,19 @@ nntp_time (void)
 
     /* This simple algorithm will be valid until the year 2100 */
     if (year % 4)
-	maxdays[2] = 28;
+        maxdays[2] = 28;
     else
-	maxdays[2] = 29;
+        maxdays[2] = 29;
     if (month < 1 || month > 12 || day < 1 || day > maxdays[month]
      || hh < 0 || hh > 23 || mm < 0 || mm > 59
      || ss < 0 || ss > 59)
-	return time((time_t*)NULL);
+        return time((time_t*)NULL);
 
     for (month--; month; month--)
-	day += maxdays[month];
+        day += maxdays[month];
 
     ss = ((((year-1970) * 365 + (year-1969)/4 + day - 1) * 24L + hh) * 60
-	  + mm) * 60 + ss;
+          + mm) * 60 + ss;
 
     return ss;
 }
@@ -396,10 +396,10 @@ nntp_newgroups (time_t t)
 
     ts = gmtime(&t);
     sprintf(ser_line, "NEWGROUPS %02d%02d%02d %02d%02d%02d GMT",
-	ts->tm_year % 100, ts->tm_mon+1, ts->tm_mday,
-	ts->tm_hour, ts->tm_min, ts->tm_sec);
+        ts->tm_year % 100, ts->tm_mon+1, ts->tm_mday,
+        ts->tm_hour, ts->tm_min, ts->tm_sec);
     if (nntp_command(ser_line) <= 0)
-	return -2;
+        return -2;
     return nntp_check();
 }
 
@@ -407,12 +407,12 @@ int
 nntp_artnums (void)
 {
     if (datasrc->flags & DF_NOLISTGROUP)
-	return 0;
+        return 0;
     if (nntp_command("LISTGROUP") <= 0)
-	return -2;
+        return -2;
     if (nntp_check() <= 0) {
-	datasrc->flags |= DF_NOLISTGROUP;
-	return 0;
+        datasrc->flags |= DF_NOLISTGROUP;
+        return 0;
     }
     return 1;
 }
@@ -422,12 +422,12 @@ int
 nntp_rover (void)
 {
     if (datasrc->flags & DF_NOXROVER)
-	return 0;
+        return 0;
     if (nntp_command("XROVER 1-") <= 0)
-	return -2;
+        return -2;
     if (nntp_check() <= 0) {
-	datasrc->flags |= DF_NOXROVER;
-	return 0;
+        datasrc->flags |= DF_NOXROVER;
+        return 0;
     }
     return 1;
 }
@@ -440,15 +440,15 @@ nntp_find_real_art (ART_NUM after)
 
     if (last_cached > after || last_cached < absfirst
      || nntp_stat(last_cached) <= 0) {
-	if (nntp_stat_id("") > after)
-	    return 0;
+        if (nntp_stat_id("") > after)
+            return 0;
     }
 
     while ((an = nntp_next_art()) > 0) {
-	if (an > after)
-	    return an;
-	if (after - an > 10)
-	    break;
+        if (an > after)
+            return an;
+        if (after - an > 10)
+            break;
     }
 
     return 0;
@@ -463,28 +463,28 @@ nntp_artname (ART_NUM artnum, bool allocate)
     int i, j;
 
     if (!artnum) {
-	for (i = 0; i < MAX_NNTP_ARTICLES; i++) {
-	    artnums[i] = 0;
-	    artages[i] = 0;
-	}
-	return NULL;
+        for (i = 0; i < MAX_NNTP_ARTICLES; i++) {
+            artnums[i] = 0;
+            artages[i] = 0;
+        }
+        return NULL;
     }
 
     now = time((time_t*)NULL);
 
     for (i = j = 0, lowage = now; i < MAX_NNTP_ARTICLES; i++) {
-	if (artnums[i] == artnum) {
-	    artages[i] = now;
-	    return nntp_tmpname(i);
-	}
-	if (artages[i] <= lowage)
-	    lowage = artages[j = i];
+        if (artnums[i] == artnum) {
+            artages[i] = now;
+            return nntp_tmpname(i);
+        }
+        if (artages[i] <= lowage)
+            lowage = artages[j = i];
     }
 
     if (allocate) {
-	artnums[j] = artnum;
-	artages[j] = now;
-	return nntp_tmpname(j);
+        artnums[j] = artnum;
+        artages[j] = now;
+        return nntp_tmpname(j);
     }
 
     return NULL;
@@ -502,9 +502,9 @@ int
 nntp_handle_nested_lists (void)
 {
     if (strcaseEQ(last_command,"quit"))
-	return 0; /*$$ flush data needed? */
+        return 0; /*$$ flush data needed? */
     if (nntp_finishbody(FB_DISCARD))
-	return 1;
+        return 1;
     fprintf(stderr,"Programming error! Nested NNTP calls detected.\n");
     return -1;
 }
@@ -516,20 +516,20 @@ nntp_handle_timeout (void)
     char last_command_save[NNTP_STRLEN];
 
     if (strcaseEQ(last_command,"quit"))
-	return 0;
+        return 0;
     if (handling_timeout)
-	return -1;
+        return -1;
     handling_timeout = true;
     strcpy(last_command_save, last_command);
     nntp_close(false);
     datasrc->nntplink = nntplink;
     if (nntp_connect(datasrc->newsid, 0) <= 0)
-	return -2;
+        return -2;
     datasrc->nntplink = nntplink;
     if (in_ng && nntp_group(ngname, (NGDATA*)NULL) <= 0)
-	return -2;
+        return -2;
     if (nntp_command(last_command_save) <= 0)
-	return -1;
+        return -1;
     strcpy(last_command, last_command_save); /*$$ Is this really needed? */
     handling_timeout = false;
     return 1;
@@ -543,7 +543,7 @@ nntp_server_died (DATASRC *dp)
     dp->flags |= DF_UNAVAILABLE;
     unuse_multirc(mp);
     if (!use_multirc(mp))
-	multirc = NULL;
+        multirc = NULL;
     fprintf(stderr,"\n%s\n", ser_line);
     get_anything();
 }
@@ -559,15 +559,15 @@ nntp_readcheck (void)
     /* try to get the status line and the status code */
     switch (nntp_check()) {
       case -2:
-	return -2;
+        return -2;
       case -1:
       case 0:
-	return rawbytes = -1;
+        return rawbytes = -1;
     }
 
     /* try to get the number of bytes being transfered */
     if (sscanf(ser_line, "%*d%ld", &rawbytes) != 1)
-	return rawbytes = -1;
+        return rawbytes = -1;
     return rawbytes;
 }
 #endif
@@ -581,7 +581,7 @@ nntp_read (char *buf, long n)
 {
     /* if no bytes to read, then just return EOF */
     if (rawbytes < 0)
-	return 0;
+        return 0;
 
 #ifdef HAS_SIGHOLD
     sighold(SIGINT);
@@ -589,17 +589,17 @@ nntp_read (char *buf, long n)
 
     /* try to read some data from the server */
     if (rawbytes) {
-	n = fread(buf, 1, n > rawbytes ? rawbytes : n, nntplink.rd_fp);
-	rawbytes -= n;
+        n = fread(buf, 1, n > rawbytes ? rawbytes : n, nntplink.rd_fp);
+        rawbytes -= n;
     } else
-	n = 0;
+        n = 0;
 
     /* if no more left, then fetch the end-of-command signature */
     if (!rawbytes) {
-	char buf[5];	/* "\r\n.\r\n" */
+        char buf[5];    /* "\r\n.\r\n" */
 
-	fread(buf, 1, 5, nntplink.rd_fp);
-	rawbytes = -1;
+        fread(buf, 1, 5, nntplink.rd_fp);
+        rawbytes = -1;
     }
 #ifdef HAS_SIGHOLD
     sigrelse(SIGINT);

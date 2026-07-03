@@ -4,10 +4,10 @@
 
 
 
-#define FB_BACKGROUND	0
-#define FB_OUTPUT	1
-#define FB_SILENT	2
-#define FB_DISCARD	3
+#define FB_BACKGROUND   0
+#define FB_OUTPUT       1
+#define FB_SILENT       2
+#define FB_DISCARD      3
 
 #define MAX_NNTP_ARTICLES   10
 

@@ -19,36 +19,36 @@ env_init (char *tcbuf, bool lax)
     bool fully_successful = true;
 
     if ((homedir = getenv("HOME")) == NULL)
-	homedir = getenv("LOGDIR");
+        homedir = getenv("LOGDIR");
 
     if ((tmpdir = getenv("TMPDIR")) == NULL)
-	tmpdir = getval("TMP","/tmp");
+        tmpdir = getval("TMP","/tmp");
 
     /* try to set loginName */
     if (lax) {
-	loginName = getenv("USER");
-	if (!loginName)
-	    loginName = getenv("LOGNAME");
+        loginName = getenv("USER");
+        if (!loginName)
+            loginName = getenv("LOGNAME");
     }
     if (!lax || !loginName) {
-	loginName = getlogin();
-	if (loginName)
-	    loginName = estrdup(loginName);
+        loginName = getlogin();
+        if (loginName)
+            loginName = estrdup(loginName);
     }
 
     /* Set realName, and maybe set loginName and homedir (if NULL). */
     if (!setusername(tcbuf)) {
-	if (!loginName)
-	    loginName = nullstr;
-	if (!realName)
-	    realName = nullstr;
-	fully_successful = false;
+        if (!loginName)
+            loginName = nullstr;
+        if (!realName)
+            realName = nullstr;
+        fully_successful = false;
     }
     env_init2();
 
     /* set phostname to the hostname of our local machine */
     if (!setphostname(tcbuf))
-	fully_successful = false;
+        fully_successful = false;
 
     return fully_successful;
 }
@@ -56,10 +56,10 @@ env_init (char *tcbuf, bool lax)
 static void
 env_init2 (void)
 {
-    if (dotdir)		/* Avoid running multiple times. */
-	return;
+    if (dotdir)         /* Avoid running multiple times. */
+        return;
     if (!homedir)
-	homedir = "/";
+        homedir = "/";
     dotdir = getval("DOTDIR",homedir);
     trndir = estrdup(filexp(getval("TRNDIR",TRNDIR)));
     newslib = estrdup(filexp(NEWSLIB));
@@ -78,53 +78,53 @@ setusername (char *tmpbuf)
     struct passwd* pwd;
 
     if (loginName == NULL)
-	pwd = getpwuid(getuid());
+        pwd = getpwuid(getuid());
     else
-	pwd = getpwnam(loginName);
+        pwd = getpwnam(loginName);
     if (!pwd)
-	return 0;
+        return 0;
     if (!loginName)
-	loginName = estrdup(pwd->pw_name);
+        loginName = estrdup(pwd->pw_name);
     if (!homedir)
-	homedir = estrdup(pwd->pw_dir);
+        homedir = estrdup(pwd->pw_dir);
     s = pwd->pw_gecos;
 #ifdef PASSNAMES
 #ifdef BERKNAMES
 #ifdef BERKJUNK
     while (*s && !isalnum(*s) && *s != '&') s++;
 #endif
-    if ((c = index(s, ',')) != NULL)
-	*c = '\0';
-    if ((c = index(s, ';')) != NULL)
-	*c = '\0';
+    if ((c = strchr(s, ',')) != NULL)
+        *c = '\0';
+    if ((c = strchr(s, ';')) != NULL)
+        *c = '\0';
     s = cpytill(buf,s,'&');
-    if (*s == '&') {			/* whoever thought this one up was */
-	c = buf + strlen(buf);		/* in the middle of the night */
-	strcat(c,loginName);		/* before the morning after */
-	strcat(c,s+1);
-	if (islower(*c))
-	    *c = toupper(*c);		/* gack and double gack */
+    if (*s == '&') {                    /* whoever thought this one up was */
+        c = buf + strlen(buf);          /* in the middle of the night */
+        strcat(c,loginName);            /* before the morning after */
+        strcat(c,s+1);
+        if (islower(*c))
+            *c = toupper(*c);           /* gack and double gack */
     }
     realName = estrdup(buf);
 #else /* !BERKNAMES */
-    if ((c = index(s, '(')) != NULL)
-	*c = '\0';
-    if ((c = index(s, '-')) != NULL)
-	s = c;
+    if ((c = strchr(s, '(')) != NULL)
+        *c = '\0';
+    if ((c = strchr(s, '-')) != NULL)
+        s = c;
     realName = estrdup(s);
 #endif /* !BERKNAMES */
 #else /* !PASSNAMES */
     {
-	FILE* fp;
-	env_init2(); /* Make sure homedir/dotdir/etc. are set. */
-	if ((fp = fopen(filexp(FULLNAMEFILE),"r")) != NULL) {
-	    fgets(buf,sizeof buf,fp);
-	    fclose(fp);
-	    buf[strlen(buf)-1] = '\0';
-	    realName = estrdup(buf);
-	}
-	else
-	    s = "PUT_YOUR_NAME_HERE";
+        FILE* fp;
+        env_init2(); /* Make sure homedir/dotdir/etc. are set. */
+        if ((fp = fopen(filexp(FULLNAMEFILE),"r")) != NULL) {
+            fgets(buf,sizeof buf,fp);
+            fclose(fp);
+            buf[strlen(buf)-1] = '\0';
+            realName = estrdup(buf);
+        }
+        else
+            s = "PUT_YOUR_NAME_HERE";
     }
 #endif /* !PASSNAMES */
     endpwent();
@@ -146,36 +146,36 @@ setphostname (char *tmpbuf)
 
     phostname = PHOSTNAME;
     if (FILE_REF(phostname) || *phostname == '~') {
-	phostname = filexp(phostname);
-	if ((fp = fopen(phostname,"r")) == NULL)
-	    strcpy(tmpbuf,".");
-	else {
-	    fgets(tmpbuf,TCBUF_SIZE,fp);
-	    fclose(fp);
-	    phostname = tmpbuf + strlen(tmpbuf) - 1;
-	    if (*phostname == '\n')
-		*phostname = '\0';
-	}
+        phostname = filexp(phostname);
+        if ((fp = fopen(phostname,"r")) == NULL)
+            strcpy(tmpbuf,".");
+        else {
+            fgets(tmpbuf,TCBUF_SIZE,fp);
+            fclose(fp);
+            phostname = tmpbuf + strlen(tmpbuf) - 1;
+            if (*phostname == '\n')
+                *phostname = '\0';
+        }
     }
     else
-	strcpy(tmpbuf,phostname);
+        strcpy(tmpbuf,phostname);
 
     if (*tmpbuf == '.') {
-	if (tmpbuf[1] != '\0')
-	    strcpy(buf,tmpbuf);
-	else
-	    *buf = '\0';
-	strcpy(tmpbuf,localhost);
-	strcat(tmpbuf,buf);
+        if (tmpbuf[1] != '\0')
+            strcpy(buf,tmpbuf);
+        else
+            *buf = '\0';
+        strcpy(tmpbuf,localhost);
+        strcat(tmpbuf,buf);
     }
 
-    if (!index(tmpbuf,'.')) {
-	if (*tmpbuf)
-	    strcat(tmpbuf, ".");
-	{
-	    strcat(tmpbuf,"UNKNOWN.HOST");
-	    hostname_ok = false;
-	}
+    if (!strchr(tmpbuf,'.')) {
+        if (*tmpbuf)
+            strcat(tmpbuf, ".");
+        {
+            strcat(tmpbuf,"UNKNOWN.HOST");
+            hostname_ok = false;
+        }
     }
     phostname = estrdup(tmpbuf);
     return hostname_ok;
@@ -187,12 +187,9 @@ getval (char *nam, char *def)
     char* val;
 
     if ((val = getenv(nam)) == NULL || !*val)
-	return def;
+        return def;
     return val;
 }
-
-static bool firstexport = true;
-extern char** environ;
 
 const char *
 export(const char *name, const char *value)

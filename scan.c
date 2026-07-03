@@ -8,8 +8,8 @@
 
 #include "common.h"
 #ifdef SCAN
-#include "final.h"		/* for assert statements */
-#include "util.h"		/* allocation */
+#include "final.h"              /* for assert statements */
+#include "util.h"               /* allocation */
 #include "scan.h"
 #include "score.h"
 #include "sorder.h"
@@ -54,8 +54,8 @@ s_init_context (int cnum, int type)
 
     /* s_num_contexts not incremented until last moment */
     if (cnum < 0 || cnum > s_num_contexts) {
-	printf("s_init_context: illegal context number %d!\n",cnum);
-	assert(false);
+        printf("s_init_context: illegal context number %d!\n",cnum);
+        assert(false);
     }
     p = s_contexts + cnum;
     p->type = type;
@@ -84,42 +84,42 @@ s_init_context (int cnum, int type)
     p->flags = 0;
     /* clear the page entries */
     for (i = 0; i < MAX_PAGE_SIZE; i++) {
-	p->page_ents[i].entnum = 0;
-	p->page_ents[i].lines = 0;
-	p->page_ents[i].start_line = 0;
-	p->page_ents[i].pageflags = (char)0;
+        p->page_ents[i].entnum = 0;
+        p->page_ents[i].lines = 0;
+        p->page_ents[i].start_line = 0;
+        p->page_ents[i].pageflags = (char)0;
     }
 }
 
 /* allocate a new context number and initialize it */
 int
 s_new_context (
-    int type			/* context type */
+    int type                    /* context type */
 )
 {
     int i;
 
     /* check for deleted contexts */
     for (i = 0; i < s_num_contexts; i++)
-	if (s_contexts[i].type == 0)	/* deleted context */
-	    break;
-    if (i < s_num_contexts) {	/* a deleted one was found */
-	s_init_context(i,type);
-	return i;
+        if (s_contexts[i].type == 0)    /* deleted context */
+            break;
+    if (i < s_num_contexts) {   /* a deleted one was found */
+        s_init_context(i,type);
+        return i;
     }
     /* none deleted, so allocate a new one */
     i = s_num_contexts;
     i++;
-    if (i == 1) {	/* none allocated before */
-	s_contexts = (SCONTEXT*)safemalloc(sizeof (SCONTEXT));
+    if (i == 1) {       /* none allocated before */
+        s_contexts = (SCONTEXT*)safemalloc(sizeof (SCONTEXT));
     } else {
-	s_contexts = (SCONTEXT*)saferealloc((char*)s_contexts,
-					i * sizeof (SCONTEXT));
+        s_contexts = (SCONTEXT*)saferealloc((char*)s_contexts,
+                                        i * sizeof (SCONTEXT));
     }
     s_contexts[i-1].page_ents =
-			(PAGE_ENT*)safemalloc(MAX_PAGE_SIZE*sizeof(PAGE_ENT));
+                        (PAGE_ENT*)safemalloc(MAX_PAGE_SIZE*sizeof(PAGE_ENT));
     s_init_context(i-1,type);
-    s_num_contexts++;			/* now safe to increment */
+    s_num_contexts++;                   /* now safe to increment */
     return s_num_contexts-1;
 }
 
@@ -163,14 +163,14 @@ s_save_context (void)
 
 void
 s_change_context (
-    int newcontext			/* context number to activate */
+    int newcontext                      /* context number to activate */
 )
 {
     SCONTEXT *p;
 
     if (newcontext < 0 || newcontext >= s_num_contexts) {
-	printf("s_change_context: bad context number %d!\n",newcontext);
-	assert(false);
+        printf("s_change_context: bad context number %d!\n",newcontext);
+        assert(false);
     }
     s_cur_context = newcontext;
     p = s_contexts + newcontext;
@@ -211,12 +211,12 @@ s_clean_contexts (void)
 
 void
 s_delete_context (
-    int cnum		/* context number to delete */
+    int cnum            /* context number to delete */
 )
 {
     if (cnum < 0 || cnum >= s_num_contexts) {
-	printf("s_delete_context: illegal context number %d!\n",cnum);
-	assert(false);
+        printf("s_delete_context: illegal context number %d!\n",cnum);
+        assert(false);
     }
     s_order_clean();
     /* mark the context as empty */

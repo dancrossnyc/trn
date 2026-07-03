@@ -22,12 +22,9 @@ struct list {
     int flags;
 };
 
-#define LF_ZERO_MEM	0x0001
-#define LF_SPARSE	0x0002
+#define LF_ZERO_MEM     0x0001
+#define LF_SPARSE       0x0002
 
-/* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
-
-void list_init (void);
 LIST* new_list (long,long,int,int,int,void(*) (LIST*,LISTNODE*));
 char* listnum2listitem (LIST*,long);
 long listitem2listnum (LIST*,char*);

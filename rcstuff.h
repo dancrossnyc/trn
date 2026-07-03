@@ -6,42 +6,42 @@
 #define TR_ONE ((ART_UNREAD) 1)
 #define TR_NONE ((ART_UNREAD) 0)
 #define TR_UNSUB ((ART_UNREAD) -1)
-			/* keep this one as -1, some tests use >= TR_UNSUB */
+                        /* keep this one as -1, some tests use >= TR_UNSUB */
 #define TR_IGNORE ((ART_UNREAD) -2)
 #define TR_BOGUS ((ART_UNREAD) -3)
 #define TR_JUNK ((ART_UNREAD) -4)
 
-#define NF_SEL		0x01
-#define NF_DEL		0x02
-#define NF_DELSEL	0x04
-#define NF_INCLUDED	0x10
-#define NF_UNTHREADED	0x40
-#define NF_VISIT	0x80
+#define NF_SEL          0x01
+#define NF_DEL          0x02
+#define NF_DELSEL       0x04
+#define NF_INCLUDED     0x10
+#define NF_UNTHREADED   0x40
+#define NF_VISIT        0x80
 
 #define ADDNEW_SUB ':'
 #define ADDNEW_UNSUB '!'
 
-#define GNG_RELOC	0x0001
-#define GNG_FUZZY	0x0002
+#define GNG_RELOC       0x0001
+#define GNG_FUZZY       0x0002
 
 extern HASHTABLE* newsrc_hash;
 
 struct newsrc {
-    NEWSRC*	next;
-    DATASRC*	datasrc;
-    char*	name;		/* the name of the associated newsrc */
-    char*	oldname;	/* the backup of the newsrc */
-    char*	newname;	/* our working newsrc file */
-    char*	infoname;	/* the time/size info file */
-    char*	lockname;	/* the lock file we created */
-    int		flags;
+    NEWSRC*     next;
+    DATASRC*    datasrc;
+    char*       name;           /* the name of the associated newsrc */
+    char*       oldname;        /* the backup of the newsrc */
+    char*       newname;        /* our working newsrc file */
+    char*       infoname;       /* the time/size info file */
+    char*       lockname;       /* the lock file we created */
+    int         flags;
 };
 
 #define RF_ADD_NEWGROUPS 0x0001
-#define RF_ADD_GROUPS	 0x0002
-#define RF_OPEN		 0x0100
-#define RF_ACTIVE	 0x0200
-#define RF_RCCHANGED	 0x0400
+#define RF_ADD_GROUPS    0x0002
+#define RF_OPEN          0x0100
+#define RF_ACTIVE        0x0200
+#define RF_RCCHANGED     0x0400
 
 struct multirc {
     NEWSRC* first;
@@ -49,8 +49,8 @@ struct multirc {
     int flags;
 };
 
-#define MF_SEL		0x0001
-#define MF_INCLUDED	0x0010
+#define MF_SEL          0x0001
+#define MF_INCLUDED     0x0010
 
 extern MULTIRC* sel_page_mp;
 extern MULTIRC* sel_next_mp;
@@ -61,10 +61,10 @@ extern MULTIRC* sel_next_mp;
 #define multirc_next(p) ((MULTIRC*)next_listitem(multirc_list,(char*)(p)))
 #define multirc_prev(p) ((MULTIRC*)prev_listitem(multirc_list,(char*)(p)))
 
-extern LIST* multirc_list;	/* a list of all MULTIRCs */
-extern MULTIRC* multirc;	/* the current MULTIRC */
+extern LIST* multirc_list;      /* a list of all MULTIRCs */
+extern MULTIRC* multirc;        /* the current MULTIRC */
 
-extern bool paranoid;		/* did we detect some inconsistency in .newsrc? */
+extern bool paranoid;           /* did we detect some inconsistency in .newsrc? */
 extern int addnewbydefault;
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */

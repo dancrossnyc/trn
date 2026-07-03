@@ -10,12 +10,12 @@
 #include "hash.h"
 #include "cache.h"
 #include "bits.h"
-#include "intrp.h"		/* for filexp */
-#include "ng.h"			/* art */
+#include "intrp.h"              /* for filexp */
+#include "ng.h"                 /* art */
 #include "ngdata.h"
-#include "util.h"		/* several */
+#include "util.h"               /* several */
 #include "util2.h"
-#include "env.h"		/* getval */
+#include "env.h"                /* getval */
 #ifdef SCAN
 #include "scan.h"
 #endif
@@ -27,15 +27,15 @@
 #include "score.h"
 #include "scoresave.h"
 
-long sc_save_new = 0;	 	/* new articles (unloaded) */
-long sc_loaded_count = 0;	/* how many articles were loaded? */
+long sc_save_new = 0;           /* new articles (unloaded) */
+long sc_loaded_count = 0;       /* how many articles were loaded? */
 
 static int num_lines = 0;
 static int lines_alloc = 0;
 static char** lines = NULL;
 
 static char lbuf[LBUFLEN];
-static char lbuf2[LBUFLEN];	/* what's another buffer between... */
+static char lbuf2[LBUFLEN];     /* what's another buffer between... */
 
 static int loaded;
 static int used;
@@ -46,8 +46,8 @@ void
 sc_sv_add (char *str)
 {
     if (num_lines == lines_alloc) {
-	lines_alloc += 100;
-	lines = (char**)saferealloc((char*)lines,lines_alloc * sizeof (char*));
+        lines_alloc += 100;
+        lines = (char**)saferealloc((char*)lines,lines_alloc * sizeof (char*));
     }
     lines[num_lines] = estrdup(str);
     num_lines++;
@@ -61,27 +61,27 @@ sc_sv_delgroup (char *gname)
     int start;
 
     for (i = 0; i < num_lines; i++) {
-	s = lines[i];
-	if (s && *s == '!' && strEQ(gname,s+1))
-	    break;
+        s = lines[i];
+        if (s && *s == '!' && strEQ(gname,s+1))
+            break;
     }
     if (i == num_lines)
-	return;		/* group not found */
+        return;         /* group not found */
     start = i;
     safefree(lines[i]);
     lines[i] = NULL;
     for (i++; i < num_lines; i++) {
-	s = lines[i];
-	if (s && *s == '!')
-	    break;
-	if (s) {
-	    safefree(s);
-	    lines[i] = NULL;
-	}
+        s = lines[i];
+        if (s && *s == '!')
+            break;
+        if (s) {
+            safefree(s);
+            lines[i] = NULL;
+        }
     }
     /* copy into the hole (if any) */
     for ( ; i < num_lines; i++)
-	lines[start++] = lines[i];
+        lines[start++] = lines[i];
     num_lines -= (i-start);
 }
 
@@ -99,13 +99,13 @@ sc_sv_getfile (void)
     fp = fopen(filexp(s),"r");
     if (!fp) {
 #if 0
-	printf("Could not open score save file for reading.\n");
+        printf("Could not open score save file for reading.\n");
 #endif
-	return;
+        return;
     }
     while (fgets(lbuf,LBUFLEN-2,fp)) {
-	lbuf[strlen(lbuf)-1] = '\0';	/* strip \n */
-	sc_sv_add(lbuf);
+        lbuf[strlen(lbuf)-1] = '\0';    /* strip \n */
+        sc_sv_add(lbuf);
     }
     fclose(fp);
 }
@@ -120,8 +120,8 @@ sc_sv_savefile (void)
     int i;
 
     if (num_lines == 0)
-	return;
-    waiting = true;	/* don't interrupt */
+        return;
+    waiting = true;     /* don't interrupt */
     s = getval("SAVESCOREFILE","%+/savedscores");
     savename = estrdup(filexp(s));
     strcpy(lbuf,savename);
@@ -129,25 +129,25 @@ sc_sv_savefile (void)
     tmpfp = fopen(lbuf,"w");
     if (!tmpfp) {
 #if 0
-	printf("Could not open score save temp file %s for writing.\n",
-	       lbuf);
+        printf("Could not open score save temp file %s for writing.\n",
+               lbuf);
 #endif
-	safefree(savename);
-	waiting = false;
-	return;
+        safefree(savename);
+        waiting = false;
+        return;
     }
     for (i = 0; i < num_lines; i++) {
-	if (lines[i])
-	    fprintf(tmpfp,"%s\n",lines[i]);
-	if (ferror(tmpfp)) {
-	    fclose(tmpfp);
-	    safefree(savename);
-	    printf("\nWrite error in temporary save file %s\n",lbuf);
-	    printf("(keeping old saved scores)\n");
-	    UNLINK(lbuf);
-	    waiting = false;
-	    return;
-	}
+        if (lines[i])
+            fprintf(tmpfp,"%s\n",lines[i]);
+        if (ferror(tmpfp)) {
+            fclose(tmpfp);
+            safefree(savename);
+            printf("\nWrite error in temporary save file %s\n",lbuf);
+            printf("(keeping old saved scores)\n");
+            UNLINK(lbuf);
+            waiting = false;
+            return;
+        }
     }
     fclose(tmpfp);
     UNLINK(savename);
@@ -159,7 +159,7 @@ sc_sv_savefile (void)
 ART_NUM
 sc_sv_use_line (
     char *line,
-    ART_NUM a	/* art number to start with */
+    ART_NUM a   /* art number to start with */
 )
 {
     char* s;
@@ -168,92 +168,92 @@ sc_sv_use_line (
     int score;
     int x;
 
-    score = 0;	/* get rid of warning */
+    score = 0;  /* get rid of warning */
     s = line;
     if (!s)
-	return a;
+        return a;
     while (*s) {
-	switch(*s) {
-	  case 'A': case 'B': case 'C': case 'D': case 'E':
-	  case 'F': case 'G': case 'H': case 'I':
-	    /* negative starting digit */
-	    p = s;
-	    c1 = *s;
-	    *s = '0' + ('J' - *s);	/* convert to first digit */
-	    s++;
-	    while (isdigit(*s)) s++;
-	    c2 = *s;
-	    *s = '\0';
-	    score = 0 - atoi(p);
-	    *p = c1;
-	    *s = c2;
-	    loaded++;
-	    if (is_available(a) && article_unread(a)) {
-		sc_set_score(a,score);
-		used++;
-	    }
-	    a++;
-	    break;
-	  case 'J': case 'K': case 'L': case 'M': case 'N':
-	  case 'O': case 'P': case 'Q': case 'R': case 'S':
-	    /* positive starting digit */
-	    p = s;
-	    c1 = *s;
-	    *s = '0' + (*s - 'J');	/* convert to first digit */
-	    s++;
-	    while (isdigit(*s)) s++;
-	    c2 = *s;
-	    *s = '\0';
-	    score = atoi(p);
-	    *p = c1;
-	    *s = c2;
-	    loaded++;
-	    if (is_available(a) && article_unread(a)) {
-		sc_set_score(a,score);
-		used++;
-	    }
-	    a++;
-	    break;
-	  case 'r':	/* repeat */
-	    s++;
-	    p = s;
-	    if (!isdigit(*s)) {
-		/* simple case, just "r" */
-		x = 1;
-	    } else {
-		s++;
-		while (isdigit(*s)) s++;
-		c1 = *s;
-		*s = '\0';
-		x = atoi(p);
-		*s = c1;
-	    }
-	    for ( ; x; x--) {
-		loaded++;
-		if (is_available(a) && article_unread(a)) {
-		    sc_set_score(a,score);
-		    used++;
-		}
-		a++;
-	    }
-	    break;
-	  case 's':	/* skip */
-	    s++;
-	    p = s;
-	    if (!isdigit(*s)) {
-		/* simple case, just "s" */
-		a += 1;
-	    } else {
-		s++;
-		while (isdigit(*s)) s++;
-		c1 = *s;
-		*s = '\0';
-		x = atoi(p);
-		*s = c1;
-		a += x;
-	    }
-	    break;
-	} /* switch */
+        switch(*s) {
+          case 'A': case 'B': case 'C': case 'D': case 'E':
+          case 'F': case 'G': case 'H': case 'I':
+            /* negative starting digit */
+            p = s;
+            c1 = *s;
+            *s = '0' + ('J' - *s);      /* convert to first digit */
+            s++;
+            while (isdigit(*s)) s++;
+            c2 = *s;
+            *s = '\0';
+            score = 0 - atoi(p);
+            *p = c1;
+            *s = c2;
+            loaded++;
+            if (is_available(a) && article_unread(a)) {
+                sc_set_score(a,score);
+                used++;
+            }
+            a++;
+            break;
+          case 'J': case 'K': case 'L': case 'M': case 'N':
+          case 'O': case 'P': case 'Q': case 'R': case 'S':
+            /* positive starting digit */
+            p = s;
+            c1 = *s;
+            *s = '0' + (*s - 'J');      /* convert to first digit */
+            s++;
+            while (isdigit(*s)) s++;
+            c2 = *s;
+            *s = '\0';
+            score = atoi(p);
+            *p = c1;
+            *s = c2;
+            loaded++;
+            if (is_available(a) && article_unread(a)) {
+                sc_set_score(a,score);
+                used++;
+            }
+            a++;
+            break;
+          case 'r':     /* repeat */
+            s++;
+            p = s;
+            if (!isdigit(*s)) {
+                /* simple case, just "r" */
+                x = 1;
+            } else {
+                s++;
+                while (isdigit(*s)) s++;
+                c1 = *s;
+                *s = '\0';
+                x = atoi(p);
+                *s = c1;
+            }
+            for ( ; x; x--) {
+                loaded++;
+                if (is_available(a) && article_unread(a)) {
+                    sc_set_score(a,score);
+                    used++;
+                }
+                a++;
+            }
+            break;
+          case 's':     /* skip */
+            s++;
+            p = s;
+            if (!isdigit(*s)) {
+                /* simple case, just "s" */
+                a += 1;
+            } else {
+                s++;
+                while (isdigit(*s)) s++;
+                c1 = *s;
+                *s = '\0';
+                x = atoi(p);
+                *s = c1;
+                a += x;
+            }
+            break;
+        } /* switch */
     } /* while */
     return a;
 }
@@ -273,56 +273,56 @@ sc_sv_make_line (ART_NUM a)
     lastscore = 0;
 
     for (a = article_first(a); a <= lastart && num_output < 50; a = article_next(a)) {
-	if (article_unread(a) && SCORED(a)) {
-	    if (last != a-1) {
-		if (last == a-2) {
-		    *s++ = 's';
-		    num_output++;
-		} else {
-		    sprintf(s,"s%ld",(a-last)-1);
-		    s = lbuf + strlen(lbuf);
-		    num_output++;
-		}
-	    }
-	    /* print article's score */
-	    score = article_ptr(a)->score;
-	    /* check for repeating scores */
-	    if (score == lastscore && lastscore_valid) {
-		a = article_next(a);
-		for (i = 1; a <= lastart && article_unread(a) && SCORED(a)
-			 && article_ptr(a)->score == score; i++)
-		    a = article_next(a);
-		a = article_prev(a);	/* prepare for the for loop increment */
-		if (i == 1) {
-		    *s++ = 'r';		/* repeat one */
-		    num_output++;
-		} else {
-		    sprintf(s,"r%d",i);	/* repeat >one */
-		    s = lbuf + strlen(lbuf);
-		    num_output++;
-		}
-		saved += i-1;
-	    } else {	/* not a repeat */
-		i = score;
-		if (i < 0) {
-		    neg_flag = true;
-		    i = 0 - i;
-		} else
-		    neg_flag = false;
-		sprintf(s,"%d",i);
-		i = (*s - '0');
-		if (neg_flag)
-		    *s++ = 'J' - i;
-		else
-		    *s++ = 'J' + i;
-		s = lbuf + strlen(lbuf);
-		num_output++;
-		lastscore_valid = true;
-	    }
-	    lastscore = score;
-	    last = a;
-	    saved++;
-	} /* if */
+        if (article_unread(a) && SCORED(a)) {
+            if (last != a-1) {
+                if (last == a-2) {
+                    *s++ = 's';
+                    num_output++;
+                } else {
+                    sprintf(s,"s%ld",(a-last)-1);
+                    s = lbuf + strlen(lbuf);
+                    num_output++;
+                }
+            }
+            /* print article's score */
+            score = article_ptr(a)->score;
+            /* check for repeating scores */
+            if (score == lastscore && lastscore_valid) {
+                a = article_next(a);
+                for (i = 1; a <= lastart && article_unread(a) && SCORED(a)
+                         && article_ptr(a)->score == score; i++)
+                    a = article_next(a);
+                a = article_prev(a);    /* prepare for the for loop increment */
+                if (i == 1) {
+                    *s++ = 'r';         /* repeat one */
+                    num_output++;
+                } else {
+                    sprintf(s,"r%d",i); /* repeat >one */
+                    s = lbuf + strlen(lbuf);
+                    num_output++;
+                }
+                saved += i-1;
+            } else {    /* not a repeat */
+                i = score;
+                if (i < 0) {
+                    neg_flag = true;
+                    i = 0 - i;
+                } else
+                    neg_flag = false;
+                sprintf(s,"%d",i);
+                i = (*s - '0');
+                if (neg_flag)
+                    *s++ = 'J' - i;
+                else
+                    *s++ = 'J' + i;
+                s = lbuf + strlen(lbuf);
+                num_output++;
+                lastscore_valid = true;
+            }
+            lastscore = score;
+            last = a;
+            saved++;
+        } /* if */
     } /* for */
     *s = '\0';
     sc_sv_add(lbuf);
@@ -340,7 +340,7 @@ sc_load_scores (void)
     int total,scored;
     bool verbose;
 
-    sc_save_new = -1;		/* just in case we exit early */
+    sc_save_new = -1;           /* just in case we exit early */
     loaded = used = 0;
     sc_loaded_count = 0;
 
@@ -348,78 +348,78 @@ sc_load_scores (void)
     verbose = 0;
 
     if (num_lines == 0)
-	sc_sv_getfile();
+        sc_sv_getfile();
 
     gname = estrdup(filexp("%C"));
 
     for (i = 0; i < num_lines; i++) {
-	s = lines[i];
-	if (s && *s == '!' && strEQ(s+1,gname))
-	    break;
+        s = lines[i];
+        if (s && *s == '!' && strEQ(s+1,gname))
+            break;
     }
     if (i == num_lines)
-	return;		/* no scores loaded */
+        return;         /* no scores loaded */
     i++;
 
     if (verbose) {
-	printf("\nLoading scores...");
-	fflush(stdout);
+        printf("\nLoading scores...");
+        fflush(stdout);
     }
     while (i < num_lines) {
-	s = lines[i++];
-	if (!s)
-	    continue;
-	switch (*s) {
-	  case ':':
-	    a = atoi(s+1);	/* set the article # */
-	    break;
-	  case '.':			/* longer score line */
-	    a = sc_sv_use_line(s+1,a);
-	    break;
-	  case '!':			/* group of shared file */
-	    i = num_lines;
-	    break;
-	  case 'v':			/* version number */
-	    break;			/* not used now */
-	  case '\0':			/* empty string */
-	  case '#':			/* comment */
-	    break;
-	  default:
-	    /* don't even try to deal with it */
-	    return;
-	} /* switch */
+        s = lines[i++];
+        if (!s)
+            continue;
+        switch (*s) {
+          case ':':
+            a = atoi(s+1);      /* set the article # */
+            break;
+          case '.':                     /* longer score line */
+            a = sc_sv_use_line(s+1,a);
+            break;
+          case '!':                     /* group of shared file */
+            i = num_lines;
+            break;
+          case 'v':                     /* version number */
+            break;                      /* not used now */
+          case '\0':                    /* empty string */
+          case '#':                     /* comment */
+            break;
+          default:
+            /* don't even try to deal with it */
+            return;
+        } /* switch */
     } /* while */
 
     sc_loaded_count = loaded;
     a = firstart;
 #ifdef SCAN_ART
     if (sa_mode_read_elig)
-	a = absfirst;
+        a = absfirst;
 #endif
     total = scored = 0;
     for (a = article_first(a); a <= lastart; a = article_next(a)) {
-	if (!article_exists(a))
-	    continue;
-	if (!article_unread(a)
+        if (!article_exists(a))
+            continue;
+        if (!article_unread(a)
 #ifdef SCAN_ART
-	 && !sa_mode_read_elig
+         && !sa_mode_read_elig
 #endif
-	)
-	    continue;
-	total++;
-	if (SCORED(a))
-	    scored++;
+        )
+            continue;
+        total++;
+        if (SCORED(a))
+            scored++;
     } /* for */
 
     /* sloppy plurals (:-) */
     if (verbose)
-	printf("(%d/%d/%d scores loaded/used/unscored)\n",
-	       loaded,used,total-scored);
+        printf("(%d/%d/%d scores loaded/used/unscored)\n",
+               loaded,used,total-scored);
 
     sc_save_new = total-scored;
 #ifdef SCAN
     if (sa_initialized)
-	s_top_ent = -1;	/* reset top of page */
+        s_top_ent = -1; /* reset top of page */
 #endif
 }
 
@@ -432,16 +432,16 @@ sc_save_scores (void)
     saved = 0;
     last = 0;
 
-    waiting = true;	/* DON'T interrupt */
+    waiting = true;     /* DON'T interrupt */
     gname = estrdup(filexp("%C"));
     /* not being able to open is OK */
     if (num_lines > 0) {
-	sc_sv_delgroup(gname);	/* delete old group */
-    } else {		/* there was no old file */
-	sc_sv_add("#STRN saved score file.");
-	sc_sv_add("v1.0");
+        sc_sv_delgroup(gname);  /* delete old group */
+    } else {            /* there was no old file */
+        sc_sv_add("#STRN saved score file.");
+        sc_sv_add("v1.0");
     }
-    sprintf(lbuf2,"!%s",gname);	/* add the header */
+    sprintf(lbuf2,"!%s",gname); /* add the header */
     sc_sv_add(lbuf2);
 
     a = firstart;
@@ -449,7 +449,7 @@ sc_save_scores (void)
     sc_sv_add(lbuf2);
     last = a-1;
     while (a <= lastart)
-	a = sc_sv_make_line(a);
+        a = sc_sv_make_line(a);
     waiting = false;
 }
 #endif /* SCORE */

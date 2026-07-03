@@ -19,7 +19,7 @@
 #include "scan.h"
 #include "scmd.h"
 #include "sdisp.h"
-#include "smisc.h"	/* needed? */
+#include "smisc.h"      /* needed? */
 #include "sorder.h"
 #include "spage.h"
 #include "scanart.h"
@@ -47,26 +47,26 @@ sa_init (void)
 {
     sa_init_context();
     if (lastart == 0 || absfirst > lastart)
-	return;		/* no articles */
-    if (s_initscreen())		/* If not able to init screen...*/
-	return;				/* ...most likely dumb terminal */
-    sa_initmode();			/*      mode differences */
+        return;         /* no articles */
+    if (s_initscreen())         /* If not able to init screen...*/
+        return;                         /* ...most likely dumb terminal */
+    sa_initmode();                      /*      mode differences */
     sa_init_threads();
     sa_mode_read_elig = false;
-    if (firstart > lastart)		/* none unread */
-	sa_mode_read_elig = true;	/* unread+read in some situations */
-    if (!sa_initarts())			/* init article array(s) */
-	return;				/* ... no articles */
+    if (firstart > lastart)             /* none unread */
+        sa_mode_read_elig = true;       /* unread+read in some situations */
+    if (!sa_initarts())                 /* init article array(s) */
+        return;                         /* ... no articles */
 #ifdef SCORE
 #ifdef PENDING
     if (sa_mode_read_elig) {
-	sc_fill_read = true;
-	sc_fill_max = absfirst - 1;
+        sc_fill_read = true;
+        sc_fill_max = absfirst - 1;
     }
 #endif
 #endif
     s_save_context();
-    sa_initialized = true;		/* all went well... */
+    sa_initialized = true;              /* all went well... */
 }
 
 void
@@ -85,23 +85,23 @@ sa_clean_ents (void)
 /* returns entry number that was added */
 long
 sa_add_ent (
-    ART_NUM artnum		/* article number to be added */
+    ART_NUM artnum              /* article number to be added */
 )
 {
     long cur;
 
     sa_num_ents++;
     if (sa_num_ents > sa_ents_alloc) {
-	sa_ents_alloc += 100;
-	if (sa_ents_alloc == 100) {	/* newly allocated */
-	    /* don't use number 0, just allocate it and skip it */
-	    sa_num_ents = 2;
-	    sa_ents = (SA_ENTRYDATA*)safemalloc(sa_ents_alloc
-					* sizeof (SA_ENTRYDATA));
+        sa_ents_alloc += 100;
+        if (sa_ents_alloc == 100) {     /* newly allocated */
+            /* don't use number 0, just allocate it and skip it */
+            sa_num_ents = 2;
+            sa_ents = (SA_ENTRYDATA*)safemalloc(sa_ents_alloc
+                                        * sizeof (SA_ENTRYDATA));
         } else {
-	    sa_ents = (SA_ENTRYDATA*)saferealloc((char*)sa_ents,
-			sa_ents_alloc * sizeof (SA_ENTRYDATA));
-	}
+            sa_ents = (SA_ENTRYDATA*)saferealloc((char*)sa_ents,
+                        sa_ents_alloc * sizeof (SA_ENTRYDATA));
+        }
     }
     cur = sa_num_ents-1;
     sa_ents[cur].artnum = artnum;
@@ -116,13 +116,13 @@ sa_cleanmain (void)
 {
     sa_clean_ents();
 
-    sa_mode_zoom = false;	/* doesn't survive across groups */
+    sa_mode_zoom = false;       /* doesn't survive across groups */
     /* remove the now-unused scan-context */
     s_delete_context(sa_scan_context);
     sa_context_init = false;
     sa_scan_context = -1;
     /* no longer "in" article scan mode */
-    sa_mode_read_elig = false;	/* the default */
+    sa_mode_read_elig = false;  /* the default */
     sa_in = false;
 }
 
@@ -132,7 +132,7 @@ sa_growarts (long oldlast, long last)
     int i;
 
     for (i = oldlast+1; i <= last; i++)
-	(void)sa_add_ent(i);
+        (void)sa_add_ent(i);
 }
 
 /* Initialize the scan-context to enter article scan mode. */
@@ -140,9 +140,9 @@ void
 sa_init_context (void)
 {
     if (sa_context_init)
-	return;		/* already initialized */
+        return;         /* already initialized */
     if (sa_scan_context == -1)
-	sa_scan_context = s_new_context(S_ART);
+        sa_scan_context = s_new_context(S_ART);
     s_change_context(sa_scan_context);
 }
 
@@ -154,8 +154,8 @@ sa_initarts (void)
     sa_init_ents();
     /* add all available articles to entry list */
     for (a = article_first(absfirst); a <= lastart; a = article_next(a)) {
-	if (article_exists(a))
-	    (void)sa_add_ent(a);
+        if (article_exists(a))
+            (void)sa_add_ent(a);
     }
     sa_order_read = sa_mode_read_elig;
     return true;
@@ -168,7 +168,7 @@ sa_initmode (void)
     /* set up screen sizes */
     sa_set_screen();
 
-    sa_mode_zoom = 0;			/* reset zoom */
+    sa_mode_zoom = 0;                   /* reset zoom */
 }
 
 int
@@ -186,28 +186,28 @@ sa_mainloop (void)
      * If that fails then strn will just use arrival ordering.
      */
     if (!sc_initialized && sa_mode_order == 2) {
-	sc_delay = false;	/* yes, actually score... */
-	sc_init(true);		/* wait for articles to score */
-	if (!sc_initialized)
-	    sa_mode_order = 1;	/* arrival order */
+        sc_delay = false;       /* yes, actually score... */
+        sc_init(true);          /* wait for articles to score */
+        if (!sc_initialized)
+            sa_mode_order = 1;  /* arrival order */
     }
 #endif
     /* redraw it *all* */
     s_ref_all = true;
     if (s_top_ent < 1)
-	s_top_ent = s_first();
+        s_top_ent = s_first();
     i = s_fillpage();
     if (i == -1 || i == 0) {
-	/* for now just quit if no page could be filled. */
-	return SA_QUIT;
+        /* for now just quit if no page could be filled. */
+        return SA_QUIT;
     }
     i = s_cmdloop();
     if (i == SA_READ) {
-	i = SA_NORM;
+        i = SA_NORM;
     }
     if (i > 0) {
-	sa_art = sa_ents[i].artnum;
-	return SA_NORM;
+        sa_art = sa_ents[i].artnum;
+        return SA_NORM;
     }
     /* something else (quit, return, etc...) */
     return i;
@@ -219,13 +219,13 @@ sa_lookahead (void)
 {
 #ifdef PENDING
 #ifdef SCORE
-    sc_lookahead(true,false);		/* do resorting now... */
+    sc_lookahead(true,false);           /* do resorting now... */
 #else /* !SCORE */
 /* consider looking forward from the last article on the page... */
-    ;				/* so the function isn't empty */
+    ;                           /* so the function isn't empty */
 #endif /* SCORE */
 #else /* !PENDING */
-    ;				/* so the function isn't empty */
+    ;                           /* so the function isn't empty */
 #endif
 }
 
@@ -237,12 +237,12 @@ sa_readmarked_elig (void)
 
     e = s_first();
     if (!e)
-	return 0L;
+        return 0L;
     for ( ; e; e = s_next(e)) {
-	if (!sa_basic_elig(e))
-	    continue;
-	if (sa_marked(e))
-	    return e;
+        if (!sa_basic_elig(e))
+            continue;
+        if (sa_marked(e))
+            return e;
     }
     /* This is possible since the marked articles might not be eligible. */
     return 0;

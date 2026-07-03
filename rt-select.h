@@ -6,29 +6,29 @@
 extern bool sel_rereading;
 extern char sel_disp_char[];
 
-#define SM_THREAD	1
-#define SM_SUBJECT	2
-#define SM_ARTICLE	3
-#define SM_NEWSGROUP	4
-#define SM_ADDGROUP	5
-#define SM_MULTIRC	6
-#define SM_OPTIONS	7
-#define SM_UNIVERSAL	8
+#define SM_THREAD       1
+#define SM_SUBJECT      2
+#define SM_ARTICLE      3
+#define SM_NEWSGROUP    4
+#define SM_ADDGROUP     5
+#define SM_MULTIRC      6
+#define SM_OPTIONS      7
+#define SM_UNIVERSAL    8
 
 extern int sel_mode;
 extern int sel_defaultmode;
 extern int sel_threadmode;
 
-#define SS_DATE		1
-#define SS_STRING	2
-#define SS_AUTHOR	3
-#define SS_COUNT	4
-#define SS_NATURAL	5
-#define SS_GROUPS	6
-#define SS_LINES	7
+#define SS_DATE         1
+#define SS_STRING       2
+#define SS_AUTHOR       3
+#define SS_COUNT        4
+#define SS_NATURAL      5
+#define SS_GROUPS       6
+#define SS_LINES        7
 /* NOTE: The score order is still valid even without scoring enabled. */
 /*       (The real order is then something like natural or date.) */
-#define SS_SCORE	8
+#define SS_SCORE        8
 
 extern char* sel_mode_string;
 extern int sel_sort;
@@ -54,19 +54,19 @@ extern int sel_last_line;
 extern bool sel_at_end;
 extern bool art_sel_ilock;
 
-#define DS_ASK  	1
-#define DS_UPDATE	2
-#define DS_DISPLAY	3
-#define DS_RESTART	4
-#define DS_STATUS	5
-#define DS_QUIT 	6
-#define DS_DOCOMMAND	7
-#define DS_ERROR	8
+#define DS_ASK          1
+#define DS_UPDATE       2
+#define DS_DISPLAY      3
+#define DS_RESTART      4
+#define DS_STATUS       5
+#define DS_QUIT         6
+#define DS_DOCOMMAND    7
+#define DS_ERROR        8
 
 
-#define UR_NORM		1
-#define UR_BREAK	2	/* request return to selector */
-#define UR_ERROR	3	/* non-normal return */
+#define UR_NORM         1
+#define UR_BREAK        2       /* request return to selector */
+#define UR_ERROR        3       /* non-normal return */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

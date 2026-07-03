@@ -70,22 +70,22 @@ initialize (int argc, char *argv[])
     char* tcbuf;
     bool foundany = false;
 #ifdef NOLINEBUF
-    static char std_out_buf[BUFSIZ];	/* must be static or malloced */
+    static char std_out_buf[BUFSIZ];    /* must be static or malloced */
 
     setbuf(stdout, std_out_buf);
 #endif
 
-    tcbuf = safemalloc(TCBUF_SIZE);	/* make temp buffer for termcap and */
-					/* other initialization stuff */
+    tcbuf = safemalloc(TCBUF_SIZE);     /* make temp buffer for termcap and */
+                                        /* other initialization stuff */
 
     our_pid = (long)getpid();
 
     /* init terminal */
 
-    term_init();			/* must precede opt_init() so that */
-					/* ospeed is set for baud-rate */
-					/* switches.  Actually terminal */
-					/* mode setting is in term_set() */
+    term_init();                        /* must precede opt_init() so that */
+                                        /* ospeed is set for baud-rate */
+                                        /* switches.  Actually terminal */
+                                        /* mode setting is in term_set() */
     mp_init();
 
     /* init syntax etc. for searching (must also precede opt_init()) */
@@ -99,8 +99,8 @@ initialize (int argc, char *argv[])
 
     /* decode switches */
 
-    opt_init(argc,argv,&tcbuf);		/* must not do % interps! */
-					/* (but may mung environment) */
+    opt_init(argc,argv,&tcbuf);         /* must not do % interps! */
+                                        /* (but may mung environment) */
     color_init();
 
     /* init signals, status flags */
@@ -114,21 +114,21 @@ initialize (int argc, char *argv[])
     /* now make sure we have a current working directory */
 
     if (!checkflag)
-	cwd_check();
+        cwd_check();
 
     if (init_nntp() < 0)
-	finalize(1);
+        finalize(1);
 
     /* if we aren't just checking, turn off echo */
 
     if (!checkflag)
-	term_set(tcbuf);
+        term_set(tcbuf);
 
     /* get info on last trn run, if any */
 
     last_init();
 
-    safefree(tcbuf);			/* recover 1024 bytes */
+    safefree(tcbuf);                    /* recover 1024 bytes */
 
 #ifdef USE_TCL
     if (UseTcl
@@ -136,7 +136,7 @@ initialize (int argc, char *argv[])
  || UseTk
 #endif
        ) {
-	ttcl_init();
+        ttcl_init();
     }
 #endif
 
@@ -145,7 +145,7 @@ initialize (int argc, char *argv[])
     /* check for news news */
 
     if (!checkflag)
-	newsnews_check();
+        newsnews_check();
 
     /* process the newsid(s) and associate the newsrc(s) */
 
@@ -183,11 +183,11 @@ initialize (int argc, char *argv[])
     util_init();
     xmouse_init(argv[0]);
 
-    writelast();	/* remember last runtime in .rnlast */
+    writelast();        /* remember last runtime in .rnlast */
 
 #ifdef FINDNEWNG
-    if (maxngtodo)			/* patterns on command line? */
-	foundany |= scanactive(true);
+    if (maxngtodo)                      /* patterns on command line? */
+        foundany |= scanactive(true);
 #endif
 
     return foundany;
@@ -199,13 +199,13 @@ newsnews_check (void)
     char* newsnewsname = filexp(NEWSNEWSNAME);
 
     if ((tmpfp = fopen(newsnewsname,"r")) != NULL) {
-	fstat(fileno(tmpfp),&filestat);
-	if (filestat.st_mtime > (time_t)lasttime) {
-	    while (fgets(buf,sizeof(buf),tmpfp) != NULL)
-		fputs(buf,stdout);
-	    get_anything();
-	    putchar('\n');
-	}
-	fclose(tmpfp);
+        fstat(fileno(tmpfp),&filestat);
+        if (filestat.st_mtime > (time_t)lasttime) {
+            while (fgets(buf,sizeof(buf),tmpfp) != NULL)
+                fputs(buf,stdout);
+            get_anything();
+            putchar('\n');
+        }
+        fclose(tmpfp);
     }
 }

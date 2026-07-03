@@ -2,18 +2,18 @@
  */
 /* This software is copyrighted as detailed in the LICENSE file. */
 
-#define DB_VERSION	2
+#define DB_VERSION      2
 
-typedef Uchar	BYTE;
-typedef short	WORD;
+typedef Uchar   BYTE;
+typedef short   WORD;
 #ifndef __alpha
-typedef long	LONG;
+typedef long    LONG;
 #else
-typedef int	LONG;
+typedef int     LONG;
 #endif
 
-#define ROOT_ARTICLE	0x0001		/* article flag definitions */
-#define HAS_XREFS	0x0004		/* article has an xref line */
+#define ROOT_ARTICLE    0x0001          /* article flag definitions */
+#define HAS_XREFS       0x0004          /* article has an xref line */
 
 struct packed_root {
     LONG root_num;

@@ -17,7 +17,7 @@
 extern  bool kill_thresh_active;
 extern  int kill_thresh;   /* KILL articles at or below this score */
 
-extern  ART_NUM sc_fill_max;	   /* maximum art# scored by fill-routine */
+extern  ART_NUM sc_fill_max;       /* maximum art# scored by fill-routine */
 extern  bool sc_fill_read; /* true if also scoring read arts... */
 
 /* has score been initialized (are we "in" scoring?) */
@@ -38,12 +38,12 @@ extern  bool sc_savescores;
 /* If true, delay initialization of scoring until explicitly required */
 extern  bool sc_delay;
 
-extern  bool sc_rescoring;	/* are we rescoring now? */
+extern  bool sc_rescoring;      /* are we rescoring now? */
 
-extern  bool sc_do_spin;	/* actually do the score spinner */
+extern  bool sc_do_spin;        /* actually do the score spinner */
 
-extern  bool sc_sf_delay;	/* if true, delay loading rule files */
-extern  bool sc_sf_force_init;	/* If true, always sf_init() */
+extern  bool sc_sf_delay;       /* if true, delay loading rule files */
+extern  bool sc_sf_force_init;  /* If true, always sf_init() */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 

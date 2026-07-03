@@ -6,10 +6,10 @@
 
 #include "common.h"
 #ifdef SCAN
-#include "final.h"	/* assert() */
+#include "final.h"      /* assert() */
 #include "hash.h"
 #include "cache.h"
-#include "ng.h"		/* mailcall */
+#include "ng.h"         /* mailcall */
 #include "term.h"
 #include "scan.h"
 #include "sorder.h"
@@ -45,20 +45,20 @@ s_mail_and_place (void)
     bool previous,next;
 
 #ifdef MAILCALL
-    setmail(false);		/* another chance to check mail */
+    setmail(false);             /* another chance to check mail */
     printf("%s",mailcall);
 #endif /* MAILCALL */
     /* print page status wrt all entries */
     previous = (0 != s_prev_elig(page_ents[0].entnum));
     next = (0 != s_next_elig(page_ents[s_bot_ent].entnum));
     if (previous && next)
-	printf("-MIDDLE-");		/* middle of entries */
+        printf("-MIDDLE-");             /* middle of entries */
     else if (next && !previous)
-	printf("-TOP-");
+        printf("-TOP-");
     else if (previous && !next)
-	printf("-BOTTOM-");
-    else	/* !previous && !next */
-	printf("-ALL-");
+        printf("-BOTTOM-");
+    else        /* !previous && !next */
+        printf("-ALL-");
 }
 
 void
@@ -68,8 +68,8 @@ s_refresh_top (void)
     switch (s_cur_type) {
 #ifdef SCAN_ART
       case S_ART:
-	sa_refresh_top();
-	break;
+        sa_refresh_top();
+        break;
 #endif
     }
     s_ref_top = false;
@@ -83,8 +83,8 @@ s_refresh_bot (void)
     switch (s_cur_type) {
 #ifdef SCAN_ART
       case S_ART:
-	sa_refresh_bot();
-	break;
+        sa_refresh_bot();
+        break;
 #endif
     }
     s_ref_bot = false;
@@ -95,20 +95,20 @@ void
 s_refresh_entzone (void)
 {
     int i;
-    int start;		/* starting page_arts index to refresh... */
+    int start;          /* starting page_arts index to refresh... */
 
     if (s_ref_status < s_ref_desc) {
-	/* refresh status characters up to (not including) desc_line */
-	for (i = s_ref_status; i <= s_bot_ent && i < s_ref_desc; i++)
-	    s_refresh_description(i);
-	start = i;
+        /* refresh status characters up to (not including) desc_line */
+        for (i = s_ref_status; i <= s_bot_ent && i < s_ref_desc; i++)
+            s_refresh_description(i);
+        start = i;
     } else {
-	for (i = s_ref_desc; i <= s_bot_ent && i < s_ref_status; i++)
-	    s_refresh_status(i);
-	start = i;
+        for (i = s_ref_desc; i <= s_bot_ent && i < s_ref_status; i++)
+            s_refresh_status(i);
+        start = i;
     }
     for (i = start; i <= s_bot_ent; i++)
-	s_ref_entry(i,i==start);
+        s_ref_entry(i,i==start);
     /* clear to end of screen */
     clear_rest();
     /* now we need to redraw the bottom status line */
@@ -120,7 +120,7 @@ void
 s_place_ptr (void)
 {
     s_goxy(s_status_cols,
-	    s_top_lines+page_ents[s_ptr_page_line].start_line);
+            s_top_lines+page_ents[s_ptr_page_line].start_line);
     putchar('>');
     fflush(stdout);
 }
@@ -134,11 +134,11 @@ s_refresh_status (int line)
     long ent;
 
     ent = page_ents[line].entnum;
-    assert(line <= s_bot_ent);	/* better be refreshing on-page */
+    assert(line <= s_bot_ent);  /* better be refreshing on-page */
     s_goxy(0,s_top_lines+page_ents[line].start_line);
     j = page_ents[line].lines;
     for (i = 1; i <= j; i++)
-	printf("%s\n",s_get_statchars(ent,i));
+        printf("%s\n",s_get_statchars(ent,i));
     fflush(stdout);
 }
 
@@ -149,24 +149,24 @@ s_refresh_description (int line)
     long ent;
 
     ent = page_ents[line].entnum;
-    assert(line <= s_bot_ent);	/* better be refreshing on-page */
+    assert(line <= s_bot_ent);  /* better be refreshing on-page */
     startline = s_top_lines+page_ents[line].start_line;
     j = page_ents[line].lines;
     for (i = 1; i <= j; i++) {
-	s_goxy(s_status_cols+s_cursor_cols,(i-1)+startline);
-	/* allow flexible format later? */
-	if (s_itemnum_cols) {
-	    if (i == 1) {	/* first description line */
-		if (line < 99)
-		    printf("%2d ",line+1);
-		else
-		    printf("** ");	/* too big */
-	    } else
-		printf("   ");
-	}
-	printf("%s",s_get_desc(ent,i,true));
-	erase_eol();
-	putchar('\n');
+        s_goxy(s_status_cols+s_cursor_cols,(i-1)+startline);
+        /* allow flexible format later? */
+        if (s_itemnum_cols) {
+            if (i == 1) {       /* first description line */
+                if (line < 99)
+                    printf("%2d ",line+1);
+                else
+                    printf("** ");      /* too big */
+            } else
+                printf("   ");
+        }
+        printf("%s",s_get_desc(ent,i,true));
+        erase_eol();
+        putchar('\n');
     }
     fflush(stdout);
 }
@@ -174,32 +174,32 @@ s_refresh_description (int line)
 void
 s_ref_entry (
     int line,
-    int jump	/* true means that the cursor should be positioned */
+    int jump    /* true means that the cursor should be positioned */
 )
 {
     int i,j;
     long ent;
 
     ent = page_ents[line].entnum;
-    assert(line <= s_bot_ent);	/* better be refreshing on-page */
+    assert(line <= s_bot_ent);  /* better be refreshing on-page */
     if (jump)
-	s_goxy(0,s_top_lines+page_ents[line].start_line);
+        s_goxy(0,s_top_lines+page_ents[line].start_line);
     j = page_ents[line].lines;
     for (i = 1; i <= j; i++) {
 /* later replace middle with variable #spaces routine */
-	printf("%s%s",s_get_statchars(ent,i),"  ");
-	if (s_itemnum_cols) {
-	    if (i == 1) {	/* first description line */
-		if (line < 99)
-		    printf("%2d ",line+1);
-		else
-		    printf("** ");	/* too big */
-	    } else
-		printf("   ");
-	}
-	printf("%s",s_get_desc(ent,i,true));
-	erase_eol();
-	putchar('\n');
+        printf("%s%s",s_get_statchars(ent,i),"  ");
+        if (s_itemnum_cols) {
+            if (i == 1) {       /* first description line */
+                if (line < 99)
+                    printf("%2d ",line+1);
+                else
+                    printf("** ");      /* too big */
+            } else
+                printf("   ");
+        }
+        printf("%s",s_get_desc(ent,i,true));
+        erase_eol();
+        putchar('\n');
     }
 }
 
@@ -215,26 +215,26 @@ s_refresh (void)
     int i;
 
     if (s_ref_all) {
-	clear();	/* make a clean slate */
-	s_ref_desc = s_ref_status = 0;
+        clear();        /* make a clean slate */
+        s_ref_desc = s_ref_status = 0;
     }
     if ((s_ref_all || s_ref_top) && s_top_lines>0)
-	s_refresh_top();
+        s_refresh_top();
     if (s_ref_all || ((s_ref_status>=0) && (s_ref_desc>=0)))
-	s_refresh_entzone();
+        s_refresh_entzone();
     else {
-	if (s_ref_status>=0) {
-	    for (i = s_ref_status; i <= s_bot_ent; i++)
-		s_refresh_status(i);
-	}
-	if (s_ref_desc >= 0) {
-	    for (i = s_ref_desc; i <= s_bot_ent; i++)
-		s_refresh_description(i);
-	}
+        if (s_ref_status>=0) {
+            for (i = s_ref_status; i <= s_bot_ent; i++)
+                s_refresh_status(i);
+        }
+        if (s_ref_desc >= 0) {
+            for (i = s_ref_desc; i <= s_bot_ent; i++)
+                s_refresh_description(i);
+        }
     }
     s_ref_status = s_ref_desc = -1;
     if ((s_ref_all || s_ref_bot) && s_bot_lines > 0)
-	s_refresh_bot();
+        s_refresh_bot();
     s_ref_all = false;
 }
 
@@ -248,9 +248,9 @@ s_initscreen (void)
 
     scr_height = tc_LINES;
     scr_width = tc_COLS;
-    if (scr_height > 2 && scr_width > 1)	/* current dependencies */
-	return 0;	/* everything is OK. */
-    return 1;	/* we can't play with this... */
+    if (scr_height > 2 && scr_width > 1)        /* current dependencies */
+        return 0;       /* everything is OK. */
+    return 1;   /* we can't play with this... */
 }
 
 /* screen-refresh the status if on-page */
@@ -259,8 +259,8 @@ s_ref_status_onpage (long ent)
 {
     int i;
     for (i = 0; i <= s_bot_ent; i++)
-	if (page_ents[i].entnum == ent)
-	    s_refresh_status(i);
+        if (page_ents[i].entnum == ent)
+            s_refresh_status(i);
 }
 
 
@@ -274,6 +274,6 @@ s_resize_win (void)
     /* later possibly use the return value for an error abort? */
     s_resized = true;
 #endif
-    ;	/* don't have an empty function */
+    ;   /* don't have an empty function */
 }
 #endif /* SCAN */

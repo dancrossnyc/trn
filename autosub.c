@@ -14,19 +14,19 @@
 #include "final.h"
 #include "autosub.h"
 
-/* Consider the newsgroup specified, and return:	*/
-/* : if we should autosubscribe to it			*/
-/* ! if we should autounsubscribe to it			*/
-/* \0 if we should ask the user.			*/
+/* Consider the newsgroup specified, and return:        */
+/* : if we should autosubscribe to it                   */
+/* ! if we should autounsubscribe to it                 */
+/* \0 if we should ask the user.                        */
 int
 auto_subscribe (char *name)
 {
     char* s;
 
     if((s = getval("AUTOSUBSCRIBE", (char*)NULL)) && matchlist(s, name))
-	return ':';
+        return ':';
     if((s = getval("AUTOUNSUBSCRIBE", (char*)NULL)) && matchlist(s, name))
-	return '!';
+        return '!';
     return 0;
 }
 
@@ -42,27 +42,27 @@ matchlist (char *patlist, char *s)
     result = false;
     init_compex(&ilcompex);
     while(patlist && *patlist) {
-	if (*patlist == '!') {
-	    patlist++;
-	    tmpresult = false;
-	} else
-	    tmpresult = true;
+        if (*patlist == '!') {
+            patlist++;
+            tmpresult = false;
+        } else
+            tmpresult = true;
 
-	if ((p = index(patlist, ',')) != NULL)
-	    *p = '\0';
+        if ((p = strchr(patlist, ',')) != NULL)
+            *p = '\0';
         /* compile regular expression */
-	err = ng_comp(&ilcompex,patlist,true,true);
-	if (p)
-	    *p++ = ',';
+        err = ng_comp(&ilcompex,patlist,true,true);
+        if (p)
+            *p++ = ',';
 
-	if (err != NULL) {
-	    printf("\n%s\n", err);
-	    finalize(1);
-	}
+        if (err != NULL) {
+            printf("\n%s\n", err);
+            finalize(1);
+        }
 
-	if (execute(&ilcompex,s) != NULL)
-	    result = tmpresult;
-	patlist = p;
+        if (execute(&ilcompex,s) != NULL)
+            result = tmpresult;
+        patlist = p;
     }
     free_compex(&ilcompex);
     return result;

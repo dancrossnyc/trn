@@ -1,7 +1,9 @@
-/* artio.c
+/*
+ * artio.c
  */
-/* This software is copyrighted as detailed in the LICENSE file. */
-
+/*
+ * This software is copyrighted as detailed in the LICENSE file.
+ */
 
 #include "common.h"
 #include "charsubst.h"
@@ -28,10 +30,10 @@
 #include "decode.h"
 #include "artio.h"
 
-ART_POS artpos = 0;	/* byte position in article file */
-ART_LINE artline = 0;	/* current line number in article file */
-FILE* artfp = NULL;	/* current article file pointer */
-ART_NUM openart = 0;	/* the article number we have open */
+ART_POS artpos = 0;     /* byte position in article file */
+ART_LINE artline = 0;   /* current line number in article file */
+FILE* artfp = NULL;     /* current article file pointer */
+ART_NUM openart = 0;    /* the article number we have open */
 
 char* artbuf;
 long artbuf_size;
@@ -55,50 +57,50 @@ artio_init (void)
 FILE *
 artopen (ART_NUM artnum, ART_POS pos)
 {
-    char artname[MAXFILENAME];		/* filename of current article */
+    char artname[MAXFILENAME];          /* filename of current article */
     ARTICLE* ap = article_find(artnum);
 
     if (!ap || !artnum || (ap->flags & (AF_EXISTS|AF_FAKE)) != AF_EXISTS) {
-	errno = ENOENT;
-	return NULL;
+        errno = ENOENT;
+        return NULL;
     }
-    if (openart == artnum) {		/* this article is already open? */
-	seekart(pos);			/* yes: just seek the file */
-	return artfp;			/* and say we succeeded */
+    if (openart == artnum) {            /* this article is already open? */
+        seekart(pos);                   /* yes: just seek the file */
+        return artfp;                   /* and say we succeeded */
     }
     artclose();
 retry_open:
     if (datasrc->flags & DF_REMOTE)
-	nntp_body(artnum);
+        nntp_body(artnum);
     else
     {
-	sprintf(artname,"%ld",(long)artnum);
-	artfp = fopen(artname,"r");
-	/*artio_setbuf(artfp);$$*/
+        sprintf(artname,"%ld",(long)artnum);
+        artfp = fopen(artname,"r");
+        /*artio_setbuf(artfp);$$*/
     }
     if (!artfp) {
-	if (errno == ETIMEDOUT)
-	    goto retry_open;
-	if (errno == EINTR)
-	    goto retry_open;
-	uncache_article(ap,false);
+        if (errno == ETIMEDOUT)
+            goto retry_open;
+        if (errno == EINTR)
+            goto retry_open;
+        uncache_article(ap,false);
     } else {
-	openart = artnum;		/* remember what we did here */
-	seekart(pos);
+        openart = artnum;               /* remember what we did here */
+        seekart(pos);
     }
-    return artfp;			/* and return either fp or NULL */
+    return artfp;                       /* and return either fp or NULL */
 }
 
 void
 artclose (void)
 {
-    if (artfp != NULL) {		/* article still open? */
-	if (datasrc->flags & DF_REMOTE)
-	    nntp_finishbody(FB_DISCARD);
-	fclose(artfp);			/* close it */
-	artfp = NULL;			/* and tell the world */
-	openart = 0;
-	clear_artbuf();
+    if (artfp != NULL) {                /* article still open? */
+        if (datasrc->flags & DF_REMOTE)
+            nntp_finishbody(FB_DISCARD);
+        fclose(artfp);                  /* close it */
+        artfp = NULL;                   /* and tell the world */
+        openart = 0;
+        clear_artbuf();
     }
 }
 
@@ -106,7 +108,7 @@ int
 seekart (ART_POS pos)
 {
     if (datasrc->flags & DF_REMOTE)
-	return nntp_seekart(pos);
+        return nntp_seekart(pos);
     return fseek(artfp,(long)pos,0);
 }
 
@@ -114,7 +116,7 @@ ART_POS
 tellart (void)
 {
     if (datasrc->flags & DF_REMOTE)
-	return nntp_tellart();
+        return nntp_tellart();
     return (ART_POS)ftell(artfp);
 }
 
@@ -122,7 +124,7 @@ char *
 readart (char *s, int limit)
 {
     if (datasrc->flags & DF_REMOTE)
-	return nntp_readart(s,limit);
+        return nntp_readart(s,limit);
     return fgets(s,limit,artfp);
 }
 
@@ -137,14 +139,14 @@ int
 seekartbuf (ART_POS pos)
 {
     if (!do_hiding)
-	return seekart(pos);
+        return seekart(pos);
 
     pos -= htype[PAST_HEADER].minpos;
     artbuf_pos = artbuf_len;
 
     while (artbuf_pos < pos) {
-	if (!readartbuf(false))
-	    return -1;
+        if (!readartbuf(false))
+            return -1;
     }
 
     artbuf_pos = pos;
@@ -162,266 +164,266 @@ readartbuf (bool view_inline)
     int read_something = 0;
 
     if (!do_hiding) {
-	bp = readart(art_line,(sizeof art_line)-1);
-	artbuf_pos = artbuf_seek = tellart() - htype[PAST_HEADER].minpos;
-	return bp;
+        bp = readart(art_line,(sizeof art_line)-1);
+        artbuf_pos = artbuf_seek = tellart() - htype[PAST_HEADER].minpos;
+        return bp;
     }
     if (artbuf_pos == artsize - htype[PAST_HEADER].minpos)
-	return NULL;
+        return NULL;
     bp = artbuf + artbuf_pos;
     if (*bp == '\001' || *bp == '\002') {
-	bp++;
-	artbuf_pos++;
+        bp++;
+        artbuf_pos++;
     }
     if (*bp) {
-	for (s = bp; *s && !AT_NL(*s); s++) ;
-	if (*s) {
-	    len = s - bp + 1;
-	    goto done;
-	}
-	read_offset = line_offset = filter_offset = s - bp;
+        for (s = bp; *s && !AT_NL(*s); s++) ;
+        if (*s) {
+            len = s - bp + 1;
+            goto done;
+        }
+        read_offset = line_offset = filter_offset = s - bp;
     }
     else
-	read_offset = line_offset = filter_offset = 0;
+        read_offset = line_offset = filter_offset = 0;
 
   read_more:
     extra_offset = mime_state == HTMLTEXT_MIME? 1024 : 0;
     o = read_offset + extra_offset;
     if (artbuf_size < artbuf_pos + o + LBUFLEN) {
-	artbuf_size += LBUFLEN * 4;
-	artbuf = saferealloc(artbuf,artbuf_size);
-	bp = artbuf + artbuf_pos;
+        artbuf_size += LBUFLEN * 4;
+        artbuf = saferealloc(artbuf,artbuf_size);
+        bp = artbuf + artbuf_pos;
     }
     switch (mime_state) {
       case IMAGE_MIME:
       case AUDIO_MIME:
-	break;
+        break;
       default:
-	read_something = 1;
-	/* The -1 leaves room for appending a newline, if needed */
-	if (!readart(bp+o, artbuf_size-artbuf_pos-o-1)) {
-	    if (!read_offset) {
-		*bp = '\0';
-		len = 0;
-		bp = NULL;
-		goto done;
-	    }
-	    strcpy(bp+o, "\n");
-	    read_something = -1;
-	}
-	len = strlen(bp+o) + read_offset;
-	if (bp[len+extra_offset-1] != '\n') {
-	    if (read_something >= 0) {
-		read_offset = len;
-		goto read_more;
-	    }
-	    strcpy(bp + len++ + extra_offset, "\n");
-	}
-	if (!is_mime)
-	    goto done;
-	o = line_offset + extra_offset;
-	mime_SetState(bp+o);
-	if (bp[o] == '\0') {
-	    strcpy(bp+o, "\n");
-	    len = line_offset+1;
-	}
-	break;
+        read_something = 1;
+        /* The -1 leaves room for appending a newline, if needed */
+        if (!readart(bp+o, artbuf_size-artbuf_pos-o-1)) {
+            if (!read_offset) {
+                *bp = '\0';
+                len = 0;
+                bp = NULL;
+                goto done;
+            }
+            strcpy(bp+o, "\n");
+            read_something = -1;
+        }
+        len = strlen(bp+o) + read_offset;
+        if (bp[len+extra_offset-1] != '\n') {
+            if (read_something >= 0) {
+                read_offset = len;
+                goto read_more;
+            }
+            strcpy(bp + len++ + extra_offset, "\n");
+        }
+        if (!is_mime)
+            goto done;
+        o = line_offset + extra_offset;
+        mime_SetState(bp+o);
+        if (bp[o] == '\0') {
+            strcpy(bp+o, "\n");
+            len = line_offset+1;
+        }
+        break;
     }
   mime_switch:
     switch (mime_state) {
       case ISOTEXT_MIME:
         if (0) charsubst = "a"; /*$$*/
-	mime_state = TEXT_MIME;
-	/* FALL THROUGH */
+        mime_state = TEXT_MIME;
+        /* FALL THROUGH */
       case TEXT_MIME:
       case HTMLTEXT_MIME:
-	if (mime_section->encoding == MENCODE_QPRINT) {
-	    o = line_offset + extra_offset;
-	    len = qp_decodestring(bp+o, bp+o, 0) + line_offset;
-	    if (len == line_offset || bp[len+extra_offset-1] != '\n') {
-		if (read_something >= 0) {
-		    read_offset = line_offset = len;
-		    goto read_more;
-		}
-		strcpy(bp + len++ + extra_offset, "\n");
-	    }
-	}
-	else if (mime_section->encoding == MENCODE_BASE64) {
-	    o = line_offset + extra_offset;
-	    len = b64_decodestring(bp+o, bp+o) + line_offset;
-	    if ((s = index(bp+o, '\n')) == NULL) {
-		if (read_something >= 0) {
-		    read_offset = line_offset = len;
-		    goto read_more;
-		}
-		strcpy(bp + len++ + extra_offset, "\n");
-	    }
-	    else {
-		extra_chars += len;
-		len = s - bp - extra_offset + 1;
-		extra_chars -= len;
-	    }
-	}
-	if (mime_state != HTMLTEXT_MIME)
-	    break;
-	o = filter_offset + extra_offset;
-	len = filter_html(bp+filter_offset, bp+o) + filter_offset;
-	if (len == filter_offset || (s = index(bp,'\n')) == NULL) {
-	    if (read_something >= 0) {
-		read_offset = line_offset = filter_offset = len;
-		goto read_more;
-	    }
-	    strcpy(bp + len++, "\n");
-	    extra_chars = 0;
-	}
-	else {
-	    extra_chars = len;
-	    len = s - bp + 1;
-	    extra_chars -= len;
-	}
-	break;
+        if (mime_section->encoding == MENCODE_QPRINT) {
+            o = line_offset + extra_offset;
+            len = qp_decodestring(bp+o, bp+o, 0) + line_offset;
+            if (len == line_offset || bp[len+extra_offset-1] != '\n') {
+                if (read_something >= 0) {
+                    read_offset = line_offset = len;
+                    goto read_more;
+                }
+                strcpy(bp + len++ + extra_offset, "\n");
+            }
+        }
+        else if (mime_section->encoding == MENCODE_BASE64) {
+            o = line_offset + extra_offset;
+            len = b64_decodestring(bp+o, bp+o) + line_offset;
+            if ((s = strchr(bp + o, '\n')) == NULL) {
+                if (read_something >= 0) {
+                    read_offset = line_offset = len;
+                    goto read_more;
+                }
+                strcpy(bp + len++ + extra_offset, "\n");
+            }
+            else {
+                extra_chars += len;
+                len = s - bp - extra_offset + 1;
+                extra_chars -= len;
+            }
+        }
+        if (mime_state != HTMLTEXT_MIME)
+            break;
+        o = filter_offset + extra_offset;
+        len = filter_html(bp+filter_offset, bp+o) + filter_offset;
+        if (len == filter_offset || (s = strchr(bp, '\n')) == NULL) {
+            if (read_something >= 0) {
+                read_offset = line_offset = filter_offset = len;
+                goto read_more;
+            }
+            strcpy(bp + len++, "\n");
+            extra_chars = 0;
+        }
+        else {
+            extra_chars = len;
+            len = s - bp + 1;
+            extra_chars -= len;
+        }
+        break;
       case DECODE_MIME: {
-	MIMECAP_ENTRY* mcp;
-	mcp = mime_FindMimecapEntry(mime_section->type_name,
-				    MCF_NEEDSTERMINAL|MCF_COPIOUSOUTPUT);
-	if (mcp) {
-	    int save_term_line = term_line;
-	    nowait_fork = true;
-	    color_object(COLOR_MIMEDESC, 1);
-	    if (decode_piece(mcp,bp) != 0) {
-		strcpy(bp = artbuf + artbuf_pos, art_line);
-		mime_SetState(bp);
-		if (mime_state == DECODE_MIME)
-		    mime_state = SKIP_MIME;
-	    }
-	    else
-		mime_state = SKIP_MIME;
-	    color_pop();
-	    chdir_newsdir();
-	    erase_line(false);
-	    nowait_fork = false;
-	    first_view = artline;
-	    term_line = save_term_line;
-	    if (mime_state != SKIP_MIME)
-		goto mime_switch;
-	}
-	/* FALL THROUGH */
+        MIMECAP_ENTRY* mcp;
+        mcp = mime_FindMimecapEntry(mime_section->type_name,
+                                    MCF_NEEDSTERMINAL|MCF_COPIOUSOUTPUT);
+        if (mcp) {
+            int save_term_line = term_line;
+            nowait_fork = true;
+            color_object(COLOR_MIMEDESC, 1);
+            if (decode_piece(mcp,bp) != 0) {
+                strcpy(bp = artbuf + artbuf_pos, art_line);
+                mime_SetState(bp);
+                if (mime_state == DECODE_MIME)
+                    mime_state = SKIP_MIME;
+            }
+            else
+                mime_state = SKIP_MIME;
+            color_pop();
+            chdir_newsdir();
+            erase_line(false);
+            nowait_fork = false;
+            first_view = artline;
+            term_line = save_term_line;
+            if (mime_state != SKIP_MIME)
+                goto mime_switch;
+        }
+        /* FALL THROUGH */
       }
       case SKIP_MIME: {
-	MIME_SECT* mp = mime_section;
-	while ((mp = mp->prev) != NULL && !mp->boundary_len) ;
-	if (!mp) {
-	    artbuf_len = artbuf_pos;
-	    artsize = artbuf_len + htype[PAST_HEADER].minpos;
-	    read_something = 0;
-	    bp = NULL;
-	}
-	else if (read_something >= 0) {
-	    *bp = '\0';
-	    read_offset = line_offset = filter_offset = 0;
-	    goto read_more;
-	}
-	else
-	    *bp = '\0';
-	len = 0;
-	break;
+        MIME_SECT* mp = mime_section;
+        while ((mp = mp->prev) != NULL && !mp->boundary_len) ;
+        if (!mp) {
+            artbuf_len = artbuf_pos;
+            artsize = artbuf_len + htype[PAST_HEADER].minpos;
+            read_something = 0;
+            bp = NULL;
+        }
+        else if (read_something >= 0) {
+            *bp = '\0';
+            read_offset = line_offset = filter_offset = 0;
+            goto read_more;
+        }
+        else
+            *bp = '\0';
+        len = 0;
+        break;
       }
     case END_OF_MIME:
-	if (mime_section->prev)
-	    mime_state = SKIP_MIME;
-	else {
-	    if (datasrc->flags & DF_REMOTE) {
-		nntp_finishbody(FB_SILENT);
-		raw_artsize = nntp_artsize();
-	    }
-	    seekart(raw_artsize);
-	}
-	/* FALL THROUGH */
+        if (mime_section->prev)
+            mime_state = SKIP_MIME;
+        else {
+            if (datasrc->flags & DF_REMOTE) {
+                nntp_finishbody(FB_SILENT);
+                raw_artsize = nntp_artsize();
+            }
+            seekart(raw_artsize);
+        }
+        /* FALL THROUGH */
       case BETWEEN_MIME:
-	len = strlen(multipart_separator) + 1;
-	if (extra_offset && filter_offset) {
-	    extra_chars = len + 1;
-	    len = o = read_offset + 1;
-	    bp[o-1] = '\n';
-	}
-	else {
-	    o = -1;
-	    artbuf_pos++;
-	    bp++;
-	}
-	sprintf(bp+o,"\002%s\n",multipart_separator);
-	break;
+        len = strlen(multipart_separator) + 1;
+        if (extra_offset && filter_offset) {
+            extra_chars = len + 1;
+            len = o = read_offset + 1;
+            bp[o-1] = '\n';
+        }
+        else {
+            o = -1;
+            artbuf_pos++;
+            bp++;
+        }
+        sprintf(bp+o,"\002%s\n",multipart_separator);
+        break;
       case UNHANDLED_MIME:
-	mime_state = SKIP_MIME;
-	*bp++ = '\001';
-	artbuf_pos++;
-	mime_Description(mime_section,bp,tc_COLS);
-	len = strlen(bp);
-	break;
+        mime_state = SKIP_MIME;
+        *bp++ = '\001';
+        artbuf_pos++;
+        mime_Description(mime_section,bp,tc_COLS);
+        len = strlen(bp);
+        break;
       case ALTERNATE_MIME:
-	mime_state = SKIP_MIME;
-	*bp++ = '\001';
-	artbuf_pos++;
-	sprintf(bp,"[Alternative: %s]\n", mime_section->type_name);
-	len = strlen(bp);
-	break;
+        mime_state = SKIP_MIME;
+        *bp++ = '\001';
+        artbuf_pos++;
+        sprintf(bp,"[Alternative: %s]\n", mime_section->type_name);
+        len = strlen(bp);
+        break;
       case IMAGE_MIME:
       case AUDIO_MIME:
-	if (!mime_article.total && !multimedia_mime)
-	    multimedia_mime = true;
-	/* FALL THROUGH */
+        if (!mime_article.total && !multimedia_mime)
+            multimedia_mime = true;
+        /* FALL THROUGH */
       default:
-	if (view_inline && first_view < artline
-	 && (mime_section->flags & MSF_INLINE))
-	    mime_state = DECODE_MIME;
-	else
-	    mime_state = SKIP_MIME;
-	*bp++ = '\001';
-	artbuf_pos++;
-	mime_Description(mime_section,bp,tc_COLS);
-	len = strlen(bp);
-	break;
+        if (view_inline && first_view < artline
+         && (mime_section->flags & MSF_INLINE))
+            mime_state = DECODE_MIME;
+        else
+            mime_state = SKIP_MIME;
+        *bp++ = '\001';
+        artbuf_pos++;
+        mime_Description(mime_section,bp,tc_COLS);
+        len = strlen(bp);
+        break;
     }
 
   done:
     word_wrap = tc_COLS - word_wrap_offset;
     if (read_something && word_wrap_offset >= 0 && word_wrap > 20 && bp) {
-	char* cp;
-	for (cp = bp; *cp && (s = index(cp, '\n')) != NULL; cp = s+1) {
-	    if (s - cp > tc_COLS) {
-		char* t;
-		do {
-		    for (t = cp+word_wrap; *t!=' ' && *t!='\t' && t > cp; t--) ;
-		    if (t == cp) {
-			for (t = cp+word_wrap; *t!=' ' && *t!='\t' && t<=cp+tc_COLS; t++) ;
-			if (t > cp+tc_COLS) {
-			    t = cp + tc_COLS - 1;
-			    continue;
-			}
-		    }
-		    if (cp == bp) {
-			extra_chars += len;
-			len = t - bp + 1;
-			extra_chars -= len;
-		    }
-		    *t = wrapped_nl;
-		    if (t[1] == ' ' || t[1] == '\t') {
-			int spaces = 1;
-			for (t++; *++t == ' ' || *t == '\t'; spaces++) ;
-			safecpy(t-spaces,t,extra_chars);
-			extra_chars -= spaces;
-			t -= spaces + 1;
-		    }
-		} while (s - (cp = t+1) > word_wrap);
-	    }
-	}
+        char* cp;
+        for (cp = bp; *cp && (s = strchr(cp, '\n')) != NULL; cp = s+1) {
+            if (s - cp > tc_COLS) {
+                char* t;
+                do {
+                    for (t = cp+word_wrap; *t!=' ' && *t!='\t' && t > cp; t--) ;
+                    if (t == cp) {
+                        for (t = cp+word_wrap; *t!=' ' && *t!='\t' && t<=cp+tc_COLS; t++) ;
+                        if (t > cp+tc_COLS) {
+                            t = cp + tc_COLS - 1;
+                            continue;
+                        }
+                    }
+                    if (cp == bp) {
+                        extra_chars += len;
+                        len = t - bp + 1;
+                        extra_chars -= len;
+                    }
+                    *t = wrapped_nl;
+                    if (t[1] == ' ' || t[1] == '\t') {
+                        int spaces = 1;
+                        for (t++; *++t == ' ' || *t == '\t'; spaces++) ;
+                        safecpy(t-spaces,t,extra_chars);
+                        extra_chars -= spaces;
+                        t -= spaces + 1;
+                    }
+                } while (s - (cp = t+1) > word_wrap);
+            }
+        }
     }
     artbuf_pos += len;
     if (read_something) {
-    	artbuf_seek = tellart();
-	artbuf_len = artbuf_pos + extra_chars;
-	if (artsize >= 0)
-	    artsize = raw_artsize-artbuf_seek+artbuf_len+htype[PAST_HEADER].minpos;
+        artbuf_seek = tellart();
+        artbuf_len = artbuf_pos + extra_chars;
+        if (artsize >= 0)
+            artsize = raw_artsize-artbuf_seek+artbuf_len+htype[PAST_HEADER].minpos;
     }
 
     return bp;

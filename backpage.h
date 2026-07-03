@@ -4,11 +4,11 @@
 
 /* things for doing the 'back page' command */
 
-extern int varyfd;			/* virtual array file for storing  */
-					/* file offsets */
-extern ART_POS varybuf[VARYSIZE];	/* current window onto virtual array */
+extern int varyfd;                      /* virtual array file for storing  */
+                                        /* file offsets */
+extern ART_POS varybuf[VARYSIZE];       /* current window onto virtual array */
 
-extern long oldoffset;			/* offset to block currently in window */
+extern long oldoffset;                  /* offset to block currently in window */
 
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
