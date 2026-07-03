@@ -1,7 +1,9 @@
-/* artstate.h
+/*
+ * artstate.h
  */
-/* This software is copyrighted as detailed in the LICENSE file. */
-
+/*
+ * This software is copyrighted as detailed in the LICENSE file.
+ */
 
 extern bool reread;             /* consider current art temporarily */
                                 /* unread? */

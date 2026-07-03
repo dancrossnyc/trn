@@ -1,10 +1,11 @@
-/* cache.h
+/*
+ * cache.h
  */
-/* This software is copyrighted as detailed in the LICENSE file. */
-
+/*
+ * This software is copyrighted as detailed in the LICENSE file.
+ */
 
 /* Subjects get their own structure */
-
 struct subject {
     SUBJECT* next;
     SUBJECT* prev;
@@ -18,7 +19,6 @@ struct subject {
 };
 
 /* subject flags */
-
 #define SF_SEL          0x0001
 #define SF_DEL          0x0002
 #define SF_DELSEL       0x0004
@@ -31,7 +31,6 @@ struct subject {
 #define SF_ISOSUBJ      0x2000
 
 /* This is our article-caching structure */
-
 struct article {
     ART_NUM num;
     time_t date;
@@ -58,7 +57,6 @@ struct article {
 };
 
 /* article flags */
-
 #define AF_SEL          0x0001
 #define AF_DEL          0x0002
 #define AF_DELSEL       0x0004
@@ -131,8 +129,6 @@ extern bool untrim_cache;
 extern ART_NUM subj_to_get;
 extern ART_NUM xref_to_get;
 #endif
-
-/* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
 void cache_init (void);
 void build_cache (void);

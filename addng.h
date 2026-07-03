@@ -1,7 +1,9 @@
-/* addng.h
+/*
+ * addng.h
  */
-/* This software is copyrighted as detailed in the LICENSE file. */
-
+/*
+ * This software is copyrighted as detailed in the LICENSE file.
+ */
 
 struct addgroup {
     ADDGROUP* next;
@@ -26,9 +28,7 @@ extern ADDGROUP* last_addgroup;
 extern ADDGROUP* sel_page_gp;
 extern ADDGROUP* sel_next_gp;
 
-/* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
-
-void addng_init (void);
-bool find_new_groups (void);
-bool scanactive (bool);
-void sort_addgroups (void);
+void addng_init(void);
+bool find_new_groups(void);
+bool scanactive(bool);
+void sort_addgroups(void);
