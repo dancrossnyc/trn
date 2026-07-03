@@ -15,7 +15,7 @@
  * Source directory  : .
  * Configuration time: Wed Jun  3 12:34:13 UTC 2026
  * Configured by     : cross
- * Target system     : openbsd spitfire.i.gajendra.net 7.9 generic.mp#449 amd64 
+ * Target system     : openbsd spitfire.i.gajendra.net 7.9 generic.mp#449 amd64
  */
 
 #ifndef _config_h_
