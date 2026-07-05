@@ -88,10 +88,6 @@ initialize (int argc, char *argv[])
                                         /* mode setting is in term_set() */
     mp_init();
 
-    /* init syntax etc. for searching (must also precede opt_init()) */
-
-    search_init();
-
     /* we have to know rnlib to look up global switches in %X/INIT */
 
     env_init(tcbuf, 1);

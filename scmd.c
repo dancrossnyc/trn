@@ -298,9 +298,7 @@ s_docmd (void)
     return 0;           /* keep on looping! */
 }
 
-static char search_text[LBUFLEN];
-
-static char search_init = false;
+static char search_text[LBUFLEN] = { 0 };
 
 bool
 s_match_description (long ent)
@@ -357,10 +355,6 @@ s_search (void)
     char* s;
     char* error_msg;
 
-    if (!search_init) {
-        search_init = true;
-        search_text[0] = '\0';
-    }
     s_rub_ptr();
     buf[1] = '\0';
     if (!s_finish_cmd(NULL))
