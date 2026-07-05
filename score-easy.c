@@ -172,11 +172,9 @@ sc_easy_append (void)
 char *
 sc_easy_command (void)
 {
-    char* s;
     bool q_done;        /* if true, we are finished with current question */
     char ch;
 
-    s = sc_e_newline;
     printf("\nScoring easy command mode.\n");
     q_done = false;
     while (!q_done) {

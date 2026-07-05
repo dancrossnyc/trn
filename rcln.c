@@ -526,8 +526,7 @@ was_read_group (DATASRC *dp, ART_NUM artnum, char *ngnam)
     NGDATA* np;
     char* s;
     char* t;
-    char* maxt = NULL;
-    ART_NUM min = 0, max = -1, lastnum = 0;
+    ART_NUM min = 0, max = -1;
 
     if (!artnum)
         return true;
@@ -558,17 +557,11 @@ was_read_group (DATASRC *dp, ART_NUM artnum, char *ngnam)
         if (*t == '-') {                /* is it a range? */
             t++;                        /* skip to next number */
             if (artnum <= (max = atol(t)))
-                return true;            /* it is in range => already read */
-            lastnum = max;              /* remember it */
-            maxt = t;                   /* remember position in case we */
-                                        /* want to overwrite the max */
             while (isdigit(*t)) t++;    /* skip second number */
         }
         else {
             if (artnum == min)          /* explicitly a read article? */
                 return true;
-            lastnum = min;              /* remember what the number was */
-            maxt = NULL;                /* last one was not a range */
         }
         while (*t && !isdigit(*t)) t++; /* skip comma and any spaces */
         s = t;

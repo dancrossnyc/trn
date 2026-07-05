@@ -582,8 +582,6 @@ find_grpdesc (DATASRC *dp, char *groupname)
         return node->data + data.dat_len + grouplen + 1;
     }
 
-  try_xgtitle:
-
     if ((dp->flags & (DF_REMOTE|DF_NOXGTITLE)) == DF_REMOTE) {
         set_datasrc(dp);
         sprintf(ser_line, "XGTITLE %s", groupname);

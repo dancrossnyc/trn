@@ -24,14 +24,9 @@ static char* tildedir = NULL;
 char *
 safecpy(char *to, const char *from, size_t len)
 {
-    char* dest = to;
-
-    if (from) {
-        while (--len && *from)
-            *dest++ = *from++;
-    }
-    *dest = '\0';
-
+    size_t n = strlcpy(to, from, len);
+    assert(n < len);
+    (void)n;
     return to;
 }
 
@@ -191,5 +186,3 @@ read_auth_file(const char *file, char **pass_ptr)
     *pass_ptr = strptr[1];
     return strptr[0];
 }
-
-

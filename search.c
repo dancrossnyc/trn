@@ -60,7 +60,7 @@
                                    ORs with the other operator types */
 
 #define ASCSIZ 256
-typedef Uchar   TRANSTABLE[ASCSIZ];
+typedef unsigned char   TRANSTABLE[ASCSIZ];
 
 static TRANSTABLE trans;
 static bool folding = false;

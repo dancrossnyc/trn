@@ -270,7 +270,7 @@ visual_length_between (const char *s1, const char *s2)
 CODE_POINT
 code_point_at (const char *s)
 {
-    CODE_POINT it;
+    CODE_POINT it = 0;
     if (s != NULL) {
         if (IS_UTF8(gs.in)) {
             size_t n = strlen(s);
@@ -355,7 +355,7 @@ insert_utf8_at (char *s, CODE_POINT c)
 int
 insert_unicode_at (char *s, CODE_POINT c)
 {
-    int it;
+    int it = 0;
     /* FIXME - should we check if s has enough space? */
     if (s == NULL)
         it = 0;
@@ -391,7 +391,7 @@ at_norm_char (const char *s)
 int
 put_char_adv (char **strptr, bool outputok)
 {
-    int it;
+    int it = 0;
     if (strptr == NULL) {
         it = 0;
     } else {

@@ -261,7 +261,6 @@ try_again:
         while (*s) {
 #ifdef USE_UTF_HACK
             int w;
-            int v;
 #endif
             if (isalpha(*s)) {
                 if (d != mid) {

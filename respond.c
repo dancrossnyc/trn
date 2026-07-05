@@ -762,7 +762,7 @@ forward (void)
     char* s;
     char* eol;
 #endif
-    char* mime_boundary;
+    char* mime_boundary = NULL;
 
 #ifdef REGEX_WORKS_RIGHT
     init_compex(&mime_compex);

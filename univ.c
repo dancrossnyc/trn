@@ -503,15 +503,11 @@ univ_use_file (char *fname, char *title, char *label)
     static char lbuf[LBUFLEN];
     FILE* fp;
     char* s;
-    char* p;
     char* open_name;
-    bool save_temp;
     bool begin_top;     /* if false, look for "begin group"
                            before interpreting */
 
-    save_temp = false;
     begin_top = true;   /* default assumption (might be changed later) */
-    p = NULL;
 
     if (!fname)
         return false;   /* bad argument */
@@ -526,7 +522,6 @@ univ_use_file (char *fname, char *title, char *label)
         univ_tmp_file = open_name;
         if (!url_get(fname+4,open_name))
             open_name = NULL;
-        save_temp = true;
         begin_top = false;      /* we will need a "begin group" */
 #else /* !USEURL */
         printf("This copy of trn does not have URL support.\n");
@@ -1216,7 +1211,6 @@ univ_help_main (
 )
 {
     UNIV_ITEM *ui;
-    bool flag;
 
     univ_open();
     univ_title = estrdup("Extended Help");
@@ -1232,9 +1226,7 @@ univ_help_main (
 
     /* read in main help file */
     univ_fname = estrdup("%X/HelpFiles/top");
-    flag = univ_use_file(univ_fname,univ_title,univ_label);
-
-    /* later: if flag is not true, then add message? */
+    univ_use_file(univ_fname,univ_title,univ_label);
 }
 
 void

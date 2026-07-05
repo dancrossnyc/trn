@@ -393,14 +393,11 @@ static int
 write_local_thread_commands (int keylen, HASHDATUM *data, int extra)
 {
     ARTICLE* ap = (ARTICLE*)data->dat_ptr;
-    int autofl = ap->autofl;
-    char ch;
-
-    if (autofl && ((ap->flags & AF_EXISTS) || ap->child1)) {
-        int i;
+    if (ap->autofl && ((ap->flags & AF_EXISTS) || ap->child1)) {
+        char ch = 0;
         /* The arrays are in priority order, so find highest priority bit. */
-        for (i = 0; thread_cmd_ltr[i]; i++) {
-            if (autofl & thread_cmd_flag[i]) {
+        for (int i = 0; thread_cmd_ltr[i]; i++) {
+            if (ap->autofl & thread_cmd_flag[i]) {
                 ch = thread_cmd_ltr[i];
                 break;
             }
@@ -508,6 +505,7 @@ write_global_thread_commands (int keylen, HASHDATUM *data, int appending)
     }
 
     /* The arrays are in priority order, so find highest priority bit. */
+    ch = 0;
     for (i = 0; thread_cmd_ltr[i]; i++) {
         if (autofl & thread_cmd_flag[i]) {
             ch = thread_cmd_ltr[i];
