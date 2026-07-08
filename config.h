@@ -75,18 +75,6 @@
  */
 #define MBOXCHAR 'F'		/**/
 
-/* PASSNAMES:
- *	This symbol, if defined, indicates that full names are stored in
- *	the /etc/passwd file.
- */
-/* BERKNAMES:
- *	This symbol, if defined, indicates that full names are stored in
- *	the /etc/passwd file in Berkeley format (name first thing, everything
- *	up to first comma, with & replaced by capitalized login id, yuck).
- */
-#define PASSNAMES /*  (undef to take name from ~/.fullname) */
-#define BERKNAMES /* (that is, ":name,stuff:") */
-
 /* INSTALLPREFIX:
  *	This symbol contains the name of the install prefix for this package.
  */

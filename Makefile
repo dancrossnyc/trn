@@ -8,8 +8,8 @@
 #    -DREPLYTO_POSTER_CHECKING    makes -p also check Reply-To (slow)
 
 srcdir = /a/cross/projects/trn
-VPATH =
-extra_cleanup =
+VPATH = 
+extra_cleanup = 
 
 CC = cc
 TOUCH = touch
@@ -17,8 +17,8 @@ YACC = yacc
 LINT = clang
 lintflags = --analyze
 
-CFLAGS = -g -pthread -I/usr/local/include -Wall -std=c17
-TKINC =
+CFLAGS = -g -pthread -I/usr/local/include 
+TKINC = 
 LDFLAGS =  -pthread -L/usr/local/lib -L/opt/local/lib -lc++abi -lm -lutil -lexecinfo -lcompiler_rt
 TKLDFLAGS =
 
@@ -29,13 +29,13 @@ rnlib = /usr/local/lib/trn
 inewsbin = /usr/local/bin
 mansrc = /usr/local/share/man/man1
 manext = 1
-NNTPFLAGS =
-strftimec =
-strftimeo =
+NNTPFLAGS = 
+strftimec = 
+strftimeo = 
 installfilexp = /usr/local/lib/trn/filexp
 
 libs = trn-rs/target/debug/libtrn.a -lcurses  -lm -lintl
-tklibs =
+tklibs = 
 public_backup = trn trn-artchk $(nntpexe) $(msdosexe)
 public_diff = Pnews Rnmail
 public = $(public_backup) $(public_diff)

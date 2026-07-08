@@ -76,7 +76,7 @@ marked as read with a single keystroke.
 If you are already familiar with
 .I trn
 you may just want to read the
-.IR "WHAT'S NEW" 
+.IR "WHAT'S NEW"
 section.
 People upgrading from
 .I rn
@@ -594,7 +594,7 @@ The normal article-reading prompt comes at the END of an article
 (although article-reading commands can also be given from within the middle
 of an article in addition to the pager level commands).
 The prompt at the end of an article looks like this:
-.Sp 
+.Sp
 End of article 248 (of 257) \*(-- what next? [npq]
 .Sp
 The following are the options at this point:
@@ -1153,7 +1153,7 @@ Escape to a subshell.
 The following commands skip the rest of the current article, then behave just
 as if typed to the \*(L"What next?\*(R" prompt at the end of the article.
 See the documentation at the article selection level for these commands.
-.Sp	
+.Sp
     # $ & / = ? A c C f F k K T ^K J , m M r R ^R u U v Y ^
 .br
     p P ^P - < > [ ] { } number
@@ -1269,7 +1269,7 @@ first thread's article tree.
 .B \-A
 tells trn to attempt to create some default macros that will map your
 arrow keys to useful trn functions (this is the default).
-Use 
+Use
 .B +A
 to turn this behavior off.
 .TP 5
@@ -1556,7 +1556,7 @@ the parent article, so that you see any other replies to the same article.
 Using \-p+ tells trn to select the whole thread that contains your reply.
 .TP 5
 .B \-q
-bypasses the automatic check for new newsgroups when starting 
+bypasses the automatic check for new newsgroups when starting
 .IR trn .
 .TP 5
 .B \-Q<set>
@@ -1600,9 +1600,9 @@ This is also a nice feature to use in your
 file, since it not only tells you whether there is unread news, but also how
 important the unread news is, without having to wade through the entire
 list of unread newsgroups.
-If no 
+If no
 .B \-s
-switch is given 
+switch is given
 .B \-s5
 is assumed, so just putting \*(L"rn \-c\*(R"
 into your
@@ -1777,8 +1777,8 @@ on 7-bit displays.
 .I trn
 assumes that articles use the ISO-8859-1 character set and converts
 the special characters (e.g., \*(L"umlauts\*(R") to a string of ASCII
-characters. 
-Currently the following conversions are supported (see the 
+characters.
+Currently the following conversions are supported (see the
 .I \-Q
 option):
 .TP 5
@@ -1795,12 +1795,12 @@ similar-looking ASCII character, e.g. umlaut-o becomes o. Used where
 correct spacing is more important than accuracy.
 .TP 5
 .B t
-TeX->ISO. Assuming your display can handle the ISO-8859-1 charset, 
+TeX->ISO. Assuming your display can handle the ISO-8859-1 charset,
 .I trn
 transforms umlauts in the TeX notation, which is commonly used in
 Germany, to real ISO characters, e.g. "a becomes umlaut-a.
 .PP
-The selected conversion, if different from 
+The selected conversion, if different from
 .BR p ,
 will be displayed in the article level and pager prompt. The
 conversion is also used when including original articles in a reply or
@@ -2155,7 +2155,7 @@ See also FORWARDPOSTER.
 .Sp
 Default:
 .Sp
-To: 
+To:
 .br
 Subject: %(%i=^$?:[subject] (fwd\e\e)
 .br
@@ -2169,7 +2169,7 @@ In-Reply-To: %i)
 .br
 )Organization: %o
 .br
-Cc: 
+Cc:
 .br
 Bcc: \en\en
 .Ip "FORWARDPOSTER (~)" 8
@@ -2279,7 +2279,7 @@ In-Reply-To: %i)
 .br
 )Organization: %o
 .br
-Cc: 
+Cc:
 .br
 Bcc: \en\en
 .Ip "MAILPOSTER (~)" 8
@@ -2329,13 +2329,13 @@ Subject: %(%S=^$?%"\en\enSubject: ":Re: %S)
 .br
 Summary:
 .br
-Expires: 
+Expires:
 .br
 %(%R=^$?:References: %R
 .br
-)Sender: 
+)Sender:
 .br
-Followup-To: 
+Followup-To:
 .br
 %(%{REPLYTO}=^$?:Reply-To: %{REPLYTO}
 .br
@@ -2502,7 +2502,7 @@ Default values for switches may be passed to
 .I trn
 by placing them in the TRNINIT variable (or RNINIT if you're starting
 trn in rn-compatibility mode).
-Any switch that is set in this way may be overruled 
+Any switch that is set in this way may be overruled
 on the command line, or via the \*(L'&\*(R' command from within
 .IR trn .
 Binary-valued switches that are set with \*(L"\-switch\*(R" may be unset

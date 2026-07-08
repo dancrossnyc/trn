@@ -95,7 +95,6 @@ head_init (void)
     headbuf = safemalloc(headbuf_size);
 }
 
-#ifdef DEBUG
 void
 dumpheader (char *where)
 {
@@ -109,7 +108,6 @@ dumpheader (char *where)
                htype[i].flags);
     }
 }
-#endif
 
 int
 set_line_type (char *bufptr, char *colon)
@@ -203,10 +201,8 @@ start_header (ART_NUM artnum)
 {
     int i;
 
-#ifdef DEBUG
     if (debug & DEB_HEADER)
         dumpheader("start_header\n");
-#endif
     for (i = 0; i < HEAD_LAST; i++) {
         htype[i].minpos = -1;
         htype[i].maxpos = 0;
@@ -272,10 +268,8 @@ parseline (char *art_buf, int newhide, int oldhide)
                         parsed_artp->date = parsedate(art_buf+6);
                 }
             }
-#ifdef DEBUG
             if (debug & DEB_HEADER)
                 dumpheader(art_buf);
-#endif
             if (htype[in_header].flags & HT_HIDE)
                 return newhide;
     }
@@ -428,61 +422,16 @@ fetchlines (
     size = lastpos - firstpos;
     t = headbuf + firstpos;
     while (*t == ' ' || *t == '\t') t++, size--;
-#ifdef DEBUG
     if (debug && (size < 1 || size > 1000)) {
         printf("Firstpos = %ld, lastpos = %ld\n",(long)firstpos,(long)lastpos);
         fgets(cmd_buf, sizeof cmd_buf, stdin);
     }
-#endif
     s = safemalloc((size_t)size);
     safecpy(s,t,size);
     return s;
 }
 
-/* (strn) like fetchlines, but for memory pools */
-#ifdef SCAN
-char *
-mp_fetchlines (
-    ART_NUM artnum,                             /* article to get line from */
-    int which_line,                             /* type of line desired */
-    int pool                            /* which memory pool to use */
-)
-{
-    char* s;
-    char* t;
-    ART_POS firstpos;
-    ART_POS lastpos;
-    int size;
-
-    /* Only return a cached line if it isn't the current article */
-    if (parsed_art != artnum) {
-        /* If the line is not in the cache, this will parse the header */
-        s = fetchcache(artnum,which_line,FILL_CACHE);
-        if (s)
-            return mp_estrdup(s,pool);
-    }
-    if ((firstpos = htype[which_line].minpos) < 0)
-        return mp_estrdup(nullstr,pool);
-
-    firstpos += htype[which_line].length + 1;
-    lastpos = htype[which_line].maxpos;
-    size = lastpos - firstpos;
-    t = headbuf + firstpos;
-    while (*t == ' ' || *t == '\t') t++, size--;
-#ifdef DEBUG
-    if (debug && (size < 1 || size > 1000)) {
-        printf("Firstpos = %ld, lastpos = %ld\n",(long)firstpos,(long)lastpos);
-        fgets(cmd_buf, sizeof cmd_buf, stdin);
-    }
-#endif
-    s = mp_malloc(size,pool);
-    safecpy(s,t,size);
-    return s;
-}
-#endif
-
 /* prefetch a header line from one or more articles */
-
 char *
 prefetchlines (
     ART_NUM artnum,                             /* article to get line from */
@@ -537,10 +486,8 @@ prefetchlines (
             size_t last_buflen = sizeof ser_line;
             for (;;) {
                 line = nntp_get_a_line(last_buf,last_buflen,last_buf!=ser_line);
-# ifdef DEBUG
                 if (debug & DEB_NNTP)
                     printf("<%s", line? line : "<EOF>");
-# endif
                 if (nntp_at_list_end(line))
                     break;
                 last_buf = line;

@@ -397,17 +397,6 @@
 # endif
 #endif
 
-/* location of full name */
-#ifndef FULLNAMEFILE
-#   ifndef PASSNAMES
-#     ifdef LIMITED_FILENAMES
-#       define FULLNAMEFILE "%./fullname"
-#     else
-#       define FULLNAMEFILE "%./.fullname"
-#     endif
-#   endif
-#endif
-
 /* The name to append to the directory name to read an overview file. */
 #ifndef OV_FILE_NAME
 # ifdef LIMITED_FILENAMES
@@ -691,24 +680,21 @@ extern char* cwd;               /* current working directory */
 extern char* dfltcmd;           /* 1st char is default command */
 
 /* switches */
-
-#ifdef DEBUG
-    extern int debug;           /* -D */
-#   define DEB_COREDUMPSOK 2
-#   define DEB_HEADER 4
-#   define DEB_INTRP 8
-#   define DEB_NNTP 16
-#   define DEB_INNERSRCH 32
-#   define DEB_FILEXP 64
-#   define DEB_HASH 128
-#   define DEB_XREF_MARKER 256
-#   define DEB_CTLAREA_BITMAP 512
-#   define DEB_RCFILES 1024
-#   define DEB_NEWSRC_LINE 2048
-#   define DEB_SEARCH_AHEAD 4096
-#   define DEB_CHECKPOINTING 8192
-#   define DEB_FEED_XREF 16384
-#endif
+extern int debug;           /* -D */
+#define DEB_COREDUMPSOK 2
+#define DEB_HEADER 4
+#define DEB_INTRP 8
+#define DEB_NNTP 16
+#define DEB_INNERSRCH 32
+#define DEB_FILEXP 64
+#define DEB_HASH 128
+#define DEB_XREF_MARKER 256
+#define DEB_CTLAREA_BITMAP 512
+#define DEB_RCFILES 1024
+#define DEB_NEWSRC_LINE 2048
+#define DEB_SEARCH_AHEAD 4096
+#define DEB_CHECKPOINTING 8192
+#define DEB_FEED_XREF 16384
 
 #ifdef ARTSEARCH
 extern int scanon;                                      /* -S */

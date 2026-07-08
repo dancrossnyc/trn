@@ -5,7 +5,7 @@ echo "Extracting Rnmail (with variable substitutions)"
 $spitshell >Rnmail <<!GROK!THIS!
 $startsh
 # Rnmail
-# 
+#
 # This software is copyrighted as detailed in the LICENSE file.
 #
 # syntax: Rnmail -h headerfile [oldart]		or
@@ -23,8 +23,6 @@ mailer="\${RNMAILER-${mailer-/bin/mail}}"
 orgname="$orgname"
 # what pager you use--if you have kernal paging use cat
 pager="\${PAGER-$pager}"
-# how you derive full names, bsd, usg, or other
-nametype="$nametype"
 # default editor
 defeditor="$defeditor"
 # where the non-publics are
@@ -128,14 +126,14 @@ EOH
 	h)
 	    $cat <<'EOH'
 
-Type the title for your message.  
+Type the title for your message.
 EOH
 	    ;;
 	esac
     done
 
 # now build a file with a header for them to edit
-    
+
     case $orgname in
     /*) orgname=`$cat $orgname` ;;
     esac

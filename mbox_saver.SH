@@ -5,9 +5,9 @@ echo "Extracting mbox.saver (with variable substitutions)"
 $spitshell >mbox.saver <<!GROK!THIS!
 $startsh
 # mbox.saver
-# 
+#
 # This software is copyrighted as detailed in the LICENSE file.
-# 
+#
 #	Arguments:
 #	1 Full name of article (%A)
 #	2 Public news spool directory (%P)

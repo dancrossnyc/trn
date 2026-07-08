@@ -107,9 +107,7 @@ extern long headbuf_size;
 /* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
 
 void head_init (void);
-#ifdef DEBUG
 void dumpheader (char*);
-#endif
 int set_line_type (char*,char*);
 int get_header_num (char*);
 void start_header (ART_NUM);
@@ -118,7 +116,4 @@ bool parseline (char*,int,int);
 void end_header (void);
 bool parseheader (ART_NUM);
 char* fetchlines (ART_NUM,int);
-#ifdef SCAN
-char* mp_fetchlines (ART_NUM,int,int);
-#endif
 char* prefetchlines (ART_NUM,int,bool);

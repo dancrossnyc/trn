@@ -88,16 +88,11 @@ setusername (char *tmpbuf)
     if (!homedir)
         homedir = estrdup(pwd->pw_dir);
     s = pwd->pw_gecos;
-#ifdef PASSNAMES
-#ifdef BERKNAMES
-#ifdef BERKJUNK
-    while (*s && !isalnum(*s) && *s != '&') s++;
-#endif
     if ((c = strchr(s, ',')) != NULL)
         *c = '\0';
     if ((c = strchr(s, ';')) != NULL)
         *c = '\0';
-    s = cpytill(buf,s,'&');
+    s = cpytill(buf, s, '&');
     if (*s == '&') {                    /* whoever thought this one up was */
         c = buf + strlen(buf);          /* in the middle of the night */
         strcat(c,loginName);            /* before the morning after */
@@ -106,27 +101,6 @@ setusername (char *tmpbuf)
             *c = toupper(*c);           /* gack and double gack */
     }
     realName = estrdup(buf);
-#else /* !BERKNAMES */
-    if ((c = strchr(s, '(')) != NULL)
-        *c = '\0';
-    if ((c = strchr(s, '-')) != NULL)
-        s = c;
-    realName = estrdup(s);
-#endif /* !BERKNAMES */
-#else /* !PASSNAMES */
-    {
-        FILE* fp;
-        env_init2(); /* Make sure homedir/dotdir/etc. are set. */
-        if ((fp = fopen(filexp(FULLNAMEFILE),"r")) != NULL) {
-            fgets(buf,sizeof buf,fp);
-            fclose(fp);
-            buf[strlen(buf)-1] = '\0';
-            realName = estrdup(buf);
-        }
-        else
-            s = "PUT_YOUR_NAME_HERE";
-    }
-#endif /* !PASSNAMES */
     endpwent();
     return 1;
 }

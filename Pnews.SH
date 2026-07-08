@@ -7,7 +7,7 @@ trnversion=`sed -e 's/.*"\(.*\)\"/\1/' $src/$patchlevel 2>/dev/null`
 echo "Extracting Pnews (with variable substitutions)"
 $spitshell >Pnews <<!GROK!THIS!
 $startsh
-# 
+#
 # This software is copyrighted as detailed in the LICENSE file.
 #
 # syntax: Pnews -h headerfile			or
@@ -66,8 +66,6 @@ esac
 orgname="$orgname"
 # what pager you use--if you have kernal paging use cat
 pager="\${PAGER-$pager}"
-# how you derive full names, bsd, usg, or other
-nametype="$nametype"
 # default editor
 defeditor="$defeditor"
 # how not to echo with newline
@@ -262,7 +260,7 @@ EOM
     $echo "The Cc: line should have the poster's requested return address."
     ;;
 esac
-  
+
 # play recorded message
 if $test -s ${lib}/recording ; then
      for ng in $hdr_newsgroups ; do
@@ -835,7 +833,7 @@ EOH
 	;;
     ''|$loc|$org|$city|$state|$multistate|$cntry|$cont|$defdist)
 	;;
-    *)  
+    *)
 	if $test -f $lib/distributions && \
 	  $egrep "^$dist[ 	]" $lib/distributions >$tmpart && \
 	  $test -s $tmpart; then
@@ -905,34 +903,14 @@ logname=$1
 case $logname in
 *!*) logname=`expr "$logname" : '!\(.*\)$'` ;;
 esac
-case ${NAME-$nametype} in
-bsd)
-	if $test "X$ypmatch" != X; then
-		fullname=`$ypmatch $logname passwd 2>/dev/null | $sed -e "s/^[^:]*:[^:]*:[^:]*:[^:]*:\([^,:;]*\).*"'$'"/\1/"`
-	elif $test "X$nidump" != X; then
-		fullname=`$nidump passwd / | $sed -e "/^$logname:/{s/^[^:]*:[^:]*:[^:]*:[^:]*:\([^,:;]*\).*"'$'"/\1/" -e "q" -e "}" -e "d"`
-	fi
-	if $test "X$fullname" = X; then
-		fullname=`$sed </etc/passwd -e "/^$logname:/{s/^[^:]*:[^:]*:[^:]*:[^:]*:\([^,:;]*\).*"'$'"/\1/" -e "q" -e "}" -e "d"`
-	fi
-    case $fullname in
-    *'&'*) : GACK
-	lname=`$echo $logname | $tr 'a-z' 'A-Z'`
-	lname=`$echo $lname $logname | $sed 's/^\(.\)[^ ]* ./\1/'`
-	fullname=`$echo "$fullname" | $sed "s/&/${lname}/"`
-	;;
-    esac
-    ;;
-usg)
-    if $test "X$ypmatch" != X; then
-	fullname=`$ypmatch $logname passwd 2>/dev/null | $sed -e "s/^[^:]*:[^:]*:[^:]*:[^:]*:\([^(:]*\).*"'$'"/\1/" -e "s/^.*-//" -e "q"`
-    fi
-    if $test "X$fullname" = X; then
-	fullname=`$sed </etc/passwd -e "/^$logname:/{s/^[^:]*:[^:]*:[^:]*:[^:]*:\([^(:]*\).*"'$'"/\1/" -e "s/^.*-//" -e "q" -e "}" -e "d"`
-    fi
-    ;;
-*)
-    fullname=${NAME-`$cat $dotdir/.fullname`}
+if $test "X$fullname" = X; then
+	fullname=`$sed </etc/passwd -e "/^$logname:/{s/^[^:]*:[^:]*:[^:]*:[^:]*:\([^,:;]*\).*"'$'"/\1/" -e "q" -e "}" -e "d"`
+fi
+case $fullname in
+*'&'*) : GACK
+    lname=`$echo $logname | $tr 'a-z' 'A-Z'`
+    lname=`$echo $lname $logname | $sed 's/^\(.\)[^ ]* ./\1/'`
+    fullname=`$echo "$fullname" | $sed "s/&/${lname}/"`
     ;;
 esac
 
@@ -943,13 +921,13 @@ esac
 $sed -e '/^Reply-To: $/d' > $tmpart <<EOHeader
 Newsgroups: $ng
 Subject: $title
-Summary: 
+Summary:
 Reply-To: $REPLYTO
 Followup-To: $follow
 Distribution: $dist
 Organization: $orgname
-Keywords: 
-Cc: 
+Keywords:
+Cc:
 
 EOHeader
 

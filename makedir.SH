@@ -6,7 +6,7 @@ $spitshell >makedir <<!GROK!THIS!
 $startsh
 #
 # makedir
-# 
+#
 
 export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed myself to sh."; sh \$0; kill \$\$)
 

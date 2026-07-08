@@ -10,7 +10,7 @@ fi
 $spitshell >makedepend <<!GROK!THIS!
 $startsh
 # makedepend.SH
-# 
+#
 # This software is copyrighted as detailed in the LICENSE file.
 #
 export PATH || (echo "OOPS, this isn't sh.  Desperation time.  I will feed myself to sh."; sh \$0; kill \$\$)

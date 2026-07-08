@@ -8,7 +8,7 @@ $startsh
 #  This file was produced by running the Policy_sh.SH script, which
 #  gets its values from config.sh, which is generally produced by
 #  running Configure.
-# 
+#
 # login name of the person who configured trn (not particularly interesting).
 cf_by='$cf_by'
 # time of configuration (not particularly interesting).
@@ -86,17 +86,6 @@ statedist='$statedist'
 # multistate region distribution name
 multistatedist='$multistatedist'
 
-#		Naming information.
-#	password file contains names (define/undef)
-d_passnames='$d_passnames'
-#	berkeley style password entries (name first in GCOS) (define/undef)
-d_berknames='$d_berknames'
-#	USG style password entries (account number first in GCOS)
-#	(define/undef)
-d_usgnames='$d_usgnames'
-#	what type of name to use.. (bsd/usg/other)
-nametype='$nametype'
-
 #	How portable do we want to be? Determines if we do lookups now
 #	or wait until run time.  (define/undef)
 d_portable='$d_portable'
@@ -138,7 +127,7 @@ overviewdir='$overviewdir'
 
 #	trn start up options
 trn_init='$trn_init'
-#	start up with the selector? 
+#	start up with the selector?
 trn_select='$trn_select'
 
 !GROK!THIS!

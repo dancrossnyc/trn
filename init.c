@@ -59,21 +59,12 @@
 #endif
 
 long our_pid;
-/* default string for group entry */
-#if 0
-char *group_default = nullstr;
-#endif
 
 bool
 initialize (int argc, char *argv[])
 {
     char* tcbuf;
     bool foundany = false;
-#ifdef NOLINEBUF
-    static char std_out_buf[BUFSIZ];    /* must be static or malloced */
-
-    setbuf(stdout, std_out_buf);
-#endif
 
     tcbuf = safemalloc(TCBUF_SIZE);     /* make temp buffer for termcap and */
                                         /* other initialization stuff */
@@ -81,15 +72,12 @@ initialize (int argc, char *argv[])
     our_pid = (long)getpid();
 
     /* init terminal */
-
     term_init();                        /* must precede opt_init() so that */
                                         /* ospeed is set for baud-rate */
                                         /* switches.  Actually terminal */
                                         /* mode setting is in term_set() */
-    mp_init();
 
     /* we have to know rnlib to look up global switches in %X/INIT */
-
     env_init(tcbuf, 1);
     head_init();
 

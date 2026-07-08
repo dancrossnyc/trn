@@ -5,9 +5,9 @@ echo "Extracting norm.saver (with variable substitutions)"
 $spitshell >norm.saver <<!GROK!THIS!
 $startsh
 # norm.saver
-# 
+#
 # This software is copyrighted as detailed in the LICENSE file.
-# 
+#
 #	Arguments:
 #	1 Full name of article (%A)
 #	2 Public news spool directory (%P)

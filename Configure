@@ -241,10 +241,6 @@ mboxchar=''
 mimecap=''
 c=''
 n=''
-d_berknames=''
-d_passnames=''
-d_usgnames=''
-nametype=''
 d_inews=''
 extrainews=''
 groupdesc=''
@@ -4082,78 +4078,6 @@ $undef$define) . ./whoa; eval "$var=\$tu";;
 *) eval "$var=$val";;
 esac'
 
-: find out how to find out full name
-case "$d_berknames" in
-"$define")
-	dflt=y;;
-"$undef")
-	dflt=n;;
-*)
-	if ./bsd; then
-		dflt=y
-	elif ./xenix; then
-		dflt=y
-	else
-		dflt=n
-	fi
-	;;
-esac
-$cat <<'EOM'
-
-Does your /etc/passwd file keep full names in Berkeley/V7 format (name first
-thing after ':' in GCOS field)?  In that case, a typical entry in the password
-file looks like this:
-
-    guest:**paswword**:10:100:Mister Guest User:/usr/users:/bin/sh
-                              ^^^^^^^^^^^^^^^^^
-EOM
-rp="Berkeley/V7 format for full name in /etc/passwd?"
-. ./myread
-case "$ans" in
-y*) d_passnames="$define"
-	d_berknames="$define"
-	d_usgnames="$undef"
-	nametype=bsd
-	;;
-*)
-	case "$d_usgnames" in
-	"$define") dflt=y;;
-	"$undef") dflt=n;;
-	*)
-		if ./usg; then
-			dflt=y
-		else
-			dflt=n
-		fi
-		;;
-	esac
-$cat <<'EOM'
-
-Does your passwd file keep full names in USG format (name sandwiched between a
-'-' and a '(')?  In that case, a typical entry in the password file looks like
-this:
-
-    guest:**paswword**:10:100:000-Mister Guest User(000):/usr/users:/bin/sh
-                                  ^^^^^^^^^^^^^^^^^
-EOM
-	rp="USG format for full name in /etc/passwd?"
-	. ./myread
-	case "$ans" in
-	n*) echo "Full name will be taken from ~/.fullname"
-		d_passnames="$undef"
-		d_berknames="$undef"
-		d_usgnames="$undef"
-		nametype=other
-		;;
-	*)
-		d_passnames="$define"
-		d_berknames="$undef"
-		d_usgnames="$define"
-		nametype=usg
-		;;
-	esac;;
-esac
-
 : define a shorthand compile call
 compile='
 mc_file=$1;
@@ -5927,7 +5851,6 @@ cppstdin='$cppstdin'
 csh='$csh'
 d_acttimes='$d_acttimes'
 d_attribut='$d_attribut'
-d_berknames='$d_berknames'
 d_bsd='$d_bsd'
 d_dirnamlen='$d_dirnamlen'
 d_eunice='$d_eunice'
@@ -5952,7 +5875,6 @@ d_nntp='$d_nntp'
 d_nolnbuf='$d_nolnbuf'
 d_normsig='$d_normsig'
 d_novoid='$d_novoid'
-d_passnames='$d_passnames'
 d_phostcmd='$d_phostcmd'
 d_portable='$d_portable'
 d_rdchk='$d_rdchk'
@@ -5966,7 +5888,6 @@ d_strchr='$d_strchr'
 d_strftime='$d_strftime'
 d_strstr='$d_strstr'
 d_uname='$d_uname'
-d_usgnames='$d_usgnames'
 d_uwait3='$d_uwait3'
 d_uwait='$d_uwait'
 d_vfork='$d_vfork'
@@ -6050,7 +5971,6 @@ mv='$mv'
 myactive='$myactive'
 myuname='$myuname'
 n='$n'
-nametype='$nametype'
 newsadmin='$newsadmin'
 newslib='$newslib'
 newslibexp='$newslibexp'

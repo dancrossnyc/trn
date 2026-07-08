@@ -225,7 +225,7 @@ The variables:
       )Organization: %o
       Mime-Version: 1.0
       Content-Type: multipart/mixed; boundary=\"=%\$%^#=--\"
-      Cc: 
+      Cc:
       Bcc: \n\n
 
  FORWARDMSG (%)
@@ -239,7 +239,7 @@ The variables:
  FORWARDMSGEND (%)
       The line added to the message body when forwarding a message,
       signifying the end of the forwarded message.  This is only
-      added if the message is not being forwarded as a MIME 
+      added if the message is not being forwarded as a MIME
       attachment (see FORWARDHEADER).
 
       Default: ------- end of forwarded message -------
@@ -291,7 +291,7 @@ The variables:
       Default: undefined
 
  HOME
-      Your home directory.  Affects ~ interpretation, and the location 
+      Your home directory.  Affects ~ interpretation, and the location
       of your dot files if DOTDIR is not defined.
 
       Default: \$LOGDIR
@@ -361,7 +361,7 @@ The variables:
       )%(%{REPLYTO}=^\$?:Reply-To: %{REPLYTO}
       )%(%[references]=^\$?:References: %[references]
       )Organization: %o
-      Cc: 
+      Cc:
       Bcc: \n\n
 
  MAILPOSTER (~)
@@ -402,11 +402,11 @@ The variables:
       %(%[followup-to]=^\$?:%(%[followup-to]=^%n\$?:X-ORIGINAL-NEWSGROUPS: %n
       ))Newsgroups: %(%F=^\$?%C:%F)
       Subject: %(%S=^\$?%\"\n\nSubject: \":Re: %S)
-      Summary: 
-      Expires: 
+      Summary:
+      Expires:
       %(%R=^\$?:References: %R
-      )Sender: 
-      Followup-To: 
+      )Sender:
+      Followup-To:
       %(%{FROM}=^\$?:From: %{FROM}
       )%(%{REPLYTO}=^\$?:Reply-To: %{REPLYTO}
       )Distribution: %(%i=^\$?%\"Distribution: \":%D)
@@ -614,7 +614,7 @@ The variables:
       containing switches.  You can put comments in this file by preceding
       them with a '#' as long as this is the first character on a line or
       it follows some white-space (which delimits the switches in the file).
-      If you want to set many environment variables but don't want to keep 
+      If you want to set many environment variables but don't want to keep
       them all in your environment, or if the use of any of these variables
       conflicts with other programs, you can use this feature along with the
       -E switch to set the environment variables upon startup.

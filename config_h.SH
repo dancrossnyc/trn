@@ -38,12 +38,6 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  */
 #$d_newsadm NEWS_ADMIN "$newsadmin"		/**/
 
-/* NOLINEBUF:
- *	This symbol, if defined, indicates that stdout is not buffered, so that
- *	the program can call setbuf() or setlinebuf() for efficiency.
- */
-#$d_nolnbuf	NOLINEBUF	/**/
-
 /* NORMSIG:
  *	This symbol, if defined, indicates that normal signal handling routines
  *	should be used, as opposed to the ones in 4.1bsd (sigset, etc.).
@@ -79,18 +73,6 @@ sed <<!GROK!THIS! >config.h -e 's!^#undef\(.*\)/\*!/\*#define\1\*//\*!' -e 's!^#
  *	of a mailbox file.
  */
 #define MBOXCHAR '$mboxchar'		/**/
-
-/* PASSNAMES:
- *	This symbol, if defined, indicates that full names are stored in
- *	the /etc/passwd file.
- */
-/* BERKNAMES:
- *	This symbol, if defined, indicates that full names are stored in
- *	the /etc/passwd file in Berkeley format (name first thing, everything
- *	up to first comma, with & replaced by capitalized login id, yuck).
- */
-#$d_passnames PASSNAMES /*  (undef to take name from ~/.fullname) */
-#$d_berknames BERKNAMES /* (that is, ":name,stuff:") */
 
 /* INSTALLPREFIX:
  *	This symbol contains the name of the install prefix for this package.

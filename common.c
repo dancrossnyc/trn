@@ -36,13 +36,8 @@ char* cwd = NULL;       /* current working directory */
 char* dfltcmd = NULL;   /* 1st char is default command */
 
 /* switches */
-#ifdef DEBUG
 int debug = 0;          /* -D */
-#endif
-
-#ifdef ARTSEARCH
 int scanon = 0;         /* -S */
-#endif
 
 bool use_threads = THREAD_INIT;                 /* -x */
 int max_tree_lines = 6;
@@ -93,9 +88,7 @@ bool can_home = false;
 bool erase_each_line = false;                   /* fancy -e */
 int findlast = 0;                               /* -r */
 bool allow_typeahead = false;                   /* -T */
-#ifdef EDIT_DISTANCE
 bool fuzzyGet = false;                          /* -G */
-#endif
 #ifdef VERBOSE
 #   ifdef TERSE
 bool verbose = true;                            /* +t */
@@ -103,9 +96,7 @@ bool verbose = true;                            /* +t */
 #endif
 bool unbroken_subjects = false;                 /* -u */
 bool unsafe_rc_saves = false;                   /* -U */
-#ifdef VERIFY
 bool verify = false;                            /* -v */
-#endif
 bool quickstart = false;                        /* -q */
 
 #define DEFAULT_REFETCH_SECS  4L*60*60  /* 4 hours */
@@ -117,12 +108,13 @@ int marking = NOMARKING;                        /* -m */
 int marking_areas = HALFPAGE_MARKING;
 
 ART_LINE initlines = 0;                         /* -i */
-bool append_unsub                                       /* -I */
+bool append_unsub =                             /* -I */
 #ifdef APPEND_UNSUB
-     = 1;
+     true
 #else
-     = 0;
+     false
 #endif
+;
 
 bool UseUnivSelector = false;
 bool UseNewsrcSelector = false;
@@ -150,9 +142,7 @@ char ess[2] = "s";
 char sh[] = SH;
 char defeditor[] = DEFEDITOR;
 char hforhelp[] = "Type h for help.\n";
-#ifdef STRICTCR
 char badcr[] = "\nUnnecessary CR ignored.\n";
-#endif
 char readerr[] = "rn read error";
 char unsubto[] = "Unsubscribed to newsgroup %s\n";
 char cantopen[] = "Can't open %s\n";

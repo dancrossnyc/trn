@@ -46,7 +46,7 @@ Cmdname=`$basename $0`
 
 if $test "X$1" = X; then
     $echo "$Cmdname: insufficent arguments" >&2
-    $echo "$Cmdname: usage: $Cmdname <filename>" >&2 
+    $echo "$Cmdname: usage: $Cmdname <filename>" >&2
     exit 1
 fi
 
@@ -61,10 +61,10 @@ while $test "X$1" != X; do
     >$mine
     >$quoted
 
-    # tear the wanted headers out and toss them at body, leaving the 
+    # tear the wanted headers out and toss them at body, leaving the
     # the remainder to be put back in later.
 
-    $awk 'BEGIN { inhdr = 1; keephdr = 0; insig = 0 } 
+    $awk 'BEGIN { inhdr = 1; keephdr = 0; insig = 0 }
 	/^$/		{
 			    inhdr = 0;
 			}
@@ -76,11 +76,11 @@ while $test "X$1" != X; do
 			    }
 			}
 	/^(Subject|Keywords|Summary): /	{
-			    if (inhdr) { 
+			    if (inhdr) {
 				keephdr = 1;
 				print $0 > Body;
 				next;
-			    }  
+			    }
 			}
 	/^[ \t]/	{
 			    if (inhdr) {
@@ -96,7 +96,7 @@ while $test "X$1" != X; do
 			    if (insig) {
 				print $0 > Sig;
 			    }
-			    else if (inhdr) { 
+			    else if (inhdr) {
 				keephdr = 0;
 				print $0 > Hdrs;
 			    }
@@ -104,7 +104,7 @@ while $test "X$1" != X; do
 				print $0 > Body;
 			    }
 			    next;
-			} 
+			}
     ' Body=$body Hdrs=$hdrs Sig=$sig $1
 
     # now rip out the quoted text from the article, so we only

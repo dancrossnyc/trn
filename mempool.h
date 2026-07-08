@@ -2,19 +2,16 @@
  * mempool.h
  */
 
-/* memory pool numbers */
-/* scoring rule text */
-#define MP_SCORE1 0
+/*
+ * memory pool numbers
+ */
+#define MP_NPOOLS 3
+typedef enum Mempool Mempool;
+enum Mempool {
+    MP_SCORE1 = 0,    /* scoring rule text */
+    MP_SCORE2 = 1,    /* scorefile cache */
+    MP_SATHREAD  = 2, /* sathread.c storage */
+};
 
-/* scorefile cache */
-#define MP_SCORE2 1
-
-/* sathread.c storage */
-#define MP_SATHREAD 2
-
-/* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
-
-void mp_init (void);
-char* mp_estrdup (char*,int);
-char* mp_malloc (int,int);
-void mp_free (int);
+char *mp_estrdup(const char *, Mempool);
+void mp_free(Mempool);

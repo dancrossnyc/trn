@@ -4,7 +4,8 @@
 //! This lets us use the Rust memory allocator from C code.
 
 use std::alloc::{Layout, alloc_zeroed, dealloc, realloc};
-use std::ffi::{CStr, c_char, c_void};
+use std::sync::RwLock;
+use std::ffi::{CStr, c_char, c_int, c_void};
 
 /// The alignment constant.  We allocate blocks of memory that
 /// are both sized and aligned sized to multiples of `ALIGN`
@@ -172,6 +173,75 @@ pub unsafe extern "C" fn estrdup(cstrp: *const c_char) -> *mut c_char {
     buf.cast()
 }
 
+/// Code derivced from `mempool.c` etc.
+///
+/// The original trn `mempool` infrastructure looks like it was
+/// meant to be an arena bump allocator for performance.
+///
+/// Unfortunately, it ended up looking more like a collection of
+/// K&R style allocators layered on top of the system malloc.
+/// The only reason I don't remove this entirely and replace it
+/// with malloc/free is because `mp_free` frees an entire "pool"
+/// at once, and tracking down all of the allocations that need
+/// to be freed would be a bigger lift.
+
+const NPOOLS: usize = 3;
+
+#[repr(C)]
+pub enum Mempool {
+    Score1 = 0,
+    Score2 = 1,
+    SAThread = 2,
+}
+
+impl From<i32> for Mempool {
+    fn from(v: c_int) -> Self {
+        match v {
+            0 => Self::Score1,
+            1 => Self::Score2,
+            2 => Self::SAThread,
+            _ => panic!("bad mempool type in FFI"),
+        }
+    }
+}
+
+static POOLS: RwLock<[Vec<usize>; NPOOLS]> = RwLock::new([Vec::new(), Vec::new(), Vec::new()]);
+
+/// Duplicates a C string and stashes a pointer to it in the
+/// given pool.
+///
+/// # Safety
+/// The caller must ensure that the argument C-string pointer is
+/// valid, and remains so for the lifetime of the pool.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_estrdup(s: *const c_char, p: c_int) -> *mut c_char {
+    let s = unsafe { estrdup(s) };
+    let pool = Mempool::from(p);
+    let mut pools = POOLS.write().expect("POOLS is not poisoned");
+    let arena = &mut pools[pool as usize];
+    arena.push(s.addr());
+    s
+}
+
+/// Frees all pointers saved in the "pool".
+///
+/// # Safety
+/// The caller must ensure that the pointers stashed in the pool
+/// are valid, were not previously freed, and so on.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_free(p: c_int) {
+    let pool = Mempool::from(p);
+    let mut pools = POOLS.write().expect("POOLS is not poisoned");
+    let arena = &mut pools[pool as usize];
+    for &addr in arena.iter() {
+        unsafe {
+            let ptr = std::ptr::with_exposed_provenance_mut(addr);
+            safefree(ptr);
+        }
+    }
+    arena.clear();
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -242,5 +312,32 @@ mod tests {
         unsafe {
             rsfree(nvptr);
         }
+    }
+
+    #[test]
+    fn mempool() {
+        let cs = c"test";
+        let sp = cs.as_ptr();
+        let score1 = Mempool::Score1 as c_int;
+
+        let pools = POOLS.read().expect("pool read lock ok");
+        assert!(pools[Mempool::Score1 as usize].is_empty());
+        drop(pools);
+
+        let dup_cstr_ptr = unsafe { mp_estrdup(sp, score1) };
+        assert!(!dup_cstr_ptr.is_null());
+        let bs = unsafe { read(dup_cstr_ptr.cast::<[u8; 5]>()) };
+        assert_eq!(bs, *b"test\0");
+
+        let pools = POOLS.read().expect("pool read lock ok");
+        assert_eq!(pools[Mempool::Score1 as usize].len(), 1);
+        drop(pools);
+
+        unsafe {
+            mp_free(score1);
+        }
+
+        let pools = POOLS.read().expect("pool read lock ok");
+        assert!(pools[Mempool::Score1 as usize].is_empty());
     }
 }
