@@ -5,7 +5,6 @@
 /*
  * memory pool numbers
  */
-#define MP_NPOOLS 3
 typedef enum Mempool Mempool;
 enum Mempool {
     MP_SCORE1 = 0,    /* scoring rule text */
