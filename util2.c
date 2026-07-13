@@ -55,49 +55,42 @@ filexp(char *s)
     char scrbuf[CBUFLEN];
     char* d;
 
-#ifdef DEBUG
     if (debug & DEB_FILEXP)
         printf("< %s\n",s);
-#endif
     /* interpret any % escapes */
     dointerp(filename,sizeof filename,s,(char*)NULL,(char*)NULL);
-#ifdef DEBUG
     if (debug & DEB_FILEXP)
         printf("%% %s\n",filename);
-#endif
     s = filename;
     if (*s == '~') {    /* does destination start with ~? */
         if (!*(++s) || *s == '/') {
             snprintf(scrbuf,sizeof(scrbuf),"%s%s",homedir,s);
                                 /* swap $HOME for it */
-#ifdef DEBUG
             if (debug & DEB_FILEXP)
                 printf("~ %s\n",scrbuf);
-#endif
             strlcpy(filename,scrbuf,sizeof(filename));
         }
         else if (*s == '~' && (!s[1] || s[1] == '/')) {
             d = getenv("TRNPREFIX");
             if (!d)
                 d = INSTALLPREFIX;
-            sprintf(scrbuf,"%s%s",d,s+1);
-#ifdef DEBUG
+            snprintf(scrbuf,sizeof(scrbuf),"%s%s",d,s+1);
             if (debug & DEB_FILEXP)
                 printf("~~ %s\n",scrbuf);
-#endif
         }
         else {
 #ifdef TILDENAME
-            for (d = scrbuf; isalnum(*s); s++, d++) *d = *s;
+            d = scrbuf;
+            size_t dsize = sizeof(scrbuf) - 1;
+            for (size_t k = 0; isalnum(*s) && k < dsize; k++)
+                *d = *s;
             *d = '\0';
-            if (tildedir && strEQ(tildename,scrbuf)) {
-                strcpy(scrbuf,tildedir);
-                strcat(scrbuf, s);
-                strcpy(filename, scrbuf);
-#ifdef DEBUG
+            if (tildedir && strEQ(tildename, scrbuf)) {
+                strlcpy(scrbuf, tildedir, sizeof(scrbuf));
+                strlcat(scrbuf, s, sizeof(scrbuf));
+                strlcpy(filename, scrbuf, sizeof(filename));
                 if (debug & DEB_FILEXP)
                     printf("r %s %s\n",tildename,tildedir);
-#endif
             }
             else {
                 if (tildename)
@@ -142,17 +135,13 @@ filexp(char *s)
             *d++ = '}';
             strcpy(d,s);
         }
-#ifdef DEBUG
         if (debug & DEB_FILEXP)
             printf("$ %s\n",scrbuf);
-#endif
         /* this might do some extra '%'s, but that's how the Mercedes Benz */
         dointerp(filename,sizeof filename,scrbuf,(char*)NULL,(char*)NULL);
     }
-#ifdef DEBUG
     if (debug & DEB_FILEXP)
         printf("> %s\n",filename);
-#endif
     return filename;
 }
 

@@ -81,7 +81,6 @@ rc_to_bits (void)
     else
         firstart = article_first(firstart);
     unread = 0;
-#ifdef DEBUG
     if (debug & DEB_CTLAREA_BITMAP) {
         printf("\n%s\n",mybuf);
         termdown(2);
@@ -90,7 +89,6 @@ rc_to_bits (void)
                 printf("%ld ",(long)i);
         }
     }
-#endif
     i = firstart;
     for ( ; (c = strchr(s, ',')) != NULL; s = ++c) {    /* for each range */
         ART_NUM min, max;
@@ -123,7 +121,6 @@ rc_to_bits (void)
         /* mark all arts in range as read */
         for ( ; i <= max; i = article_next(i))
             article_ptr(i)->flags &= ~AF_UNREAD;
-#ifdef DEBUG
         if (debug & DEB_CTLAREA_BITMAP) {
             printf("\n%s\n",s);
             termdown(2);
@@ -132,7 +129,6 @@ rc_to_bits (void)
                     printf("%ld ",(long)i);
             }
         }
-#endif
         i = article_next(max);
     }
     for (; i <= lastart; i = article_next(i)) {
@@ -148,13 +144,11 @@ rc_to_bits (void)
             }
         }
     }
-#ifdef DEBUG
     if (debug & DEB_CTLAREA_BITMAP) {
         fputs("\n(hit CR)",stdout);
         termdown(1);
         fgets(cmd_buf, sizeof cmd_buf, stdin);
     }
-#endif
     if (mybuf != buf)
         safefree(mybuf);
     ngptr->toread = unread;
@@ -235,13 +229,11 @@ bits_to_rc (void)
     if (*(s-1) == ',')                  /* is there a final ','? */
         s--;                            /* take it back */
     *s++ = '\0';                        /* and terminate string */
-#ifdef DEBUG
     if ((debug & DEB_NEWSRC_LINE) && !panic) {
         printf("%s: %s\n",ngptr->rcline,ngptr->rcline+ngptr->numoffset);
         printf("%s\n",mybuf);
         termdown(2);
     }
-#endif
     safefree(ngptr->rcline);            /* return old rc line */
     if (mybuf == buf) {
         ngptr->rcline = safemalloc((size_t)(s-buf)+1);
@@ -633,12 +625,10 @@ chase_xref (    /* The Xref-line-using version */
         return 0;
 
     xref_buf = estrdup(xref_buf);
-# ifdef DEBUG
     if (debug & DEB_XREF_MARKER) {
         printf("Xref: %s\n",xref_buf);
         termdown(1);
     }
-# endif
     curxref = cpytill(tmpbuf,xref_buf,' ') + 1;
 # ifdef VALIDATE_XREF_SITE
     if (valid_xref_site(artnum,tmpbuf))
@@ -723,12 +713,10 @@ valid_xref_site (ART_NUM artnum, char *site)
     if (strEQ(site,inews_site))
         return true;
 
-#ifdef DEBUG
     if (debug) {
         printf("Xref not from %s -- ignoring\n",inews_site);
         termdown(1);
     }
-#endif
     return false;
 }
 # endif /* VALIDATE_XREF_SITE */
@@ -781,23 +769,19 @@ chase_xref (            /* The DBM version */
 
     xref_buf = safemalloc((size_t)BUFSIZ);
     if (hist_file == NULL) {    /* Init. file accesses */
-# ifdef DEBUG
         if (debug) {
             printf("chase_xref: opening files\n");
             termdown(1);
         }
-# endif
         dbminit(filexp(ARTFILE));
         if ((hist_file = fopen(filexp(ARTFILE), "r")) == NULL)
             return 0;
     }
     ident_buf = fetchlines(artnum,MSGID_LINE);  /* get Message-ID */
-# ifdef DEBUG
     if (debug) {
         printf ("chase_xref: Message-ID: %s\n", ident_buf);
         termdown(1);
     }
-# endif
 
     if ((idp = strchr(ident_buf, '@')) != NULL) {
         while (*++idp)                  /* make message-id case insensitive */
@@ -812,20 +796,16 @@ chase_xref (            /* The DBM version */
     memmove(pos, rhs.dptr, 4);
     fseek(hist_file, pos, 0);   /* datum returned is position in hist file */
     fgets(xref_buf, BUFSIZ, hist_file);
-# ifdef DEBUG
     if (debug) {
         printf ("Xref from history: %s\n", xref_buf);
         termdown(1);
     }
-# endif
     curxref = cpytill(tmpbuf, xref_buf, '\t') + 1;
     curxref = cpytill(tmpbuf, curxref, '\t') + 1;
-# ifdef DEBUG
     if (debug) {
         printf ("chase_xref: curxref: %s\n", curxref);
         termdown(1);
     }
-# endif
     while (*curxref) {                  /* for each newsgroup */
         curxref = cpytill(tmpbuf,curxref,' ');
         xartnum = strchr(tmpbuf,'/');
