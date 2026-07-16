@@ -105,23 +105,17 @@ struct gstate gs = { CHARSET_UTF8, CHARSET_UTF8, NULL };
 
 
 int
-find_charset (const char *s)
+find_charset(const char *s)
 {
+    if (s == NULL)
+        return CHARSET_UNKNOWN;
     int it = CHARSET_UNKNOWN;
-    if (s) {
-        int i;
-        for (i = 0; ; i += 1) {
-            const char *name = charset_descs[i].name;
-            int j;
-        if (name == NULL) break;
-            for (j = 0; ; j++) {
-        if (tolower(s[j]) != name[j]) break;
-                if (s[j] == 0 && name[j] == 0)
-                    it = charset_descs[i].id;
-        if (s[j] == 0 || name[j] == 0) break;
-            }
-        if (it != CHARSET_UNKNOWN) break;
-        }
+    for (int i = 0; it == CHARSET_UNKNOWN; i++) {
+        const char *name = charset_descs[i].name;
+        if (name == NULL)
+            break;
+        if (strcaseEQ(s, name))
+            it = charset_descs[i].id;
     }
     return it;
 }
