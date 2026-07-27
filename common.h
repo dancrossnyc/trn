@@ -250,27 +250,18 @@
 #   define eaccess access
 #endif
 
+#ifdef TERSE
+#   undef TERSE
+#   define TERSE 1
+#endif
+
 #ifdef VERBOSE
-#   ifdef TERSE
-#       define IF(c) if (c)
-#       define ELSE else
-#   else
-#       define IF(c)
-#       define ELSE
-#   endif
-#else /* !VERBOSE */
-#   ifndef TERSE
-#       define TERSE
-#   endif
-#   define IF(c) ..."IF" outside of VERBOSE
-#   define ELSE ..."ELSE" outside of VERBOSE
+#   undef VERBOSE
+#   define VERBOSE 1
+#   define IF(c) if (c)
+#   define ELSE else
 #endif
 
-#define ElseIf else if
-
-#ifndef DEBUG
-#define NDEBUG
-#endif
 #include <assert.h>
 
 /* If you're strapped for space use the help messages in shell scripts */
@@ -314,7 +305,7 @@
 
 /* news library */
 #ifndef NEWSLIB         /* ~ and %l only ("~%l" is permissable) */
-#   define NEWSLIB "/usr/lib/news"
+#   define NEWSLIB "/usr/local/lib/news"
 #endif
 
 /* path to private executables */
@@ -329,7 +320,7 @@
 
 /* where to find news files */
 #ifndef NEWSSPOOL               /* % and ~ */
-#   define NEWSSPOOL "/usr/spool/news"
+#   define NEWSSPOOL "/var/spool/news"
 #endif
 
 #ifndef THREAD_DIR
@@ -363,7 +354,7 @@
 /* preferred shell for use in doshell routine */
 /*  ksh or sh would be okay here */
 #ifndef PREFSHELL
-#   define PREFSHELL "/bin/csh"
+#   define PREFSHELL "/bin/ksh"
 #endif
 
 /* path to fastest starting shell */
@@ -373,16 +364,12 @@
 
 /* path to default editor */
 #ifndef DEFEDITOR
-#   define DEFEDITOR "/usr/ucb/vi"
+#   define DEFEDITOR "/usr/bin/vi"
 #endif
 
 /* the user's init files */
 #ifndef TRNDIR
-# ifdef LIMITED_FILENAMES
-#   define TRNDIR "%./trn"
-# else
 #   define TRNDIR "%./.trn"
-# endif
 #endif
 
 /* location of macro file for trn and rn modes */
@@ -390,29 +377,17 @@
 #   define TRNMACRO "%+/macros"
 #endif
 #ifndef RNMACRO
-# ifdef LIMITED_FILENAMES
-#   define RNMACRO "%./rnmac"
-# else
 #   define RNMACRO "%./.rnmac"
-# endif
 #endif
 
 /* The name to append to the directory name to read an overview file. */
 #ifndef OV_FILE_NAME
-# ifdef LIMITED_FILENAMES
-#   define OV_FILE_NAME "/overview"
-# else
 #   define OV_FILE_NAME "/.overview"
-# endif
 #endif
 
 /* The name to append to the directory name to read a thread file. */
 #ifndef MT_FILE_NAME
-# ifdef LIMITED_FILENAMES
-#   define MT_FILE_NAME "/thread"
-# else
 #   define MT_FILE_NAME "/.thread"
-# endif
 #endif
 
 /* virtual array file name template */
@@ -422,11 +397,7 @@
 
 /* file to pass header to followup article poster */
 #ifndef HEADNAME                /* % and ~ */
-#   ifdef LIMITED_FILENAMES
-#       define HEADNAME "%Y/tmpart.%$"
-#   else
-#       define HEADNAME "%./.rnhead.%$"
-#   endif
+#   define HEADNAME "%./.rnhead.%$"
 #endif
 
 
@@ -442,11 +413,7 @@
 
 /* location of newsrc file */
 #ifndef RCNAME          /* % and ~ */
-# ifdef LIMITED_FILENAMES
-#   define RCNAME "%./newsrc"
-# else
 #   define RCNAME "%./.newsrc"
-# endif
 #endif
 
 /* temporary newsrc file in case we crash while writing out */
@@ -471,28 +438,16 @@
 
 /* if existent, contains process number of current or crashed trn */
 #ifndef LOCKNAME                /* % and ~ */
-# ifdef LIMITED_FILENAMES
-#   define LOCKNAME "%+/lock"
-# else
 #   define LOCKNAME "%./.rnlock"
-# endif
 #endif
 
 /* information from last invocation of trn */
 #ifndef LASTNAME                /* % and ~ */
-# ifdef LIMITED_FILENAMES
-#   define LASTNAME "%+/rnlast"
-# else
 #   define LASTNAME "%./.rnlast"
-# endif
 #endif
 
 #ifndef SIGNATURE_FILE
-# ifdef LIMITED_FILENAMES
-#   define SIGNATURE_FILE "%./signatur"
-# else
 #   define SIGNATURE_FILE "%./.signature"
-# endif
 #endif
 
 #ifndef NNTP_AUTH_FILE
@@ -752,16 +707,11 @@ extern bool allow_typeahead;                    /* -T */
 #ifdef EDIT_DISTANCE
 extern bool fuzzyGet;                           /* -G */
 #endif
-#ifdef VERBOSE
-#   ifdef TERSE
 extern bool verbose;                            /* +t */
-#   endif
-#endif
+extern bool terse;
 extern bool unbroken_subjects;                  /* -u */
 extern bool unsafe_rc_saves;                    /* -U */
-#ifdef VERIFY
 extern bool verify;                             /* -v */
-#endif
 extern bool quickstart;                 /* -q */
 
 #define DEFAULT_REFETCH_SECS  4L*60*60  /* 4 hours */

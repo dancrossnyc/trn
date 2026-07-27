@@ -171,7 +171,6 @@ int_catcher (int dummy)
 void
 sig_catcher (int signo)
 {
-#ifdef VERBOSE
     static char* signame[] = {
         "",
         "HUP",
@@ -190,7 +189,6 @@ sig_catcher (int signo)
         "ALRM",
         "TERM",
         "???"
-#ifdef SIGTSTP
         ,"STOP",
         "TSTP",
         "CONT",
@@ -200,20 +198,14 @@ sig_catcher (int signo)
         "TINT",
         "XCPU",
         "XFSZ"
-#ifdef SIGPROF
         ,"VTALARM",
         "PROF"
-#endif
-#endif
         };
-#endif
 
-#ifdef DEBUG
     if (debug) {
         printf("\nSIG%s--.newsrc not restored in debug\n",signame[signo]);
         finalize(-1);
     }
-#endif
     if (panic) {
 #ifdef HAS_SIGBLOCK
         sigsetmask(sigblock(0) & ~(sigmask(SIGILL) | sigmask(SIGIOT)));
@@ -234,21 +226,13 @@ sig_catcher (int signo)
     update_thread_kfile();
 #endif
 
-#ifdef SIGHUP
     if (signo != SIGHUP) {
-#endif
-#ifdef VERBOSE
-        IF(verbose)
+        if(verbose)
             printf("\nCaught %s%s--.newsrc restored\n",
                 signo ? "a SIG" : "an internal error", signame[signo]);
-        ELSE
-#endif
-#ifdef TERSE
+        else if (terse)
             printf("\nSignal %d--bye bye\n",signo);
-#endif
-#ifdef SIGHUP
     }
-#endif
     switch (signo) {
 #ifdef SIGBUS
     case SIGBUS:
@@ -268,8 +252,6 @@ pipe_catcher (int signo)
 }
 
 /* come here on stop signal */
-
-#ifdef SIGTSTP
 void
 stop_catcher (int signo)
 {
@@ -282,10 +264,8 @@ stop_catcher (int signo)
         }
         termlib_reset();
         resetty();              /* this is the point of all this */
-#ifdef DEBUG
         if (debug)
             write(2,"stop_catcher\n",13);
-#endif
         fflush(stdout);
         sigset(signo,SIG_DFL);  /* enable stop */
 #ifdef HAS_SIGBLOCK
@@ -310,4 +290,3 @@ stop_catcher (int signo)
     }
     sigset(signo,stop_catcher); /* unenable the stop */
 }
-#endif

@@ -213,19 +213,14 @@ art_search (
                 mark_as_read(article_ptr(art)); /* this article needs to die */
             }
             if (!*h) {
-#ifdef VERBOSE
-                IF(verbose)
+                if(verbose)
                     sprintf(msg, "Current article has no %s.", finding_str);
-                ELSE
-#endif
-#ifdef TERSE
+                else
                     sprintf(msg, "Null %s.", finding_str);
-#endif
                 errormsg(msg);
                 ret = SRCH_ABORT;
                 goto exit;
             }
-#ifdef VERBOSE
             if (verbose) {
                 if (cmdchr != '+' && cmdchr != '.')
                     printf("\nMarking %s \"%s\" as read.\n",finding_str,h);
@@ -233,7 +228,6 @@ art_search (
                     printf("\nSelecting %s \"%s\".\n",finding_str,h);
                 termdown(2);
             }
-#endif
         }
         else if (!srchahead)
             srchahead = -1;

@@ -522,10 +522,9 @@ yankback (void)
             sprintf(msg, "Returned %ld Marked article%s.",(long)dmcount,
                 PLURAL(dmcount));
         else {
-#ifdef VERBOSE
-            printf("\nReturning %ld Marked article%s...\n",(long)dmcount,
-                PLURAL(dmcount));
-#endif
+            if (verbose)
+                printf("\nReturning %ld Marked article%s...\n",
+                    (long)dmcount, PLURAL(dmcount));
             termdown(2);
         }
         article_walk(yank_article, 0);
@@ -605,14 +604,10 @@ chase_xref (    /* The Xref-line-using version */
         spin(10);
     else {
         if (output_chase_phrase) {
-# ifdef VERBOSE
-            IF(verbose)
+            if (verbose)
                 fputs("\nChasing xrefs", stdout);
-            ELSE
-# endif
-# ifdef TERSE
+            else if (terse)
                 fputs("\nXrefs", stdout);
-# endif
             termdown(1);
             output_chase_phrase = 0;
         }
@@ -748,14 +743,10 @@ chase_xref (            /* The DBM version */
         spin(10);
     else {
         if (output_chase_phrase) {
-# ifdef VERBOSE
-            IF(verbose)
+            if(verbose)
                 fputs("\nChasing xrefs", stdout);
-            ELSE
-# endif
-# ifdef TERSE
+            else if (terse)
                 fputs("\nXrefs", stdout);
-# endif
             termdown(1);
             output_chase_phrase = 0;
         }

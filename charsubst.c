@@ -128,34 +128,22 @@ current_charsubst (void)
 
     switch (*charsubst) {
       case 'm':
-#ifdef VERBOSE
-        IF(verbose)
+        if(verbose)
             show = "[ISO->USmono] ";
-        ELSE
-#endif
-#ifdef TERSE
+        else if (terse)
             show = "[M] ";
-#endif
         break;
       case 'a':
-#ifdef VERBOSE
-        IF(verbose)
+        if(verbose)
             show = "[ISO->US] ";
-        ELSE
-#endif
-#ifdef TERSE
+        else if (terse)
             show = "[U] ";
-#endif
         break;
       case 't':
-#ifdef VERBOSE
-        IF(verbose)
+        if(verbose)
             show = "[TeX->ISO] ";
-        ELSE
-#endif
-#ifdef TERSE
+        else if (terse)
             show = "[T] ";
-#endif
         break;
       default:
         show = nullstr;

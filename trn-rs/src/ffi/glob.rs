@@ -300,6 +300,45 @@ pub fn execute(prog: &Program, s: &[u8]) -> Result<bool> {
 
 use std::ffi::{c_char, CStr};
 
+/*
+fn match_class(pattern: &mut std::iter::Peekable<impl Iterator<Item = u8>>, c: u8) -> bool {
+    true
+}
+
+fn russglob(pattern: &[u8], text: &[u8]) -> bool {
+    let mut pattern = pattern.fuse().iter();
+    let mut text = text.iter();
+    let mut ntext = None;
+    let mut npattern = None;
+    while let Some(op) = pattern.next() {
+        match op {
+            b'?' if let Some(_) = text.next() => continue,
+            b'[' if let Some(c) = text.clone().next() => {
+                if !match_class(&mut pattern, c) {
+                    return false;
+                }
+                continue;
+            }
+            b'*' => {
+                npattern = pattern.clone();
+                ntext = text.clone().next();
+                continue;
+            }
+            lit if let Some(c) = text.peek() => if lit == c {
+                return false;
+            } else {
+                continue
+            },
+        }
+        if ntext.is_some() {
+            pattern = npattern;
+            text = ntext;
+        }
+    }
+    return true;
+}
+*/
+
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn wildmat(pp: *const c_char, tp: *const c_char) -> bool {
     if pp.is_null() || tp.is_null() {

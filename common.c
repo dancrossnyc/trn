@@ -89,11 +89,8 @@ bool erase_each_line = false;                   /* fancy -e */
 int findlast = 0;                               /* -r */
 bool allow_typeahead = false;                   /* -T */
 bool fuzzyGet = false;                          /* -G */
-#ifdef VERBOSE
-#   ifdef TERSE
 bool verbose = true;                            /* +t */
-#   endif
-#endif
+bool terse = true;
 bool unbroken_subjects = false;                 /* -u */
 bool unsafe_rc_saves = false;                   /* -U */
 bool verify = false;                            /* -v */

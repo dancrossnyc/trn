@@ -24,9 +24,7 @@ static char* tildedir = NULL;
 char *
 safecpy(char *to, const char *from, size_t len)
 {
-    size_t n = strlcpy(to, from, len);
-    assert(n < len);
-    (void)n;
+    strlcpy(to, from, len);
     return to;
 }
 
@@ -64,8 +62,8 @@ filexp(char *s)
     s = filename;
     if (*s == '~') {    /* does destination start with ~? */
         if (!*(++s) || *s == '/') {
-            snprintf(scrbuf,sizeof(scrbuf),"%s%s",homedir,s);
-                                /* swap $HOME for it */
+            snprintf(scrbuf,sizeof scrbuf,"%s%s",homedir,s);
+            /* swap $HOME for it */
             if (debug & DEB_FILEXP)
                 printf("~ %s\n",scrbuf);
             strlcpy(filename,scrbuf,sizeof(filename));
@@ -79,7 +77,6 @@ filexp(char *s)
                 printf("~~ %s\n",scrbuf);
         }
         else {
-#ifdef TILDENAME
             d = scrbuf;
             size_t dsize = sizeof(scrbuf) - 1;
             for (size_t k = 0; isalnum(*s) && k < dsize; k++)
@@ -91,36 +88,22 @@ filexp(char *s)
                 strlcpy(filename, scrbuf, sizeof(filename));
                 if (debug & DEB_FILEXP)
                     printf("r %s %s\n",tildename,tildedir);
-            }
-            else {
-                if (tildename)
-                    safefree(tildename);
-                if (tildedir)
-                    safefree(tildedir);
-                tildedir = NULL;
+            } else {
+                tildedir = safefree(tildedir);
+                safefree(tildename);
                 tildename = estrdup(scrbuf);
                 {
-                    struct passwd* pwd = getpwnam(tildename);
+                    struct passwd *pwd = getpwnam(tildename);
                     if (pwd == NULL) {
                         printf("%s is an unknown user. Using default.\n",tildename);
                         return NULL;
                     }
-                    sprintf(scrbuf,"%s%s",pwd->pw_dir,s);
+                    snprintf(scrbuf,sizeof scrbuf,"%s%s",pwd->pw_dir,s);
                     tildedir = estrdup(pwd->pw_dir);
-                    strcpy(filename,scrbuf);
+                    strlcpy(filename,scrbuf,sizeof filename);
                     endpwent();
                 }
             }
-#else /* !TILDENAME */
-#ifdef VERBOSE
-            IF(verbose)
-                fputs("~loginname not implemented.\n",stdout);
-            ELSE
-#endif
-#ifdef TERSE
-                fputs("~login not impl.\n",stdout);
-#endif
-#endif
         }
     }
     else if (*s == '$') {       /* starts with some env variable? */

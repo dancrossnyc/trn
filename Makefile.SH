@@ -135,6 +135,7 @@ all: Makefile $(public) $(inewsexe) $(private) $(util) Policy.sh
 	$(TOUCH) all
 
 trn: $(obj)
+	(cd trn-rs && cargo build)
 	$(CC) $(LDFLAGS) $(TKLDFLAGS) $(obj) $(tklibs) $(libs) -o trn
 #NNTP
 #NNTPnntpinit.$(o): nntpinit.c
@@ -221,6 +222,7 @@ clean:
 	@echo 'Use "make spotless" to even remove config.sh, Policy.sh, and .config.'
 	rm -rf UU $(extra_cleanup)
 	rm -f *.$(o) core $(addedbymake)
+	(cd trn-rs && cargo clean)
 
 realclean:
 	@echo 'You can use "Configure -S" to reverse this.'

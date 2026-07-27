@@ -107,7 +107,7 @@ static bool restore_old_newsrc = false;
 static bool go_forward = true;
 
 int
-main (int argc, char *argv[])
+main(int argc, char *argv[])
 {
     bool foundany;
     char* s;
@@ -132,7 +132,7 @@ main (int argc, char *argv[])
     else
         UseTk = 0;
 #endif
-    foundany = initialize(argc,argv);
+    foundany = initialize(argc, argv);
 
     if (UseNewsrcSelector) {
         multirc_selector();
@@ -149,7 +149,6 @@ main (int argc, char *argv[])
     if (maxngtodo)
         starthere = NULL;
     else if (!foundany) {               /* nothing to do? */
-#ifdef VERBOSE
         if (verbose) {
             fputs("\
 No unread news in subscribed-to newsgroups.  To subscribe to a new\n\
@@ -157,13 +156,13 @@ newsgroup use the g<newsgroup> command.\n\
 ",stdout);
             termdown(2);
         }
-#endif
         starthere = last_ng;
     }
 
     do_multirc();
 
     finalize(0);
+
     /* NOT REACHED */
     return 0;
 }
@@ -237,25 +236,17 @@ do_multirc (void)
                 set_mode('r','f');
                 if (maxngtodo) {
                     if (retry) {
-#ifdef VERBOSE
-                        IF(verbose)
+                        if (verbose)
                             printf("\nRestriction %s%s still in effect.\n",
                                    ngtodo[0], maxngtodo > 1 ? ", etc." : nullstr);
-                        ELSE
-#endif
-#ifdef TERSE
+                        else
                             fputs("\n(\"Only\" mode.)\n",stdout);
-#endif
                         termdown(2);
                     } else {
-#ifdef VERBOSE
-                        IF(verbose)
+                        if(verbose)
                             fputs("\nNo articles under restriction.", stdout);
-                        ELSE
-#endif
-#ifdef TERSE
+                        else
                             fputs("\nNo \"only\" articles.",stdout);
-#endif
                         termdown(2);
                         end_only();     /* release the restriction */
                         printf("\n%s\n", msg);

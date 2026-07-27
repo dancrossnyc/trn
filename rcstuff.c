@@ -459,7 +459,7 @@ open_newsrc(NEWSRC *rp)
                     break;
             } while (!nntp_at_list_end(ser_line));
         }
-        ElseIf (*some_buf && (tmpfp = fopen(filexp(some_buf),"r")) != NULL) {
+        else if (*some_buf && (tmpfp = fopen(filexp(some_buf),"r")) != NULL) {
             while (fgets(buf,sizeof buf,tmpfp))
                 fputs(buf,rcfp);
             fclose(tmpfp);

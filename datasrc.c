@@ -732,7 +732,7 @@ srcfile_open (SRCFILE *sfp, char *filename, char *fetchcmd, char *server)
             fputs(buf, fp);
             spin(4000);
         }
-        ElseIf (!fgets(buf, sizeof buf, fp))
+        else if (!fgets(buf, sizeof buf, fp))
             break;
 
         for (s = buf; *s && !isspace(*s); s++) ;

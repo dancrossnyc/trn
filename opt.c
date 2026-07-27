@@ -506,11 +506,9 @@ set_option (int num, char *s)
 #endif
         break;
       case OI_TERSE_OUTPUT:
-#if defined(VERBOSE) && defined(TERSE)
         verbose = !YES(s);
         if (!verbose)
             novice_delays = false;
-#endif
         break;
       case OI_EAT_TYPEAHEAD:
         allow_typeahead = !YES(s);
@@ -519,9 +517,7 @@ set_option (int num, char *s)
         unbroken_subjects = !YES(s);
         break;
       case OI_VERIFY_INPUT:
-#ifdef VERIFY
         verify = YES(s);
-#endif
         break;
       case OI_ARTICLE_TREE_LINES:
         if (isdigit(*s)) {
@@ -915,18 +911,14 @@ option_value (int num)
         sprintf(buf,"%d",scanon);
         return buf;
 #endif
-#if defined(VERBOSE) && defined(TERSE)
       case OI_TERSE_OUTPUT:
         return YESorNO(!verbose);
-#endif
       case OI_EAT_TYPEAHEAD:
         return YESorNO(!allow_typeahead);
       case OI_COMPRESS_SUBJECTS:
         return YESorNO(!unbroken_subjects);
-#ifdef VERIFY
       case OI_VERIFY_INPUT:
         return YESorNO(verify);
-#endif
       case OI_ARTICLE_TREE_LINES:
         sprintf(buf,"%d",max_tree_lines);
         return buf;
@@ -1243,49 +1235,41 @@ cwd_check (void)
 
     if (!cwd)
         cwd = estrdup(filexp("~/News"));
-    strcpy(tmpbuf,cwd);
+    strlcpy(tmpbuf,cwd,sizeof tmpbuf);
     if (chdir(cwd) != 0) {
-        safecpy(tmpbuf,filexp(cwd),sizeof tmpbuf);
+        strlcpy(tmpbuf,filexp(cwd),sizeof tmpbuf);
         if (makedir(tmpbuf,MD_DIR) != 0 || chdir(tmpbuf) != 0) {
             interp(cmd_buf, (sizeof cmd_buf), "%~/News");
             if (makedir(cmd_buf,MD_DIR) != 0)
-                strcpy(tmpbuf,homedir);
+                strlcpy(tmpbuf,homedir,sizeof tmpbuf);
             else
-                strcpy(tmpbuf,cmd_buf);
+                strlcpy(tmpbuf,cmd_buf,sizeof tmpbuf);
             chdir(tmpbuf);
-#ifdef VERBOSE
-            IF(verbose)
+            if(verbose)
                 printf("\
 Cannot make directory %s--\n\
         articles will be saved to %s\n\
 \n\
 ",cwd,tmpbuf);
-            ELSE
-#endif
-#ifdef TERSE
+            else if (terse)
                 printf("\
 Can't make %s--\n\
         using %s\n\
 \n\
 ",cwd,tmpbuf);
-#endif
         }
     }
     safefree(cwd);
     trn_getwd(tmpbuf, sizeof(tmpbuf));
     if (eaccess(tmpbuf,2)) {
-#ifdef VERBOSE
-        IF(verbose)
+        if(verbose)
             printf("\
 Current directory %s is not writeable--\n\
         articles will be saved to home directory\n\n\
 ",tmpbuf);
-        ELSE
-#endif
-#ifdef TERSE
+        else if (terse)
             printf("%s not writeable--using ~\n\n",tmpbuf);
-#endif
-        strcpy(tmpbuf,homedir);
+        strlcpy(tmpbuf,homedir,sizeof tmpbuf);
     }
     cwd = estrdup(tmpbuf);
 }
