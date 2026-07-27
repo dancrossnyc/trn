@@ -339,8 +339,8 @@ insert_utf8_at (char *s, CODE_POINT c)
         s[1] = ((char)(c >> 24) & 0x3F) | 0x80;
         s[2] = ((char)(c >> 18) & 0x3F) | 0x80;
         s[3] = ((char)(c >> 12) & 0x3F) | 0x80;
-        s[3] = ((char)(c >>  6) & 0x3F) | 0x80;
-        s[4] = ((char) c        & 0x3F) | 0x80;
+        s[4] = ((char)(c >>  6) & 0x3F) | 0x80;
+        s[5] = ((char) c        & 0x3F) | 0x80;
         it = 6;
     }
     return it;

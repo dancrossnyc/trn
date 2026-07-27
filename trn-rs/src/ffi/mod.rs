@@ -3,3 +3,4 @@ pub mod glob;
 pub mod globals;
 pub mod net;
 pub mod time;
+pub mod utf;

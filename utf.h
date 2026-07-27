@@ -3,6 +3,7 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifndef UTF_H_INCLUDED
 #define UTF_H_INCLUDED
@@ -22,11 +23,11 @@
 #define TAG_ISO8859_15          "Latin9"
 #define TAG_WINDOWS_1252        "CP1252"
 
-typedef unsigned long CODE_POINT;
+typedef uint32_t CODE_POINT;
 
 int utf_init(const char *, const char *);
-const char *input_charset_name();
-const char *output_charset_name();
+const char *input_charset_name(void);
+const char *output_charset_name(void);
 
 bool at_norm_char(const char *);
 
@@ -36,13 +37,12 @@ int visual_length_of(const char *);
 int visual_length_between(const char *, const char *);
 int insert_unicode_at(char *, CODE_POINT);
 
-#define INVALID_CODE_POINT ((CODE_POINT) ~0L)
 CODE_POINT code_point_at(const char *);
 
 int put_char_adv(char **, bool);
-
 char *create_utf8_copy(char *);
-
 void terminate_string_at_visual_index(char *, int);
+
+static const CODE_POINT INVALID_CODE_POINT = UINT32_MAX;
 
 #endif
