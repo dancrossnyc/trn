@@ -162,8 +162,8 @@ bool in_choice (char*,char*,char*,int);
 int print_lines (char*,int);
 int check_page_line (void);
 void page_start (void);
-void errormsg (char*);
-void warnmsg (char*);
+void errormsg (const char*);
+void warnmsg (const char*);
 void pad (int);
 #ifdef VERIFY
 void printcmd (void);

@@ -754,6 +754,7 @@ check_ini_cond (char *cond)
 {
     int not, equal, upordown, num;
     char* s;
+    const char *es;
     cond = dointerp(buf,sizeof buf,cond,"!=<>",(char*)NULL);
     s = buf + strlen(buf);
     while (s != buf && isspace(s[-1])) s--;
@@ -773,7 +774,7 @@ check_ini_cond (char *cond)
     else if (equal) {
         COMPEX condcompex;
         init_compex(&condcompex);
-        if ((s = compile(&condcompex,cond,true,true)) != NULL) {
+        if ((es = compile(&condcompex,cond,true)) != NULL) {
             /*warning(s)*/;
             equal = false;
         }

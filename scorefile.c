@@ -631,6 +631,7 @@ sf_do_line (
     char ch;
     char* s;
     char* s2;
+    const char *es;
     int i,j;
 
     if (!line || !*line)
@@ -715,10 +716,10 @@ sf_do_line (
         /* 2nd is search string */
         /* 3rd should be true if the search string is a regex */
         /* 4th is true for case-insensitivity */
-        s2 = compile(sf_compex,s,true,true);
-        if (s2 != NULL) {
+        es = compile(sf_compex,s,true);
+        if (es != NULL) {
             printf("Bad pattern : |%s|\n",s);
-            printf("Compex returns: |%s|\n",s2);
+            printf("Compex returns: |%s|\n",es);
             free_compex(sf_compex);
             safefree(sf_compex);
             sf_entries[sf_num_entries-1].compex = NULL;
@@ -802,9 +803,9 @@ score_match(
     int ind             /* index into sf_entries */
 )
 {
-    char* s1;
-    char* s2;
-    char* s3;
+    const char* s1;
+    const char* s2;
+    const char* s3;
 
     s1 = sf_entries[ind].str1;
     s2 = sf_entries[ind].str2;

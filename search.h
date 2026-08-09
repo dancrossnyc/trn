@@ -2,6 +2,8 @@
  */
 /* This software is copyrighted as detailed in the LICENSE file. */
 
+#include <stdbool.h>
+
 #pragma once
 
 struct compex {
@@ -11,5 +13,5 @@ struct compex {
 void init_compex(COMPEX *);
 void free_compex(COMPEX *);
 char *getbracket(COMPEX *, int);
-char *compile(COMPEX *, char *, int, int);
-char *execute(COMPEX *, char *);
+const char *compile(COMPEX *, const char *, bool);
+const char *execute(COMPEX *, const char *);

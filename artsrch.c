@@ -60,6 +60,7 @@ art_search (
     char* pattern;                      /* unparsed pattern */
     char cmdchr = *patbuf;      /* what kind of search? */
     char* s;
+    const char *es;
     bool backward = cmdchr == '?' || cmdchr == Ctl('p');
                                         /* direction of search */
     COMPEX* compex;                     /* which compiled expression */
@@ -246,9 +247,9 @@ art_search (
         }
 #endif
     }
-    if ((s = compile(compex,pattern,true,foldcase)) != NULL) {
+    if ((es = compile(compex,pattern,foldcase)) != NULL) {
                                         /* compile regular expression */
-        errormsg(s);
+        errormsg(es);
         ret = SRCH_ABORT;
         goto exit;
     }

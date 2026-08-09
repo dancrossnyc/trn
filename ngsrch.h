@@ -1,9 +1,9 @@
-/* ngsrch.h
+/*
+ * This software is copyrighted as detailed in the LICENSE file.
  */
-/* This software is copyrighted as detailed in the LICENSE file. */
 
+#pragma once
 
-#ifdef NGSEARCH
 #define NGS_ABORT 0
 #define NGS_FOUND 1
 #define NGS_INTR 2
@@ -12,13 +12,8 @@
 #define NGS_DONE 5
 
 extern bool ng_doempty;         /* search empty newsgroups? */
-#endif
 
-/* DON'T EDIT BELOW THIS LINE OR YOUR CHANGES WILL BE LOST! */
-
-void ngsrch_init (void);
-#ifdef NGSEARCH
-int ng_search (char*,int);
-bool ng_wanted (NGDATA*);
-#endif
-char* ng_comp (COMPEX*,char*,bool,bool);
+void ngsrch_init(void);
+int ng_search(char *, int);
+bool ng_wanted(NGDATA *);
+const char *ng_comp(COMPEX *, char *, bool);

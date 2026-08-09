@@ -1535,7 +1535,7 @@ page_start (void)
 }
 
 void
-errormsg (char *str)
+errormsg (const char *str)
 {
     if (gmode == 's') {
         if (str != msg)
@@ -1549,7 +1549,7 @@ errormsg (char *str)
 }
 
 void
-warnmsg (char *str)
+warnmsg (const char *str)
 {
     if (gmode != 's') {
         printf("\n%s\n", str);

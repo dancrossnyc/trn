@@ -683,7 +683,7 @@ look_ahead (void)
 {
 #ifdef ARTSEARCH
     char* h;
-    char* s;
+    const char* s;
 
 #ifdef DEBUG
     if (debug && srchahead) {
@@ -724,7 +724,7 @@ look_ahead (void)
             termdown(2);
         }
 #endif
-        if ((s = compile(&srchcompex,pattern,true,true)) != NULL) {
+        if ((s = compile(&srchcompex,pattern,true)) != NULL) {
                                     /* compile regular expression */
             printf("\n%s\n",s);
             termdown(2);

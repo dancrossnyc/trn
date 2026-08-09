@@ -2709,7 +2709,7 @@ option_commands (int ch)
       case '/': {
         extern COMPEX optcompex;
         SEL_UNION u;
-        char* s;
+        const char* s;
         char* pattern;
         int i, j;
         erase_line(mousebar_cnt > 0);   /* erase the prompt */
@@ -2718,7 +2718,7 @@ option_commands (int ch)
             break;
         s = cpytill(buf,buf+1,'/');
         for (pattern = buf; *pattern == ' '; pattern++) ;
-        if ((s = compile(&optcompex,pattern,true,true)) != NULL) {
+        if ((s = compile(&optcompex,pattern,true)) != NULL) {
             strcpy(msg,s);
             return DS_STATUS;
         }

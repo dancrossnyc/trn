@@ -84,7 +84,7 @@ static TRANSTABLE trans = {
 static bool folding = false;
 
 static int err;
-static char* FirstCharacter;
+static const char* FirstCharacter;
 
 void
 init_compex (COMPEX *ocompex)
@@ -148,8 +148,8 @@ case_fold (int which)
 
 /* Compile the given regular expression into a [secret] internal format */
 
-char *
-compile (COMPEX *ocompex, char *strp, int RE, int fold)
+const char *
+compile (COMPEX *ocompex, const char *strp, bool fold)
 {
     struct xcompex *compex = (struct xcompex *)ocompex;
     int c;
@@ -158,7 +158,7 @@ compile (COMPEX *ocompex, char *strp, int RE, int fold)
     char  bracket[NBRA];
     char* bracketp;
     char** alt = compex->alternatives;
-    char* retmes = "Badly formed search string";
+    const char* retmes = "Badly formed search string";
 
     case_fold(compex->do_folding = fold);
     if (!compex->eblen) {
@@ -192,147 +192,141 @@ compile (COMPEX *ocompex, char *strp, int RE, int fold)
         }
         if (c != '*')
             lastep = ep;
-        if (!RE) {                      /* just a normal search string? */
-            *ep++ = CCHR;               /* everything is a normal char */
+        switch (c) {
+        case '\\':              /* meta something */
+            switch (c = *strp++) {
+            case '(':
+                if (compex->nbra >= NBRA) {
+#ifdef VERBOSE
+                    retmes = "Too many parens";
+#endif
+                    goto cerror;
+                }
+                *bracketp++ = ++compex->nbra;
+                *ep++ = CBRA;
+                *ep++ = compex->nbra;
+                break;
+            case '|':
+                if (bracketp>bracket) {
+#ifdef VERBOSE
+                    retmes = "No \\| in parens";        /* Alas! */
+#endif
+                    goto cerror;
+                }
+                *ep++ = CEND;
+                *alt++ = ep;
+                if (alt > compex->alternatives + NALTS) {
+#ifdef VERBOSE
+                        retmes = "Too many alternatives in reg ex";
+#endif
+                        goto cerror;
+                }
+                break;
+            case ')':
+                if (bracketp <= bracket) {
+#ifdef VERBOSE
+                    retmes = "Unmatched right paren";
+#endif
+                    goto cerror;
+                }
+                *ep++ = CKET;
+                *ep++ = *--bracketp;
+                break;
+            case 'w':
+                *ep++ = WORD;
+                break;
+            case 'W':
+                *ep++ = NWORD;
+                break;
+            case 'b':
+                *ep++ = WBOUND;
+                break;
+            case 'B':
+                *ep++ = NWBOUND;
+                break;
+            case '0': case '1': case '2': case '3': case '4':
+            case '5': case '6': case '7': case '8': case '9':
+                *ep++ = CBACK;
+                *ep++ = c - '0';
+                break;
+            default:
+                *ep++ = CCHR;
+                if (c == '\0')
+                    goto cerror;
+                *ep++ = c;
+                break;
+            }
+            break;
+        case '.':
+            *ep++ = CDOT;
+            continue;
+
+        case '*':
+            if (lastep == 0 || *lastep == CBRA || *lastep == CKET
+                || *lastep == CIRC
+                || (*lastep&STAR)|| *lastep>NWORD)
+                goto defchar;
+            *lastep |= STAR;
+            continue;
+
+        case '^':
+            if (ep != compex->expbuf && ep[-1] != CEND)
+                goto defchar;
+            *ep++ = CIRC;
+            continue;
+
+        case '$':
+            if (*strp != 0 && (*strp != '\\' || strp[1] != '|'))
+                goto defchar;
+            *ep++ = CDOL;
+            continue;
+
+        case '[': {             /* character class */
+            int i;
+
+            if (ep - compex->expbuf >= compex->eblen - BMAPSIZ)
+                ep = grow_eb(compex, ep, alt); /* reserve bitmap */
+
+            for (i = BMAPSIZ; i; --i)
+                ep[i] = 0;
+
+            if ((c = *strp++) == '^') {
+                c = *strp++;
+                *ep++ = NCCL;   /* negated */
+            }
+            else
+                *ep++ = CCL;    /* normal */
+
+            i = 0;              /* remember oldchar */
+            do {
+                if (c == '\0') {
+#ifdef VERBOSE
+                    retmes = "Missing ]";
+#endif
+                    goto cerror;
+                }
+                if (*strp == '-' && *(++strp) != ']' && *strp)
+                    i = *strp++;
+                else
+                    i = c;
+                while (c <= i) {
+                    ep[c / BITSPERBYTE] |= 1 << (c % BITSPERBYTE);
+                    if (fold && isalpha(c))
+                        ep[(c ^ 32) / BITSPERBYTE] |=
+                            1 << ((c ^ 32) % BITSPERBYTE);
+                                /* set the other bit too */
+                    c++;
+                }
+            } while ((c = *strp++) != ']');
+            ep += BMAPSIZ;
+            continue;
+        }
+
+defchar:
+        default:
+            *ep++ = CCHR;
             *ep++ = c;
         }
-        else                            /* it is a regular expression */
-            switch (c) {
-
-                case '\\':              /* meta something */
-                    switch (c = *strp++) {
-                    case '(':
-                        if (compex->nbra >= NBRA) {
-#ifdef VERBOSE
-                            retmes = "Too many parens";
-#endif
-                            goto cerror;
-                        }
-                        *bracketp++ = ++compex->nbra;
-                        *ep++ = CBRA;
-                        *ep++ = compex->nbra;
-                        break;
-                    case '|':
-                        if (bracketp>bracket) {
-#ifdef VERBOSE
-                            retmes = "No \\| in parens";        /* Alas! */
-#endif
-                            goto cerror;
-                        }
-                        *ep++ = CEND;
-                        *alt++ = ep;
-                        if (alt > compex->alternatives + NALTS) {
-#ifdef VERBOSE
-                                retmes = "Too many alternatives in reg ex";
-#endif
-                                goto cerror;
-                        }
-                        break;
-                    case ')':
-                        if (bracketp <= bracket) {
-#ifdef VERBOSE
-                            retmes = "Unmatched right paren";
-#endif
-                            goto cerror;
-                        }
-                        *ep++ = CKET;
-                        *ep++ = *--bracketp;
-                        break;
-                    case 'w':
-                        *ep++ = WORD;
-                        break;
-                    case 'W':
-                        *ep++ = NWORD;
-                        break;
-                    case 'b':
-                        *ep++ = WBOUND;
-                        break;
-                    case 'B':
-                        *ep++ = NWBOUND;
-                        break;
-                    case '0': case '1': case '2': case '3': case '4':
-                    case '5': case '6': case '7': case '8': case '9':
-                        *ep++ = CBACK;
-                        *ep++ = c - '0';
-                        break;
-                    default:
-                        *ep++ = CCHR;
-                        if (c == '\0')
-                            goto cerror;
-                        *ep++ = c;
-                        break;
-                    }
-                    break;
-                case '.':
-                    *ep++ = CDOT;
-                    continue;
-
-                case '*':
-                    if (lastep == 0 || *lastep == CBRA || *lastep == CKET
-                        || *lastep == CIRC
-                        || (*lastep&STAR)|| *lastep>NWORD)
-                        goto defchar;
-                    *lastep |= STAR;
-                    continue;
-
-                case '^':
-                    if (ep != compex->expbuf && ep[-1] != CEND)
-                        goto defchar;
-                    *ep++ = CIRC;
-                    continue;
-
-                case '$':
-                    if (*strp != 0 && (*strp != '\\' || strp[1] != '|'))
-                        goto defchar;
-                    *ep++ = CDOL;
-                    continue;
-
-                case '[': {             /* character class */
-                    int i;
-
-                    if (ep - compex->expbuf >= compex->eblen - BMAPSIZ)
-                        ep = grow_eb(compex, ep, alt); /* reserve bitmap */
-
-                    for (i = BMAPSIZ; i; --i)
-                        ep[i] = 0;
-
-                    if ((c = *strp++) == '^') {
-                        c = *strp++;
-                        *ep++ = NCCL;   /* negated */
-                    }
-                    else
-                        *ep++ = CCL;    /* normal */
-
-                    i = 0;              /* remember oldchar */
-                    do {
-                        if (c == '\0') {
-#ifdef VERBOSE
-                            retmes = "Missing ]";
-#endif
-                            goto cerror;
-                        }
-                        if (*strp == '-' && *(++strp) != ']' && *strp)
-                            i = *strp++;
-                        else
-                            i = c;
-                        while (c <= i) {
-                            ep[c / BITSPERBYTE] |= 1 << (c % BITSPERBYTE);
-                            if (fold && isalpha(c))
-                                ep[(c ^ 32) / BITSPERBYTE] |=
-                                    1 << ((c ^ 32) % BITSPERBYTE);
-                                        /* set the other bit too */
-                            c++;
-                        }
-                    } while ((c = *strp++) != ']');
-                    ep += BMAPSIZ;
-                    continue;
-                }
-
-            defchar:
-                default:
-                    *ep++ = CCHR;
-                    *ep++ = c;
-            }
     }
 cerror:
     compex->expbuf[0] = 0;
@@ -356,11 +350,11 @@ grow_eb (struct xcompex *compex, char *epp, char **alt)
     return epp;
 }
 
-char *
-execute (COMPEX *ocompex, char *addr)
+const char *
+execute (COMPEX *ocompex, const char *addr)
 {
     struct xcompex *compex = (struct xcompex *)ocompex;
-    char* p1 = addr;
+    const char* p1 = addr;
     Uchar* trt = trans;
     int c;
 
@@ -404,9 +398,9 @@ execute (COMPEX *ocompex, char *addr)
 /* advance the match of the regular expression starting at ep along the
    string lp, simulates an NDFSA */
 static bool
-advance (struct xcompex *compex, char *lp, char *ep)
+advance (struct xcompex *compex, const char *lp, const char *ep)
 {
-    char* curlp;
+    const char* curlp;
     Uchar* trt = trans;
     int i;
 
@@ -565,9 +559,9 @@ advance (struct xcompex *compex, char *lp, char *ep)
 }
 
 static bool
-backref(struct xcompex *compex, int i, char *lp)
+backref(struct xcompex *compex, int i, const char *lp)
 {
-    char* bp;
+    const char* bp;
 
     bp = compex->braslist[i];
     while (*lp && *bp == *lp) {
@@ -579,15 +573,11 @@ backref(struct xcompex *compex, int i, char *lp)
     return false;
 }
 
-bool
-cclass (char *set, int c, int af)
+static bool
+cclass (const char *set, int c, int af)
 {
     c &= 0177;
-#if BITSPERBYTE == 8
-    if (set[c >> 3] & 1 << (c & 7))
-#else
     if (set[c / BITSPERBYTE] & 1 << (c % BITSPERBYTE))
-#endif
         return af;
     return !af;
 }

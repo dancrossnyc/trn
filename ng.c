@@ -232,9 +232,9 @@ do_newsgroup (
 
 #ifdef CUSTOMLINES
     if ((hideline = getval("HIDELINE",(char*)NULL)) != NULL)
-        compile(&hide_compex,hideline,true,true);
+        compile(&hide_compex,hideline,true);
     if ((pagestop = getval("PAGESTOP",(char*)NULL)) != NULL)
-        compile(&page_compex,pagestop,true,true);
+        compile(&page_compex,pagestop,true);
 #endif
 
     /* now read each unread article */

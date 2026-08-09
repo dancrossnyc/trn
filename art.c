@@ -711,7 +711,7 @@ reask_pager:
 }
 
 int
-maybe_set_color (char *cp, bool backsearch)
+maybe_set_color (const char *cp, bool backsearch)
 {
     char ch = (cp == artbuf || cp == art_line? 0 : cp[-1]);
     if (ch == '\001')
@@ -740,7 +740,7 @@ maybe_set_color (char *cp, bool backsearch)
 int
 page_switch (void)
 {
-    char* s;
+    const char* s;
 
     switch (*buf) {
       case '!':                 /* shell escape */
@@ -765,19 +765,19 @@ page_switch (void)
             }
         }
         sprintf(cmd_buf,"^[^%c\n]",*s);
-        compile(&gcompex,cmd_buf,true,true);
+        compile(&gcompex,cmd_buf,true);
         goto caseG;
       }
       case Ctl('g'):
         gline = 3;
-        compile(&gcompex,"^Subject:",true,true);
+        compile(&gcompex,"^Subject:",true);
         goto caseG;
       case 'g':         /* in-article search */
         if (!finish_command(false))/* get rest of command */
             return PS_ASK;
         s = buf+1;
         if (isspace(*s)) s++;
-        if ((s = compile(&gcompex,s,true,true)) != NULL) {
+        if ((s = compile(&gcompex,s,true)) != NULL) {
                             /* compile regular expression */
             printf("\n%s\n",s);
             termdown(2);

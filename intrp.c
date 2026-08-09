@@ -198,6 +198,7 @@ dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
     char* line_buf = NULL;
     char* line_split = NULL;
     char* orig_dest = dest;
+    const char *es;
     char* s;
     char* h;
     int i;
@@ -360,8 +361,8 @@ dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
                         dointerp(scrbuf,sizeof scrbuf,spfbuf,(char*)NULL,cmd);
                         proc_sprintf = false;
                     }
-                    if ((s = compile(&cond_compex,scrbuf,true,true)) != NULL) {
-                        printf("%s: %s\n",scrbuf,s);
+                    if ((es = compile(&cond_compex,scrbuf,true)) != NULL) {
+                        printf("%s: %s\n",scrbuf,es);
                         pattern += strlen(pattern);
                         free_compex(&cond_compex);
                         goto getout;

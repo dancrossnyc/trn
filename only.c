@@ -33,7 +33,7 @@ only_init (void)
 void
 setngtodo (char *pat)
 {
-    char* s;
+    const char* s;
     int i = maxngtodo + save_maxngtodo;
 
     if (!*pat)
@@ -42,8 +42,8 @@ setngtodo (char *pat)
         ngtodo[i] = estrdup(pat);
         compextodo[i] = (COMPEX*)safemalloc(sizeof(COMPEX));
         init_compex(compextodo[i]);
-        compile(compextodo[i],pat,true,true);
-        if ((s = ng_comp(compextodo[i],pat,true,true)) != NULL) {
+        compile(compextodo[i],pat,true);
+        if ((s = ng_comp(compextodo[i],pat,true)) != NULL) {
             printf("\n%s\n",s);
             finalize(1);
         }

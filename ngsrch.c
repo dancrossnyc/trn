@@ -47,7 +47,7 @@ ng_search (
 )
 {
     char cmdchr = *patbuf;      /* what kind of search? */
-    char* s;
+    const char* s;
     char* pattern;                      /* unparsed pattern */
     char* cmdlst = NULL;                /* list of commands to do */
     int ret = NGS_NOTFOUND;             /* assume no commands */
@@ -86,7 +86,7 @@ ng_search (
         cmdlst = estrdup("+");
     if (cmdlst)
         ret = NGS_DONE;
-    if ((s = ng_comp(&ngcompex,pattern,true,true)) != NULL) {
+    if ((s = ng_comp(&ngcompex,pattern,true)) != NULL) {
                                         /* compile regular expression */
         errormsg(s);
         ret = NGS_ERROR;
@@ -182,15 +182,15 @@ ng_wanted (NGDATA *np)
 }
 #endif /* NGSEARCH */
 
-char *
-ng_comp (COMPEX *compex, char *pattern, bool RE, bool fold)
+const char *
+ng_comp (COMPEX *compex, char *pattern, bool fold)
 {
     char ng_pattern[128];
     char* s = pattern;
     char* d = ng_pattern;
 
     if (!*s) {
-        if (compile(compex, "", RE, fold))
+        if (compile(compex, "", fold))
             return "No previous search pattern";
         return NULL;                    /* reuse old pattern */
     }
@@ -217,5 +217,5 @@ ng_comp (COMPEX *compex, char *pattern, bool RE, bool fold)
             *d++ = *s;
     }
     *d = '\0';
-    return compile(compex,ng_pattern,RE,fold);
+    return compile(compex,ng_pattern,/*RE,*/fold);
 }
