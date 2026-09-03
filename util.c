@@ -352,11 +352,13 @@ notincl (char *feature)
 
 /* grow a static string to at least a certain length */
 void
-growstr (char **strptr, int *curlen, int newlen)
+growstr(char **strptr, size_t *curlen, size_t newlen)
 {
+    assert(strptr != NULL);
+    assert(curlen != NULL);
     if (newlen > *curlen) {             /* need more room? */
         if (*curlen)
-            *strptr = saferealloc(*strptr,newlen);
+            *strptr = saferealloc(*strptr, newlen);
         else
             *strptr = safemalloc(newlen);
         *curlen = newlen;

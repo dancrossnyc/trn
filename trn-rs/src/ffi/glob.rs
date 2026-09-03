@@ -298,7 +298,7 @@ pub fn execute(prog: &Program, s: &[u8]) -> Result<bool> {
     Ok(curr.contains(prog.len() - 1))
 }
 
-use std::ffi::{c_char, CStr};
+use std::ffi::{CStr, c_char};
 
 /*
 fn match_class(pattern: &mut std::iter::Peekable<impl Iterator<Item = u8>>, c: u8) -> bool {
@@ -407,11 +407,17 @@ mod tests {
     fn glob_xfont() {
         let obj = compile(b"-*-*-*-*-*-*-12-*-*-*-m-*-*-*").expect("parsed glob");
         assert_eq!(
-            execute(&obj, b"-adobe-courier-bold-o-normal--12-120-75-75-m-70-iso8859-1"),
+            execute(
+                &obj,
+                b"-adobe-courier-bold-o-normal--12-120-75-75-m-70-iso8859-1"
+            ),
             Ok(true)
         );
         assert_eq!(
-            execute(&obj, b"-adobe-courier-bold-o-normal--12-120-75-75-X-70-iso8859-1"),
+            execute(
+                &obj,
+                b"-adobe-courier-bold-o-normal--12-120-75-75-X-70-iso8859-1"
+            ),
             Ok(false)
         );
     }

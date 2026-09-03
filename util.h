@@ -61,7 +61,7 @@ char* trn_getwd (char*, size_t);
 char* get_a_line(char*, size_t, bool, FILE*);
 int makedir (char*, int);
 void notincl (char*);
-void growstr (char**,int*,int);
+void growstr (char**,size_t*,size_t);
 void setdef (char*,char*);
 #ifndef NO_FILELINKS
 void safelink (char*,char*);

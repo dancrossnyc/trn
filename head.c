@@ -303,7 +303,7 @@ end_header (void)
             ARTICLE* artp_hold = artp;
             char* references = fetchlines(parsed_art, REFS_LINE);
             char* inreply = fetchlines(parsed_art, INREPLY_LINE);
-            int reflen = strlen(references) + 1;
+            size_t reflen = strlen(references) + 1;
             growstr(&references, &reflen, reflen + strlen(inreply) + 1);
             safecat(references, inreply, reflen);
             thread_article(ap, references);

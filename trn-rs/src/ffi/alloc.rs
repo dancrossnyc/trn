@@ -4,8 +4,8 @@
 //! This lets us use the Rust memory allocator from C code.
 
 use std::alloc::{Layout, alloc_zeroed, dealloc, realloc};
-use std::sync::RwLock;
 use std::ffi::{CStr, c_char, c_int, c_void};
+use std::sync::RwLock;
 
 /// The alignment constant.  We allocate blocks of memory that
 /// are both sized and aligned sized to multiples of `ALIGN`

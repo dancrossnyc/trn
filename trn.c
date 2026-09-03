@@ -81,10 +81,10 @@
 #include "univ.h"
 
 char* ngname = NULL;    /* name of current newsgroup */
-int ngnlen = 0;         /* current malloced size of ngname */
-int ngname_len;         /* length of current ngname */
+size_t ngnlen = 0;         /* current malloced size of ngname */
+size_t ngname_len;         /* length of current ngname */
 char* ngdir = NULL;     /* same thing in directory name form */
-int ngdlen = 0;         /* current malloced size of ngdir */
+size_t ngdlen = 0;         /* current malloced size of ngdir */
 
 int ing_state;
 
@@ -920,12 +920,12 @@ set_ngname (char *what)
     strcpy(ngdir,getngdir(ngname));
 }
 
-static char* myngdir;
-static int ngdirlen = 0;
-
 char *
-getngdir (char *ngnam)
+getngdir(char *ngnam)
 {
+
+    static char* myngdir;
+    static size_t ngdirlen = 0;
     char* s;
 
     growstr(&myngdir,&ngdirlen,strlen(ngnam)+1);

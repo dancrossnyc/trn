@@ -3,24 +3,24 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-#define NBRA    10              /* the maximum number of meta-brackets in an
-                                   RE -- \( \) */
-#define NALTS   10              /* the maximum number of \|'s */
+#define NBRA    10                /* the maximum number of meta-brackets in an
+                                     RE -- \( \) */
+#define NALTS   10                /* the maximum number of \|'s */
 
 struct xcompex {
-    char* expbuf;               /* The compiled search string */
-    int eblen;                  /* Length of above buffer */
-    char* alternatives[NALTS+1];/* The list of \| seperated alternatives */
-    const char* braslist[NBRA];       /* RE meta-bracket start list */
-    const char* braelist[NBRA];       /* RE meta-bracket end list */
-    char* brastr;               /* saved match string after execute() */
-    char nbra;                  /* The number of meta-brackets int the most
-                                   recenlty compiled RE */
-    bool do_folding;            /* fold upper and lower case? */
+    char* expbuf;                 /* The compiled search string */
+    size_t eblen;                 /* Length of above buffer */
+    char* alternatives[NALTS+1];  /* The list of \| seperated alternatives */
+    const char* braslist[NBRA];   /* RE meta-bracket start list */
+    const char* braelist[NBRA];   /* RE meta-bracket end list */
+    char* brastr;                 /* saved match string after execute() */
+    size_t nbra;                  /* The number of meta-brackets int the most
+                                     recenlty compiled RE */
+    bool do_folding;              /* fold upper and lower case? */
 };
 
 static void case_fold(int);
-static char* grow_eb(struct xcompex *, char *, char **);
+static char *grow_eb(struct xcompex *, char *, char **);
 static bool advance(struct xcompex *, const char *, const char *);
 static bool backref(struct xcompex *, int, const char *);
-static bool cclass(const char* , int, int);
+static bool cclass(const char *, int, int);

@@ -205,7 +205,7 @@ dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
     char scrbuf[8192];
     char spfbuf[512];
     static char* input_str = NULL;
-    static int input_siz = 0;
+    static size_t input_size = 0;
     bool upper = false;
     bool lastcomp = false;
     bool re_quote = false;
@@ -428,7 +428,7 @@ dointerp (char *dest, int destsize, char *pattern, char *stoppers, char *cmd)
                     if (scrbuf[i-1] == '\n') {
                         scrbuf[--i] = '\0';
                     }
-                    growstr(&input_str, &input_siz, i+1);
+                    growstr(&input_str, &input_size, i+1);
                     safecpy(input_str, scrbuf, i+1);
                     s = input_str;
                     break;

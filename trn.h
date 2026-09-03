@@ -3,11 +3,11 @@
 /* This software is copyrighted as detailed in the LICENSE file. */
 
 
-extern char* ngname;    /* name of current newsgroup */
-extern int ngnlen;      /* current malloced size of ngname */
-extern int ngname_len;  /* length of current ngname */
-extern char* ngdir;     /* same thing in directory name form */
-extern int ngdlen;      /* current malloced size of ngdir */
+extern char* ngname;       /* name of current newsgroup */
+extern size_t ngnlen;      /* current malloced size of ngname */
+extern size_t ngname_len;  /* length of current ngname */
+extern char* ngdir;        /* same thing in directory name form */
+extern size_t ngdlen;      /* current malloced size of ngdir */
 
 #define ING_NORM        0
 #define ING_ASK         1

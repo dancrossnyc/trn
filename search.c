@@ -111,20 +111,26 @@ free_compex (COMPEX *ocompex)
 }
 
 static char* gbr_str = NULL;
-static int gbr_siz = 0;
+static size_t gbr_size = 0;
 
 char *
-getbracket (COMPEX *ocompex, int n)
+getbracket (COMPEX *ocompex, size_t n)
 {
+    assert(ocompex != NULL);
     struct xcompex *compex = (struct xcompex *)ocompex;
-    int length = compex->braelist[n] - compex->braslist[n];
 
     if (!compex->nbra)
         return NULL;
-    if (n > compex->nbra || !compex->braelist[n] || length < 0)
+    if (n > compex->nbra)
         return nullstr;
-    growstr(&gbr_str, &gbr_siz, length+1);
-    safecpy(gbr_str, compex->braslist[n], length+1);
+    if (compex->braslist[n] == NULL || compex->braelist[n] == NULL)
+        return nullstr;
+    if ((uintptr_t)compex->braelist[n] <= (uintptr_t)compex->braslist[n])
+        return nullstr;
+    size_t length = compex->braelist[n] - compex->braslist[n];
+    growstr(&gbr_str, &gbr_size, length + 1);
+    strlcpy(gbr_str, compex->braslist[n], length + 1);
+
     return gbr_str;
 }
 
